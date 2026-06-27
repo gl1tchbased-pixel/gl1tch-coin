@@ -2,17 +2,27 @@ import { Composer, type Context } from "grammy";
 import type { Bot } from "grammy";
 import { getScanData, scanLink, shortLine, type ScanData } from "../scan.js";
 import { OFFICIAL } from "../content.js";
+import { store as verifyStore } from "../verify/index.js";
 import { watchStore, type Baseline, type WatchEntry } from "./store.js";
 
 /**
  * GL1TCH Watchtower — holders (and anyone) can /watch a token; a periodic sweep
  * re-scans each one and pings the chat if its safety *worsens* (LP unlocked, an
  * authority comes back, verdict drops). Read-only; it never touches a wallet.
+ *
+ * Watch slots are HOLDER-GATED: more $GL1TCH = more tokens you can guard. Free users
+ * get a few; verified holders unlock far more — a concrete reason to hold.
  */
 export const watchCommands = new Composer<Context>();
 
 const HTML = { parse_mode: "HTML" as const, link_preview_options: { is_disabled: true } };
-const CAP = Number(process.env.WATCH_CAP ?? 5);
+// Watch-slot cap by verified rank tier (verify your wallet at /verify to claim it).
+const TIER_CAP: Record<string, number> = { observer: 3, infected: 10, bearer: 25, core: 50, ghost: 200 };
+function capFor(userId?: number): number {
+  if (!userId) return TIER_CAP.observer;
+  const v = verifyStore.getVerification(userId);
+  return (v && TIER_CAP[v.tierId]) || TIER_CAP.observer;
+}
 const SWEEP_MS = Number(process.env.WATCH_SWEEP_MS ?? 3 * 60 * 60_000); // 3h
 const VERDICT_ORDER = ["CLEAN", "LOW RISK", "CAUTION", "HIGH RISK", "RUG-SHAPED"];
 const SEV: Record<string, number> = { pass: 0, warn: 1, fail: 2 };
@@ -64,9 +74,11 @@ watchCommands.command("watch", async (ctx) => {
   if (!data) { await ctx.reply("⚪ Couldn't find that token to watch — try the exact name or paste the contract.", HTML); return; }
 
   const already = watchStore.has(userId, data.chain, data.mint);
-  if (!already && watchStore.countByUser(userId) >= CAP) {
+  const cap = capFor(userId);
+  if (!already && watchStore.countByUser(userId) >= cap) {
+    const verified = !!verifyStore.getVerification(userId);
     await ctx.reply(
-      `👁 You're already watching ${CAP} tokens — the free limit.\n\nHolding <b>$GL1TCH</b> unlocks more slots and real-time alerts. ${OFFICIAL.SITE}/ranks`,
+      `👁 You're watching ${cap} tokens — your current limit.\n\n${verified ? "Hold more <b>$GL1TCH</b> to climb a tier and unlock more slots." : "Verify your wallet to unlock more — holders get up to 200 watch slots."}\nTiers: Infected 10 · Bearer 25 · Core 50 · Ghost 200 → <code>/verify</code> · ${OFFICIAL.SITE}/ranks`,
       HTML
     );
     return;
@@ -116,7 +128,10 @@ watchCommands.command("watching", async (ctx) => {
     const lp = w.baseline.lpLockedPct != null ? ` · LP ${w.baseline.lpLockedPct}%` : "";
     return `• <b>${esc(w.label)}</b> · ${esc(w.chain)} · ${esc(w.baseline.verdict)} ${w.baseline.score}/100${lp}`;
   });
-  await ctx.reply(`👁 <b>Your Watchtower (${mine.length}/${CAP})</b>\n\n${lines.join("\n")}\n\n<i>I re-check these automatically and ping you on any safety drop.</i>`, HTML);
+  const cap = capFor(userId);
+  const v = verifyStore.getVerification(userId);
+  const tierNote = v ? ` · ${v.tierId}` : " · unverified";
+  await ctx.reply(`👁 <b>Your Watchtower (${mine.length}/${cap}${tierNote})</b>\n\n${lines.join("\n")}\n\n<i>I re-check these automatically and ping you on any safety drop.</i>${cap <= 3 ? `\n\nHold $GL1TCH + <code>/verify</code> for more slots.` : ""}`, HTML);
 });
 
 /* ----------------------------- sweep ----------------------------- */
@@ -149,5 +164,5 @@ export function startWatchtower(bot: Bot): void {
   // First sweep a minute after boot (let the process settle), then on an interval.
   setTimeout(() => { sweepOnce(bot).catch((e) => console.error("[watch] sweep error:", e)); }, 60_000);
   setInterval(() => { sweepOnce(bot).catch((e) => console.error("[watch] sweep error:", e)); }, SWEEP_MS);
-  console.log(`[watch] Watchtower armed — sweeping every ${Math.round(SWEEP_MS / 3.6e6)}h, cap ${CAP}/user`);
+  console.log(`[watch] Watchtower armed — sweeping every ${Math.round(SWEEP_MS / 3.6e6)}h, holder-gated slots (observer ${TIER_CAP.observer} → ghost ${TIER_CAP.ghost})`);
 }
