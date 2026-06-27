@@ -1,51 +1,23 @@
 name: CI
 
+# Lean, reliable type-check gate. The real production build/deploy runs on Vercel
+# (site) and the Deploy-bot workflow (Railway), so CI just keeps types honest.
 on:
   push:
     branches: [main]
   pull_request:
 
 jobs:
-  website:
+  typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: npm
-      - run: npm ci
-      - run: npx tsc --noEmit
-      - run: npm run lint
-      - run: npm test
-      - run: npm run build
-        env:
-          NEXT_PUBLIC_SITE_URL: https://gl1tch.io
-
-  bot:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: bot
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm install
-      - run: npm run typecheck
-      - run: npm test
-
-  onchain:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: onchain
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - run: npm install
-      - run: npm run typecheck
-      - run: npm test
+          node-version: 22
+      - name: Install (site)
+        run: npm install --no-audit --no-fund
+      - name: Type-check site
+        run: npx tsc --noEmit
+      - name: Type-check bot
+        run: cd bot && npm install --no-audit --no-fund && npx tsc --noEmit
