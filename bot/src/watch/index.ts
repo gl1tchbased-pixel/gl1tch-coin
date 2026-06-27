@@ -4,6 +4,7 @@ import { getScanData, scanLink, shortLine, type ScanData } from "../scan.js";
 import { OFFICIAL } from "../content.js";
 import { store as verifyStore } from "../verify/index.js";
 import { watchStore, type Baseline, type WatchEntry } from "./store.js";
+import { sweepWallets, startWalletWatch } from "./wallet.js";
 
 /**
  * GL1TCH Watchtower — holders (and anyone) can /watch a token; a periodic sweep
@@ -17,8 +18,8 @@ export const watchCommands = new Composer<Context>();
 
 const HTML = { parse_mode: "HTML" as const, link_preview_options: { is_disabled: true } };
 // Watch-slot cap by verified rank tier (verify your wallet at /verify to claim it).
-const TIER_CAP: Record<string, number> = { observer: 3, infected: 10, bearer: 25, core: 50, ghost: 200 };
-function capFor(userId?: number): number {
+export const TIER_CAP: Record<string, number> = { observer: 3, infected: 10, bearer: 25, core: 50, ghost: 200 };
+export function capFor(userId?: number): number {
   if (!userId) return TIER_CAP.observer;
   const v = verifyStore.getVerification(userId);
   return (v && TIER_CAP[v.tierId]) || TIER_CAP.observer;
@@ -161,8 +162,13 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export function startWatchtower(bot: Bot): void {
   watchStore.load();
+  startWalletWatch();
+  const sweep = () => {
+    sweepOnce(bot).catch((e) => console.error("[watch] sweep error:", e));
+    sweepWallets(bot).catch((e) => console.error("[wallet] sweep error:", e));
+  };
   // First sweep a minute after boot (let the process settle), then on an interval.
-  setTimeout(() => { sweepOnce(bot).catch((e) => console.error("[watch] sweep error:", e)); }, 60_000);
-  setInterval(() => { sweepOnce(bot).catch((e) => console.error("[watch] sweep error:", e)); }, SWEEP_MS);
-  console.log(`[watch] Watchtower armed — sweeping every ${Math.round(SWEEP_MS / 3.6e6)}h, holder-gated slots (observer ${TIER_CAP.observer} → ghost ${TIER_CAP.ghost})`);
+  setTimeout(sweep, 60_000);
+  setInterval(sweep, SWEEP_MS);
+  console.log(`[watch] Watchtower armed — sweeping every ${Math.round(SWEEP_MS / 3.6e6)}h, holder-gated slots (observer ${TIER_CAP.observer} → ghost ${TIER_CAP.ghost}); wallet-watch active`);
 }

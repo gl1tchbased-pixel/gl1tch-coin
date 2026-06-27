@@ -4,6 +4,7 @@ import { antiSpam, scamFilter, logging } from "./middleware.js";
 import { publicCommands } from "./commands.js";
 import { scanCommands, autoScan } from "./scan.js";
 import { watchCommands, startWatchtower } from "./watch/index.js";
+import { walletCommands } from "./watch/wallet.js";
 import { callbacks } from "./callbacks.js";
 import { xCallbacks } from "./agent/x-agent/handlers.js";
 import { adminCommands } from "./admin.js";
@@ -49,6 +50,7 @@ bot.use(xCallbacks);
 bot.use(adminCommands);
 bot.use(scanCommands);
 bot.use(watchCommands);
+bot.use(walletCommands);
 bot.use(publicCommands);
 
 // Auto-scan any contract address pasted in chat (calls next() so other handlers
@@ -73,6 +75,9 @@ async function main() {
     { command: "watch", description: "👁 Watch a token — alert me if its safety changes" },
     { command: "watching", description: "👁 Your Watchtower list" },
     { command: "unwatch", description: "🚫 Stop watching a token" },
+    { command: "watchwallet", description: "🐋 Watch a wallet — alert on whale/dev sells" },
+    { command: "wallets", description: "🐋 Your watched wallets" },
+    { command: "unwatchwallet", description: "🚫 Stop watching a wallet" },
     { command: "menu", description: "Open the control menu" },
     { command: "rank", description: "Rank ladder & verification" },
     { command: "verify", description: "Link wallet to verify your rank" },
