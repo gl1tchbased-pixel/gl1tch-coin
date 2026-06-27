@@ -7,6 +7,22 @@ import fs from "node:fs";
 import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
 
 const PRESETS = {
+  wallet: {
+    video: "gl1tch-wallet-watch.mp4",
+    title: "Get pinged when a whale or dev sells — GL1TCH Wallet Watch 🐋 #Shorts",
+    desc: `GL1TCH can now watch any Solana WALLET — a whale, a token's dev, or your own bag. How it works:
+1) /watchwallet <address> — point it at any wallet (read-only, never touches funds)
+2) it snapshots every holding as a baseline
+3) it re-checks every 3 hours — flags any position that dropped ≥25%
+4) it pings you the second smart money sells — before the chart moves
+
+🐋 Hold $GL1TCH, watch MORE wallets: free 3 → Infected 10 → Bearer 25 → Core 50 → Ghost 200. Your rank = your watch slots (/verify).
+
+💬 /watchwallet in Telegram: https://t.me/gl1tch_infected
+🔍 Scanner: https://coin-three-mu.vercel.app/scan
+
+#crypto #memecoin #solana #whalealert #rugpull #cryptoscanner #web3 #AI #Shorts`,
+  },
   mascot: {
     video: "gl1tch-lore-origin.mp4",
     title: "GL1TCH — the rogue AI that protects your bag 👻 #Shorts",

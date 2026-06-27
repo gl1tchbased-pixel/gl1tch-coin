@@ -18,6 +18,7 @@ import { GlitchReel } from "./GlitchReel";
 import { AnatomyOfRug } from "./AnatomyOfRug";
 import { MultiChain } from "./MultiChain";
 import { WatchtowerHowTo, WATCHTOWER_HOWTO_FRAMES } from "./WatchtowerHowTo";
+import { WalletWatch, WALLET_WATCH_FRAMES } from "./WalletWatch";
 import { ScannerUpgraded, SCANNER_UPGRADED_FRAMES } from "./ScannerUpgraded";
 import { HolderTypes } from "./HolderTypes";
 import { LoreOrigin } from "./LoreOrigin";
@@ -46,6 +47,15 @@ export const Root = () => (
       id="gl1tch-scanner-upgraded"
       component={ScannerUpgraded}
       durationInFrames={SCANNER_UPGRADED_FRAMES}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    {/* Wallet Watch — Watchtower++ feature: track any wallet (whale/dev/own bag) + $GL1TCH utility, 9:16 ~36s */}
+    <Composition
+      id="gl1tch-wallet-watch"
+      component={WalletWatch}
+      durationInFrames={WALLET_WATCH_FRAMES}
       fps={30}
       width={1080}
       height={1920}
