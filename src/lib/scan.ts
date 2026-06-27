@@ -72,6 +72,7 @@ export interface ScanResult {
   verified: boolean; // canonical blue-chip (real token, not an impostor clone)
   bottomLine: string; // one-line plain-language takeaway
   aiVerdict: string; // the rogue AI's narrative read, in character
+  sources: { name: string; ok: boolean; detail?: string }[]; // which data sources we cross-checked
   checks: ScanCheck[];
   risks: ScanRisk[]; // named risks (RugCheck) for extra context
   meta: {
@@ -521,6 +522,12 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
     verified: false,
     bottomLine: bottomLineFor(verdict, checks, confidence),
     aiVerdict: "",
+    sources: [
+      { name: "On-chain RPC", ok: true, detail: "mint authorities, supply" },
+      { name: "Market", ok: market.priceUsd != null, detail: market.priceUsd != null ? (market.priceUsd && market.volume24h != null ? "DexScreener / GeckoTerminal" : "DexScreener") : "no pair found" },
+      { name: "RugCheck", ok: (rug.score != null || rug.holderCount != null || rug.creator != null || rug.risks.length > 0), detail: "risks, LP lock, holders, deployer" },
+      { name: "Holder index", ok: conc.topHolderPct != null || rug.top10Pct != null, detail: "concentration, insiders" },
+    ],
     checks,
     risks: rug.risks,
     meta: {

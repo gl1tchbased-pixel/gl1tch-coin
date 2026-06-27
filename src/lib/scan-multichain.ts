@@ -296,9 +296,16 @@ export async function scanEvm(chain: string, address: string, market: ChainMarke
   else if (lpUnlocked && taxModifiable) verdict = "RUG-SHAPED";
   else verdict = bandVerdict(score, possible);
 
+  const gOk = Object.keys(g).length > 0;
   return {
     mint: address, name: market.name, symbol: market.symbol, isToken2022: false,
-    chain, score, confidence, verdict, verified: false, bottomLine: bottomLineFor(verdict, checks, confidence), aiVerdict: "", checks, risks,
+    chain, score, confidence, verdict, verified: false, bottomLine: bottomLineFor(verdict, checks, confidence), aiVerdict: "",
+    sources: [
+      { name: "GoPlus Security", ok: gOk, detail: "honeypot, tax, ownership, LP" },
+      { name: "Market", ok: market.priceUsd != null, detail: market.priceUsd != null ? "DexScreener / GeckoTerminal" : "no pair found" },
+      { name: "On-chain", ok: gOk, detail: "supply, holders, creator" },
+    ],
+    checks, risks,
     meta: {
       priceUsd: market.priceUsd, priceChange24h: market.priceChange24h,
       marketCap: market.marketCap ?? (market.priceUsd != null && numStr(g.total_supply) ? market.priceUsd * (numStr(g.total_supply) as number) : null),

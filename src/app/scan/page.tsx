@@ -36,6 +36,10 @@ export default function ScanPage() {
 
       <ScanTool />
 
+      <p style={{ textAlign: "center", marginTop: 18 }}>
+        <Link href="/scan/compare" className={styles.ctaAlt}>⚖ Compare two tokens →</Link>
+      </p>
+
       <section className={styles.points}>
         {POINTS.map((p) => (
           <div key={p.k} className={styles.point}>

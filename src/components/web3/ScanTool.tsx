@@ -252,13 +252,26 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
             <div><span>24h vol</span>{fmtUsd(result.meta.volume24h)}</div>
           </div>
 
+          {/* Multi-source transparency — we show our work */}
+          {result.sources && result.sources.length > 0 && (
+            <div className={styles.sources}>
+              <div className={styles.sourcesHead}>Cross-checked across {result.sources.filter((s) => s.ok).length} live sources</div>
+              <div className={styles.sourceChips}>
+                {result.sources.map((s) => (
+                  <span key={s.name} className={`${styles.sourceChip} ${s.ok ? styles.srcOk : styles.srcOff}`} title={s.detail || ""}>
+                    <span className={styles.srcDot} /> {s.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className={styles.resultFoot}>
             <button type="button" className={styles.shareBtn} onClick={share}>
               {copied ? "✓ link copied" : "⤴ share this scan"}
             </button>
             <span className={styles.source}>
-              Sources: on-chain RPC · DexScreener · {result.chain === "solana" ? "RugCheck" : "GoPlus"}
-              {result.scannedAt ? ` · scanned ${new Date(result.scannedAt).toUTCString().replace("GMT", "UTC")}` : ""}
+              {result.scannedAt ? `scanned ${new Date(result.scannedAt).toUTCString().replace("GMT", "UTC")}` : "live on-chain read"}
             </span>
           </div>
 
