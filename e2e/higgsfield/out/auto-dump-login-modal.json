@@ -1,0 +1,2381 @@
+[
+  {
+    "tag": "a",
+    "text": "Nano Banana Pro & Nano Banana 2 Unlimited.\nKling 3",
+    "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1389,
+      "h": 47
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 1397,
+      "y": 10,
+      "w": 28,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "aria": "Higgsfield home",
+    "box": {
+      "x": 16,
+      "y": 64,
+      "w": 32,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Explore",
+    "box": {
+      "x": 56,
+      "y": 66,
+      "w": 59,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Image",
+    "box": {
+      "x": 128,
+      "y": 66,
+      "w": 52,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Video",
+    "box": {
+      "x": 180,
+      "y": 66,
+      "w": 49,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Audio",
+    "box": {
+      "x": 229,
+      "y": 66,
+      "w": 50,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Supercomputer\nNew",
+    "box": {
+      "x": 292,
+      "y": 66,
+      "w": 167,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "MCP & CLI\nNew",
+    "box": {
+      "x": 463,
+      "y": 66,
+      "w": 116,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Collab",
+    "box": {
+      "x": 582,
+      "y": 66,
+      "w": 52,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Plugins\nNew",
+    "box": {
+      "x": 638,
+      "y": 66,
+      "w": 95,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Marketing Studio",
+    "box": {
+      "x": 737,
+      "y": 66,
+      "w": 122,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Cinema Studio",
+    "box": {
+      "x": 863,
+      "y": 66,
+      "w": 104,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "AI Influencer",
+    "box": {
+      "x": 972,
+      "y": 66,
+      "w": 93,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Canvas",
+    "box": {
+      "x": 1069,
+      "y": 66,
+      "w": 56,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Apps",
+    "box": {
+      "x": 1129,
+      "y": 66,
+      "w": 44,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "aria": "Search Higgsfield",
+    "text": "Search\nCtrl\nK",
+    "box": {
+      "x": 987,
+      "y": 62,
+      "w": 176,
+      "h": 36
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Upgrade\n30% OFF",
+    "box": {
+      "x": 1167,
+      "y": 58,
+      "w": 92,
+      "h": 44
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Assets",
+    "box": {
+      "x": 1266,
+      "y": 62,
+      "w": 90,
+      "h": 36
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 1373,
+      "y": 62,
+      "w": 36,
+      "h": 36
+    }
+  },
+  {
+    "tag": "a",
+    "aria": "Open Seedance 2.0 in native 4K",
+    "text": "Open Seedance 2.0 in native 4K",
+    "box": {
+      "x": 16,
+      "y": 124,
+      "w": 512,
+      "h": 348
+    }
+  },
+  {
+    "tag": "a",
+    "aria": "Open Seedance 2.0 in 4K",
+    "text": "Open Seedance 2.0 in 4K",
+    "box": {
+      "x": 548,
+      "y": 124,
+      "w": 512,
+      "h": 348
+    }
+  },
+  {
+    "tag": "a",
+    "aria": "Open Exclusive Unlimited Seedance 2.0 Mini",
+    "text": "Open Exclusive Unlimited Seedance 2.0 Mini",
+    "box": {
+      "x": 1080,
+      "y": 124,
+      "w": 512,
+      "h": 348
+    }
+  },
+  {
+    "tag": "a",
+    "aria": "Open ENHANCED UNLIMITED SEEDANCE 2.0 Fast",
+    "text": "Open ENHANCED UNLIMITED SEEDANCE 2.0 Fast",
+    "box": {
+      "x": 1612,
+      "y": 124,
+      "w": 512,
+      "h": 348
+    }
+  },
+  {
+    "tag": "a",
+    "aria": "Open GROK IMAGINE 1.5 IS HERE",
+    "text": "Open GROK IMAGINE 1.5 IS HERE",
+    "box": {
+      "x": 2144,
+      "y": 124,
+      "w": 512,
+      "h": 348
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 1381,
+      "y": 240,
+      "w": 40,
+      "h": 40
+    }
+  },
+  {
+    "tag": "a",
+    "text": "SUPERCOMPUTER\n\nNEW\n\nAgents, automation, skills,\nco",
+    "box": {
+      "x": 16,
+      "y": 504,
+      "w": 512,
+      "h": 267
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Nano Banana Pro\n\nGenerate high-quality visuals\n\nIm",
+    "box": {
+      "x": 548,
+      "y": 504,
+      "w": 279,
+      "h": 128
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Seedance 2.0\n\nCreate high-quality videos in second",
+    "box": {
+      "x": 839,
+      "y": 504,
+      "w": 279,
+      "h": 128
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Marketing Studio\n\nLaunch full campaigns from one p",
+    "box": {
+      "x": 1130,
+      "y": 504,
+      "w": 279,
+      "h": 128
+    }
+  },
+  {
+    "tag": "a",
+    "text": "MCP & CLI\n\nTurn Claude into a creative engine\n\nNEW",
+    "box": {
+      "x": 548,
+      "y": 644,
+      "w": 279,
+      "h": 128
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Higgsfield Canvas\n\nGenerate stunning media with AI",
+    "box": {
+      "x": 839,
+      "y": 644,
+      "w": 279,
+      "h": 128
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Cinema Studio 3.5\n\nCreate cinematic scenes effortl",
+    "box": {
+      "x": 1130,
+      "y": 644,
+      "w": 279,
+      "h": 128
+    }
+  },
+  {
+    "tag": "a",
+    "text": "SEEDANCE 2.0\n4K",
+    "box": {
+      "x": 32,
+      "y": 795,
+      "w": 1361,
+      "h": 36
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 32,
+      "y": 875,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 32,
+      "y": 1134,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 32,
+      "y": 1393,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 32,
+      "y": 1651,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 32,
+      "y": 1910,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 32,
+      "y": 2168,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 32,
+      "y": 2427,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 486,
+      "y": 875,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 486,
+      "y": 1134,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 486,
+      "y": 1393,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 486,
+      "y": 1651,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 486,
+      "y": 1910,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 486,
+      "y": 2168,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 486,
+      "y": 2427,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 939,
+      "y": 875,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 939,
+      "y": 1134,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 939,
+      "y": 1393,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 939,
+      "y": 1651,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 939,
+      "y": 1910,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 939,
+      "y": 2168,
+      "w": 446,
+      "h": 251
+    }
+  },
+  {
+    "tag": "a",
+    "type": "button",
+    "text": "View all of Seedance 2.0",
+    "box": {
+      "x": 599,
+      "y": 1691,
+      "w": 226,
+      "h": 48
+    }
+  },
+  {
+    "tag": "a",
+    "text": "HIGGSFIELD VIRAL PRESETS",
+    "box": {
+      "x": 16,
+      "y": 2308,
+      "w": 1393,
+      "h": 36
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "BASEBALL GAME",
+    "box": {
+      "x": 16,
+      "y": 2392,
+      "w": 111,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "DRIFT RACING",
+    "box": {
+      "x": 135,
+      "y": 2392,
+      "w": 99,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "CGI BREAKDOWN",
+    "box": {
+      "x": 242,
+      "y": 2392,
+      "w": 116,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "FOOTBALL INVADER",
+    "box": {
+      "x": 366,
+      "y": 2392,
+      "w": 130,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "SUMMER HAZE",
+    "box": {
+      "x": 504,
+      "y": 2392,
+      "w": 104,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "KUNG FU HIT",
+    "box": {
+      "x": 616,
+      "y": 2392,
+      "w": 93,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "FINAL SERVE",
+    "box": {
+      "x": 717,
+      "y": 2392,
+      "w": 89,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "ANDROID ASSEMBLE",
+    "box": {
+      "x": 814,
+      "y": 2392,
+      "w": 135,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "3D RENDER",
+    "box": {
+      "x": 957,
+      "y": 2392,
+      "w": 83,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "STORM GIANT",
+    "box": {
+      "x": 1048,
+      "y": 2392,
+      "w": 99,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "BLUE DEPTH",
+    "box": {
+      "x": 1154,
+      "y": 2392,
+      "w": 87,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "ORBITAL PRESENCE",
+    "box": {
+      "x": 1249,
+      "y": 2392,
+      "w": 126,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "ZOMBIE DANCE",
+    "box": {
+      "x": 1383,
+      "y": 2392,
+      "w": 106,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "GOLF MAJOR",
+    "box": {
+      "x": 1497,
+      "y": 2392,
+      "w": 93,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "2000'S PAPARAZZI",
+    "box": {
+      "x": 1598,
+      "y": 2392,
+      "w": 121,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "CANDID PAPARAZZI",
+    "box": {
+      "x": 1727,
+      "y": 2392,
+      "w": 130,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "RACE TRACK",
+    "box": {
+      "x": 1864,
+      "y": 2392,
+      "w": 88,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "DROWN IN MUSIC",
+    "box": {
+      "x": 1961,
+      "y": 2392,
+      "w": 121,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "NIGHTLINE",
+    "box": {
+      "x": 2090,
+      "y": 2392,
+      "w": 81,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "FREE FALL",
+    "box": {
+      "x": 2179,
+      "y": 2392,
+      "w": 74,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "RED CARPET",
+    "box": {
+      "x": 2260,
+      "y": 2392,
+      "w": 88,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "NEON CITY",
+    "box": {
+      "x": 2356,
+      "y": 2392,
+      "w": 81,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "SOUL FIGHTER",
+    "box": {
+      "x": 2445,
+      "y": 2392,
+      "w": 99,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "TUSCAN YOGA",
+    "box": {
+      "x": 2552,
+      "y": 2392,
+      "w": 101,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "APEX HUNTER",
+    "box": {
+      "x": 2661,
+      "y": 2392,
+      "w": 98,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "IN THE DARK",
+    "box": {
+      "x": 2767,
+      "y": 2392,
+      "w": 91,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "RED THREAD",
+    "box": {
+      "x": 2867,
+      "y": 2392,
+      "w": 91,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "EXIT THE DREAM",
+    "box": {
+      "x": 2965,
+      "y": 2392,
+      "w": 113,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "ENDING FAIRY",
+    "box": {
+      "x": 3086,
+      "y": 2392,
+      "w": 99,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "DRAGON FANTASY",
+    "box": {
+      "x": 3193,
+      "y": 2392,
+      "w": 123,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "FAN MEETING",
+    "box": {
+      "x": 3324,
+      "y": 2392,
+      "w": 96,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "NIGHT VISION",
+    "box": {
+      "x": 3428,
+      "y": 2392,
+      "w": 99,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "OFFICE CCTV",
+    "box": {
+      "x": 3535,
+      "y": 2392,
+      "w": 90,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "RACE WINNER",
+    "box": {
+      "x": 3633,
+      "y": 2392,
+      "w": 99,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 1301,
+      "y": 2388,
+      "w": 40,
+      "h": 40
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 1353,
+      "y": 2388,
+      "w": 40,
+      "h": 40
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "BASEBALL GAME",
+    "box": {
+      "x": 16,
+      "y": 2448,
+      "w": 271,
+      "h": 483
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "STORM GIANT",
+    "box": {
+      "x": 16,
+      "y": 2939,
+      "w": 271,
+      "h": 481
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "2000'S PAPARAZZI",
+    "box": {
+      "x": 16,
+      "y": 3428,
+      "w": 271,
+      "h": 481
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "DRIFT RACING",
+    "box": {
+      "x": 295,
+      "y": 2448,
+      "w": 271,
+      "h": 481
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "KUNG FU HIT",
+    "box": {
+      "x": 295,
+      "y": 2936,
+      "w": 271,
+      "h": 481
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "BLUE DEPTH",
+    "box": {
+      "x": 295,
+      "y": 3425,
+      "w": 271,
+      "h": 481
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "CGI BREAKDOWN",
+    "box": {
+      "x": 573,
+      "y": 2448,
+      "w": 271,
+      "h": 481
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "FINAL SERVE",
+    "box": {
+      "x": 573,
+      "y": 2936,
+      "w": 271,
+      "h": 481
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "ORBITAL PRESENCE",
+    "box": {
+      "x": 573,
+      "y": 3425,
+      "w": 271,
+      "h": 481
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "FOOTBALL INVADER",
+    "box": {
+      "x": 852,
+      "y": 2448,
+      "w": 271,
+      "h": 481
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "ANDROID ASSEMBLE",
+    "box": {
+      "x": 852,
+      "y": 2936,
+      "w": 271,
+      "h": 481
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "ZOMBIE DANCE",
+    "box": {
+      "x": 852,
+      "y": 3425,
+      "w": 271,
+      "h": 481
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "SUMMER HAZE",
+    "box": {
+      "x": 1130,
+      "y": 2448,
+      "w": 279,
+      "h": 495
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "3D RENDER",
+    "box": {
+      "x": 1130,
+      "y": 2950,
+      "w": 279,
+      "h": 495
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "GOLF MAJOR",
+    "box": {
+      "x": 1130,
+      "y": 3453,
+      "w": 279,
+      "h": 495
+    }
+  },
+  {
+    "tag": "a",
+    "text": "View all presets",
+    "box": {
+      "x": 630,
+      "y": 3328,
+      "w": 165,
+      "h": 48
+    }
+  },
+  {
+    "tag": "a",
+    "text": "SUPERCOMPUTER\n\nOne superagent for your entire crea",
+    "box": {
+      "x": 16,
+      "y": 1835,
+      "w": 1393,
+      "h": 424
+    }
+  },
+  {
+    "tag": "a",
+    "text": "GPT IMAGE 2",
+    "box": {
+      "x": 32,
+      "y": 3432,
+      "w": 1361,
+      "h": 36
+    }
+  },
+  {
+    "tag": "a",
+    "type": "button",
+    "text": "View all of GPT Image 2",
+    "box": {
+      "x": 601,
+      "y": 4328,
+      "w": 224,
+      "h": 48
+    }
+  },
+  {
+    "tag": "a",
+    "aria": "Try Canvas",
+    "text": "NEW FEATURE\nONE CANVAS.\nEVERY WORKFLOW.\n\nMoodboard",
+    "box": {
+      "x": 16,
+      "y": 4472,
+      "w": 1393,
+      "h": 300
+    }
+  },
+  {
+    "tag": "a",
+    "text": "MARKETING STUDIO",
+    "box": {
+      "x": 32,
+      "y": 4796,
+      "w": 1361,
+      "h": 36
+    }
+  },
+  {
+    "tag": "a",
+    "type": "button",
+    "text": "View all of Marketing Studio",
+    "box": {
+      "x": 584,
+      "y": 5692,
+      "w": 256,
+      "h": 48
+    }
+  },
+  {
+    "tag": "a",
+    "text": "SEEDANCE 2.0",
+    "box": {
+      "x": 32,
+      "y": 5836,
+      "w": 1361,
+      "h": 36
+    }
+  },
+  {
+    "tag": "a",
+    "type": "button",
+    "text": "View all of Seedance 2.0",
+    "box": {
+      "x": 599,
+      "y": 6732,
+      "w": 226,
+      "h": 48
+    }
+  },
+  {
+    "tag": "a",
+    "aria": "Watch Zephyr",
+    "text": "Watch Zephyr",
+    "box": {
+      "x": 18,
+      "y": 6877,
+      "w": 1390,
+      "h": 360
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Watch now",
+    "box": {
+      "x": 141,
+      "y": 7134,
+      "w": 118,
+      "h": 40
+    }
+  },
+  {
+    "tag": "a",
+    "aria": "Try Photodump",
+    "text": "Try Photodump",
+    "box": {
+      "x": 16,
+      "y": 7263,
+      "w": 1393,
+      "h": 280
+    }
+  },
+  {
+    "tag": "a",
+    "text": "HIGGSFIELD SOUL CINEMA",
+    "box": {
+      "x": 16,
+      "y": 7607,
+      "w": 1393,
+      "h": 36
+    }
+  },
+  {
+    "tag": "a",
+    "type": "button",
+    "text": "View all of Higgsfield Soul Cinema",
+    "box": {
+      "x": 563,
+      "y": 8503,
+      "w": 299,
+      "h": 48
+    }
+  },
+  {
+    "tag": "a",
+    "text": "HIGGSFIELD SOUL 2.0",
+    "box": {
+      "x": 16,
+      "y": 8647,
+      "w": 1393,
+      "h": 36
+    }
+  },
+  {
+    "tag": "a",
+    "type": "button",
+    "text": "View all of Higgsfield Soul 2.0",
+    "box": {
+      "x": 579,
+      "y": 9543,
+      "w": 266,
+      "h": 48
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Cinema Studio",
+    "box": {
+      "x": 37,
+      "y": 9855,
+      "w": 130,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Visual Effects",
+    "box": {
+      "x": 175,
+      "y": 9855,
+      "w": 120,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Higgsfield Soul",
+    "box": {
+      "x": 302,
+      "y": 9855,
+      "w": 134,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Kling 2.1 Master",
+    "box": {
+      "x": 445,
+      "y": 9855,
+      "w": 139,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Camera Controls",
+    "box": {
+      "x": 592,
+      "y": 9855,
+      "w": 145,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Viral",
+    "box": {
+      "x": 744,
+      "y": 9855,
+      "w": 57,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Action movements",
+    "box": {
+      "x": 809,
+      "y": 9855,
+      "w": 160,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Commercial",
+    "box": {
+      "x": 978,
+      "y": 9855,
+      "w": 110,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "MiniMax Hailuo 02",
+    "box": {
+      "x": 1096,
+      "y": 9855,
+      "w": 162,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Seedance Pro",
+    "box": {
+      "x": 1266,
+      "y": 9855,
+      "w": 122,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Community",
+    "box": {
+      "x": 34,
+      "y": 9895,
+      "w": 109,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Wan 2.2 Image",
+    "box": {
+      "x": 151,
+      "y": 9895,
+      "w": 132,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Seedream 4.0",
+    "box": {
+      "x": 291,
+      "y": 9895,
+      "w": 123,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Nano Banana",
+    "box": {
+      "x": 421,
+      "y": 9895,
+      "w": 121,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Flux Kontext",
+    "box": {
+      "x": 551,
+      "y": 9895,
+      "w": 114,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "GPT Image",
+    "box": {
+      "x": 673,
+      "y": 9895,
+      "w": 103,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Topaz",
+    "box": {
+      "x": 784,
+      "y": 9895,
+      "w": 66,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Google Veo3",
+    "box": {
+      "x": 858,
+      "y": 9895,
+      "w": 117,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Kling 2.5 Turbo",
+    "box": {
+      "x": 984,
+      "y": 9895,
+      "w": 134,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Kling Avatars 2.0",
+    "box": {
+      "x": 1125,
+      "y": 9895,
+      "w": 145,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Claude MCP",
+    "box": {
+      "x": 1278,
+      "y": 9895,
+      "w": 112,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Wan 2.5",
+    "box": {
+      "x": 26,
+      "y": 9935,
+      "w": 83,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Sora 2",
+    "box": {
+      "x": 116,
+      "y": 9935,
+      "w": 70,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Sora 2 Presets",
+    "box": {
+      "x": 194,
+      "y": 9935,
+      "w": 126,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Banana Placement",
+    "box": {
+      "x": 328,
+      "y": 9935,
+      "w": 157,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Product Placement",
+    "box": {
+      "x": 494,
+      "y": 9935,
+      "w": 161,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Edit Image",
+    "box": {
+      "x": 663,
+      "y": 9935,
+      "w": 102,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Multi Reference",
+    "box": {
+      "x": 772,
+      "y": 9935,
+      "w": 138,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Upscale",
+    "box": {
+      "x": 919,
+      "y": 9935,
+      "w": 80,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Assists",
+    "box": {
+      "x": 1007,
+      "y": 9935,
+      "w": 72,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "YouTube",
+    "box": {
+      "x": 1087,
+      "y": 9935,
+      "w": 86,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "TikTok",
+    "box": {
+      "x": 1181,
+      "y": 9935,
+      "w": 71,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Instagram Reels",
+    "box": {
+      "x": 1260,
+      "y": 9935,
+      "w": 139,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "YouTube Shorts",
+    "box": {
+      "x": 250,
+      "y": 9975,
+      "w": 137,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Nano Banana Pro",
+    "box": {
+      "x": 395,
+      "y": 9975,
+      "w": 150,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Kling o1",
+    "box": {
+      "x": 553,
+      "y": 9975,
+      "w": 82,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Mixed Media Community",
+    "box": {
+      "x": 643,
+      "y": 9975,
+      "w": 208,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Soul Presets",
+    "box": {
+      "x": 858,
+      "y": 9975,
+      "w": 112,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Visual Effects Collection",
+    "box": {
+      "x": 978,
+      "y": 9975,
+      "w": 197,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "About",
+    "box": {
+      "x": 448,
+      "y": 10224,
+      "w": 44,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Trust",
+    "box": {
+      "x": 448,
+      "y": 10260,
+      "w": 35,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Careers",
+    "box": {
+      "x": 448,
+      "y": 10296,
+      "w": 53,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Contact",
+    "box": {
+      "x": 448,
+      "y": 10332,
+      "w": 55,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Pricing",
+    "box": {
+      "x": 448,
+      "y": 10368,
+      "w": 49,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Apps",
+    "box": {
+      "x": 448,
+      "y": 10404,
+      "w": 36,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Supercomputer",
+    "box": {
+      "x": 448,
+      "y": 10440,
+      "w": 110,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Cinema Studio",
+    "box": {
+      "x": 448,
+      "y": 10476,
+      "w": 104,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Marketing Studio",
+    "box": {
+      "x": 448,
+      "y": 10512,
+      "w": 123,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Higgsfield Canvas",
+    "box": {
+      "x": 448,
+      "y": 10548,
+      "w": 127,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Higgsfield Collab",
+    "box": {
+      "x": 448,
+      "y": 10584,
+      "w": 122,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Higgsfield MCP",
+    "box": {
+      "x": 448,
+      "y": 10620,
+      "w": 110,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Higgsfield Games",
+    "box": {
+      "x": 448,
+      "y": 10656,
+      "w": 125,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "AI Influencer",
+    "box": {
+      "x": 448,
+      "y": 10692,
+      "w": 91,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Community",
+    "box": {
+      "x": 448,
+      "y": 10728,
+      "w": 83,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Enterprise",
+    "box": {
+      "x": 448,
+      "y": 10764,
+      "w": 71,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Team",
+    "box": {
+      "x": 448,
+      "y": 10800,
+      "w": 38,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Copilot",
+    "box": {
+      "x": 448,
+      "y": 10836,
+      "w": 52,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Reference Extension",
+    "box": {
+      "x": 448,
+      "y": 10872,
+      "w": 143,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Blog",
+    "box": {
+      "x": 448,
+      "y": 10908,
+      "w": 32,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Contests",
+    "box": {
+      "x": 448,
+      "y": 10944,
+      "w": 61,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Discord",
+    "box": {
+      "x": 448,
+      "y": 10980,
+      "w": 54,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "AI Image",
+    "box": {
+      "x": 700,
+      "y": 10224,
+      "w": 64,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Soul ID Character",
+    "box": {
+      "x": 700,
+      "y": 10260,
+      "w": 124,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Draw to Edit",
+    "box": {
+      "x": 700,
+      "y": 10296,
+      "w": 88,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Fashion Factory",
+    "box": {
+      "x": 700,
+      "y": 10332,
+      "w": 110,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Edit Image",
+    "box": {
+      "x": 700,
+      "y": 10368,
+      "w": 76,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Image Upscale",
+    "box": {
+      "x": 700,
+      "y": 10404,
+      "w": 104,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Photodump Studio",
+    "box": {
+      "x": 700,
+      "y": 10440,
+      "w": 135,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Higgsfield Popcorn",
+    "box": {
+      "x": 700,
+      "y": 10476,
+      "w": 136,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Nano Banana",
+    "box": {
+      "x": 700,
+      "y": 10512,
+      "w": 96,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Prompt Guide",
+    "box": {
+      "x": 700,
+      "y": 10548,
+      "w": 100,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Flux 2",
+    "box": {
+      "x": 700,
+      "y": 10584,
+      "w": 42,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Seedream 5",
+    "box": {
+      "x": 700,
+      "y": 10620,
+      "w": 84,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "GPT Image 2",
+    "box": {
+      "x": 700,
+      "y": 10656,
+      "w": 91,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Inpaint",
+    "box": {
+      "x": 700,
+      "y": 10692,
+      "w": 50,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Soul 2.0",
+    "box": {
+      "x": 700,
+      "y": 10728,
+      "w": 57,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Soul Cinema",
+    "box": {
+      "x": 700,
+      "y": 10764,
+      "w": 89,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Soul Cast",
+    "box": {
+      "x": 700,
+      "y": 10800,
+      "w": 66,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "AI Video",
+    "box": {
+      "x": 952,
+      "y": 10224,
+      "w": 61,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Mixed media",
+    "box": {
+      "x": 952,
+      "y": 10260,
+      "w": 92,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Sora 2 Introduction",
+    "box": {
+      "x": 952,
+      "y": 10296,
+      "w": 138,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Veo 3.1 Introduction",
+    "box": {
+      "x": 952,
+      "y": 10332,
+      "w": 143,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Create Video",
+    "box": {
+      "x": 952,
+      "y": 10368,
+      "w": 91,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Lipsync Studio",
+    "box": {
+      "x": 952,
+      "y": 10404,
+      "w": 102,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Talking Avatar",
+    "box": {
+      "x": 952,
+      "y": 10440,
+      "w": 100,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Draw to Video",
+    "box": {
+      "x": 952,
+      "y": 10476,
+      "w": 102,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "UGC Factory",
+    "box": {
+      "x": 952,
+      "y": 10512,
+      "w": 88,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Video Upscale",
+    "box": {
+      "x": 952,
+      "y": 10548,
+      "w": 101,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Kling 3.0",
+    "box": {
+      "x": 952,
+      "y": 10584,
+      "w": 62,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "WAN 2.6",
+    "box": {
+      "x": 952,
+      "y": 10620,
+      "w": 63,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Seedance 2.0",
+    "box": {
+      "x": 952,
+      "y": 10656,
+      "w": 93,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Grok Imagine 1.5",
+    "box": {
+      "x": 952,
+      "y": 10692,
+      "w": 119,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Banana Placement",
+    "box": {
+      "x": 1205,
+      "y": 10224,
+      "w": 131,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Product Placement",
+    "box": {
+      "x": 1205,
+      "y": 10260,
+      "w": 134,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Edit Image",
+    "box": {
+      "x": 1205,
+      "y": 10296,
+      "w": 76,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Multi Reference",
+    "box": {
+      "x": 1205,
+      "y": 10332,
+      "w": 112,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Upscale",
+    "box": {
+      "x": 1205,
+      "y": 10368,
+      "w": 55,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Sora 2 Upscale",
+    "box": {
+      "x": 1205,
+      "y": 10404,
+      "w": 104,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "X / Twitter",
+    "box": {
+      "x": 972,
+      "y": 11124,
+      "w": 74,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Youtube",
+    "box": {
+      "x": 1078,
+      "y": 11124,
+      "w": 59,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Instagram",
+    "box": {
+      "x": 1169,
+      "y": 11124,
+      "w": 72,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "LinkedIn",
+    "box": {
+      "x": 1272,
+      "y": 11124,
+      "w": 60,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Tiktok",
+    "box": {
+      "x": 1365,
+      "y": 11124,
+      "w": 44,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Press",
+    "box": {
+      "x": 1041,
+      "y": 11207,
+      "w": 33,
+      "h": 20
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Privacy",
+    "box": {
+      "x": 1090,
+      "y": 11207,
+      "w": 45,
+      "h": 20
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Terms",
+    "box": {
+      "x": 1151,
+      "y": 11207,
+      "w": 37,
+      "h": 20
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Cookie Notice",
+    "box": {
+      "x": 1204,
+      "y": 11207,
+      "w": 90,
+      "h": 20
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Cookie Settings",
+    "box": {
+      "x": 1310,
+      "y": 11207,
+      "w": 99,
+      "h": 20
+    }
+  }
+]

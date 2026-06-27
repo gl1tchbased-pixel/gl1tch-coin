@@ -1,0 +1,241 @@
+.wrap {
+  position: relative;
+  min-height: 88vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-16) var(--pad-side);
+  overflow: hidden;
+}
+
+/* Cinematic ambient backdrop — purple/green dual aurora */
+.wrap::before,
+.wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.wrap::before {
+  background:
+    radial-gradient(ellipse 60% 40% at 30% 35%, rgba(122, 60, 255, 0.14), transparent 65%),
+    radial-gradient(ellipse 50% 35% at 75% 65%, rgba(124, 255, 79, 0.06), transparent 65%);
+  opacity: 0.7;
+}
+.wrap::after {
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 1px, transparent 1px, transparent 3px),
+    repeating-linear-gradient(90deg, rgba(124,255,79,0.012) 0px, rgba(124,255,79,0.012) 1px, transparent 1px, transparent 60px);
+  mix-blend-mode: screen;
+}
+
+.stage {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+  align-items: center;
+  width: 100%;
+  max-width: 1080px;
+}
+
+/* MASCOT SIDE ---------------------------------------------------------------- */
+.mascotFrame {
+  position: relative;
+  width: min(460px, 88vw);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Soft ambient aura — bleeds into page bg, no hard edge */
+.aura {
+  position: absolute;
+  inset: -8%;
+  border-radius: var(--radius-full);
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 58%, rgba(122, 60, 255, 0.18) 0%, transparent 58%),
+    radial-gradient(circle at 50% 50%, rgba(124, 255, 79, 0.05) 0%, transparent 70%);
+  filter: blur(14px);
+  animation: aura-breathe 7s var(--ease-in-out) infinite;
+  z-index: 0;
+}
+@keyframes aura-breathe {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%      { opacity: 0.92; transform: scale(1.04); }
+}
+
+.mascot {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  z-index: 2;
+  opacity: 0.95;
+  animation: ghost-drift 7s var(--ease-in-out) infinite;
+  filter:
+    drop-shadow(0 22px 50px rgba(122, 60, 255, 0.35))
+    drop-shadow(0 0 28px rgba(124, 255, 79, 0.12));
+}
+.mascot img { width: 100%; height: auto; display: block; }
+
+/* Subtle on-brand drift with a tiny green/purple flicker — no magenta/cyan */
+@keyframes ghost-drift {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    filter: drop-shadow(0 22px 50px rgba(122, 60, 255, 0.35)) drop-shadow(0 0 28px rgba(124, 255, 79, 0.12));
+  }
+  35% {
+    transform: translateY(-8px) scale(1.01);
+  }
+  46% {
+    transform: translate(-2px, -10px) scale(1.012);
+    filter: drop-shadow(3px 22px 50px rgba(122, 60, 255, 0.45)) drop-shadow(-3px 0 28px rgba(124, 255, 79, 0.20));
+  }
+  48% {
+    transform: translate(3px, -11px) scale(1.012);
+    filter: drop-shadow(-3px 22px 50px rgba(124, 255, 79, 0.20)) drop-shadow(3px 0 28px rgba(122, 60, 255, 0.45));
+  }
+  60% {
+    transform: translateY(-8px) scale(1.01);
+  }
+}
+
+/* Caption strip under mascot */
+.code {
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.3em;
+  color: var(--text-muted);
+  background: rgba(10, 10, 14, 0.6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 5px 14px;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  z-index: 3;
+}
+
+/* TERMINAL SIDE ------------------------------------------------------------- */
+.terminal {
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+  border: 1px solid rgba(124, 255, 79, 0.22);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(15, 15, 18, 0.92), rgba(8, 8, 10, 0.92));
+  box-shadow:
+    var(--shadow-lg),
+    0 0 80px rgba(124, 60, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: linear-gradient(180deg, rgba(28, 28, 32, 0.9), rgba(18, 18, 22, 0.9));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.dots { display: inline-flex; gap: 6px; }
+.dots i { width: 10px; height: 10px; border-radius: var(--radius-full); background: var(--color-border); }
+.dots i:first-child { background: var(--color-danger); }
+.dots i:nth-child(2) { background: var(--color-glitch); }
+.dots i:last-child  { background: var(--color-signal); }
+.barTitle {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.body {
+  position: relative;
+  padding: var(--space-6);
+}
+.body::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.5) 0px, rgba(255,255,255,0.5) 1px, transparent 1px, transparent 3px);
+}
+
+.heading {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  flex-wrap: wrap;
+}
+.errorBadge {
+  font-family: var(--font-body);
+  font-size: clamp(2.6rem, 6vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  background: linear-gradient(180deg, var(--color-glitch), rgba(122, 60, 255, 0.55));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 1;
+  text-shadow: 0 0 24px rgba(122, 60, 255, 0.2);
+}
+.title {
+  font-family: var(--font-body);
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-signal);
+}
+
+.routes {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.route {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  transition: background var(--duration-normal), color var(--duration-normal), transform var(--duration-fast);
+}
+.route:hover {
+  background: rgba(124, 255, 79, 0.06);
+  color: var(--color-signal);
+  transform: translateX(4px);
+}
+.arrow { color: var(--color-signal); }
+
+/* DESKTOP LAYOUT ------------------------------------------------------------ */
+@media (min-width: 880px) {
+  .stage {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-10);
+    align-items: center;
+  }
+  .mascotFrame { margin: 0; width: 100%; max-width: 460px; }
+  .terminal { margin: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aura { animation: none; }
+  .mascot { animation: none; }
+}

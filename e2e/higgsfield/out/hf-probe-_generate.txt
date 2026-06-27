@@ -1,0 +1,13 @@
+/generate -> https://higgsfield.ai/generate  (12 els)
+  button | button | txt="New project"
+  button | button | aria="Close"
+  button | button | txt="Try Unlimited"
+  button | button
+  button | button | txt="Upgrade"
+  div | role=button | aria="Close" | txt="×"
+  a | txt="Privacy Policy"
+  a | txt="Terms of Use"
+  a | txt="Cookie Policy"
+  div | role=button | txt="Accept all"
+  div | role=button | txt="Reject all"
+  div | role=button | txt="Customize"

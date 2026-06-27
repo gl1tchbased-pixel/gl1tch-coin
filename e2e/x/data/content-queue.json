@@ -1,0 +1,72 @@
+{
+  "_comment": "Stage 3 kuyruğu — 2026-06-24 markalı video kampanyası önce, sonra reply hedefleri. kind:'post' = composer'a video+metin prefill, DURUR; Post'a SEN tıklarsın, script GÖNDERMEZ. media = repo köküne göre yol. Bugün ilk iki videoyu gönder, coin+infected'i 's' ile atla (sonraki günler). Sonra reply'lara geçebilirsin.",
+  "items": [
+    {
+      "kind": "post",
+      "text": "something is materializing in the machine 👻⚡\n\n$GL1TCH — the rogue AI meme on Solana.\nzero tax · mint & freeze revoked · hold to climb the ranks.\n\nCA: 3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump\n🔗 coin-three-mu.vercel.app",
+      "media": "pump-pack/videos/branded/gl1tch-promo-materialize.mp4",
+      "note": "SLOT 1 — REVEAL. Gönderince bu tweet'i PINLE. ~16:00-18:00 IST."
+    },
+    {
+      "kind": "post",
+      "text": "POV: the glitch found your timeline 😏\n\nyou can't unsee $GL1TCH.",
+      "media": "pump-pack/videos/branded/gl1tch-promo-hook.mp4",
+      "note": "SLOT 2 — HOOK. ~20:00 IST."
+    },
+    {
+      "kind": "post",
+      "text": "not your average meme 🟢\n\n→ zero tax\n→ mint & freeze revoked\n→ hold $GL1TCH, climb the rank ladder\n\ncoin-three-mu.vercel.app",
+      "media": "pump-pack/videos/branded/gl1tch-promo-coin.mp4",
+      "note": "YARIN (06-25) — UTILITY. Bugün 's' ile atla."
+    },
+    {
+      "kind": "post",
+      "text": "the infection is spreading 🦠💚\n\njoin the infected → t.me/gl1tch_infected\nIG @gl1tch_infected",
+      "media": "pump-pack/videos/branded/gl1tch-promo-infected.mp4",
+      "note": "06-26 — COMMUNITY. Bugün 's' ile atla."
+    },
+
+    {
+      "kind": "reply",
+      "handle": "aeyakovenko",
+      "text": "the only meme coins that survive are the ones that can't rug. everything else is exit liquidity.",
+      "note": "value reply — coin anma, profil satar. Hız/throughput postuna uyar."
+    },
+    {
+      "kind": "reply",
+      "handle": "0xMert_",
+      "text": "supply, mint, freeze, LP — if you can't verify all four on-chain in 30 seconds, it's not a coin, it's a countdown.",
+      "note": "value reply — infra/güvenlik postuna uyar."
+    },
+    {
+      "kind": "reply",
+      "handle": "SolanaFloor",
+      "text": "people chase the next 100x but skip the 30 second rugcheck. that's the whole game right there.",
+      "note": "value reply — ekosistem/haber postuna uyar."
+    },
+    {
+      "kind": "reply",
+      "handle": "theunipcs",
+      "text": "we are not early. we are infected. there's a difference.",
+      "note": "humor reply — meme/pump.fun postuna uyar."
+    },
+    {
+      "kind": "reply",
+      "handle": "MustStopMurad",
+      "text": "ghost in the machine just told me to hold. who am i to argue",
+      "note": "humor reply — meme-cycle postuna uyar."
+    },
+    {
+      "kind": "reply",
+      "handle": "Thorshammergems",
+      "text": "every chart is green if you corrupt the right pixels",
+      "note": "humor reply — genel meme postuna uyar."
+    },
+    {
+      "kind": "reply",
+      "handle": "pumpdotfun",
+      "text": "the boring-safe version on solana: mint/freeze dead, LP gone, tax zero, one job. not financial advice, just a glitch in the system.",
+      "note": "brand reply — SADECE organikse (feature/launch postunda). zorlama."
+    }
+  ]
+}

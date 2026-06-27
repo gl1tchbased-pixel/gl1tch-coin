@@ -1,0 +1,282 @@
+/ -> https://higgsfield.ai/  (240 els)
+  a | txt="Nano Banana Pro & Nano Banana 2 Unlimited.
+Kling 3.0 Unlimit"
+  button | button
+  a | aria="Higgsfield home"
+  a | txt="Explore"
+  button | button | txt="Image"
+  button | button | txt="Video"
+  button | button | txt="Audio"
+  a | txt="Supercomputer
+New"
+  a | txt="MCP & CLI
+New"
+  a | txt="Collab"
+  button | button | txt="Plugins
+New"
+  a | txt="Marketing Studio"
+  a | txt="Cinema Studio"
+  a | txt="AI Influencer"
+  a | txt="Canvas"
+  a | txt="Apps"
+  button | button | aria="Search Higgsfield" | txt="Search
+Ctrl
+K"
+  a | txt="Pricing
+30% OFF"
+  a | txt="Assets"
+  button | button
+  a | aria="Open Seedance 2.0 in native 4K" | txt="Open Seedance 2.0 in native 4K"
+  a | aria="Open Seedance 2.0 in 4K" | txt="Open Seedance 2.0 in 4K"
+  a | aria="Open Exclusive Unlimited Seedance 2.0 Mini" | txt="Open Exclusive Unlimited Seedance 2.0 Mini"
+  a | aria="Open ENHANCED UNLIMITED SEEDANCE 2.0 Fast" | txt="Open ENHANCED UNLIMITED SEEDANCE 2.0 Fast"
+  a | aria="Open GROK IMAGINE 1.5 IS HERE" | txt="Open GROK IMAGINE 1.5 IS HERE"
+  button | button
+  a | txt="SUPERCOMPUTER
+
+NEW
+
+Agents, automation, skills,
+connectors, "
+  a | txt="Nano Banana Pro
+
+Generate high-quality visuals
+
+Image"
+  a | txt="Seedance 2.0
+
+Create high-quality videos in seconds
+
+Video"
+  a | txt="Marketing Studio
+
+Launch full campaigns from one prompt
+
+TRE"
+  a | txt="MCP & CLI
+
+Turn Claude into a creative engine
+
+NEW"
+  a | txt="Higgsfield Canvas
+
+Generate stunning media with AI canvas
+
+N"
+  a | txt="Cinema Studio 3.5
+
+Create cinematic scenes effortlessly"
+  a | txt="SEEDANCE 2.0
+4K"
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  a | button | txt="View all of Seedance 2.0"
+  a | txt="HIGGSFIELD VIRAL PRESETS"
+  button | button | txt="BASEBALL GAME"
+  button | button | txt="DRIFT RACING"
+  button | button | txt="CGI BREAKDOWN"
+  button | button | txt="FOOTBALL INVADER"
+  button | button | txt="SUMMER HAZE"
+  button | button | txt="KUNG FU HIT"
+  button | button | txt="FINAL SERVE"
+  button | button | txt="ANDROID ASSEMBLE"
+  button | button | txt="3D RENDER"
+  button | button | txt="STORM GIANT"
+  button | button | txt="BLUE DEPTH"
+  button | button | txt="ORBITAL PRESENCE"
+  button | button | txt="ZOMBIE DANCE"
+  button | button | txt="GOLF MAJOR"
+  button | button | txt="2000'S PAPARAZZI"
+  button | button | txt="CANDID PAPARAZZI"
+  button | button | txt="RACE TRACK"
+  button | button | txt="DROWN IN MUSIC"
+  button | button | txt="NIGHTLINE"
+  button | button | txt="FREE FALL"
+  button | button | txt="RED CARPET"
+  button | button | txt="NEON CITY"
+  button | button | txt="SOUL FIGHTER"
+  button | button | txt="TUSCAN YOGA"
+  button | button | txt="APEX HUNTER"
+  button | button | txt="IN THE DARK"
+  button | button | txt="RED THREAD"
+  button | button | txt="EXIT THE DREAM"
+  button | button | txt="ENDING FAIRY"
+  button | button | txt="DRAGON FANTASY"
+  button | button | txt="FAN MEETING"
+  button | button | txt="NIGHT VISION"
+  button | button | txt="OFFICE CCTV"
+  button | button | txt="RACE WINNER"
+  button | button
+  button | button
+  button | button | txt="BASEBALL GAME"
+  button | button | txt="STORM GIANT"
+  button | button | txt="2000'S PAPARAZZI"
+  button | button | txt="DRIFT RACING"
+  button | button | txt="KUNG FU HIT"
+  button | button | txt="BLUE DEPTH"
+  button | button | txt="CGI BREAKDOWN"
+  button | button | txt="FINAL SERVE"
+  button | button | txt="ORBITAL PRESENCE"
+  button | button | txt="FOOTBALL INVADER"
+  button | button | txt="ANDROID ASSEMBLE"
+  button | button | txt="ZOMBIE DANCE"
+  button | button | txt="SUMMER HAZE"
+  button | button | txt="3D RENDER"
+  button | button | txt="GOLF MAJOR"
+  a | txt="View all presets"
+  a | txt="SUPERCOMPUTER
+
+One superagent for your entire creative stack"
+  a | txt="GPT IMAGE 2"
+  a | button | txt="View all of GPT Image 2"
+  a | aria="Try Canvas" | txt="NEW FEATURE
+ONE CANVAS.
+EVERY WORKFLOW.
+
+Moodboard, chain wo"
+  a | txt="MARKETING STUDIO"
+  a | button | txt="View all of Marketing Studio"
+  a | txt="SEEDANCE 2.0"
+  a | button | txt="View all of Seedance 2.0"
+  a | aria="Watch Zephyr" | txt="Watch Zephyr"
+  a | txt="Watch now"
+  a | aria="Try Photodump" | txt="Try Photodump"
+  a | txt="HIGGSFIELD SOUL CINEMA"
+  a | button | txt="View all of Higgsfield Soul Cinema"
+  a | txt="HIGGSFIELD SOUL 2.0"
+  a | button | txt="View all of Higgsfield Soul 2.0"
+  a | txt="Cinema Studio"
+  a | txt="Visual Effects"
+  a | txt="Higgsfield Soul"
+  a | txt="Kling 2.1 Master"
+  a | txt="Camera Controls"
+  a | txt="Viral"
+  a | txt="Action movements"
+  a | txt="Commercial"
+  a | txt="MiniMax Hailuo 02"
+  a | txt="Seedance Pro"
+  a | txt="Community"
+  a | txt="Wan 2.2 Image"
+  a | txt="Seedream 4.0"
+  a | txt="Nano Banana"
+  a | txt="Flux Kontext"
+  a | txt="GPT Image"
+  a | txt="Topaz"
+  a | txt="Google Veo3"
+  a | txt="Kling 2.5 Turbo"
+  a | txt="Kling Avatars 2.0"
+  a | txt="Claude MCP"
+  a | txt="Wan 2.5"
+  a | txt="Sora 2"
+  a | txt="Sora 2 Presets"
+  a | txt="Banana Placement"
+  a | txt="Product Placement"
+  a | txt="Edit Image"
+  a | txt="Multi Reference"
+  a | txt="Upscale"
+  a | txt="Assists"
+  a | txt="YouTube"
+  a | txt="TikTok"
+  a | txt="Instagram Reels"
+  a | txt="YouTube Shorts"
+  a | txt="Nano Banana Pro"
+  a | txt="Kling o1"
+  a | txt="Mixed Media Community"
+  a | txt="Soul Presets"
+  a | txt="Visual Effects Collection"
+  a | txt="About"
+  a | txt="Trust"
+  a | txt="Careers"
+  a | txt="Contact"
+  a | txt="Pricing"
+  a | txt="Apps"
+  a | txt="Supercomputer"
+  a | txt="Cinema Studio"
+  a | txt="Marketing Studio"
+  a | txt="Higgsfield Canvas"
+  a | txt="Higgsfield Collab"
+  a | txt="Higgsfield MCP"
+  a | txt="Higgsfield Games"
+  a | txt="AI Influencer"
+  a | txt="Community"
+  a | txt="Enterprise"
+  a | txt="Team"
+  a | txt="Copilot"
+  a | txt="Reference Extension"
+  a | txt="Blog"
+  a | txt="Contests"
+  a | txt="Discord"
+  a | txt="AI Image"
+  a | txt="Soul ID Character"
+  a | txt="Draw to Edit"
+  a | txt="Fashion Factory"
+  a | txt="Edit Image"
+  a | txt="Image Upscale"
+  a | txt="Photodump Studio"
+  a | txt="Higgsfield Popcorn"
+  a | txt="Nano Banana"
+  a | txt="Prompt Guide"
+  a | txt="Flux 2"
+  a | txt="Seedream 5"
+  a | txt="GPT Image 2"
+  a | txt="Inpaint"
+  a | txt="Soul 2.0"
+  a | txt="Soul Cinema"
+  a | txt="Soul Cast"
+  a | txt="AI Video"
+  a | txt="Mixed media"
+  a | txt="Sora 2 Introduction"
+  a | txt="Veo 3.1 Introduction"
+  a | txt="Create Video"
+  a | txt="Lipsync Studio"
+  a | txt="Talking Avatar"
+  a | txt="Draw to Video"
+  a | txt="UGC Factory"
+  a | txt="Video Upscale"
+  a | txt="Kling 3.0"
+  a | txt="WAN 2.6"
+  a | txt="Seedance 2.0"
+  a | txt="Grok Imagine 1.5"
+  a | txt="Banana Placement"
+  a | txt="Product Placement"
+  a | txt="Edit Image"
+  a | txt="Multi Reference"
+  a | txt="Upscale"
+  a | txt="Sora 2 Upscale"
+  a | txt="X / Twitter"
+  a | txt="Youtube"
+  a | txt="Instagram"
+  a | txt="LinkedIn"
+  a | txt="Tiktok"
+  a | txt="Press"
+  a | txt="Privacy"
+  a | txt="Terms"
+  a | txt="Cookie Notice"
+  a | txt="Cookie Settings"
+  button | button
+  button | button | txt="Upgrade"
+  div | role=button | aria="Close" | txt="×"
+  a | txt="Privacy Policy"
+  a | txt="Terms of Use"
+  a | txt="Cookie Policy"
+  div | role=button | txt="Accept all"
+  div | role=button | txt="Reject all"
+  div | role=button | txt="Customize"

@@ -1,0 +1,31 @@
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+.footer {
+  margin-top: var(--space-8);
+  text-align: center;
+}
+.cta {
+  font-family: var(--font-mono);
+  font-size: var(--fs-base);
+  color: var(--color-signal);
+}
+.cta:hover { text-decoration: underline; }
+
+@media (max-width: 767px) {
+  .grid {
+    grid-auto-flow: column;
+    grid-auto-columns: 80%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: var(--space-4);
+  }
+  .grid > * { scroll-snap-align: start; }
+}
+
+@media (min-width: 768px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}

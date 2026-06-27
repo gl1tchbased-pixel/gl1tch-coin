@@ -1,0 +1,1520 @@
+{
+  "route": "/",
+  "requestedUrl": "https://higgsfield.ai/",
+  "finalUrl": "https://higgsfield.ai/",
+  "count": 240,
+  "elements": [
+    {
+      "tag": "a",
+      "text": "Nano Banana Pro & Nano Banana 2 Unlimited.\nKling 3.0 Unlimit",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "size-5 md:size-7 absolute right-2 md:static grid justify-center items-center int",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "aria": "Higgsfield home",
+      "cls": "shrink-0 grid grid-flow-col-dense items-center gap-2 mr-2 transition hover:text-",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Explore",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Image",
+      "cls": "p-0 md:py-1 md:px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col ite",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Video",
+      "cls": "p-0 md:py-1 md:px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col ite",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Audio",
+      "cls": "p-0 md:py-1 md:px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col ite",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Supercomputer\nNew",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "MCP & CLI\nNew",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Collab",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Plugins\nNew",
+      "cls": "p-0 md:py-1 md:px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col ite",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Marketing Studio",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cinema Studio",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Influencer",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Canvas",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Apps",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "aria": "Search Higgsfield",
+      "text": "Search\nCtrl\nK",
+      "cls": "group relative grid h-9 w-9 grid-flow-col items-center justify-center rounded-[1",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Pricing\n30% OFF",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Assets",
+      "cls": "button button-sm button-primary relative h-9! items-center justify-center gap-1!",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "p-0 md:py-1 md:px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col ite",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "aria": "Open Seedance 2.0 in native 4K",
+      "text": "Open Seedance 2.0 in native 4K",
+      "cls": "absolute inset-0 hidden md:block z-10",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "aria": "Open Seedance 2.0 in 4K",
+      "text": "Open Seedance 2.0 in 4K",
+      "cls": "absolute inset-0 hidden md:block z-10",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "aria": "Open Exclusive Unlimited Seedance 2.0 Mini",
+      "text": "Open Exclusive Unlimited Seedance 2.0 Mini",
+      "cls": "absolute inset-0 hidden md:block z-10",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "aria": "Open ENHANCED UNLIMITED SEEDANCE 2.0 Fast",
+      "text": "Open ENHANCED UNLIMITED SEEDANCE 2.0 Fast",
+      "cls": "absolute inset-0 hidden md:block z-10",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "aria": "Open GROK IMAGINE 1.5 IS HERE",
+      "text": "Open GROK IMAGINE 1.5 IS HERE",
+      "cls": "absolute inset-0 hidden md:block z-10",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute -translate-y-1/2 top-[calc(50%-2rem)] z-10! bg-neutral-primary-reverted",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "SUPERCOMPUTER\n\nNEW\n\nAgents, automation, skills,\nconnectors, ",
+      "cls": "hidden lg:flex relative overflow-hidden rounded-2xl p-[19px] bg-[#1c1e20] border",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Nano Banana Pro\n\nGenerate high-quality visuals\n\nImage",
+      "cls": "relative overflow-hidden rounded-2xl min-h-[126px] p-4 lg:p-5 gap-3 bg-[#1c1e20]",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Seedance 2.0\n\nCreate high-quality videos in seconds\n\nVideo",
+      "cls": "relative overflow-hidden rounded-2xl min-h-[126px] p-4 lg:p-5 gap-3 bg-[#1c1e20]",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Marketing Studio\n\nLaunch full campaigns from one prompt\n\nTRE",
+      "cls": "relative overflow-hidden rounded-2xl min-h-[126px] p-4 lg:p-5 gap-3 bg-[#1c1e20]",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "MCP & CLI\n\nTurn Claude into a creative engine\n\nNEW",
+      "cls": "relative overflow-hidden rounded-2xl min-h-[126px] p-4 lg:p-5 gap-3 bg-[#1c1e20]",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Higgsfield Canvas\n\nGenerate stunning media with AI canvas\n\nN",
+      "cls": "relative overflow-hidden rounded-2xl min-h-[126px] p-4 lg:p-5 gap-3 bg-[#1c1e20]",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cinema Studio 3.5\n\nCreate cinematic scenes effortlessly",
+      "cls": "relative overflow-hidden rounded-2xl min-h-[126px] p-4 lg:p-5 gap-3 bg-[#1c1e20]",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "SEEDANCE 2.0\n4K",
+      "cls": "relative button-interactive interactive-tap text-md md:text-brand-h-sm font-bold",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "absolute inset-0 size-full z-2 bg-gradient-to-b from-black-60 to-black-20 transi",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "type": "button",
+      "text": "View all of Seedance 2.0",
+      "cls": "button button-lg button-brand-alpha backdrop-blur-sm",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "HIGGSFIELD VIRAL PRESETS",
+      "cls": "relative button-interactive interactive-tap text-md md:text-brand-h-sm font-bold",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "BASEBALL GAME",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "DRIFT RACING",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "CGI BREAKDOWN",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "FOOTBALL INVADER",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "SUMMER HAZE",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "KUNG FU HIT",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "FINAL SERVE",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "ANDROID ASSEMBLE",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "3D RENDER",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "STORM GIANT",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "BLUE DEPTH",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "ORBITAL PRESENCE",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "ZOMBIE DANCE",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "GOLF MAJOR",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "2000'S PAPARAZZI",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "CANDID PAPARAZZI",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "RACE TRACK",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "DROWN IN MUSIC",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "NIGHTLINE",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "FREE FALL",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "RED CARPET",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "NEON CITY",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "SOUL FIGHTER",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "TUSCAN YOGA",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "APEX HUNTER",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "IN THE DARK",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "RED THREAD",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "EXIT THE DREAM",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "ENDING FAIRY",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "DRAGON FANTASY",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "FAN MEETING",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "NIGHT VISION",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "OFFICE CCTV",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "RACE WINNER",
+      "cls": "button button-sm button-secondary-reverted text-font-secondary",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "button button-md button-primary rounded-full p-0",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "button button-md button-primary rounded-full p-0",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "BASEBALL GAME",
+      "cls": "group/item relative w-full overflow-hidden rounded-xl cursor-pointer bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "STORM GIANT",
+      "cls": "group/item relative w-full overflow-hidden rounded-xl cursor-pointer bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "2000'S PAPARAZZI",
+      "cls": "group/item relative w-full overflow-hidden rounded-xl cursor-pointer bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "DRIFT RACING",
+      "cls": "group/item relative w-full overflow-hidden rounded-xl cursor-pointer bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "KUNG FU HIT",
+      "cls": "group/item relative w-full overflow-hidden rounded-xl cursor-pointer bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "BLUE DEPTH",
+      "cls": "group/item relative w-full overflow-hidden rounded-xl cursor-pointer bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "CGI BREAKDOWN",
+      "cls": "group/item relative w-full overflow-hidden rounded-xl cursor-pointer bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "FINAL SERVE",
+      "cls": "group/item relative w-full overflow-hidden rounded-xl cursor-pointer bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "ORBITAL PRESENCE",
+      "cls": "group/item relative w-full overflow-hidden rounded-xl cursor-pointer bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "FOOTBALL INVADER",
+      "cls": "group/item relative w-full overflow-hidden rounded-xl cursor-pointer bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "ANDROID ASSEMBLE",
+      "cls": "group/item relative w-full overflow-hidden rounded-xl cursor-pointer bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "ZOMBIE DANCE",
+      "cls": "group/item relative w-full overflow-hidden rounded-xl cursor-pointer bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "SUMMER HAZE",
+      "cls": "group/item relative w-full overflow-hidden rounded-xl cursor-pointer bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "3D RENDER",
+      "cls": "group/item relative w-full overflow-hidden rounded-xl cursor-pointer bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "GOLF MAJOR",
+      "cls": "group/item relative w-full overflow-hidden rounded-xl cursor-pointer bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "View all presets",
+      "cls": "button button-lg button-brand-alpha backdrop-blur-sm",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "SUPERCOMPUTER\n\nOne superagent for your entire creative stack",
+      "cls": "block mb-6",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "GPT IMAGE 2",
+      "cls": "relative button-interactive interactive-tap text-md md:text-brand-h-sm font-bold",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "type": "button",
+      "text": "View all of GPT Image 2",
+      "cls": "button button-lg button-brand-alpha backdrop-blur-sm",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "aria": "Try Canvas",
+      "text": "NEW FEATURE\nONE CANVAS.\nEVERY WORKFLOW.\n\nMoodboard, chain wo",
+      "cls": "relative isolate hidden h-[300px] overflow-hidden rounded-3xl cursor-pointer ite",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "MARKETING STUDIO",
+      "cls": "relative button-interactive interactive-tap text-md md:text-brand-h-sm font-bold",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "type": "button",
+      "text": "View all of Marketing Studio",
+      "cls": "button button-lg button-brand-alpha backdrop-blur-sm",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "SEEDANCE 2.0",
+      "cls": "relative button-interactive interactive-tap text-md md:text-brand-h-sm font-bold",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "type": "button",
+      "text": "View all of Seedance 2.0",
+      "cls": "button button-lg button-brand-alpha backdrop-blur-sm",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "aria": "Watch Zephyr",
+      "text": "Watch Zephyr",
+      "cls": "absolute inset-0 z-20 rounded-[32px]",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Watch now",
+      "cls": "button button-md bg-neutral-primary-reverted/20! button-secondary pointer-events",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "aria": "Try Photodump",
+      "text": "Try Photodump",
+      "cls": "absolute inset-0 z-20 hidden rounded-[32px] md:block",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "HIGGSFIELD SOUL CINEMA",
+      "cls": "relative button-interactive interactive-tap text-md md:text-brand-h-sm font-bold",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "type": "button",
+      "text": "View all of Higgsfield Soul Cinema",
+      "cls": "button button-lg button-brand-alpha backdrop-blur-sm",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "HIGGSFIELD SOUL 2.0",
+      "cls": "relative button-interactive interactive-tap text-md md:text-brand-h-sm font-bold",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "type": "button",
+      "text": "View all of Higgsfield Soul 2.0",
+      "cls": "button button-lg button-brand-alpha backdrop-blur-sm",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cinema Studio",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Visual Effects",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Higgsfield Soul",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Kling 2.1 Master",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Camera Controls",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Viral",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Action movements",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Commercial",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "MiniMax Hailuo 02",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Seedance Pro",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Community",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Wan 2.2 Image",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Seedream 4.0",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Nano Banana",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Flux Kontext",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "GPT Image",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Topaz",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Google Veo3",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Kling 2.5 Turbo",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Kling Avatars 2.0",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Claude MCP",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Wan 2.5",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Sora 2",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Sora 2 Presets",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Banana Placement",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Product Placement",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Edit Image",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Multi Reference",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Upscale",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Assists",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "YouTube",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "TikTok",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Instagram Reels",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "YouTube Shorts",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Nano Banana Pro",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Kling o1",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Mixed Media Community",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Soul Presets",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Visual Effects Collection",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "About",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Trust",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Careers",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Contact",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Pricing",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Apps",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Supercomputer",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cinema Studio",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Marketing Studio",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Higgsfield Canvas",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Higgsfield Collab",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Higgsfield MCP",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Higgsfield Games",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Influencer",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Community",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Enterprise",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Team",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Copilot",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Reference Extension",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Blog",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Contests",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Discord",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Image",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Soul ID Character",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Draw to Edit",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Fashion Factory",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Edit Image",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Image Upscale",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Photodump Studio",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Higgsfield Popcorn",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Nano Banana",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Prompt Guide",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Flux 2",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Seedream 5",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "GPT Image 2",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Inpaint",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Soul 2.0",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Soul Cinema",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Soul Cast",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Video",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Mixed media",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Sora 2 Introduction",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Veo 3.1 Introduction",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Create Video",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Lipsync Studio",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Talking Avatar",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Draw to Video",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "UGC Factory",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Video Upscale",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Kling 3.0",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "WAN 2.6",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Seedance 2.0",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Grok Imagine 1.5",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Banana Placement",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Product Placement",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Edit Image",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Multi Reference",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Upscale",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Sora 2 Upscale",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "X / Twitter",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Youtube",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Instagram",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "LinkedIn",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Tiktok",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Press",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Privacy",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Terms",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cookie Notice",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cookie Settings",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "size-6 rounded-full bg-surface-primary hover:bg-surface-secondary transition-col",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Upgrade",
+      "cls": "button button-sm button-brand shrink-0",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "aria": "Close",
+      "text": "×",
+      "id": "cookiescript_close",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Privacy Policy",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Terms of Use",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cookie Policy",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "text": "Accept all",
+      "id": "cookiescript_accept",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "text": "Reject all",
+      "id": "cookiescript_reject",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "text": "Customize",
+      "id": "cookiescript_manage_wrap",
+      "visible": true
+    }
+  ]
+}

@@ -1,0 +1,1420 @@
+{
+  "route": "https://higgsfield.ai/ai-video",
+  "requestedUrl": "https://higgsfield.ai/ai-video",
+  "finalUrl": "https://higgsfield.ai/ai-video",
+  "count": 229,
+  "elements": [
+    {
+      "tag": "a",
+      "aria": "Higgsfield home",
+      "cls": "shrink-0 grid grid-flow-col-dense items-center gap-2 mr-2 transition hover:text-",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Explore",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Image",
+      "cls": "p-0 md:py-1 md:px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col ite",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Video",
+      "cls": "p-0 md:py-1 md:px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col ite",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Audio",
+      "cls": "p-0 md:py-1 md:px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col ite",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Supercomputer\nNew",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "MCP & CLI\nNew",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Collab",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Plugins\nNew",
+      "cls": "p-0 md:py-1 md:px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col ite",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Marketing Studio",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cinema Studio",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Influencer",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Canvas",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Apps",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "type": "button",
+      "text": "Login",
+      "cls": "border max-w-full inline-grid grid-flow-col text-ellipsis overflow-hidden whites",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "type": "button",
+      "text": "Sign up",
+      "cls": "border max-w-full inline-grid grid-flow-col text-ellipsis overflow-hidden whites",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "type": "button",
+      "text": "Create Video Now",
+      "cls": "grid grid-flow-col-dense text-center justify-center items-center gap-2 border-no",
+      "visible": true
+    },
+    {
+      "tag": "textarea",
+      "placeholder": "Describe any visual idea. We will generate a video.",
+      "cls": "text-lg text-white/90 w-full hover:border-white-24 disabled:cursor-not-allowed r",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Generate",
+      "cls": "button button-md button-brand grid grid-flow-col-dense items-center gap-2 h-12 p",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "First and Last image reference\n\nAchieve seamless consistency",
+      "cls": "hidden md:block",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Edit any video\n\nUpload existing footage to change styles, sw",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Motion control everything\n\nUpload a reference video to dicta",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Top models in a single place\n\nAccess Veo, Sora, Kling, Wan, ",
+      "cls": "hidden md:block",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "type": "button",
+      "text": "Try Cinema Studio",
+      "cls": "grid grid-flow-col-dense text-center justify-center items-center gap-2 border-no",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "aria": "Previous",
+      "cls": "grid justify-center items-center [&_svg]:size-6 rounded-full size-12 bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "aria": "Next",
+      "cls": "grid justify-center items-center [&_svg]:size-6 rounded-full size-12 bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "overflow-hidden relative hover:brightness-50 rounded-full duration-300 transitio",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "overflow-hidden relative hover:brightness-50 rounded-full duration-300 transitio",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "overflow-hidden relative hover:brightness-50 rounded-full duration-300 transitio",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "overflow-hidden relative hover:brightness-50 rounded-full duration-300 transitio",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "overflow-hidden relative hover:brightness-50 rounded-full duration-300 transitio",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "grid justify-center items-center size-14 rounded-full bg-surface-tertiary border",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Generate",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Generate",
+      "cls": "self-start flex items-center gap-1 px-3 py-1.5 bg-white text-black text-xs font-",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Generate",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Generate",
+      "cls": "self-start flex items-center gap-1 px-3 py-1.5 bg-white text-black text-xs font-",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Generate",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Generate",
+      "cls": "self-start flex items-center gap-1 px-3 py-1.5 bg-white text-black text-xs font-",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Generate",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Generate",
+      "cls": "self-start flex items-center gap-1 px-3 py-1.5 bg-white text-black text-xs font-",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Generate",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Generate",
+      "cls": "self-start flex items-center gap-1 px-3 py-1.5 bg-white text-black text-xs font-",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Generate",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Generate",
+      "cls": "self-start flex items-center gap-1 px-3 py-1.5 bg-white text-black text-xs font-",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Generate",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Generate",
+      "cls": "self-start flex items-center gap-1 px-3 py-1.5 bg-white text-black text-xs font-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Explore All",
+      "cls": "grid grid-flow-col-dense text-center justify-center items-center gap-2 border-no",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Get started",
+      "cls": "button button-sm button-primary-reverted grid grid-flow-col-dense items-center g",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "button button-md button-primary-reverted rounded-full",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "button button-md button-primary-reverted rounded-full",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "button button-md button-primary-reverted rounded-full",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "button button-md button-primary-reverted rounded-full",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "aria": "Previous",
+      "cls": "grid justify-center items-center [&_svg]:size-6 rounded-full size-12 bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "aria": "Next",
+      "cls": "grid justify-center items-center [&_svg]:size-6 rounded-full size-12 bg-neutral-",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "role": "switch",
+      "aria": "Toggle between monthly and annual billing",
+      "cls": "relative inline-flex shrink-0 cursor-pointer items-center transition ring-0 outl",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Get Plan",
+      "cls": "w-full h-[51px] rounded-xl text-sm font-semibold cursor-pointer transition-all r",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Learn more",
+      "cls": "text-xs font-medium text-white/40 underline decoration-dotted cursor-pointer [bo",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "600",
+      "cls": "flex items-center gap-1 text-xs cursor-pointer text-white font-semibold [body[da",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "900",
+      "cls": "flex items-center gap-1 text-xs cursor-pointer text-white/40 [body[data-theme=su",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Get Plan",
+      "cls": "w-full h-[51px] rounded-xl text-sm font-semibold cursor-pointer transition-all r",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "inline-flex shrink-0 cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Learn more",
+      "cls": "text-xs font-medium text-white/40 underline decoration-dotted cursor-pointer [bo",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "1,800",
+      "cls": "flex items-center gap-1 text-xs cursor-pointer text-white font-semibold [body[da",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "3,600",
+      "cls": "flex items-center gap-1 text-xs cursor-pointer text-white/40 [body[data-theme=su",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "5,400",
+      "cls": "flex items-center gap-1 text-xs cursor-pointer text-white/40 [body[data-theme=su",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Get Plan",
+      "cls": "w-full h-[51px] rounded-xl text-sm font-semibold cursor-pointer transition-all r",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "inline-flex shrink-0 cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Learn more",
+      "cls": "text-xs font-medium text-white/40 underline decoration-dotted cursor-pointer [bo",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "whitespace-nowrap inline cursor-help",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Get Plan",
+      "cls": "w-full h-[51px] rounded-xl text-sm font-semibold cursor-pointer transition-all r",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "aria": "Decrease team size",
+      "cls": "w-5 h-5 flex items-center justify-center transition-opacity text-white [body[dat",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "aria": "Increase team size",
+      "cls": "w-5 h-5 flex items-center justify-center transition-opacity text-white [body[dat",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Read more",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Read more",
+      "cls": "button button-lg button-primary-reverted button-md md:button-lg shadow-[inset_0p",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "How to Use Agentic AI for Content Creation",
+      "cls": "flex-shrink-0 w-full md:w-103 snap-start",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Why Does Your AI Character's Face Keep Changing?",
+      "cls": "flex-shrink-0 w-full md:w-103 snap-start",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "How to Make Money Online in 2026 with Higgsfield Earn",
+      "cls": "flex-shrink-0 w-full md:w-103 snap-start",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "A Guide to Creating AI Motion Design with Higgsfield Vibe Mo",
+      "cls": "flex-shrink-0 w-full md:w-103 snap-start",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Testing the Best AI Storyboard Tools to Find The Absolute Wi",
+      "cls": "flex-shrink-0 w-full md:w-103 snap-start",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "What Influencers Know About Sora 2 That You Don’t",
+      "cls": "flex-shrink-0 w-full md:w-103 snap-start",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "The Future of Creator Partnerships: How Brands and AI Platfo",
+      "cls": "flex-shrink-0 w-full md:w-103 snap-start",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "What's New in GenAI: AI Motion Design Meets CodeGen Video Ge",
+      "cls": "flex-shrink-0 w-full md:w-103 snap-start",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Nano Banana 2 and Gemini 3.0: Early Signs of a Major Shift i",
+      "cls": "flex-shrink-0 w-full md:w-103 snap-start",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "FLUX.2: A Technical Preview",
+      "cls": "flex-shrink-0 w-full md:w-103 snap-start",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cinematic Video Generator",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Kling 3.0",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Sora 2 Upscale",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Wan 2.6",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Grok Imagine",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Sora 2",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Wan AI Video",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Kling",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Seedance",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Veo 3.1",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Seedance 2.0",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Effects",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Camera Controls",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "MiniMax",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Claude AI Video Generator",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Transitions",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Recast",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Face Swap",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Bullet Time Scene",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "3D Rotation",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cloud Surf",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Mukbang",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Video Background Remover",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Video Editing",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Mixed Media Intro",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Image Generator",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Nano Banana Pro Intro",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "GPT 2",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Video Editor",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Video Upscaler",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Commercial Generator",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Brand Video Generator",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Product Video Generator",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Invitation Video Maker",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Car Video Generator",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Nature Video Generator",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Background Video Generator",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Anime Video Generator",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Animal Video Generator",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Human Video Generator",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Video Extender",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Prompt Generator",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Podcast Generator",
+      "cls": "h-8 rounded-full md:rounded-lg inline-grid items-center text-font-secondary bg-s",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "About",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Trust",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Careers",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Contact",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Pricing",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Apps",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Supercomputer",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cinema Studio",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Marketing Studio",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Higgsfield Canvas",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Higgsfield Collab",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Higgsfield MCP",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Higgsfield Games",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Influencer",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Community",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Enterprise",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Team",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Copilot",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Reference Extension",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Blog",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Contests",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Discord",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Image",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Soul ID Character",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Draw to Edit",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Fashion Factory",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Edit Image",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Image Upscale",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Photodump Studio",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Higgsfield Popcorn",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Nano Banana",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Prompt Guide",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Flux 2",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Seedream 5",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "GPT Image 2",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Inpaint",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Soul 2.0",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Soul Cinema",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Soul Cast",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Video",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Mixed media",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Sora 2 Introduction",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Veo 3.1 Introduction",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Create Video",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Lipsync Studio",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Talking Avatar",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Draw to Video",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "UGC Factory",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Video Upscale",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Kling 3.0",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "WAN 2.6",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Seedance 2.0",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Grok Imagine 1.5",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Banana Placement",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Product Placement",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Edit Image",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Multi Reference",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Upscale",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Sora 2 Upscale",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "X / Twitter",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Youtube",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Instagram",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "LinkedIn",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Tiktok",
+      "cls": "text-nowrap font-medium text-font-primary-reverted transition hover:not-active:o",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Press",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Privacy",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Terms",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cookie Notice",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cookie Settings",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "aria": "Close",
+      "text": "×",
+      "id": "cookiescript_close",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Privacy Policy",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Terms of Use",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cookie Policy",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "text": "Accept all",
+      "id": "cookiescript_accept",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "text": "Reject all",
+      "id": "cookiescript_reject",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "text": "Customize",
+      "id": "cookiescript_manage_wrap",
+      "visible": true
+    }
+  ]
+}

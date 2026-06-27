@@ -1,0 +1,50 @@
+/* GL1TCH keyframes. All animations use transform/opacity only (GPU composited). */
+
+@keyframes glitch-flicker {
+  0%, 100% { opacity: 1; transform: translateX(0); }
+  20% { opacity: 0.6; transform: translateX(-2px); }
+  40% { opacity: 1; transform: translateX(2px); }
+  60% { opacity: 0.8; transform: translateX(-1px); }
+  80% { opacity: 1; transform: translateX(1px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 var(--color-signal-dim); }
+  50% { box-shadow: 0 0 24px 2px var(--color-signal-dim); }
+}
+
+@keyframes scanline-drift {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
+}
+
+@keyframes fade-rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes text-reveal {
+  from { opacity: 0; transform: translateY(0.4em); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slow-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes signal-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

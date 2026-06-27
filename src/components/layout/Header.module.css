@@ -1,0 +1,189 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  transition: background var(--duration-normal), backdrop-filter var(--duration-normal),
+    border-color var(--duration-normal);
+  border-bottom: 1px solid transparent;
+}
+.solid {
+  background: rgba(5, 5, 5, 0.72);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border-bottom-color: var(--color-border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+/* Premium gradient hairline under the glass when scrolled. */
+.solid::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-border-signal) 20%,
+    var(--color-border-signal) 80%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--color-border-signal);
+  box-shadow: 0 0 16px var(--color-signal-dim);
+  transition: box-shadow var(--duration-normal), transform var(--duration-normal);
+}
+.brand:hover .logo {
+  transform: translateY(-1px);
+  box-shadow: 0 0 22px var(--color-signal-glow);
+}
+.logo :global(img) { display: block; object-fit: cover; }
+
+.wordmark {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--fs-lg);
+  letter-spacing: 0.08em;
+  color: var(--color-static);
+}
+
+.liveDot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-signal);
+  box-shadow: 0 0 0 0 var(--color-signal-glow);
+  animation: hd-pulse 2s var(--ease-in-out) infinite;
+}
+@keyframes hd-pulse {
+  0% { box-shadow: 0 0 0 0 var(--color-signal-glow); opacity: 1; }
+  70% { box-shadow: 0 0 0 6px transparent; opacity: 0.6; }
+  100% { box-shadow: 0 0 0 0 transparent; opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .liveDot { animation: none; }
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-left: auto;
+  margin-right: var(--space-4);
+}
+.navLink {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  color: var(--text-secondary);
+  transition: color var(--duration-normal);
+}
+.navLink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 100%;
+  height: 1px;
+  background: var(--color-signal);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-normal) var(--ease-out-expo);
+}
+.navLink:hover { color: var(--color-static); }
+.navLink:hover::after { transform: scaleX(1); }
+
+.cta { display: flex; align-items: center; gap: var(--space-3); }
+
+.burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-2);
+}
+.burger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--color-signal);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(5, 5, 5, 0.97);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  padding: var(--space-6);
+}
+.close {
+  position: absolute;
+  top: var(--space-5);
+  right: var(--space-5);
+  background: none;
+  border: none;
+  color: var(--color-static);
+  font-size: var(--fs-xl);
+  cursor: pointer;
+}
+.overlayNav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  text-align: center;
+}
+.overlayLink {
+  font-family: var(--font-body);
+  font-size: var(--fs-2xl);
+  font-weight: 600;
+  color: var(--color-static);
+}
+.overlayWallet { display: flex; justify-content: center; }
+.overlayCta { width: 80%; max-width: 320px; }
+
+/* Show the full horizontal nav only when there's genuine room for all items;
+   below this, collapse to the premium full-screen overlay menu instead of
+   cramming. */
+@media (max-width: 1199px) {
+  .nav, .cta { display: none; }
+  .burger { display: flex; }
+}

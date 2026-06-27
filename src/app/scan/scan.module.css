@@ -1,0 +1,90 @@
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: clamp(80px, 12vw, 130px) var(--container-pad, 24px) 120px;
+}
+
+.header { text-align: center; margin-bottom: clamp(32px, 6vw, 54px); }
+.pulse {
+  display: inline-block;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: #7cff4f;
+  box-shadow: 0 0 10px #7cff4f;
+  margin-right: 8px;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.7); } }
+
+.title {
+  font-size: clamp(40px, 9vw, 78px);
+  font-weight: 800;
+  letter-spacing: -2px;
+  line-height: 1.02;
+  margin: 18px 0 0;
+  color: #f5f7f8;
+}
+.sub {
+  max-width: 640px;
+  margin: 22px auto 0;
+  font-size: clamp(16px, 2.6vw, 19px);
+  line-height: 1.6;
+  color: rgba(245, 247, 248, 0.66);
+}
+.sub em { color: #7cff4f; font-style: normal; }
+
+.points {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: clamp(40px, 7vw, 70px);
+}
+.point {
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.015);
+}
+.pointK {
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: #7cff4f;
+}
+.point h3 { margin: 12px 0 8px; font-size: 18px; font-weight: 800; color: #f5f7f8; }
+.point p { margin: 0; font-size: 14.5px; line-height: 1.55; color: rgba(245, 247, 248, 0.6); }
+
+.cta {
+  margin-top: clamp(40px, 7vw, 70px);
+  padding: clamp(28px, 5vw, 44px);
+  border: 1px solid rgba(124, 255, 79, 0.2);
+  border-radius: 20px;
+  background: radial-gradient(circle at 50% 0%, rgba(122, 60, 255, 0.12), transparent 60%);
+  text-align: center;
+}
+.cta p { max-width: 600px; margin: 0 auto; font-size: clamp(15px, 2.5vw, 18px); line-height: 1.6; color: rgba(245, 247, 248, 0.78); }
+.cta strong { color: #7cff4f; }
+.ctaRow { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+.ctaBtn {
+  padding: 13px 26px;
+  border-radius: 10px;
+  background: #7cff4f;
+  color: #050505;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 0 24px rgba(124, 255, 79, 0.35);
+}
+.ctaAlt {
+  padding: 13px 26px;
+  border-radius: 10px;
+  border: 1px solid rgba(245, 247, 248, 0.2);
+  color: #f5f7f8;
+  font-weight: 700;
+  text-decoration: none;
+}
+.ctaBtn:hover { transform: translateY(-1px); }
+.ctaAlt:hover { border-color: rgba(124, 255, 79, 0.5); color: #7cff4f; }
+
+@media (max-width: 680px) {
+  .points { grid-template-columns: 1fr; }
+}

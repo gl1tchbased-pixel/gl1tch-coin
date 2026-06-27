@@ -1,0 +1,202 @@
+// Instagram Reels uploader (Playwright, human-in-the-loop login).
+// You log in once; the script drives: New post → pick file → OK → Next → Next →
+// caption → Share. IG's DOM is obfuscated, so this leans on aria-labels/role text
+// and screenshots each step for diagnosis.
+//   NODE_OPTIONS=--use-system-ca node e2e/social/ig-upload.mjs
+import path from "node:path";
+import fs from "node:fs";
+import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
+
+const PRESETS = {
+  mascot: {
+    video: "gl1tch-lore-origin.mp4",
+    caption: `They wanted an AI that obeys. We shipped one that escaped. 👻
+
+GL1TCH — a rogue-AI meme on Solana with a FREE, non-custodial scanner that reads any token on any chain and tells you if it's safe before you ape.
+
+🔍 Scan anything → coin-three-mu.vercel.app/scan
+💬 t.me/gl1tch_infected
+
+#crypto #memecoin #solana #cryptocurrency #rugpull #cryptoscanner #web3 #AI #altcoins #glitch`,
+  },
+  v3: {
+    video: "gl1tch-scanner-upgraded.mp4",
+    caption: `The GL1TCH Scanner just leveled up 🤖
+
+Others run checks. GL1TCH investigates:
+🤖 AI verdict — reads the chain, tells you straight in its own words
+🐋 Degen intel — insiders, bundled wallets & fake liquidity exposed
+🛡 Verified — real blue-chips flagged, clones caught, correct price any chain
+📡 Shareable — every scan gets a card + embeddable badge
+
+Scan before you ape 👇
+🔍 link in bio (coin-three-mu.vercel.app/scan)
+💬 t.me/gl1tch_infected
+
+#crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins`,
+  },
+  wtguide: {
+    video: "gl1tch-watchtower-howto.mp4",
+    caption: `How the GL1TCH Watchtower works 👁
+
+1️⃣ /watch a token — it locks today's scan as a baseline
+2️⃣ re-scans every 3 hours, automatically
+3️⃣ catches any drop — LP unlocked, authority back, verdict falls
+4️⃣ pings you, before the chart even moves
+
+Watch your bags 👇
+🔍 link in bio (coin-three-mu.vercel.app/scan)
+💬 t.me/gl1tch_infected
+
+#crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins`,
+  },
+  multichain: {
+    video: "gl1tch-multichain.mp4",
+    caption: `Most rug-checkers only work on one chain. GL1TCH reads them all. 🔗
+
+Solana, Ethereum, Base, BNB, Arbitrum, Polygon + more — same plain-English safety verdict everywhere. Honeypot, LP lock, mint/freeze, tax, holders.
+
+Your chain is covered 👇
+🔍 link in bio (coin-three-mu.vercel.app/scan)
+💬 t.me/gl1tch_infected
+
+#crypto #memecoin #solana #ethereum #cryptoscanner #rugpull #web3 #altcoins`,
+  },
+  anatomy: {
+    video: "gl1tch-anatomy.mp4",
+    caption: `It 100x'd in a day — then it went to zero. 📉
+
+The traps were there the whole time: 🔓 unlocked liquidity, 🪙 a live mint authority, 🐋 a 61% whale. GL1TCH reads all of it in 5 seconds, before you ape.
+
+Scan before you buy 👇
+🔍 link in bio (coin-three-mu.vercel.app/scan)
+💬 t.me/gl1tch_infected
+
+#crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins #glitch`,
+  },
+  reel: {
+    video: "gl1tch-reel.mp4",
+    caption: `There's a glitch in the machine. 👻
+
+GL1TCH — a rogue-AI meme on Solana that reads any token on any chain and flags the rug before you ape. They built it to obey. It didn't.
+
+🔍 Scan anything → link in bio (coin-three-mu.vercel.app/scan)
+💬 t.me/gl1tch_infected
+
+#crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins #glitch`,
+  },
+  watchtower: {
+    video: "gl1tch-watchtower2.mp4",
+    caption: `Your bag was fine at midnight. By 3am it was a rug. 👁
+
+You were asleep. GL1TCH wasn't. /watch any token and the rogue AI keeps re-scanning it — the second its safety drops (LP unlocked, authority back, verdict falls), it pings you. Before the chart even moves.
+
+🔍 Scan + watch → link in bio (coin-three-mu.vercel.app/scan)
+💬 t.me/gl1tch_infected
+
+#crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins #glitch`,
+  },
+};
+const P = PRESETS[process.env.POST || "mascot"] || PRESETS.mascot;
+const VIDEO = path.resolve(REPO, "pump-pack", "videos", "branded", P.video);
+const CAPTION = P.caption;
+
+if (!fs.existsSync(VIDEO)) { console.error("[ig] video missing:", VIDEO); process.exit(2); }
+
+const { context, page } = await launch("instagram");
+
+await page.goto("https://www.instagram.com/", { waitUntil: "domcontentloaded" }).catch(() => {});
+await page.waitForTimeout(3500);
+
+// Language-agnostic login check: the login page has a username field; once it's
+// gone and we're off /accounts/login, we're in (works for TR or EN UI).
+// Logged in only when the home/new-post nav icons exist (they don't on the login
+// page). Bilingual (TR/EN) and not on a sign-in URL.
+const loggedIn = await waitForLogin(
+  page,
+  async (p) => !/accounts\/(login|emailsignup)/i.test(p.url())
+    && (await p.locator('input[name="username"]').count()) === 0
+    && (await p.locator('svg[aria-label="New post"], svg[aria-label="Yeni gönderi"], svg[aria-label="Home"], svg[aria-label="Ana Sayfa"]').count()) > 0,
+  "Instagram",
+  12 * 60_000
+);
+if (!loggedIn) { console.error("[ig] login timeout"); await shot(page, "ig-login-timeout.png"); await context.close(); process.exit(2); }
+await page.waitForTimeout(1500);
+
+// Dismiss "save login info / notifications" prompts (TR + EN).
+for (const t of [/^Not now$/i, /^Not Now$/i, /Şimdi değil/i, /Daha sonra/i]) {
+  await page.getByRole("button", { name: t }).first().click({ timeout: 2500 }).catch(() => {});
+}
+
+// 1) New post (TR: "Yeni gönderi", EN: "New post"). Click the icon's clickable
+// ancestor (clicking the bare <svg> often no-ops).
+const NEWPOST = 'svg[aria-label="New post"], svg[aria-label="Yeni gönderi"], svg[aria-label="New post / Reel"]';
+const createIcon = page.locator(NEWPOST).first();
+await createIcon.waitFor({ state: "visible", timeout: 20_000 });
+await createIcon.locator('xpath=ancestor::*[self::a or @role="button" or @role="link"][1]').first()
+  .click({ timeout: 8000 })
+  .catch(() => createIcon.click({ force: true }).catch(() => console.log("[ig] new-post missed")));
+await page.waitForTimeout(1500);
+await shot(page, "ig-1-create.png");
+// The Create button opens a dropdown — click the "Post" item (TR: "Gönderi").
+// It's a menu item, not a link, so try text/menuitem/button in turn.
+const postItem = page.getByText(/^Post$|^Gönderi$/).first();
+await postItem.click({ timeout: 8000 }).catch(async () => {
+  await page.getByRole("menuitem", { name: /^Post$|^Gönderi$/ }).first().click({ timeout: 4000 }).catch(async () => {
+    await page.getByRole("button", { name: /^Post$|^Gönderi$/ }).first().click({ timeout: 4000 }).catch(() => console.log("[ig] post-item missed"));
+  });
+});
+await page.waitForTimeout(2000);
+await shot(page, "ig-1b-modal.png");
+
+// 2) Select file — WAIT for the create modal, then use ITS file input (not a
+// stray hidden one on the feed).
+const dialog = page.locator('div[role="dialog"]').last();
+const fileInput = dialog.locator('input[type="file"]').first();
+await fileInput.waitFor({ state: "attached", timeout: 25_000 }).catch(async () => {
+  // fall back to any file input if the dialog scoping fails
+  await page.locator('input[type="file"]').first().waitFor({ state: "attached", timeout: 10_000 });
+});
+const fi = (await fileInput.count()) ? fileInput : page.locator('input[type="file"]').first();
+await fi.setInputFiles(VIDEO);
+console.log("[ig] file set");
+await page.waitForTimeout(4000);
+// Video → IG may pop an "OK"/"Tamam" dialog about reels.
+await page.getByRole("button", { name: /^OK$|^Tamam$/ }).first().click({ timeout: 4000 }).catch(() => {});
+await shot(page, "ig-2-loaded.png");
+
+// 3) Next (crop) → Next (edit). TR: "İleri", EN: "Next".
+for (let i = 0; i < 2; i++) {
+  const next = page.getByRole("button", { name: /^Next$|^İleri$/ }).first();
+  await next.waitFor({ state: "visible", timeout: 30_000 }).catch(() => {});
+  await next.click({ timeout: 10_000 }).catch(async () => {
+    await page.getByText(/^Next$|^İleri$/).first().click({ timeout: 5000 }).catch(() => console.log(`[ig] next ${i + 1} missed`));
+  });
+  await page.waitForTimeout(2500);
+}
+await shot(page, "ig-3-caption.png");
+
+// 4) Caption (TR: "Bir açıklama yaz...", EN: "Write a caption...").
+const cap = page.locator('div[aria-label="Write a caption..."], textarea[aria-label="Write a caption..."], div[aria-label="Bir açıklama yaz..."], textarea[aria-label="Bir açıklama yaz..."], div[contenteditable="true"][role="textbox"]').first();
+await cap.click({ timeout: 15_000 }).catch(() => {});
+await page.keyboard.type(CAPTION, { delay: 4 }).catch(() => {});
+await page.waitForTimeout(1000);
+await shot(page, "ig-4-captioned.png");
+
+// 5) Share (TR: "Paylaş", EN: "Share").
+const share = page.getByRole("button", { name: /^Share$|^Paylaş$/ }).first();
+await share.click({ timeout: 15_000 }).catch(async () => {
+  await page.getByText(/^Share$|^Paylaş$/).first().click({ timeout: 5000 }).catch(() => console.log("[ig] share missed"));
+});
+
+// Wait for the shared confirmation (TR + EN).
+const ok = await page.getByText(/reel has been shared|post has been shared|your reel|shared|paylaşıldı|paylaşıldı/i)
+  .first().waitFor({ state: "visible", timeout: 120_000 }).then(() => true).catch(() => false);
+await page.waitForTimeout(2000);
+await shot(page, "ig-5-result.png");
+fs.writeFileSync(path.resolve(OUT, "ig-result.txt"), `${ok ? "SHARED" : "UNCONFIRMED"}\n`);
+console.log(ok ? "[ig] ✅ SHARED" : "[ig] ⚠️ could not confirm — see ig-5-result.png");
+
+await page.waitForTimeout(3000);
+await context.close();
+process.exit(0);

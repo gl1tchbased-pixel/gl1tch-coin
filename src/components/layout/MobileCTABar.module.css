@@ -1,0 +1,22 @@
+.bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  display: none;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: rgba(5, 5, 5, 0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--color-border);
+  transform: translateY(100%);
+  transition: transform var(--duration-normal) var(--ease-out-expo);
+}
+.visible { transform: translateY(0); }
+
+.btn { flex: 1; }
+
+@media (max-width: 768px) {
+  .bar { display: flex; }
+}

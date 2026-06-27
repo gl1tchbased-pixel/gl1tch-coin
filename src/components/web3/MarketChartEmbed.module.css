@@ -1,0 +1,110 @@
+.frame {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border-signal);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface-elevated);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.pair {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-signal);
+  box-shadow: 0 0 0 0 var(--color-signal-glow);
+  animation: mc-pulse 1.8s var(--ease-in-out) infinite;
+}
+@keyframes mc-pulse {
+  0% { box-shadow: 0 0 0 0 var(--color-signal-glow); }
+  70% { box-shadow: 0 0 0 7px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+.tabs {
+  display: inline-flex;
+  gap: 2px;
+  margin-inline: auto;
+  padding: 3px;
+  background: var(--color-void);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.tab {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  transition: color var(--duration-fast), background var(--duration-fast);
+}
+.tab:hover { color: var(--text-secondary); }
+.active {
+  color: var(--color-void);
+  background: var(--color-signal);
+}
+
+.open {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-signal);
+}
+.open:hover { text-decoration: underline; }
+
+.viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  background: var(--color-void);
+}
+@media (min-width: 768px) {
+  .viewport { aspect-ratio: 16 / 8; }
+}
+@media (min-width: 1024px) {
+  .viewport { aspect-ratio: 16 / 7; }
+}
+
+.iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* On small screens the provider tabs wrap below the pair label cleanly. */
+@media (max-width: 520px) {
+  .bar { flex-wrap: wrap; }
+  .tabs { margin-inline: 0; order: 3; width: 100%; justify-content: center; }
+}

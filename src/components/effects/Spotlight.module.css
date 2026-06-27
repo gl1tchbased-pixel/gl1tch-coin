@@ -1,0 +1,29 @@
+.spot {
+  position: relative;
+}
+
+.spot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-out-expo);
+  background: radial-gradient(
+    340px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(124, 255, 79, 0.1),
+    transparent 60%
+  );
+  border-radius: inherit;
+}
+.spot:hover::after {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spot::after { display: none; }
+}
+@media (hover: none) {
+  .spot::after { display: none; }
+}

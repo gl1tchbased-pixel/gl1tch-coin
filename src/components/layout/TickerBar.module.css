@@ -1,0 +1,112 @@
+.bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  display: none;
+  align-items: center;
+  height: 38px;
+  background: rgba(5, 5, 5, 0.92);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--color-border-signal);
+  overflow: hidden;
+  font-family: var(--font-mono);
+}
+
+/* Desktop only — mobile uses MobileCTABar at the bottom. */
+@media (min-width: 768px) {
+  .bar { display: flex; }
+}
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 100%;
+  padding-inline: var(--space-4);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--color-signal);
+  background: var(--color-signal-dim);
+  border-right: 1px solid var(--color-border-signal);
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  background: var(--color-signal);
+  box-shadow: 0 0 0 0 var(--color-signal-glow);
+  animation: tb-pulse 1.8s var(--ease-in-out) infinite;
+}
+
+@keyframes tb-pulse {
+  0% { box-shadow: 0 0 0 0 var(--color-signal-glow); }
+  70% { box-shadow: 0 0 0 7px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+.viewport {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+}
+
+.track {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  will-change: transform;
+  animation: tb-scroll 48s linear infinite;
+}
+.bar:hover .track { animation-play-state: paused; }
+
+@keyframes tb-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.cell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.06em;
+}
+
+.label { color: var(--text-muted); }
+.value {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.up { color: var(--color-signal); }
+.down { color: var(--color-danger); }
+
+.trust {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+}
+.check { color: var(--color-signal); font-weight: 700; }
+
+.sep {
+  color: var(--color-border-signal);
+  margin-inline: var(--space-4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track { animation: none; }
+  .dot { animation: none; }
+}

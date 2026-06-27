@@ -1,0 +1,86 @@
+{
+  "route": "/generate",
+  "requestedUrl": "https://higgsfield.ai/generate",
+  "finalUrl": "https://higgsfield.ai/generate",
+  "count": 12,
+  "elements": [
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "New project",
+      "cls": "home-page_projectCardSurface__xPNwz group transition-[background-color,box-shado",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "aria": "Close",
+      "cls": "absolute right-3 top-3 z-10 flex size-8 items-center justify-center rounded-2xl ",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Try Unlimited",
+      "cls": "relative flex h-11 w-full items-center justify-center rounded-xl text-sm font-se",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "size-6 rounded-full bg-surface-primary hover:bg-surface-secondary transition-col",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Upgrade",
+      "cls": "button button-sm button-brand shrink-0",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "aria": "Close",
+      "text": "×",
+      "id": "cookiescript_close",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Privacy Policy",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Terms of Use",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cookie Policy",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "text": "Accept all",
+      "id": "cookiescript_accept",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "text": "Reject all",
+      "id": "cookiescript_reject",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "text": "Customize",
+      "id": "cookiescript_manage_wrap",
+      "visible": true
+    }
+  ]
+}

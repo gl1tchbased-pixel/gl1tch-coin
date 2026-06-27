@@ -1,0 +1,41 @@
+.log {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  line-height: 1.9;
+  min-height: 180px;
+}
+.line {
+  display: block;
+  white-space: pre-wrap;
+}
+.prompt { color: var(--color-signal); }
+.ok { color: var(--color-signal); }
+.err { color: var(--color-danger); }
+.muted { color: var(--text-secondary); }
+
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  margin-left: 2px;
+  background: var(--color-signal);
+  vertical-align: text-bottom;
+  animation: term-blink 1s steps(2) infinite;
+}
+@keyframes term-blink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+.after {
+  margin-top: var(--space-5);
+  animation: after-in var(--duration-slow) var(--ease-out-expo);
+}
+@keyframes after-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor, .after { animation: none; }
+}

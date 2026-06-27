@@ -1,0 +1,228 @@
+{
+  "route": "/dashboard",
+  "requestedUrl": "https://higgsfield.ai/dashboard",
+  "finalUrl": "https://higgsfield.ai/dashboard",
+  "count": 35,
+  "elements": [
+    {
+      "tag": "a",
+      "text": "Nano Banana Pro & Nano Banana 2 Unlimited.\nKling 3.0 Unlimit",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "size-5 md:size-7 absolute right-2 md:static grid justify-center items-center int",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "aria": "Higgsfield home",
+      "cls": "shrink-0 grid grid-flow-col-dense items-center gap-2 mr-2 transition hover:text-",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Explore",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Image",
+      "cls": "p-0 md:py-1 md:px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col ite",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Video",
+      "cls": "p-0 md:py-1 md:px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col ite",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Audio",
+      "cls": "p-0 md:py-1 md:px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col ite",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Supercomputer\nNew",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "MCP & CLI\nNew",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Collab",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Plugins\nNew",
+      "cls": "p-0 md:py-1 md:px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col ite",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Marketing Studio",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cinema Studio",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "AI Influencer",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Canvas",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Apps",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "aria": "Search Higgsfield",
+      "text": "Search\nCtrl\nK",
+      "cls": "group relative grid h-9 w-9 grid-flow-col items-center justify-center rounded-[1",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Pricing\n30% OFF",
+      "cls": "py-1 px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col items-center ",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Assets",
+      "cls": "button button-sm button-primary relative h-9! items-center justify-center gap-1!",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "p-0 md:py-1 md:px-1.5 rounded-[10px] text-sm-medium grid gap-1 grid-flow-col ite",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "type": "button",
+      "text": "Back to home",
+      "cls": "border max-w-full inline-grid grid-flow-col text-ellipsis overflow-hidden whites",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Press",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Privacy",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Terms",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cookie Notice",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cookie Settings",
+      "cls": "gap-1.5 inline-grid grid-flow-col content-center text-ellipsis overflow-hidden w",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "cls": "size-6 rounded-full bg-surface-primary hover:bg-surface-secondary transition-col",
+      "visible": true
+    },
+    {
+      "tag": "button",
+      "type": "button",
+      "text": "Upgrade",
+      "cls": "button button-sm button-brand shrink-0",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "aria": "Close",
+      "text": "×",
+      "id": "cookiescript_close",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Privacy Policy",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Terms of Use",
+      "visible": true
+    },
+    {
+      "tag": "a",
+      "text": "Cookie Policy",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "text": "Accept all",
+      "id": "cookiescript_accept",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "text": "Reject all",
+      "id": "cookiescript_reject",
+      "visible": true
+    },
+    {
+      "tag": "div",
+      "role": "button",
+      "text": "Customize",
+      "id": "cookiescript_manage_wrap",
+      "visible": true
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "gl1tch-bot",
+  "version": "0.1.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "vercel-build": "next build",
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.98.4",
+    "agent-twitter-client": "^0.0.18",
+    "bs58": "^6.0.0",
+    "dotenv": "^16.4.5",
+    "grammy": "^1.30.0",
+    "node-cron": "^4.2.1",
+    "tsx": "^4.19.0",
+    "tweetnacl": "^1.0.3",
+    "twitter-api-v2": "^1.29.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/node-cron": "^3.0.11",
+    "typescript": "^5",
+    "vitest": "^4.1.7"
+  }
+}

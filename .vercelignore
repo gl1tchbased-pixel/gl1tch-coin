@@ -1,0 +1,14 @@
+# Keep deploy uploads small (avoids the free-tier upload-request limit).
+# These dirs are NOT part of the Next.js site build/runtime.
+e2e
+remotion
+bot
+onchain
+archive
+pump-pack
+test-results
+*.docx
+*.md
+Claude_Code_AI_Video_Studio_GTX1060.md
+tsconfig.tsbuildinfo
+.next

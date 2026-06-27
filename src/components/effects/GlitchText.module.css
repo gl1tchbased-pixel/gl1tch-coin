@@ -1,0 +1,37 @@
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  clip-path: inset(0 0 0 0);
+}
+.glitch::before { color: var(--color-glitch); }
+.glitch::after { color: var(--color-signal); }
+
+.onLoad::before,
+.onLoad::after {
+  animation: glitch-flicker 0.45s steps(2) 1;
+  opacity: 0.8;
+}
+
+.onHover:hover::before {
+  opacity: 0.7;
+  transform: translateX(-2px);
+  transition: none;
+}
+.onHover:hover::after {
+  opacity: 0.7;
+  transform: translateX(2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glitch::before,
+  .glitch::after { display: none; }
+}

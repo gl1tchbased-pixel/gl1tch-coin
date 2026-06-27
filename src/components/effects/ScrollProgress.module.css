@@ -1,0 +1,15 @@
+.bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 1200;
+  background: linear-gradient(
+    90deg,
+    var(--color-signal),
+    var(--color-glitch)
+  );
+  transform-origin: 0%;
+  box-shadow: 0 0 12px var(--color-signal-dim);
+}

@@ -1,0 +1,95 @@
+.button {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  transition: transform var(--duration-fast) var(--ease-out-expo),
+    box-shadow var(--duration-normal) var(--ease-out-expo),
+    background var(--duration-normal), border-color var(--duration-normal),
+    color var(--duration-normal);
+}
+
+/* Shine sweep on primary hover */
+.primary::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.5),
+    transparent
+  );
+  transform: skewX(-20deg);
+  pointer-events: none;
+}
+.primary:hover::after {
+  animation: btn-shine 0.8s var(--ease-out-expo);
+}
+@keyframes btn-shine {
+  from { left: -150%; }
+  to { left: 200%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .primary:hover::after { animation: none; }
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Sizes */
+.sm { padding: var(--space-2) var(--space-4); font-size: var(--fs-sm); min-height: 36px; }
+.md { padding: var(--space-3) var(--space-5); font-size: var(--fs-base); min-height: 44px; }
+.lg { padding: var(--space-4) var(--space-8); font-size: var(--fs-lg); min-height: 56px; }
+
+/* Variants */
+.primary {
+  background: var(--color-signal);
+  color: var(--color-void);
+}
+.primary:hover:not(:disabled) {
+  transform: scale(1.02);
+  box-shadow: 0 0 20px var(--color-signal-dim);
+}
+.primary:active:not(:disabled) { transform: scale(0.99); }
+
+.secondary {
+  background: transparent;
+  color: var(--color-static);
+  border-color: var(--color-border-signal);
+}
+.secondary:hover:not(:disabled) {
+  border-color: var(--color-signal);
+  box-shadow: 0 0 16px var(--color-signal-dim);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--text-secondary);
+}
+.ghost:hover:not(:disabled) { color: var(--color-signal); }
+
+.danger {
+  background: transparent;
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+.danger:hover:not(:disabled) { background: var(--color-danger); color: var(--color-void); }
+
+.pulse { animation: pulse-glow 4s var(--ease-in-out) infinite; }
+
+.loading { pointer-events: none; opacity: 0.7; }

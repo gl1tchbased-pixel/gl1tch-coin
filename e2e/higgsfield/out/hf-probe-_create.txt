@@ -1,0 +1,242 @@
+/create -> https://higgsfield.ai/ai-video  (230 els)
+  a | aria="Higgsfield home"
+  a | txt="Explore"
+  button | button | txt="Image"
+  button | button | txt="Video"
+  button | button | txt="Audio"
+  a | txt="Supercomputer
+New"
+  a | txt="MCP & CLI
+New"
+  a | txt="Collab"
+  button | button | txt="Plugins
+New"
+  a | txt="Marketing Studio"
+  a | txt="Cinema Studio"
+  a | txt="AI Influencer"
+  a | txt="Canvas"
+  a | txt="Apps"
+  a | button | txt="Login"
+  a | button | txt="Sign up"
+  a | button | txt="Create Video Now"
+  textarea | ph="Describe any visual idea. We will generate a video."
+  button | button | txt="Generate"
+  a | txt="First and Last image reference
+
+Achieve seamless consistency"
+  a | txt="Edit any video
+
+Upload existing footage to change styles, sw"
+  a | txt="Motion control everything
+
+Upload a reference video to dicta"
+  a | txt="Top models in a single place
+
+Access Veo, Sora, Kling, Wan, "
+  a | button | txt="Try Cinema Studio"
+  button | button | aria="Previous"
+  button | button | aria="Next"
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  a | txt="Generate"
+  button | button | txt="Generate"
+  a | txt="Generate"
+  button | button | txt="Generate"
+  a | txt="Generate"
+  button | button | txt="Generate"
+  a | txt="Generate"
+  button | button | txt="Generate"
+  a | txt="Generate"
+  button | button | txt="Generate"
+  a | txt="Generate"
+  button | button | txt="Generate"
+  a | txt="Generate"
+  button | button | txt="Generate"
+  button | button | txt="Explore All"
+  button | button | txt="Get started"
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button | aria="Previous"
+  button | button | aria="Next"
+  button | button | role=switch | aria="Toggle between monthly and annual billing"
+  button | button | txt="Get Plan"
+  button | button
+  button | button
+  button | button | txt="Learn more"
+  button | button
+  button | button
+  button | button
+  button | button | txt="Get Plan"
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button | txt="Learn more"
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button | txt="3,000"
+  button | button | txt="6,000"
+  button | button | txt="9,000"
+  button | button | txt="Get Plan"
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button | txt="Learn more"
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button
+  button | button | txt="Get Plan"
+  button | button | aria="Decrease team size"
+  button | button | aria="Increase team size"
+  a | txt="Read more"
+  button | button | txt="Read more"
+  a | txt="How to Use Agentic AI for Content Creation"
+  a | txt="Why Does Your AI Character's Face Keep Changing?"
+  a | txt="How to Make Money Online in 2026 with Higgsfield Earn"
+  a | txt="A Guide to Creating AI Motion Design with Higgsfield Vibe Mo"
+  a | txt="Testing the Best AI Storyboard Tools to Find The Absolute Wi"
+  a | txt="What Influencers Know About Sora 2 That You Don’t"
+  a | txt="The Future of Creator Partnerships: How Brands and AI Platfo"
+  a | txt="What's New in GenAI: AI Motion Design Meets CodeGen Video Ge"
+  a | txt="Nano Banana 2 and Gemini 3.0: Early Signs of a Major Shift i"
+  a | txt="FLUX.2: A Technical Preview"
+  a | txt="Cinematic Video Generator"
+  a | txt="Kling 3.0"
+  a | txt="Sora 2 Upscale"
+  a | txt="Wan 2.6"
+  a | txt="Grok Imagine"
+  a | txt="Sora 2"
+  a | txt="Wan AI Video"
+  a | txt="Kling"
+  a | txt="Seedance"
+  a | txt="Veo 3.1"
+  a | txt="Seedance 2.0"
+  a | txt="Effects"
+  a | txt="Camera Controls"
+  a | txt="MiniMax"
+  a | txt="Claude AI Video Generator"
+  a | txt="Transitions"
+  a | txt="Recast"
+  a | txt="Face Swap"
+  a | txt="Bullet Time Scene"
+  a | txt="3D Rotation"
+  a | txt="Cloud Surf"
+  a | txt="Mukbang"
+  a | txt="Video Background Remover"
+  a | txt="Video Editing"
+  a | txt="Mixed Media Intro"
+  a | txt="AI Image Generator"
+  a | txt="Nano Banana Pro Intro"
+  a | txt="GPT 2"
+  a | txt="AI Video Editor"
+  a | txt="AI Video Upscaler"
+  a | txt="AI Commercial Generator"
+  a | txt="AI Brand Video Generator"
+  a | txt="AI Product Video Generator"
+  a | txt="AI Invitation Video Maker"
+  a | txt="AI Car Video Generator"
+  a | txt="AI Nature Video Generator"
+  a | txt="AI Background Video Generator"
+  a | txt="AI Anime Video Generator"
+  a | txt="AI Animal Video Generator"
+  a | txt="AI Human Video Generator"
+  a | txt="AI Video Extender"
+  a | txt="AI Prompt Generator"
+  a | txt="AI Podcast Generator"
+  a | txt="About"
+  a | txt="Trust"
+  a | txt="Careers"
+  a | txt="Contact"
+  a | txt="Pricing"
+  a | txt="Apps"
+  a | txt="Supercomputer"
+  a | txt="Cinema Studio"
+  a | txt="Marketing Studio"
+  a | txt="Higgsfield Canvas"
+  a | txt="Higgsfield Collab"
+  a | txt="Higgsfield MCP"
+  a | txt="Higgsfield Games"
+  a | txt="AI Influencer"
+  a | txt="Community"
+  a | txt="Enterprise"
+  a | txt="Team"
+  a | txt="Copilot"
+  a | txt="Reference Extension"
+  a | txt="Blog"
+  a | txt="Contests"
+  a | txt="Discord"
+  a | txt="AI Image"
+  a | txt="Soul ID Character"
+  a | txt="Draw to Edit"
+  a | txt="Fashion Factory"
+  a | txt="Edit Image"
+  a | txt="Image Upscale"
+  a | txt="Photodump Studio"
+  a | txt="Higgsfield Popcorn"
+  a | txt="Nano Banana"
+  a | txt="Prompt Guide"
+  a | txt="Flux 2"
+  a | txt="Seedream 5"
+  a | txt="GPT Image 2"
+  a | txt="Inpaint"
+  a | txt="Soul 2.0"
+  a | txt="Soul Cinema"
+  a | txt="Soul Cast"
+  a | txt="AI Video"
+  a | txt="Mixed media"
+  a | txt="Sora 2 Introduction"
+  a | txt="Veo 3.1 Introduction"
+  a | txt="Create Video"
+  a | txt="Lipsync Studio"
+  a | txt="Talking Avatar"
+  a | txt="Draw to Video"
+  a | txt="UGC Factory"
+  a | txt="Video Upscale"
+  a | txt="Kling 3.0"
+  a | txt="WAN 2.6"
+  a | txt="Seedance 2.0"
+  a | txt="Grok Imagine 1.5"
+  a | txt="Banana Placement"
+  a | txt="Product Placement"
+  a | txt="Edit Image"
+  a | txt="Multi Reference"
+  a | txt="Upscale"
+  a | txt="Sora 2 Upscale"
+  a | txt="X / Twitter"
+  a | txt="Youtube"
+  a | txt="Instagram"
+  a | txt="LinkedIn"
+  a | txt="Tiktok"
+  a | txt="Press"
+  a | txt="Privacy"
+  a | txt="Terms"
+  a | txt="Cookie Notice"
+  a | txt="Cookie Settings"
+  div | role=button | aria="Close" | txt="×"
+  a | txt="Privacy Policy"
+  a | txt="Terms of Use"
+  a | txt="Cookie Policy"
+  div | role=button | txt="Accept all"
+  div | role=button | txt="Reject all"
+  div | role=button | txt="Customize"

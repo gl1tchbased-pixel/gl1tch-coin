@@ -1,0 +1,88 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.panel {
+  padding: var(--space-8);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border-signal);
+  text-align: center;
+}
+
+.connect {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+.lead {
+  font-size: var(--fs-lg);
+  color: var(--text-secondary);
+  max-width: 520px;
+  line-height: 1.7;
+}
+.status {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--color-signal);
+}
+.retry {
+  padding: var(--space-2) var(--space-5);
+  border: 1px solid var(--color-border-signal);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-signal);
+  cursor: pointer;
+  font-family: var(--font-mono);
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+.rankLabel {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.rankName {
+  font-family: var(--font-body);
+  font-size: var(--fs-3xl);
+  font-weight: 800;
+  color: var(--color-signal);
+  text-shadow: 0 0 24px var(--color-signal-dim);
+}
+.balance {
+  font-family: var(--font-mono);
+  font-size: var(--fs-base);
+  color: var(--text-primary);
+}
+.next {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}
+.next strong { color: var(--color-signal); }
+
+.ladder {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+.active {
+  border-color: var(--color-signal) !important;
+  box-shadow: var(--shadow-glow);
+}
+
+@media (min-width: 640px) {
+  .ladder { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 1024px) {
+  .ladder { grid-template-columns: repeat(5, 1fr); }
+}

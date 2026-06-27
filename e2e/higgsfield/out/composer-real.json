@@ -1,0 +1,461 @@
+[
+  {
+    "tag": "a",
+    "text": "Nano Banana Pro & Nano Banana 2 Unlimite",
+    "box": {
+      "x": 0,
+      "y": 0,
+      "w": 1404,
+      "h": 47
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 1412,
+      "y": 10,
+      "w": 28,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "aria": "Higgsfield home",
+    "box": {
+      "x": 16,
+      "y": 64,
+      "w": 32,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Explore",
+    "box": {
+      "x": 56,
+      "y": 66,
+      "w": 59,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Image",
+    "box": {
+      "x": 128,
+      "y": 66,
+      "w": 52,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Video",
+    "box": {
+      "x": 180,
+      "y": 66,
+      "w": 49,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Audio",
+    "box": {
+      "x": 229,
+      "y": 66,
+      "w": 50,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Supercomputer\nNew",
+    "box": {
+      "x": 292,
+      "y": 66,
+      "w": 167,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "MCP & CLI\nNew",
+    "box": {
+      "x": 463,
+      "y": 66,
+      "w": 116,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Collab",
+    "box": {
+      "x": 582,
+      "y": 66,
+      "w": 52,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Plugins\nNew",
+    "box": {
+      "x": 638,
+      "y": 66,
+      "w": 95,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Marketing Studio",
+    "box": {
+      "x": 737,
+      "y": 66,
+      "w": 122,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Cinema Studio",
+    "box": {
+      "x": 863,
+      "y": 66,
+      "w": 104,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "AI Influencer",
+    "box": {
+      "x": 972,
+      "y": 66,
+      "w": 93,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Canvas",
+    "box": {
+      "x": 1069,
+      "y": 66,
+      "w": 56,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Apps",
+    "box": {
+      "x": 1129,
+      "y": 66,
+      "w": 44,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "aria": "Search Higgsfield",
+    "text": "Search\nCtrl\nK",
+    "box": {
+      "x": 1002,
+      "y": 62,
+      "w": 176,
+      "h": 36
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Upgrade\n30% OFF",
+    "box": {
+      "x": 1182,
+      "y": 58,
+      "w": 92,
+      "h": 44
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Assets",
+    "box": {
+      "x": 1281,
+      "y": 62,
+      "w": 90,
+      "h": 36
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 1388,
+      "y": 62,
+      "w": 36,
+      "h": 36
+    }
+  },
+  {
+    "tag": "figure",
+    "role": "button",
+    "text": "GENERAL\n\nSeedance 2.0\n\nChange",
+    "box": {
+      "x": 33,
+      "y": 178,
+      "w": 286,
+      "h": 125
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Change",
+    "box": {
+      "x": 236,
+      "y": 184,
+      "w": 77,
+      "h": 24
+    }
+  },
+  {
+    "tag": "div",
+    "role": "textbox",
+    "box": {
+      "x": 34,
+      "y": 439,
+      "w": 285,
+      "h": 113
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Elements",
+    "box": {
+      "x": 45,
+      "y": 560,
+      "w": 81,
+      "h": 26
+    }
+  },
+  {
+    "tag": "input",
+    "type": "checkbox",
+    "text": "true",
+    "box": {
+      "x": 156,
+      "y": 573,
+      "w": 1,
+      "h": 1
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "aria": "Model",
+    "text": "Model\n\nSeedance 2.0",
+    "box": {
+      "x": 33,
+      "y": 606,
+      "w": 286,
+      "h": 48
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "aria": "Close",
+    "box": {
+      "x": 587,
+      "y": 394,
+      "w": 28,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Try Unlimited Seedance 2.0 Family",
+    "box": {
+      "x": 353,
+      "y": 766,
+      "w": 254,
+      "h": 44
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "aria": "Duration",
+    "text": "8s",
+    "box": {
+      "x": 33,
+      "y": 662,
+      "w": 101,
+      "h": 40
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "aria": "Ratio",
+    "text": "Auto",
+    "box": {
+      "x": 142,
+      "y": 662,
+      "w": 85,
+      "h": 40
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "aria": "Resolution",
+    "text": "1080p",
+    "box": {
+      "x": 234,
+      "y": 662,
+      "w": 85,
+      "h": 40
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "aria": "Bitrate",
+    "text": "Bitrate\nHigh",
+    "box": {
+      "x": 33,
+      "y": 710,
+      "w": 286,
+      "h": 40
+    }
+  },
+  {
+    "tag": "button",
+    "type": "submit",
+    "text": "Generate\n96\n72",
+    "box": {
+      "x": 33,
+      "y": 766,
+      "w": 286,
+      "h": 48
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "role": "tab",
+    "text": "History",
+    "box": {
+      "x": 356,
+      "y": 116,
+      "w": 120,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "role": "tab",
+    "text": "How it works",
+    "box": {
+      "x": 480,
+      "y": 116,
+      "w": 120,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 741,
+      "y": 839,
+      "w": 24,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 773,
+      "y": 839,
+      "w": 24,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 805,
+      "y": 839,
+      "w": 24,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 837,
+      "y": 839,
+      "w": 24,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 869,
+      "y": 839,
+      "w": 24,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "box": {
+      "x": 905,
+      "y": 839,
+      "w": 28,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "aria": "Close",
+    "box": {
+      "x": 1071,
+      "y": 194,
+      "w": 32,
+      "h": 32
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Go to Cinema Studio",
+    "box": {
+      "x": 737,
+      "y": 658,
+      "w": 366,
+      "h": 48
+    }
+  }
+]

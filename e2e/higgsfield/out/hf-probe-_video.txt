@@ -1,0 +1,43 @@
+/video -> https://higgsfield.ai/video  (35 els)
+  a | txt="Nano Banana Pro & Nano Banana 2 Unlimited.
+Kling 3.0 Unlimit"
+  button | button
+  a | aria="Higgsfield home"
+  a | txt="Explore"
+  button | button | txt="Image"
+  button | button | txt="Video"
+  button | button | txt="Audio"
+  a | txt="Supercomputer
+New"
+  a | txt="MCP & CLI
+New"
+  a | txt="Collab"
+  button | button | txt="Plugins
+New"
+  a | txt="Marketing Studio"
+  a | txt="Cinema Studio"
+  a | txt="AI Influencer"
+  a | txt="Canvas"
+  a | txt="Apps"
+  button | button | aria="Search Higgsfield" | txt="Search
+Ctrl
+K"
+  a | txt="Pricing
+30% OFF"
+  a | txt="Assets"
+  button | button
+  a | button | txt="Back to home"
+  a | txt="Press"
+  a | txt="Privacy"
+  a | txt="Terms"
+  a | txt="Cookie Notice"
+  a | txt="Cookie Settings"
+  button | button
+  button | button | txt="Upgrade"
+  div | role=button | aria="Close" | txt="×"
+  a | txt="Privacy Policy"
+  a | txt="Terms of Use"
+  a | txt="Cookie Policy"
+  div | role=button | txt="Accept all"
+  div | role=button | txt="Reject all"
+  div | role=button | txt="Customize"

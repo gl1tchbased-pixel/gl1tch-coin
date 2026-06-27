@@ -1,0 +1,13 @@
+{
+  "_comment": "Reply hedef listesi. Stage 2 raporu ve Stage 3 reply sprint bunu okur. Kaynak: bot/src/agent/x-agent/replypack.ts + content-pack tier listesi. Haftalık güncelle (5 yeni mikro-caller ekle/çıkar).",
+  "tier1": ["blknoiz06", "a1lon9", "aeyakovenko", "rajgokal", "0xMert_"],
+  "tier2": ["Thorshammergems", "AltcoinDailyio", "MustStopMurad", "theunipcs", "ansemtrades"],
+  "tier3": ["pumpdotfun", "gakonst", "SolanaFloor", "phantom", "JupiterExchange", "raydiumprotocol", "BackpackApp", "magiceden", "cookerflips"],
+  "rules": {
+    "maxRepliesPerAccountPerWeek": 2,
+    "leadWithValueMentionTokenLast": true,
+    "noLinksInReplies": true,
+    "replyWindowIstanbul": "16:00-24:00",
+    "earlyReplyMinutes": 15
+  }
+}

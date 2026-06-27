@@ -1,0 +1,403 @@
+[
+  {
+    "tag": "a",
+    "text": "Nano Banana Pro & Nano Banana 2 Unlimite",
+    "box": {
+      "x": 0,
+      "y": 0
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Explore",
+    "box": {
+      "x": 56,
+      "y": 66
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Image",
+    "box": {
+      "x": 128,
+      "y": 66
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Video",
+    "box": {
+      "x": 180,
+      "y": 66
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Audio",
+    "box": {
+      "x": 229,
+      "y": 66
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Supercomputer\nNew",
+    "box": {
+      "x": 292,
+      "y": 66
+    }
+  },
+  {
+    "tag": "a",
+    "text": "MCP & CLI\nNew",
+    "box": {
+      "x": 463,
+      "y": 66
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Collab",
+    "box": {
+      "x": 582,
+      "y": 66
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Plugins\nNew",
+    "box": {
+      "x": 638,
+      "y": 66
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Marketing Studio",
+    "box": {
+      "x": 737,
+      "y": 66
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Cinema Studio",
+    "box": {
+      "x": 863,
+      "y": 66
+    }
+  },
+  {
+    "tag": "a",
+    "text": "AI Influencer",
+    "box": {
+      "x": 972,
+      "y": 66
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Canvas",
+    "box": {
+      "x": 1069,
+      "y": 66
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Apps",
+    "box": {
+      "x": 1129,
+      "y": 66
+    }
+  },
+  {
+    "tag": "button",
+    "aria": "Search Higgsfield",
+    "text": "Search\nCtrl\nK",
+    "box": {
+      "x": 1002,
+      "y": 62
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Upgrade\n30% OFF",
+    "box": {
+      "x": 1182,
+      "y": 58
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Assets",
+    "box": {
+      "x": 1281,
+      "y": 62
+    }
+  },
+  {
+    "tag": "figure",
+    "role": "button",
+    "text": "GENERAL\n\nSeedance 2.0\n\nChange",
+    "box": {
+      "x": 33,
+      "y": 178
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Change",
+    "box": {
+      "x": 236,
+      "y": 184
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Elements",
+    "box": {
+      "x": 45,
+      "y": 560
+    }
+  },
+  {
+    "tag": "button",
+    "aria": "Model",
+    "text": "Model\n\nSeedance 2.0",
+    "box": {
+      "x": 33,
+      "y": 606
+    }
+  },
+  {
+    "tag": "button",
+    "aria": "Duration",
+    "text": "8s",
+    "box": {
+      "x": 33,
+      "y": 662
+    }
+  },
+  {
+    "tag": "button",
+    "aria": "Ratio",
+    "text": "Auto",
+    "box": {
+      "x": 142,
+      "y": 662
+    }
+  },
+  {
+    "tag": "button",
+    "aria": "Resolution",
+    "text": "1080p",
+    "box": {
+      "x": 234,
+      "y": 662
+    }
+  },
+  {
+    "tag": "button",
+    "aria": "Bitrate",
+    "text": "Bitrate\nHigh",
+    "box": {
+      "x": 33,
+      "y": 710
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Generate\n96\n72",
+    "box": {
+      "x": 33,
+      "y": 766
+    }
+  },
+  {
+    "tag": "button",
+    "role": "tab",
+    "text": "History",
+    "box": {
+      "x": 356,
+      "y": 116
+    }
+  },
+  {
+    "tag": "button",
+    "role": "tab",
+    "text": "How it works",
+    "box": {
+      "x": 480,
+      "y": 116
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Upgrade",
+    "box": {
+      "x": 1340,
+      "y": 835
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Seedance 2.0\n4K\n4s-15s",
+    "box": {
+      "x": 340,
+      "y": 241
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Seedance 2.0 Mini\nNEW\nEXCLUSIVE\n720p\n4s-",
+    "box": {
+      "x": 340,
+      "y": 297
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Seedance 2.0 Fast\n720p\n4s-15s",
+    "box": {
+      "x": 340,
+      "y": 353
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Kling 3.0\n4K\n3s-15s",
+    "box": {
+      "x": 340,
+      "y": 409
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Kling 3.0 Turbo\nNEW\n1080p\n3s-15s",
+    "box": {
+      "x": 340,
+      "y": 465
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Kling 3.0 Motion Control\n1080p\n3s-30s",
+    "box": {
+      "x": 340,
+      "y": 521
+    }
+  },
+  {
+    "tag": "button",
+    "text": "HappyHorse\nNEW\n1080p\n3s-15s",
+    "box": {
+      "x": 340,
+      "y": 577
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Grok Imagine\n720p\n1s-15s",
+    "box": {
+      "x": 340,
+      "y": 633
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Grok Imagine 1.5\nNEW\n720p\n1s-15s",
+    "box": {
+      "x": 340,
+      "y": 689
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Google Veo 3.1 Lite\nNEW\n1080p\n4s-8s",
+    "box": {
+      "x": 340,
+      "y": 745
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Wan 2.7\nNEW\n1080p\n2s-15s",
+    "box": {
+      "x": 340,
+      "y": 801
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Minimax Hailuo\n\nHigh-dynamic, VFX-ready,",
+    "box": {
+      "x": 340,
+      "y": 891
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Kling\n\nPerfect motion with advanced vide",
+    "box": {
+      "x": 340,
+      "y": 957
+    }
+  },
+  {
+    "tag": "button",
+    "text": "OpenAI Sora 2\n\nMulti-shot video with sou",
+    "box": {
+      "x": 340,
+      "y": 1013
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Google Veo\n\nPrecision video with sound c",
+    "box": {
+      "x": 340,
+      "y": 1069
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Higgsfield\n\nAdvanced camera controls and",
+    "box": {
+      "x": 340,
+      "y": 1125
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Wan\n\nCamera-controlled video with sound,",
+    "box": {
+      "x": 340,
+      "y": 1181
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Seedance\n\nCinematic, multi-shot video cr",
+    "box": {
+      "x": 340,
+      "y": 1237
+    }
+  },
+  {
+    "tag": "button",
+    "text": "Grok Imagine\n\nPerfect motion with advanc",
+    "box": {
+      "x": 340,
+      "y": 1293
+    }
+  },
+  {
+    "tag": "button",
+    "text": "HappyHorse\nNEW\n1080p\n3s-15s",
+    "box": {
+      "x": 340,
+      "y": 1349
+    }
+  }
+]

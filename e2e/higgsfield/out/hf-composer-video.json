@@ -1,0 +1,275 @@
+[
+  {
+    "tag": "a",
+    "aria": "Higgsfield home",
+    "box": {
+      "x": 16,
+      "y": 16,
+      "w": 32,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Explore",
+    "box": {
+      "x": 56,
+      "y": 18,
+      "w": 59,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Image",
+    "box": {
+      "x": 128,
+      "y": 18,
+      "w": 52,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Video",
+    "box": {
+      "x": 180,
+      "y": 18,
+      "w": 49,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Audio",
+    "box": {
+      "x": 229,
+      "y": 18,
+      "w": 50,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Supercomputer\nNew",
+    "box": {
+      "x": 292,
+      "y": 18,
+      "w": 167,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "MCP & CLI\nNew",
+    "box": {
+      "x": 463,
+      "y": 18,
+      "w": 116,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Collab",
+    "box": {
+      "x": 582,
+      "y": 18,
+      "w": 52,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Plugins\nNew",
+    "box": {
+      "x": 638,
+      "y": 18,
+      "w": 95,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Marketing Studio",
+    "box": {
+      "x": 737,
+      "y": 18,
+      "w": 122,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Cinema Studio",
+    "box": {
+      "x": 863,
+      "y": 18,
+      "w": 104,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "AI Influencer",
+    "box": {
+      "x": 972,
+      "y": 18,
+      "w": 93,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Canvas",
+    "box": {
+      "x": 1069,
+      "y": 18,
+      "w": 56,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Apps",
+    "box": {
+      "x": 1129,
+      "y": 18,
+      "w": 44,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "type": "button",
+    "text": "Login",
+    "box": {
+      "x": 1274,
+      "y": 12,
+      "w": 57,
+      "h": 40
+    }
+  },
+  {
+    "tag": "a",
+    "type": "button",
+    "text": "Sign up",
+    "box": {
+      "x": 1339,
+      "y": 12,
+      "w": 70,
+      "h": 40
+    }
+  },
+  {
+    "tag": "a",
+    "type": "button",
+    "text": "Create Video Now",
+    "box": {
+      "x": 624,
+      "y": 388,
+      "w": 177,
+      "h": 52
+    }
+  },
+  {
+    "tag": "textarea",
+    "placeholder": "Describe any visual idea. We will generate a video.",
+    "box": {
+      "x": 390,
+      "y": 629,
+      "w": 645,
+      "h": 60
+    }
+  },
+  {
+    "tag": "button",
+    "type": "button",
+    "text": "Generate",
+    "box": {
+      "x": 919,
+      "y": 710,
+      "w": 116,
+      "h": 48
+    }
+  },
+  {
+    "tag": "div",
+    "role": "button",
+    "aria": "Close",
+    "text": "×",
+    "box": {
+      "x": 1375,
+      "y": 574,
+      "w": 15,
+      "h": 15
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Privacy Policy",
+    "box": {
+      "x": 1276,
+      "y": 719,
+      "w": 83,
+      "h": 15
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Terms of Use",
+    "box": {
+      "x": 1125,
+      "y": 739,
+      "w": 80,
+      "h": 15
+    }
+  },
+  {
+    "tag": "a",
+    "text": "Cookie Policy",
+    "box": {
+      "x": 1238,
+      "y": 739,
+      "w": 80,
+      "h": 15
+    }
+  },
+  {
+    "tag": "div",
+    "role": "button",
+    "text": "Accept all",
+    "box": {
+      "x": 1125,
+      "y": 787,
+      "w": 128,
+      "h": 36
+    }
+  },
+  {
+    "tag": "div",
+    "role": "button",
+    "text": "Reject all",
+    "box": {
+      "x": 1262,
+      "y": 787,
+      "w": 122,
+      "h": 36
+    }
+  },
+  {
+    "tag": "div",
+    "role": "button",
+    "text": "Customize",
+    "box": {
+      "x": 1125,
+      "y": 836,
+      "w": 260,
+      "h": 24
+    }
+  }
+]
