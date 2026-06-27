@@ -57,6 +57,13 @@ Multi-chain · non-custodial · plain-English explanations · **verified blue-ch
 > the dev, the holders — then tells you straight, in plain English, and keeps watching
 > after you buy. Free. It never touches your wallet.**
 
+## STATUS (2026-06-28): A–G + I shipped & live ✅
+A AI verdict ✅ · B degen intel ✅ · C deployer track record ✅ · D multi-source
+transparency ✅ · E side-by-side compare (/scan/compare) ✅ · F API + embeddable badge
+✅ · G shareable verdict card ✅ · I holder-gated Watchtower slots ✅ (observer 3 →
+ghost 200, via /verify). Remaining optional: **H — Watchtower++** (wallet/portfolio
+watch, whale-exit & dev-sell alerts) — a distinct subsystem, next when wanted.
+
 ## Recommended build order
 1. **B (degen intelligence)** — data half-fetched already, highest degen pull, low effort.
 2. **A (Rogue-AI verdict)** — brand-defining, the thing screenshots spread.
