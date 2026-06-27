@@ -260,7 +260,10 @@
       "Bash(curl -s \"https://api.github.com/users/flookiii25/repos?per_page=100&sort=updated\")",
       "Bash(curl -sSL -H \"Accept: application/vnd.github+json\" \"https://api.github.com/users/flookiii25/repos?per_page=100\" -o /tmp/repos.json)",
       "Bash(curl -sSL --ssl-no-revoke -H \"Accept: application/vnd.github+json\" \"https://api.github.com/users/flookiii25/repos?per_page=100\" -o /tmp/repos.json)",
-      "Bash(curl -sSL --ssl-no-revoke -H \"Accept: application/vnd.github+json\" \"https://api.github.com/users/flookiii25/repos?per_page=100\" -o _repos.json)"
+      "Bash(curl -sSL --ssl-no-revoke -H \"Accept: application/vnd.github+json\" \"https://api.github.com/users/flookiii25/repos?per_page=100\" -o _repos.json)",
+      "Bash(git push *)",
+      "Bash(git count-objects *)",
+      "Bash(ps -W)"
     ]
   }
 }

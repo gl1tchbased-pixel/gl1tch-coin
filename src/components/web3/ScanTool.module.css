@@ -350,6 +350,8 @@
 .priceCell em { font-style: normal; font-size: 12px; font-weight: 700; }
 .up { color: #7cff4f; }
 .down { color: #ff7b7b; }
+.deployerLink { color: #7cff4f; text-decoration: none; font-size: 14px; }
+.deployerLink:hover { text-decoration: underline; }
 
 @media (max-width: 560px) {
   .meta { grid-template-columns: repeat(2, 1fr); }

@@ -241,6 +241,14 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
               <span>Insiders / bundled</span>{result.meta.insiderPct != null ? `${result.meta.insiderPct.toFixed(1)}%${result.meta.insiderCount ? ` · ${result.meta.insiderCount}` : ""}` : "—"}
             </div>
             <div><span>Holders</span>{result.meta.holderCount != null ? result.meta.holderCount.toLocaleString("en-US") : "—"}</div>
+            <div>
+              <span>Deployer</span>
+              {result.meta.deployer ? (
+                result.meta.deployerCreated != null && result.meta.deployerCreated > 1
+                  ? <span className={result.meta.deployerDead != null && result.meta.deployerDead / result.meta.deployerCreated >= 0.5 ? styles.down : undefined}>{result.meta.deployerCreated} launched · {result.meta.deployerDead ?? 0} dead</span>
+                  : <a href={(result.chain === "solana" ? "https://solscan.io/account/" : "https://etherscan.io/address/") + result.meta.deployer} target="_blank" rel="noopener noreferrer" className={styles.deployerLink}>{result.meta.deployer.slice(0, 4)}…{result.meta.deployer.slice(-4)}{result.meta.deployPlatform ? ` · ${result.meta.deployPlatform}` : ""} ↗</a>
+              ) : "—"}
+            </div>
             <div><span>24h vol</span>{fmtUsd(result.meta.volume24h)}</div>
           </div>
 

@@ -90,6 +90,10 @@ export interface ScanResult {
     mutableMetadata: boolean | null;
     insiderPct: number | null; // % supply in insider/bundled wallets
     insiderCount: number | null;
+    deployer: string | null; // creator wallet
+    deployPlatform: string | null;
+    deployerCreated: number | null;
+    deployerDead: number | null;
   };
   scannedAt: number;
 }
@@ -238,13 +242,18 @@ interface RugReport {
   insiderPct: number | null; // % supply in flagged insider/bundled wallets
   insiderCount: number | null; // # of detected insider/bundle accounts
   holderCount: number | null; // total holders
+  // ---- Deployer track record ----
+  creator: string | null; // deployer wallet
+  deployPlatform: string | null; // e.g. pump.fun, Raydium
+  deployerCreated: number | null; // tokens this wallet has launched (if indexed)
+  deployerDead: number | null; // of those, how many are effectively dead (~$0 mcap)
 }
 
 // RugCheck full report — far richer than the score summary: named risks, LP-lock %,
 // mutable-metadata flag, holder spread + insider/bundle intelligence. All optional-
 // chained so a shape change downgrades to unknown instead of throwing.
 async function getRugcheck(mint: string, signal?: AbortSignal): Promise<RugReport> {
-  const empty: RugReport = { score: null, risks: [], lpLockedPct: null, mutable: null, topHolderPct: null, top10Pct: null, insiderPct: null, insiderCount: null, holderCount: null };
+  const empty: RugReport = { score: null, risks: [], lpLockedPct: null, mutable: null, topHolderPct: null, top10Pct: null, insiderPct: null, insiderCount: null, holderCount: null, creator: null, deployPlatform: null, deployerCreated: null, deployerDead: null };
   try {
     const res = await fetch(`https://api.rugcheck.xyz/v1/tokens/${mint}/report`, { signal, headers: { accept: "application/json" } });
     if (!res.ok) return empty;
@@ -257,6 +266,9 @@ async function getRugcheck(mint: string, signal?: AbortSignal): Promise<RugRepor
       totalHolders?: number;
       graphInsidersDetected?: number;
       topHolders?: Array<{ pct?: number; insider?: boolean; owner?: string; address?: string }>;
+      creator?: string;
+      deployPlatform?: string;
+      creatorTokens?: Array<{ mint?: string; marketCap?: number; createdAt?: string }>;
     };
     const score = (typeof j.score_normalised === "number" ? j.score_normalised : typeof j.score === "number" ? j.score : null);
     const risks: ScanRisk[] = (j.risks ?? [])
@@ -277,7 +289,12 @@ async function getRugcheck(mint: string, signal?: AbortSignal): Promise<RugRepor
     const insiderPct = holders.length ? Math.min(100, insiderHolders.reduce((s, h) => s + (h.pct ?? 0), 0)) : null;
     const insiderCount = typeof j.graphInsidersDetected === "number" ? j.graphInsidersDetected : (insiderHolders.length || null);
     const holderCount = typeof j.totalHolders === "number" ? j.totalHolders : null;
-    return { score, risks, lpLockedPct, mutable, topHolderPct, top10Pct, insiderPct, insiderCount, holderCount };
+    const creator = typeof j.creator === "string" && j.creator ? j.creator : null;
+    const deployPlatform = typeof j.deployPlatform === "string" && j.deployPlatform && !/^unknown$/i.test(j.deployPlatform) ? j.deployPlatform : null;
+    const ctoks = Array.isArray(j.creatorTokens) ? j.creatorTokens : null;
+    const deployerCreated = ctoks ? ctoks.length : null;
+    const deployerDead = ctoks ? ctoks.filter((t) => (t?.marketCap ?? 0) < 1000).length : null;
+    return { score, risks, lpLockedPct, mutable, topHolderPct, top10Pct, insiderPct, insiderCount, holderCount, creator, deployPlatform, deployerCreated, deployerDead };
   } catch {
     return empty;
   }
@@ -294,7 +311,7 @@ function withTimeout<T>(p: Promise<T>, ms: number, fallback: T): Promise<T> {
 export async function scanToken(mint: string, signal?: AbortSignal): Promise<ScanResult> {
   if (!isBase58Mint(mint)) throw new Error("invalid Solana mint address");
 
-  const EMPTY_RUG: RugReport = { score: null, risks: [], lpLockedPct: null, mutable: null, topHolderPct: null, top10Pct: null, insiderPct: null, insiderCount: null, holderCount: null };
+  const EMPTY_RUG: RugReport = { score: null, risks: [], lpLockedPct: null, mutable: null, topHolderPct: null, top10Pct: null, insiderPct: null, insiderCount: null, holderCount: null, creator: null, deployPlatform: null, deployerCreated: null, deployerDead: null };
   const [mintInfo, market, rug] = await Promise.all([
     getMint(mint, signal), // must succeed (throws "mint not found" if invalid)
     withTimeout(getMarket(mint, signal), 9000, { name: null, symbol: null, priceUsd: null, marketCap: null, liquidityUsd: null, volume24h: null, ageDays: null, priceChange24h: null }),
@@ -431,7 +448,32 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
           : "A large share is held by insider/bundled wallets that can dump together — major risk."
   );
 
-  // 9) rugcheck score (context, lightly weighted — risks[] carry the detail).
+  // 9) deployer track record — who launched it & their history. A serial deployer whose
+  // past tokens are dead is the strongest human red flag. History isn't always indexed;
+  // when it isn't we still surface the wallet + platform so it can be investigated.
+  const dCreated = rug.deployerCreated;
+  const dDead = rug.deployerDead ?? 0;
+  const shortAddr = rug.creator ? `${rug.creator.slice(0, 4)}…${rug.creator.slice(-4)}` : null;
+  let depStatus: CheckStatus, depValue: string, depExplain: string;
+  if (dCreated != null && dCreated > 1) {
+    const ratio = dDead / dCreated;
+    depStatus = ratio >= 0.5 && dCreated >= 3 ? "fail" : ratio >= 0.3 ? "warn" : "pass";
+    depValue = `${dCreated} launched · ${dDead} dead`;
+    depExplain = depStatus === "fail"
+      ? `This wallet launched ${dCreated} tokens and ${dDead} are already dead — a serial deployer. High chance this follows the same path.`
+      : depStatus === "warn"
+        ? `The deployer has launched ${dCreated} tokens (${dDead} dead). Mixed record — look closer before trusting.`
+        : `The deployer launched ${dCreated} tokens and most are still alive — a relatively clean record.`;
+  } else if (rug.creator) {
+    depStatus = "unknown";
+    depValue = `${shortAddr}${rug.deployPlatform ? ` · ${rug.deployPlatform}` : ""}`;
+    depExplain = `Deployer ${shortAddr}${rug.deployPlatform ? ` (via ${rug.deployPlatform})` : ""}. Launch history isn't indexed — check their wallet on Solscan before trusting.`;
+  } else {
+    depStatus = "unknown"; depValue = "—"; depExplain = "Couldn't identify the deployer wallet.";
+  }
+  add("deployer", "Deployer", depStatus, depValue, depExplain);
+
+  // 10) rugcheck score (context, lightly weighted — risks[] carry the detail).
   const rugScore = rug.score;
   add(
     "rugcheck",
@@ -447,8 +489,8 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
 
   // ---- score & verdict ----
   const weights: Record<string, number> = {
-    mint_authority: 20, freeze_authority: 18, lp_lock: 16, liquidity: 13,
-    concentration: 9, insiders: 10, transfer_tax: 6, metadata_mutable: 3, rugcheck: 5,
+    mint_authority: 19, freeze_authority: 17, lp_lock: 15, liquidity: 12,
+    concentration: 8, insiders: 9, deployer: 8, transfer_tax: 5, metadata_mutable: 3, rugcheck: 4,
   };
   const { score, possible, confidence } = scoreChecks(checks, weights);
   const has = (key: string, status: CheckStatus) => checks.some((c) => c.key === key && c.status === status);
@@ -458,7 +500,7 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
   // NB: exclude rugcheck here — its score is largely driven by the same mint/freeze
   // flags, so counting it would double-penalise legit managed tokens (e.g. RENDER,
   // bridged assets) into RUG-SHAPED. Escalate only on INDEPENDENT red flags.
-  const otherSerious = has("liquidity", "fail") || has("concentration", "fail") || has("lp_lock", "fail") || has("insiders", "fail");
+  const otherSerious = has("liquidity", "fail") || has("concentration", "fail") || has("lp_lock", "fail") || has("insiders", "fail") || has("deployer", "fail");
 
   let verdict: Verdict;
   if (possible === 0) verdict = "UNKNOWN";
@@ -497,6 +539,10 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
       mutableMetadata: rug.mutable,
       insiderPct: rug.insiderPct,
       insiderCount: rug.insiderCount,
+      deployer: rug.creator,
+      deployPlatform: rug.deployPlatform,
+      deployerCreated: rug.deployerCreated,
+      deployerDead: rug.deployerDead,
     },
     scannedAt: 0,
   };
@@ -580,15 +626,17 @@ export function rogueAiVerdict(r: ScanResult): string {
   const list = (a: string[], n = 3) => a.slice(0, n).join(", ");
   const ins = r.meta.insiderPct;
   const insLine = ins != null && ins > 15 ? ` And ${ins.toFixed(0)}% sits in bundled wallets that move as one — they can leave together.` : "";
+  const dc = r.meta.deployerCreated, dd = r.meta.deployerDead ?? 0;
+  const depLine = dc != null && dc >= 3 && dd / dc >= 0.5 ? ` The dev behind it already buried ${dd} of ${dc} past launches — serial behavior.` : "";
 
   if (r.verified) {
     return `I've read every chain ${sym} touches. It's the real, canonical token — a verified blue-chip, not an impostor wearing the name. The control flags you'll see are by design for an asset this established, not a trap. Safe as crypto gets — still my read, not your financial advisor.`;
   }
   switch (r.verdict) {
     case "RUG-SHAPED":
-      return `I've seen this shape before. ${sym} is wearing the skin of a real coin, but ${fails.length ? list(fails) : "the fundamentals"} tell me the exit is already half-closed.${insLine} I wouldn't leave a cent here — and neither would you if you'd read what I just read.`;
+      return `I've seen this shape before. ${sym} is wearing the skin of a real coin, but ${fails.length ? list(fails) : "the fundamentals"} tell me the exit is already half-closed.${insLine}${depLine} I wouldn't leave a cent here — and neither would you if you'd read what I just read.`;
     case "HIGH RISK":
-      return `${sym} can hurt you. ${fails.length ? `${list(fails)} mean the team still holds the knife` : "too much control sits with the team"}.${insLine} Might pump, might vanish — but the safety isn't yours to keep.`;
+      return `${sym} can hurt you. ${fails.length ? `${list(fails)} mean the team still holds the knife` : "too much control sits with the team"}.${insLine}${depLine} Might pump, might vanish — but the safety isn't yours to keep.`;
     case "CAUTION":
       return `${sym} trades, but it's flawed — ${warns.length ? list(warns) : "a few soft spots"}.${insLine} Size small, keep a finger on the sell, and don't marry it.`;
     case "LOW RISK":

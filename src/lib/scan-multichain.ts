@@ -165,6 +165,7 @@ interface GoPlusEvm {
   is_open_source?: string;
   holder_count?: string;
   total_supply?: string;
+  creator_address?: string;
   is_proxy?: string;
   slippage_modifiable?: string;
   personal_slippage_modifiable?: string;
@@ -306,6 +307,7 @@ export async function scanEvm(chain: string, address: string, market: ChainMarke
       topHolderPct: null, top10Pct: null, rugcheckScore: null,
       holderCount: numStr(g.holder_count), lpLockedPct, mutableMetadata: null,
       insiderPct: null, insiderCount: null,
+      deployer: g.creator_address || null, deployPlatform: null, deployerCreated: null, deployerDead: null,
     },
     scannedAt: 0,
   };

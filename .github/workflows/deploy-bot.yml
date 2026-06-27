@@ -1,0 +1,31 @@
+name: Deploy bot to Railway
+
+# Auto-deploy the Telegram bot on every push that touches bot/. Uses the Railway
+# account token stored as the RAILWAY_API_TOKEN secret; the service is targeted by
+# id so no interactive link is needed in CI.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "bot/**"
+      - ".github/workflows/deploy-bot.yml"
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-bot-railway
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Railway CLI
+        run: npm i -g @railway/cli
+      - name: Deploy bot
+        working-directory: bot
+        env:
+          RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+        run: |
+          railway link -p 66524158-2454-4ef1-9ce3-e87413f4396b -e ff54b7b7-0daa-4aff-be44-1949ef639c7e -s 39a60b25-f642-47c4-b30e-6b66649175ac
+          railway up --ci

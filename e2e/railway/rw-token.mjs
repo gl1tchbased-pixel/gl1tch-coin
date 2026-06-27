@@ -11,9 +11,13 @@ import { chromium } from "@playwright/test";
 
 const DIR = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.join(DIR, "out");
-const PROFILE = path.join(DIR, ".profiles", "main");
+// RW_PROFILE lets us use a FRESH profile for a different account (don't reuse a
+// session). RW_OUT names the token file so we don't overwrite another account's token.
+const PROFILE = path.join(DIR, ".profiles", process.env.RW_PROFILE || "main");
+const OUTFILE = process.env.RW_OUT || "rw-token.txt";
 fs.mkdirSync(OUT, { recursive: true });
 fs.mkdirSync(PROFILE, { recursive: true });
+for (const lock of ["SingletonLock", "SingletonCookie", "SingletonSocket"]) { try { fs.rmSync(path.join(PROFILE, lock), { force: true }); } catch { /* */ } }
 const status = (s) => { fs.writeFileSync(path.join(OUT, "rw-status.txt"), s + "\n"); console.log("[rw]", s); };
 
 const ctx = await chromium.launchPersistentContext(PROFILE, {
@@ -79,7 +83,7 @@ try {
     return cand.sort((a, b) => b.length - a.length)[0] || "";
   });
   if (token) {
-    fs.writeFileSync(path.join(OUT, "rw-token.txt"), token);
+    fs.writeFileSync(path.join(OUT, OUTFILE), token);
     status(`TOKEN-CAPTURED (${token.length} chars)`);
   } else {
     status("no-token — see rw-after-create.png + rw-tokens-dump.json");

@@ -56,6 +56,8 @@ onchain/keys
 /e2e/railway/.profiles/
 /e2e/railway/out/
 /e2e/higgsfield/.profiles/
+/e2e/github/.profiles/
+/e2e/github/out/
 e2e/railway/out/rw-token.txt
 
 # any node_modules / build caches anywhere in the monorepo
