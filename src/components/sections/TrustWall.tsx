@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Reveal } from "@/components/effects/Reveal";
+import { LiveTrustBadge } from "@/components/web3/LiveTrustBadge";
 import {
   TRUST_REPORT,
   CURRENT_LAUNCH_STATUS,
@@ -67,6 +68,9 @@ export function TrustWall() {
             Every guarantee below is enforced on-chain and verifiable by anyone —
             no claim is taken on faith.
           </p>
+          <div style={{ marginTop: "var(--space-5)", display: "flex", justifyContent: "center" }}>
+            <LiveTrustBadge />
+          </div>
         </Reveal>
 
         <Reveal className={styles.grid}>
