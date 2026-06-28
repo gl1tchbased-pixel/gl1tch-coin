@@ -72,6 +72,7 @@ async function main() {
   await bot.api.setMyCommands([
     { command: "start", description: "Enter The Infected" },
     { command: "scan", description: "🔍 Safety-scan any token (any chain)" },
+    { command: "proof", description: "🛡 Why $GL1TCH is safe — live self-scan + receipts" },
     { command: "watch", description: "👁 Watch a token — alert me if its safety changes" },
     { command: "watching", description: "👁 Your Watchtower list" },
     { command: "unwatch", description: "🚫 Stop watching a token" },
