@@ -20,6 +20,7 @@ composition) and publish to Telegram + X + YouTube + Instagram.
 
 ## Concept queue (do in order, then invent fresh ones)
 1. [DONE 2026-06-27] **Multichain** — "6 Chains, 1 Scanner" (MultiChain.tsx, posted all 4)
+1b. [DONE 2026-06-28] **Wallet Watch** — Watchtower++ /watchwallet + "hold $GL1TCH = watch more wallets" utility ladder (WalletWatch.tsx, posted all 4)
 2. [ ] **Telegram auto-scan** — paste any contract in the group → instant verdict
 3. [ ] **Non-custodial** — other bots want your keys; we never touch them
 4. [ ] **Search by name** — no contract? type the token name, any chain
@@ -33,3 +34,13 @@ composition) and publish to Telegram + X + YouTube + Instagram.
 
 ## Posted log
 - 2026-06-27 — Multichain "6 Chains, 1 Scanner" → Telegram(#325), YouTube(shorts/HEHIPWUFEQc), Instagram, X. ✅ all 4
+- 2026-06-28 — Wallet Watch (Watchtower++) → Telegram(#355), YouTube(Short), Instagram, X. ✅ all 4
+
+## How the 8h cadence actually runs (READ THIS)
+
+The 8h auto-video cron is **session-only** — it fires only while a Claude Code
+session is alive on this machine (the X/YouTube/Instagram posts need the LOGGED-IN
+browser profiles in `e2e/.profiles` + a local Remotion render, so they cannot run on
+a headless server). If the session/machine is off, no auto-post happens — that window
+is just skipped, not queued. When the session is alive it fires every 8h at :11 and
+runs the next queued concept end-to-end (build → render → post to all 4).
