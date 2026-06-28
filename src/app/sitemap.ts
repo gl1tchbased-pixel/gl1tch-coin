@@ -7,6 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "",
     "/scan",
     "/scan/compare",
+    "/proof",
     "/lore",
     "/links",
     "/whitepaper",

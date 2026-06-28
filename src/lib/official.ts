@@ -24,6 +24,7 @@ export const OFFICIAL = {
   IG_URL: "https://instagram.com/gl1tch_infected",
   REDDIT_URL: "https://reddit.com/user/gl1tch_infected",
   SITE_URL: "https://coin-three-mu.vercel.app",
+  GITHUB_URL: "https://github.com/gl1tchbased-pixel/gl1tch-coin",
 } as const;
 
 /** Set at launch from the Pump.fun mint. Empty until LIVE. */
@@ -31,6 +32,13 @@ export const CONTRACT_ADDRESS = "3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump";
 
 /** Fresh, dedicated give-back wallet — generated at setup, never a personal wallet. */
 export const GIVEBACK_WALLET = "CSxey8FbMS5dDG7Z5usH9gmXgLQqXTN6m25NRdqAC6g4";
+
+/** Token deployer wallet (verified on-chain via RugCheck/Solscan). */
+export const DEPLOYER_WALLET = "H5qbtquJzLVrwYj5opedoQCy9edQQZAtiyPMTMFFaFb4";
+
+/** Solscan account link helper. */
+export const solscanAccount = (addr: string) =>
+  addr ? `https://solscan.io/account/${addr}` : "";
 
 /** Derived explorer/market links (only meaningful once CONTRACT_ADDRESS is set). */
 export const links = {
@@ -62,8 +70,8 @@ export const TRUST_REPORT = {
   freezeRevoked: true,
   // Token-2022 mint with NO transfer fee extension → buys/sells are zero-tax at protocol level.
   zeroTax: true,
-  // Pump.fun manages liquidity on the bonding curve pre-graduation; LP is burned/locked at Raydium migration.
-  lpBurnedOrLocked: false,
+  // Verified 2026-06-28 via RugCheck + our own scanner: LP 100% locked/burned. The dev cannot pull the pool.
+  lpBurnedOrLocked: true,
   // RugCheck normalized risk score. Lower is better; 1 with no risks = clean.
   // Verified 2026-05-30 via api.rugcheck.xyz.
   rugcheckScore: 1 as number | null,
