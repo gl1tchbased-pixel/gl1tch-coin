@@ -68,3 +68,7 @@ e2e/railway/out/rw-token.txt
 
 .vercel
 .env*
+
+# verify-listing local artifacts
+e2e/verify/.profile*
+e2e/verify/out/

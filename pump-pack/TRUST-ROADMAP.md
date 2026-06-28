@@ -103,4 +103,5 @@ The honest weak point. With no budget we can't inject LP, so we build trust *aro
 - [x] **Bot `/proof` command** — live self-scan + receipts + verify links (RugCheck/Solscan/GitHub).
 - [x] **Trust video** "Don't trust us. Verify us." (VerifyUs.tsx) → posted Telegram/X/YouTube/Instagram.
 - [ ] 1B homepage self-scan badge (embed on `/`) · [ ] 2C seed give-back (FOUNDER, ~10min)
-- [ ] 3A–3D third-party verify-socials (FOUNDER) · [ ] 4A changelog discipline
+- [x] **3B GeckoTerminal token-info update SUBMITTED** (2026-06-28, ticket GTIU2806260008 → gl1tchbased@gmail.com, free path, ~5 biz-day review) — name/website/socials/desc + Solana pool.
+- [ ] 3A RugCheck verify (FOUNDER: connect creator wallet H5qb…aFb4 → sign → add socials) · [ ] 4A changelog discipline
