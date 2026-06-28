@@ -7,6 +7,19 @@ import fs from "node:fs";
 import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
 
 const PRESETS = {
+  verify: {
+    video: "gl1tch-verify-us.mp4",
+    title: "Don't trust us — verify us. We scan $GL1TCH live 🛡 #Shorts",
+    desc: `Every meme coin says "trust us," then rugs you. GL1TCH hands you the receipts instead. We built the rug-scanner — so we run it on ourselves, live:
+$GL1TCH = LOW RISK. Mint authority revoked · freeze revoked · 0% tax · liquidity 100% locked/burned · metadata immutable · 0% insiders · RugCheck score 1.
+
+We're anonymous — but the code is open and every wallet is public. Don't take our word: verify each claim yourself on Solscan, RugCheck & GitHub.
+
+🛡 Proof page: https://coin-three-mu.vercel.app/proof
+💬 /proof in Telegram: https://t.me/gl1tch_infected
+
+#crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #Shorts`,
+  },
   wallet: {
     video: "gl1tch-wallet-watch.mp4",
     title: "Get pinged when a whale or dev sells — GL1TCH Wallet Watch 🐋 #Shorts",

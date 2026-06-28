@@ -95,7 +95,12 @@ The honest weak point. With no budget we can't inject LP, so we build trust *aro
 > revoked, zero tax, liquidity locked, code open. Don't believe us: scan us. We built the
 > scanner; we pass it live.**
 
-## STATUS
-- [ ] 1A `/proof` page · [ ] 1B homepage self-scan badge · [ ] 1C honest yellow-flags
-- [ ] 2A open-source callout · [ ] 2B wallet map · [ ] 2C seed give-back (founder)
-- [ ] 3A–3D third-party verifications · [ ] 4A changelog · [ ] 5A LP commitment
+## STATUS (updated 2026-06-28)
+- [x] **1A `/proof` page LIVE** — coin-three-mu.vercel.app/proof (live self-scan LOW RISK 78, verify-yourself links, wallet map, open-source, honest yellow-flags). In nav/footer/sitemap.
+- [x] **1C honest yellow-flags** (thin-but-locked liquidity + "95.9% = locked LP, not a person") — on /proof.
+- [x] **2A open-source callout** + [x] **2B wallet map** (deployer/give-back/contract → Solscan) — on /proof.
+- [x] **5A LP commitment** — "100% locked, we can't pull it" messaging shipped on /proof + video.
+- [x] **Bot `/proof` command** — live self-scan + receipts + verify links (RugCheck/Solscan/GitHub).
+- [x] **Trust video** "Don't trust us. Verify us." (VerifyUs.tsx) → posted Telegram/X/YouTube/Instagram.
+- [ ] 1B homepage self-scan badge (embed on `/`) · [ ] 2C seed give-back (FOUNDER, ~10min)
+- [ ] 3A–3D third-party verify-socials (FOUNDER) · [ ] 4A changelog discipline

@@ -8,6 +8,23 @@ import fs from "node:fs";
 import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
 
 const PRESETS = {
+  verify: {
+    video: "gl1tch-verify-us.mp4",
+    caption: `Don't trust us. Verify us. 🛡
+
+Every meme coin says "trust us" — then rugs you. GL1TCH hands you the receipts.
+
+We built the rug-scanner, so we ran it on ourselves, live:
+$GL1TCH = LOW RISK ✅
+mint revoked · freeze revoked · 0% tax · LP 100% locked · 0% insiders · RugCheck 1
+
+Anonymous team, but the code is open and every wallet is public. Verify each claim yourself.
+
+🛡 coin-three-mu.vercel.app/proof
+💬 t.me/gl1tch_infected
+
+#crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins #glitch`,
+  },
   wallet: {
     video: "gl1tch-wallet-watch.mp4",
     caption: `Get pinged the second a whale or a dev sells. 🐋

@@ -19,6 +19,7 @@ import { AnatomyOfRug } from "./AnatomyOfRug";
 import { MultiChain } from "./MultiChain";
 import { WatchtowerHowTo, WATCHTOWER_HOWTO_FRAMES } from "./WatchtowerHowTo";
 import { WalletWatch, WALLET_WATCH_FRAMES } from "./WalletWatch";
+import { VerifyUs, VERIFY_US_FRAMES } from "./VerifyUs";
 import { ScannerUpgraded, SCANNER_UPGRADED_FRAMES } from "./ScannerUpgraded";
 import { HolderTypes } from "./HolderTypes";
 import { LoreOrigin } from "./LoreOrigin";
@@ -47,6 +48,15 @@ export const Root = () => (
       id="gl1tch-scanner-upgraded"
       component={ScannerUpgraded}
       durationInFrames={SCANNER_UPGRADED_FRAMES}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    {/* Verify Us — trust pitch: we scan ourselves live + the receipts, 9:16 ~30s */}
+    <Composition
+      id="gl1tch-verify-us"
+      component={VerifyUs}
+      durationInFrames={VERIFY_US_FRAMES}
       fps={30}
       width={1080}
       height={1920}

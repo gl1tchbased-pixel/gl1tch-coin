@@ -35,6 +35,7 @@ composition) and publish to Telegram + X + YouTube + Instagram.
 ## Posted log
 - 2026-06-27 — Multichain "6 Chains, 1 Scanner" → Telegram(#325), YouTube(shorts/HEHIPWUFEQc), Instagram, X. ✅ all 4
 - 2026-06-28 — Wallet Watch (Watchtower++) → Telegram(#355), YouTube(Short), Instagram, X. ✅ all 4
+- 2026-06-28 — "Don't Trust Us. Verify Us." (trust/proof, VerifyUs.tsx) → Telegram(#377), YouTube, Instagram, X. ✅ all 4
 
 ## How the 8h cadence actually runs (READ THIS)
 
