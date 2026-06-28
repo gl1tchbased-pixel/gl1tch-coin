@@ -16,6 +16,7 @@ export const META_DESCRIPTION =
 export const NAV_LINKS = [
   { id: "nav-scan", label: "Scanner", href: "/scan" },
   { id: "nav-proof", label: "Proof", href: "/proof" },
+  { id: "nav-radar", label: "Rug Radar", href: "/radar" },
   { id: "nav-lore", label: "Lore", href: "/lore" },
   { id: "nav-tokenomics", label: "Tokenomics", href: "/#tokenomics" },
   { id: "nav-buy", label: "How to Buy", href: "/#how-to-buy" },
@@ -29,6 +30,7 @@ export const NAV_LINKS = [
 export const FOOTER_LINKS = [
   { id: "foot-scan", label: "Scanner", href: "/scan" },
   { id: "foot-proof", label: "Proof", href: "/proof" },
+  { id: "foot-radar", label: "Rug Radar", href: "/radar" },
   { id: "foot-lore", label: "Lore", href: "/lore" },
   { id: "foot-ranks", label: "Ranks", href: "/ranks" },
   { id: "foot-live", label: "Live", href: "/live" },
