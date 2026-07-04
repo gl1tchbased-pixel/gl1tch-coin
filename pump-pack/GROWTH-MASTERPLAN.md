@@ -98,9 +98,13 @@ alternative (ads/KOLs) is the exact thing the research says fails.
   every site scan + the hourly radar sweep. Scan-to-flex card already exists (/scan/<...>).
 - [x] Bonus: stabilized $GL1TCH self-verdict (RugCheck retry + no low-confidence cache
   poisoning) so /proof, the trust badge, and radar contrast stay consistent (LOW RISK 78).
-- [ ] **B — Glitch Hunters (Zealy)** — needs the founder to open the free Zealy community;
-  then wire quests + bot/site links.
-- [ ] **D/E — embed adoption + referrals** — next buildable pillar.
+- [x] **D — Embed generator** LIVE: `/embed` — paste a token → live badge preview + copy
+  HTML/Markdown/URL snippets (badge = `/api/badge`, auto-updating, links back). Footer+sitemap.
+- [x] **E — "Infect a friend" referrals** LIVE (bot): deep links `t.me/<bot>?start=ref_<id>`,
+  `/invite` + `/leaderboard`, status-only, durable on the Railway volume (`bot/src/referrals.ts`).
+- [ ] **B — Glitch Hunters (Zealy)** — DEFERRED (premature at our size; acquisition > retention).
+  Revisit when the community is a few hundred strong. Native holder-rank ladder already covers levels.
+- [ ] **F/G — deepen holder utility + community rug DB** — later.
 
 ## 8. Proposed build order (for joint refinement)
 1. **A — Rug Radar / Hall of Shame** (highest leverage: content + virality + utility).
