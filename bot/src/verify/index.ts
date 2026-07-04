@@ -9,6 +9,7 @@ import { readTokenBalance } from "./balance.js";
 import { handleVerification } from "./flow.js";
 import { createVerifyServer, parseVerifyBody } from "./server.js";
 import { claimPendingX, ackX } from "../agent/x-agent/xqueue.js";
+import { statsStore } from "../stats.js";
 
 /** Shared store — the bot issues nonces here and the HTTP endpoint consumes them. */
 export const store = new VerifyStore();
@@ -103,9 +104,15 @@ export function startVerification(bot: Bot): Server | null {
     };
   };
 
+  statsStore.load();
   const server = createVerifyServer({
     origin: config.verify.siteOrigin,
     handle,
+    stats: {
+      token: config.stats.token,
+      get: () => statsStore.get(),
+      bump: (flagged, n, flaggedN) => statsStore.bump(flagged, n, flaggedN),
+    },
     ...(config.xBridge.token
       ? {
           xBridge: {

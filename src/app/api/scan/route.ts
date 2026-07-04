@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { scanToken, isVerified, applyVerified, rogueAiVerdict } from "@/lib/scan";
 import { searchTokens, detectChainMarket, scanEvm, GOPLUS_CHAIN } from "@/lib/scan-multichain";
+import { bumpStats } from "@/lib/stats";
 
 /**
  * GL1TCH SCANNER API — multi-chain, read-only.
@@ -63,6 +64,10 @@ export async function GET(req: NextRequest) {
     if (result) result.aiVerdict = rogueAiVerdict(result);
 
     result.scannedAt = Date.now();
+    // Feed the global counter (only confident reads count a "rug"), fire-and-forget.
+    if (typeof result.confidence !== "number" || result.confidence >= 75) {
+      bumpStats({ flagged: result.verdict === "HIGH RISK" || result.verdict === "RUG-SHAPED" });
+    }
     // A transient source timeout drops checks to "unknown" and degrades the verdict.
     // Don't let such a low-confidence read stick in the CDN cache for a full minute —
     // cache it briefly so the next request re-scans and heals.

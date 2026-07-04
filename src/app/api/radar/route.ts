@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { scanToken, applyVerified, isVerified } from "@/lib/scan";
+import { bumpStats } from "@/lib/stats";
 
 /**
  * RUG RADAR API — auto Hall of Shame. Pulls freshly-promoted ("boosted") tokens from
@@ -64,6 +65,9 @@ export async function GET() {
       });
     }
     ranked.sort((a, b) => a.score - b.score); // riskiest first
+
+    // Hourly sweep doubles as the counter's heartbeat (real scans, real catches).
+    if (scanned > 0) bumpStats({ n: scanned, flaggedN: flaggedCount });
 
     return NextResponse.json(
       { scanned, flagged: flaggedCount, caught: ranked.slice(0, 8), updatedAt: Date.now() },

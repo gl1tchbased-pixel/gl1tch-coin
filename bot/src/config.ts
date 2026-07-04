@@ -41,6 +41,10 @@ export const config = {
     // tierId -> private chat id, e.g. "infected:-1001234567890,core:-1009876543210"
     gatedChats: parseGatedChats(process.env.GATED_CHATS ?? ""),
   },
+  /** Global scan-counter: shared token guards the POST /stats/scan increment endpoint. */
+  stats: {
+    token: process.env.STATS_TOKEN ?? "",
+  },
   agent: {
     // X (OAuth 1.0a user context) — write-only daily posting.
     x: {

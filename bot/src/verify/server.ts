@@ -15,6 +15,12 @@ export interface VerifyServerOptions {
     claim: () => unknown[];
     ack: (body: unknown) => boolean;
   };
+  /** Global scan-counter endpoints: public GET /stats, token-guarded POST /stats/scan. */
+  stats?: {
+    token: string;
+    get: () => { scanned: number; flagged: number };
+    bump: (flagged: boolean, n?: number, flaggedN?: number) => void;
+  };
 }
 
 const RATE_WINDOW_MS = 60_000;
@@ -36,8 +42,8 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
   return createServer((req, res) => {
     const cors = {
       "Access-Control-Allow-Origin": opts.origin,
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, x-stats-token",
       Vary: "Origin",
     };
 
@@ -50,6 +56,39 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
     if (req.method === "GET" && req.url === "/health") {
       res.writeHead(200, { "Content-Type": "application/json", ...cors });
       res.end(JSON.stringify({ ok: true }));
+      return;
+    }
+
+    // ---- global scan counter ----
+    const sPath = (req.url ?? "").split("?")[0];
+    if (opts.stats && sPath === "/stats" && req.method === "GET") {
+      res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=15", ...cors });
+      res.end(JSON.stringify({ ok: true, ...opts.stats.get() }));
+      return;
+    }
+    if (opts.stats && sPath === "/stats/scan" && req.method === "POST") {
+      const hdr = req.headers["x-stats-token"];
+      const token = (Array.isArray(hdr) ? hdr[0] : hdr) ?? "";
+      if (!opts.stats.token || token !== opts.stats.token) {
+        res.writeHead(401, { "Content-Type": "application/json", ...cors });
+        res.end(JSON.stringify({ ok: false, error: "unauthorized" }));
+        return;
+      }
+      let sRaw = "";
+      let sTooLarge = false;
+      req.on("data", (chunk) => { sRaw += chunk; if (sRaw.length > 2048) { sTooLarge = true; req.destroy(); } });
+      req.on("end", () => {
+        if (sTooLarge) return;
+        try {
+          const b = sRaw ? (JSON.parse(sRaw) as { flagged?: boolean; n?: number; flaggedN?: number }) : {};
+          opts.stats!.bump(!!b.flagged, typeof b.n === "number" ? b.n : 1, typeof b.flaggedN === "number" ? b.flaggedN : 0);
+          res.writeHead(200, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify({ ok: true }));
+        } catch {
+          res.writeHead(400, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify({ ok: false, error: "bad_json" }));
+        }
+      });
       return;
     }
 

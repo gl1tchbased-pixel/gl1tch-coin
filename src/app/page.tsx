@@ -17,11 +17,15 @@ import { FAQ } from "@/components/sections/FAQ";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { MobileCTABar } from "@/components/layout/MobileCTABar";
 import { Marquee } from "@/components/effects/Marquee";
+import { LiveCounter } from "@/components/web3/LiveCounter";
 
 export default function Home() {
   return (
     <>
       <Hero />
+      <div className="container" style={{ paddingBlock: "var(--space-6)" }}>
+        <LiveCounter />
+      </div>
       <StatsCounter />
       <LiveMarket />
       <Manifesto />
