@@ -90,6 +90,18 @@ builds a *machine* that compounds: the scanner earns trust → trust earns share
 earn community → community earns holders → holders fund depth. Free, slow, real. The
 alternative (ads/KOLs) is the exact thing the research says fails.
 
+## STATUS (2026-07-04)
+- [x] **A — Rug Radar** LIVE (`/radar` + `/api/radar`): live risk-ranked board of fresh
+  launches, HIGH RISK ones badged "⚠ CAUGHT". Honest (real verdicts, DYOR).
+- [x] **C — Live counter** LIVE: homepage "X scanned · Y rugs caught" band, persisted on
+  the bot Railway volume (bot `GET /stats` + token-guarded `POST /stats/scan`), fed by
+  every site scan + the hourly radar sweep. Scan-to-flex card already exists (/scan/<...>).
+- [x] Bonus: stabilized $GL1TCH self-verdict (RugCheck retry + no low-confidence cache
+  poisoning) so /proof, the trust badge, and radar contrast stay consistent (LOW RISK 78).
+- [ ] **B — Glitch Hunters (Zealy)** — needs the founder to open the free Zealy community;
+  then wire quests + bot/site links.
+- [ ] **D/E — embed adoption + referrals** — next buildable pillar.
+
 ## 8. Proposed build order (for joint refinement)
 1. **A — Rug Radar / Hall of Shame** (highest leverage: content + virality + utility).
 2. **B — Glitch Hunters on Zealy** (the activity engine that retains).
