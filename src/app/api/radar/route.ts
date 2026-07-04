@@ -11,20 +11,21 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
 
-const RISKY = new Set(["HIGH RISK", "RUG-SHAPED", "CAUTION"]);
+const FLAGGED = new Set(["HIGH RISK", "RUG-SHAPED"]);
 const withTimeout = <T,>(p: Promise<T>, ms: number) =>
   Promise.race([p, new Promise<null>((r) => setTimeout(() => r(null), ms))]);
 
 type Caught = {
   chain: string; mint: string; name: string; symbol: string;
-  verdict: string; score: number; reason: string;
+  verdict: string; score: number; reason: string; flagged: boolean;
 };
 
 function topReason(checks: { label: string; status: string; value: string; explain?: string }[]): string {
   const fail = checks.find((c) => c.status === "fail");
   if (fail) return `${fail.label}: ${fail.value}`;
   const warn = checks.find((c) => c.status === "warn");
-  return warn ? `${warn.label}: ${warn.value}` : "multiple risk flags";
+  if (warn) return `${warn.label}: ${warn.value}`;
+  return "passed contract checks · still DYOR";
 }
 
 export async function GET() {
@@ -47,24 +48,25 @@ export async function GET() {
     );
 
     let scanned = 0;
-    const caught: Caught[] = [];
+    let flaggedCount = 0;
+    const ranked: Caught[] = [];
     for (const s of scans) {
       if (!s) continue;
       scanned++;
-      if (RISKY.has(s.verdict) || s.score < 60) {
-        caught.push({
-          chain: s.chain, mint: s.mint,
-          name: s.name || s.symbol || s.mint.slice(0, 6),
-          symbol: s.symbol || "",
-          verdict: s.verdict, score: s.score,
-          reason: topReason(s.checks),
-        });
-      }
+      const flagged = FLAGGED.has(s.verdict);
+      if (flagged) flaggedCount++;
+      ranked.push({
+        chain: s.chain, mint: s.mint,
+        name: s.name || s.symbol || s.mint.slice(0, 6),
+        symbol: s.symbol || "",
+        verdict: s.verdict, score: s.score,
+        reason: topReason(s.checks), flagged,
+      });
     }
-    caught.sort((a, b) => a.score - b.score); // worst first
+    ranked.sort((a, b) => a.score - b.score); // riskiest first
 
     return NextResponse.json(
-      { scanned, flagged: caught.length, caught: caught.slice(0, 8), updatedAt: Date.now() },
+      { scanned, flagged: flaggedCount, caught: ranked.slice(0, 8), updatedAt: Date.now() },
       { headers: { "cache-control": "public, s-maxage=3600, stale-while-revalidate=7200" } }
     );
   } catch (e) {

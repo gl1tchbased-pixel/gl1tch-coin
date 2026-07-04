@@ -9,11 +9,15 @@ import styles from "./RugRadar.module.css";
  * stream of shareable cards. Each links to its full report.
  */
 
-type Caught = { chain: string; mint: string; name: string; symbol: string; verdict: string; score: number; reason: string };
+type Caught = { chain: string; mint: string; name: string; symbol: string; verdict: string; score: number; reason: string; flagged: boolean };
 type Radar = { scanned: number; flagged: number; caught: Caught[] };
 
-function vtone(v: string): "warn" | "bad" {
-  return v.toUpperCase().includes("CAUTION") ? "warn" : "bad";
+function vtone(v: string): "good" | "ok" | "warn" | "bad" {
+  const u = v.toUpperCase();
+  if (u.includes("RUG") || u.includes("HIGH")) return "bad";
+  if (u.includes("CAUTION")) return "warn";
+  if (u.includes("CLEAN")) return "good";
+  return "ok";
 }
 const short = (a: string) => `${a.slice(0, 4)}…${a.slice(-4)}`;
 
@@ -51,18 +55,19 @@ export function RugRadar() {
         <div className={styles.statSep} />
         <div className={styles.stat}>
           <span className={`${styles.num} ${styles.bad}`}>{data.flagged}</span>
-          <span className={styles.lbl}>flagged risky</span>
+          <span className={styles.lbl}>flagged HIGH RISK+</span>
         </div>
       </div>
 
       {data.caught.length === 0 ? (
-        <p className={styles.note}>No fresh catches this sweep — the radar refreshes hourly. <a href="/scan" className={styles.link}>Scan one yourself →</a></p>
+        <p className={styles.note}>Radar is mid-sweep — it refreshes hourly. <a href="/scan" className={styles.link}>Scan one yourself →</a></p>
       ) : (
         <div className={styles.grid}>
           {data.caught.map((c) => {
             const t = vtone(c.verdict);
             return (
               <a key={c.mint} href={`/scan/${c.chain}-${c.mint}`} className={`${styles.card} ${styles[`t_${t}`]}`}>
+                {c.flagged && <span className={styles.ribbon}>⚠ CAUGHT</span>}
                 <div className={styles.cardTop}>
                   <span className={styles.name}>{c.symbol ? `$${c.symbol}` : c.name}</span>
                   <span className={`${styles.verdict} ${styles[`v_${t}`]}`}>{c.verdict}</span>

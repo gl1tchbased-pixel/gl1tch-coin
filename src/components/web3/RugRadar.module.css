@@ -22,6 +22,7 @@
   gap: var(--space-4);
 }
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -30,20 +31,40 @@
   border: 1px solid var(--color-border);
   background: var(--color-surface);
   transition: border-color 0.15s, transform 0.15s;
+  overflow: hidden;
 }
 .card:hover { transform: translateY(-2px); }
 .t_bad { border-color: rgba(255, 79, 79, 0.3); }
 .t_bad:hover { border-color: rgba(255, 79, 79, 0.6); }
 .t_warn { border-color: rgba(255, 196, 79, 0.3); }
 .t_warn:hover { border-color: rgba(255, 196, 79, 0.6); }
+.t_ok { border-color: var(--color-border-signal); }
+.t_ok:hover { border-color: rgba(124, 255, 79, 0.5); }
+.t_good { border-color: rgba(124, 255, 79, 0.35); }
+.t_good:hover { border-color: rgba(124, 255, 79, 0.6); }
+
+.ribbon {
+  position: absolute;
+  top: 12px; right: -34px;
+  transform: rotate(45deg);
+  background: var(--color-danger);
+  color: #050505;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 4px 40px;
+}
 
 .cardTop { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .name { font-weight: 800; font-size: 18px; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .verdict { font-family: var(--font-mono); font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: var(--radius-sm); white-space: nowrap; }
 .v_bad { color: var(--color-danger); }
 .v_warn { color: #ffc44f; }
+.v_ok, .v_good { color: var(--color-signal); }
 .verdict.v_bad { background: rgba(255, 79, 79, 0.1); }
 .verdict.v_warn { background: rgba(255, 196, 79, 0.1); }
+.verdict.v_ok, .verdict.v_good { background: var(--color-signal-dim); }
 
 .scoreRow { display: flex; align-items: baseline; justify-content: space-between; }
 .score { font-family: var(--font-mono); font-size: 34px; font-weight: 800; }

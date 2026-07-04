@@ -3,9 +3,9 @@ import { RugRadar } from "@/components/web3/RugRadar";
 import { LiveTrustBadge } from "@/components/web3/LiveTrustBadge";
 
 export const metadata: Metadata = {
-  title: "Rug Radar — scams GL1TCH just caught | GL1TCH",
+  title: "Rug Radar — live risk scan of fresh launches | GL1TCH",
   description:
-    "Live Hall of Shame: tokens the GL1TCH scanner just flagged as risky, pulled from freshly-promoted coins. Proof the rug-scanner works — on real targets, updated hourly. Free & non-custodial.",
+    "The GL1TCH scanner sweeps freshly-promoted tokens and ranks them by risk, live. The ones it flags HIGH RISK get the ⚠. Real targets, refreshed hourly, free & non-custodial. A risk signal — always DYOR.",
   alternates: { canonical: "/radar" },
 };
 
@@ -15,12 +15,13 @@ export default function RadarPage() {
       <div style={{ textAlign: "center", marginBottom: "var(--space-8)" }}>
         <span className="t-eyebrow">Rug Radar</span>
         <h1 className="t-h1" style={{ marginTop: "var(--space-3)" }}>
-          Scams we <span style={{ color: "var(--color-danger)" }}>just caught</span>.
+          The riskiest <span style={{ color: "var(--color-danger)" }}>fresh launches</span>, live.
         </h1>
-        <p className="t-body-lg" style={{ color: "var(--text-secondary)", maxWidth: 660, margin: "var(--space-4) auto 0" }}>
-          The radar sweeps freshly-promoted tokens and runs each through the GL1TCH
-          scanner. Here&apos;s what it flagged — live, on real targets, refreshed hourly.
-          The only &quot;scams we caught&quot; feed in the meme space.
+        <p className="t-body-lg" style={{ color: "var(--text-secondary)", maxWidth: 680, margin: "var(--space-4) auto 0" }}>
+          The radar sweeps freshly-promoted tokens, runs each through the GL1TCH scanner,
+          and ranks them riskiest-first — refreshed hourly. The ones it flags{" "}
+          <strong style={{ color: "var(--text-primary)" }}>HIGH RISK</strong> get the ⚠.
+          A risk signal on real targets, not financial advice — always DYOR.
         </p>
       </div>
 
