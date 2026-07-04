@@ -256,8 +256,18 @@ interface RugReport {
 async function getRugcheck(mint: string, signal?: AbortSignal): Promise<RugReport> {
   const empty: RugReport = { score: null, risks: [], lpLockedPct: null, mutable: null, topHolderPct: null, top10Pct: null, insiderPct: null, insiderCount: null, holderCount: null, creator: null, deployPlatform: null, deployerCreated: null, deployerDead: null };
   try {
-    const res = await fetch(`https://api.rugcheck.xyz/v1/tokens/${mint}/report`, { signal, headers: { accept: "application/json" } });
-    if (!res.ok) return empty;
+    // RugCheck can be slow/flaky; one retry with a per-attempt timeout so a single
+    // sluggish response doesn't drop all of its checks to "unknown" and tank the score.
+    let res: Response | null = null;
+    for (let attempt = 0; attempt < 2 && !res; attempt++) {
+      try {
+        const to = AbortSignal.timeout(6500);
+        const sig = signal ? AbortSignal.any([signal, to]) : to;
+        const r = await fetch(`https://api.rugcheck.xyz/v1/tokens/${mint}/report`, { signal: sig, headers: { accept: "application/json" } });
+        if (r.ok) { res = r; break; }
+      } catch { /* retry once */ }
+    }
+    if (!res) return empty;
     const j = (await res.json()) as {
       score_normalised?: number; score?: number;
       risks?: Array<{ name?: string; level?: string }>;
@@ -316,7 +326,7 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
   const [mintInfo, market, rug] = await Promise.all([
     getMint(mint, signal), // must succeed (throws "mint not found" if invalid)
     withTimeout(getMarket(mint, signal), 9000, { name: null, symbol: null, priceUsd: null, marketCap: null, liquidityUsd: null, volume24h: null, ageDays: null, priceChange24h: null }),
-    withTimeout(getRugcheck(mint, signal), 9000, EMPTY_RUG),
+    withTimeout(getRugcheck(mint, signal), 14000, EMPTY_RUG),
   ]);
   const conc = await withTimeout(getConcentration(mint, mintInfo.supply, signal), 8000, { topHolderPct: null, top10Pct: null });
 

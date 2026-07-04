@@ -63,7 +63,14 @@ export async function GET(req: NextRequest) {
     if (result) result.aiVerdict = rogueAiVerdict(result);
 
     result.scannedAt = Date.now();
-    return NextResponse.json(result, { headers: { "cache-control": "public, s-maxage=60, stale-while-revalidate=120" } });
+    // A transient source timeout drops checks to "unknown" and degrades the verdict.
+    // Don't let such a low-confidence read stick in the CDN cache for a full minute —
+    // cache it briefly so the next request re-scans and heals.
+    const cache =
+      typeof result.confidence === "number" && result.confidence < 75
+        ? "public, s-maxage=10, stale-while-revalidate=30"
+        : "public, s-maxage=60, stale-while-revalidate=120";
+    return NextResponse.json(result, { headers: { "cache-control": cache } });
   } catch (e) {
     return NextResponse.json({ error: e instanceof Error ? e.message : "scan failed", mint }, { status: 422 });
   }
