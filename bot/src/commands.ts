@@ -5,8 +5,12 @@ import { getSection } from "./sections.js";
 import { isVerifyEnabled } from "./config.js";
 import { store } from "./verify/index.js";
 import { RANK_TIERS } from "./ranks.js";
+import { referralStore } from "./referrals.js";
 
 export const publicCommands = new Composer<Context>();
+
+const displayName = (ctx: Context): string =>
+  ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name || "Infected");
 
 const HTML = {
   parse_mode: "HTML" as const,
@@ -14,7 +18,56 @@ const HTML = {
 };
 
 publicCommands.command("start", async (ctx) => {
+  // Referral deep link: t.me/<bot>?start=ref_<referrerId>
+  const payload = (ctx.match || "").trim();
+  const uid = ctx.from?.id ? String(ctx.from.id) : "";
+  const m = /^ref_(\d{3,})$/.exec(payload);
+  if (m && uid) {
+    const referrerId = m[1];
+    if (referralStore.record(referrerId, uid)) {
+      const count = referralStore.count(referrerId);
+      try {
+        await ctx.api.sendMessage(
+          Number(referrerId),
+          `🧬 <b>+1 infected.</b> Someone joined through your link — you've infected <b>${count}</b> now.\nClimb the board: <code>/leaderboard</code>`,
+          HTML
+        );
+      } catch { /* referrer may have blocked DMs */ }
+    }
+  }
   await ctx.reply(messages.welcome, { ...HTML, reply_markup: startKb() });
+});
+
+publicCommands.command("invite", async (ctx) => {
+  const uid = ctx.from?.id ? String(ctx.from.id) : "";
+  if (!uid) return;
+  referralStore.setName(uid, displayName(ctx));
+  const bot = ctx.me?.username ?? "gl1tch_infected_bot";
+  const link = `https://t.me/${bot}?start=ref_${uid}`;
+  const count = referralStore.count(uid);
+  const rank = referralStore.rank(uid);
+  const rankLine = count > 0 ? `You're <b>#${rank}</b> with <b>${count}</b> infected.` : "No infections yet — share your link to climb the board.";
+  await ctx.reply(
+    `🧬 <b>INFECT A FRIEND</b>\n\nEvery person who joins through your link makes you climb the board. Pure status — no wallet needed.\n\nYour link:\n${link}\n\n${rankLine}\n\n<code>/leaderboard</code> — top infectors`,
+    { ...HTML, reply_markup: new InlineKeyboard().url("Share my link ↗", `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent("Join The Infected 🧬 — free rug-scanner + rogue-AI meme on Solana")}`) }
+  );
+});
+
+publicCommands.command("leaderboard", async (ctx) => {
+  const uid = ctx.from?.id ? String(ctx.from.id) : "";
+  const top = referralStore.leaderboard(10);
+  if (!top.length) {
+    await ctx.reply("🧬 No infectors yet. Be the first — <code>/invite</code>", HTML);
+    return;
+  }
+  const medal = (i: number) => (i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i + 1}.`);
+  const rows = top.map((r, i) => `${medal(i)} ${r.name} — <b>${r.count}</b>`);
+  let mine = "";
+  if (uid) {
+    const c = referralStore.count(uid);
+    if (c > 0) mine = `\n\nYou: <b>#${referralStore.rank(uid)}</b> · ${c} infected`;
+  }
+  await ctx.reply(`🧬 <b>TOP INFECTORS</b>\n\n${rows.join("\n")}${mine}\n\n<code>/invite</code> to get your link · ${referralStore.total()} total infections`, HTML);
 });
 
 publicCommands.command("menu", async (ctx) => {

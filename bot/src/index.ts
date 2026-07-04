@@ -5,6 +5,7 @@ import { publicCommands } from "./commands.js";
 import { scanCommands, autoScan } from "./scan.js";
 import { watchCommands, startWatchtower } from "./watch/index.js";
 import { walletCommands } from "./watch/wallet.js";
+import { referralStore } from "./referrals.js";
 import { callbacks } from "./callbacks.js";
 import { xCallbacks } from "./agent/x-agent/handlers.js";
 import { adminCommands } from "./admin.js";
@@ -79,6 +80,8 @@ async function main() {
     { command: "watchwallet", description: "🐋 Watch a wallet — alert on whale/dev sells" },
     { command: "wallets", description: "🐋 Your watched wallets" },
     { command: "unwatchwallet", description: "🚫 Stop watching a wallet" },
+    { command: "invite", description: "🧬 Get your invite link — infect a friend" },
+    { command: "leaderboard", description: "🧬 Top infectors" },
     { command: "menu", description: "Open the control menu" },
     { command: "rank", description: "Rank ladder & verification" },
     { command: "verify", description: "Link wallet to verify your rank" },
@@ -91,6 +94,7 @@ async function main() {
     { command: "submit", description: "Submit a meme/content" },
     { command: "support", description: "How to get help" },
   ]);
+  referralStore.load();
   startVerification(bot);
   startAgent(bot);
   startWatchtower(bot);
