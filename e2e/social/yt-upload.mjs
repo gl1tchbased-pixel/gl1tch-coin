@@ -216,22 +216,30 @@ await notForKids.click({ timeout: 10_000 }).catch(() => console.log("[yt] not-fo
 await page.waitForTimeout(600);
 await shot(page, "yt-3-filled.png");
 
-// Next × 3 (Details → Video elements → Checks → Visibility).
-for (let i = 0; i < 3; i++) {
-  const next = page.locator("#next-button").first();
-  await next.click({ timeout: 15_000 }).catch(() => console.log(`[yt] next ${i + 1} click missed`));
-  await page.waitForTimeout(1800);
+// Advance to Görünürlük (Visibility): click İleri/Next until the Public option or the
+// Publish button is visible. Text/role selectors — ids differ per Studio build and left
+// videos stuck as drafts. TR + EN.
+const pubRadio = () => page.getByRole("radio", { name: /Herkese açık|Public/i }).first();
+const publishBtn = () => page.getByRole("button", { name: /^Yayınla$|^Publish$/i }).first();
+for (let i = 0; i < 4; i++) {
+  const seen = (await pubRadio().count() && await pubRadio().isVisible().catch(() => false)) ||
+               (await publishBtn().count() && await publishBtn().isVisible().catch(() => false));
+  if (seen) break;
+  await page.getByRole("button", { name: /^İleri$|^Next$/i }).first().click({ timeout: 12_000 }).catch(() => console.log(`[yt] next ${i + 1} click missed`));
+  await page.waitForTimeout(1700);
 }
 await shot(page, "yt-4-visibility.png");
 
 // Public.
-const pub = page.locator('tp-yt-paper-radio-button[name="PUBLIC"], #privacy-radios [name="PUBLIC"]').first();
-await pub.click({ timeout: 10_000 }).catch(() => console.log("[yt] public radio not found"));
-await page.waitForTimeout(800);
+await pubRadio().click({ timeout: 10_000 }).catch(async () => {
+  await page.locator('tp-yt-paper-radio-button[name="PUBLIC"]').first().click({ timeout: 5000 }).catch(() => console.log("[yt] public radio not found"));
+});
+await page.waitForTimeout(900);
 
-// Publish.
-const done = page.locator("#done-button").first();
-await done.click({ timeout: 15_000 }).catch(() => console.log("[yt] done button missed"));
+// Publish (Yayınla).
+await publishBtn().click({ timeout: 12_000 }).catch(async () => {
+  await page.locator("#done-button").first().click({ timeout: 5000 }).catch(() => console.log("[yt] done button missed"));
+});
 await page.waitForTimeout(4000);
 
 // CRITICAL: the file may still be UPLOADING after Publish. Closing the tab mid-
