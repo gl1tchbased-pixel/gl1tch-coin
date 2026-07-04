@@ -21,6 +21,7 @@ import { WatchtowerHowTo, WATCHTOWER_HOWTO_FRAMES } from "./WatchtowerHowTo";
 import { WalletWatch, WALLET_WATCH_FRAMES } from "./WalletWatch";
 import { VerifyUs, VERIFY_US_FRAMES } from "./VerifyUs";
 import { RugRadarVideo, RUG_RADAR_FRAMES } from "./RugRadarVideo";
+import { ProductTour, PRODUCT_TOUR_FRAMES } from "./ProductTour";
 import { ScannerUpgraded, SCANNER_UPGRADED_FRAMES } from "./ScannerUpgraded";
 import { HolderTypes } from "./HolderTypes";
 import { LoreOrigin } from "./LoreOrigin";
@@ -49,6 +50,15 @@ export const Root = () => (
       id="gl1tch-scanner-upgraded"
       component={ScannerUpgraded}
       durationInFrames={SCANNER_UPGRADED_FRAMES}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    {/* Product Tour — everything the site does, chapter by chapter, 9:16 ~42s */}
+    <Composition
+      id="gl1tch-product-tour"
+      component={ProductTour}
+      durationInFrames={PRODUCT_TOUR_FRAMES}
       fps={30}
       width={1080}
       height={1920}

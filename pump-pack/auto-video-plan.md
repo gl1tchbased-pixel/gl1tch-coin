@@ -46,3 +46,4 @@ a headless server). If the session/machine is off, no auto-post happens — that
 is just skipped, not queued. When the session is alive it fires every 8h at :11 and
 runs the next queued concept end-to-end (build → render → post to all 4).
 - 2026-07-05 — "Rug Radar: it hunts" (RugRadarVideo.tsx) → Telegram(#452), YouTube(gvQ-2bP6u6s), Instagram, X. ✅ all 4
+- 2026-07-05 — "Full Product Tour" (ProductTour.tsx, ~38s: scan/radar/watchtower/wallet/proof/embed/hold) → Telegram(#453), YouTube, Instagram, X. ✅ all 4

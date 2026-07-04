@@ -8,6 +8,25 @@ import fs from "node:fs";
 import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
 
 const PRESETS = {
+  tour: {
+    video: "gl1tch-product-tour.mp4",
+    caption: `Everything GL1TCH does — in 40 seconds. 👁
+
+One free, non-custodial tool:
+🔍 Scan any token, any chain — plain-English verdict
+📡 Rug Radar — it hunts fresh rugs live
+👁 Watchtower — pinged if a token's safety drops
+🐋 Wallet Watch — whale & dev sell alerts
+🛡 Proof — we pass our own scanner
+</> Embed the badge on your site · 🧬 hold to unlock more
+
+Free. Non-custodial. It never touches your wallet.
+
+🌐 coin-three-mu.vercel.app
+💬 t.me/gl1tch_infected
+
+#crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins #glitch`,
+  },
   radar: {
     video: "gl1tch-rug-radar.mp4",
     caption: `Most scanners wait. GL1TCH hunts. 📡
