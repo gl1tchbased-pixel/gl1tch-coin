@@ -8,6 +8,21 @@ import fs from "node:fs";
 import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
 
 const PRESETS = {
+  radar: {
+    video: "gl1tch-rug-radar.mp4",
+    caption: `Most scanners wait. GL1TCH hunts. 📡
+
+Rug Radar sweeps fresh Solana launches every hour and flags the rugs — live. Riskiest first; the HIGH RISK ones get the ⚠ CAUGHT badge.
+
+It just caught $DON'T and $Tete (RUG-SHAPED) before anyone aped.
+
+Clean token? Add the free "Scanned by GL1TCH" badge to your site.
+
+📡 coin-three-mu.vercel.app/radar
+💬 t.me/gl1tch_infected
+
+#crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins #glitch`,
+  },
   verify: {
     video: "gl1tch-verify-us.mp4",
     caption: `Don't trust us. Verify us. 🛡
