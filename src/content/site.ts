@@ -31,6 +31,7 @@ export const FOOTER_LINKS = [
   { id: "foot-scan", label: "Scanner", href: "/scan" },
   { id: "foot-proof", label: "Proof", href: "/proof" },
   { id: "foot-radar", label: "Rug Radar", href: "/radar" },
+  { id: "foot-embed", label: "Embed Badge", href: "/embed" },
   { id: "foot-lore", label: "Lore", href: "/lore" },
   { id: "foot-ranks", label: "Ranks", href: "/ranks" },
   { id: "foot-live", label: "Live", href: "/live" },
