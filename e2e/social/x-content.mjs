@@ -142,8 +142,102 @@ $GL1TCH reads the flags: insider bundling, sniper clusters, fake liquidity, muta
 ${SITE}/scan`,
 ];
 
+// Multi-tweet threads — far higher reach than single tweets. Each inner array is one thread
+// (tweet 1 = the hook, each <=280). Posted on thread days (see x-daily). Investor-facing.
+export const THREADS = [
+  // The investment thesis
+  [
+    `Most memecoins are a bet on attention. It fades, the chart dies.
+
+$GL1TCH is a bet on a product people actually use — a free multi-chain rug scanner with a memory.
+
+Why that's a different kind of bet 🧵`,
+    `1/ The product is real and live.
+
+Paste any token, any chain → plain-English safety verdict in seconds. Mint/freeze authority, LP lock, holder spread, honeypot traps, deployer history.
+
+Free. Non-custodial. Try it now: ${SITE}/scan`,
+    `2/ It has a moat memes don't: memory.
+
+The Signal Graph remembers every deployer we've scanned. A wallet that shipped rugs before gets flagged on its NEXT token — before anyone buys. No single-token scanner (RugCheck, GoPlus) can do this.`,
+    `3/ The tokenomics are rug-proof by design.
+
+Mint & freeze authority revoked. 0% tax. Fixed 1B supply. RugCheck: Low risk, 0 flags. We scanned our own token live and published it.
+
+The thing that warns you about rugs can't be one.`,
+    `4/ Utility that compounds, not a one-off gimmick.
+
+Rug Radar (live hunting), Watchtower (alerts), Proof-of-Signal (earned reputation), a Telegram bot. Every scan makes the graph smarter.
+
+Judge the product, not the promise: ${SITE}`,
+    `5/ Not financial advice — crypto is high-risk, always DYOR.
+
+But if you're going to be in memecoins, be in one building something people open every day.
+
+$GL1TCH — the rogue-AI that works for holders, not deployers.
+${SITE}`,
+  ],
+  // Educational: how not to get rugged (pure value → reach + follows)
+  [
+    `You don't need to be technical to avoid 90% of rugs.
+
+5 checks that take 30 seconds — a thread that could save your next bag 🧵`,
+    `1/ Can the dev mint more tokens?
+
+If the mint authority isn't revoked, they can print supply and dump on you. This is the #1 rug mechanic. Non-negotiable: it must be revoked.`,
+    `2/ Can they freeze your wallet?
+
+An active freeze authority means they can stop YOU from selling while they exit. Must be revoked too.`,
+    `3/ Is the liquidity locked — and how deep?
+
+Unlocked LP = the dev can pull it and the price goes to zero instantly. Shallow LP = one whale exit nukes you.`,
+    `4/ Who holds the supply?
+
+If the top few wallets hold most of it (insiders/snipers/bundled), they control your exit. Concentration is a red flag.`,
+    `5/ Has this deployer rugged before?
+
+The hardest to check manually — and the most predictive. Serial ruggers reuse wallets.
+
+All 5, automated + free, any chain: ${SITE}/scan. DYOR.`,
+  ],
+  // Signal Graph deep-dive (the differentiator)
+  [
+    `Every token scanner has the same blind spot: it checks one token, then forgets.
+
+So serial ruggers just spin up a new wallet and do it again.
+
+We fixed that. 🧵`,
+    `1/ Meet the Signal Graph.
+
+Every token $GL1TCH scans, we remember — linked to the wallet that deployed it, and how it scored. External APIs forget. We don't.`,
+    `2/ Here's the edge:
+
+When a deployer has shipped 2+ tokens we've flagged, ANY fresh token from that wallet lights up as ⚠ Serial deployer — instantly, before it has a chart, before anyone apes.`,
+    `3/ It compounds.
+
+Every scan — from the website or the Telegram bot — feeds the graph. The more it's used, the smarter it gets. A network effect on rug detection.`,
+    `4/ And it stays free.
+
+Scanning + the verdict are free for everyone, never gated behind holding $GL1TCH. Holding unlocks convenience, never the protection.
+
+See it: ${SITE}/scan`,
+  ],
+];
+
 /** Deterministic day index → post, walking the whole set before repeating. */
 export function postForDay(date = new Date()) {
   const dayNum = Math.floor(Date.parse(date.toISOString().slice(0, 10)) / 86400000);
   return POSTS[((dayNum % POSTS.length) + POSTS.length) % POSTS.length];
+}
+
+/** Thread for the day (rotates), used on thread days. */
+export function threadForDay(date = new Date()) {
+  const dayNum = Math.floor(Date.parse(date.toISOString().slice(0, 10)) / 86400000);
+  return THREADS[((dayNum % THREADS.length) + THREADS.length) % THREADS.length];
+}
+
+/** True on thread days (Mon & Thu) — a thread instead of a single post, for reach. */
+export function isThreadDay(date = new Date()) {
+  const dow = new Date(date.toISOString().slice(0, 10)).getUTCDay(); // 0 Sun … 6 Sat
+  return dow === 1 || dow === 4;
 }
