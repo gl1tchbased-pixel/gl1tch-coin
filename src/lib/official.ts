@@ -48,6 +48,10 @@ export const links = {
   dexscreener: CONTRACT_ADDRESS
     ? `https://dexscreener.com/solana/${CONTRACT_ADDRESS}`
     : "",
+  // Verified GeckoTerminal listing (token-info update approved 2026-07-05).
+  geckoterminal: CONTRACT_ADDRESS
+    ? `https://www.geckoterminal.com/solana/tokens/${CONTRACT_ADDRESS}`
+    : "",
   pumpfun: CONTRACT_ADDRESS ? `https://pump.fun/coin/${CONTRACT_ADDRESS}` : "",
   rugcheck: CONTRACT_ADDRESS
     ? `https://rugcheck.xyz/tokens/${CONTRACT_ADDRESS}`

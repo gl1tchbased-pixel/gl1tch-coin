@@ -108,6 +108,9 @@ export default function LinksPage() {
             {officialLinks.dexscreener && (
               <a href={officialLinks.dexscreener} target="_blank" rel="noopener noreferrer">DEXScreener ↗</a>
             )}
+            {officialLinks.geckoterminal && (
+              <a href={officialLinks.geckoterminal} target="_blank" rel="noopener noreferrer">GeckoTerminal ↗</a>
+            )}
             {officialLinks.rugcheck && (
               <a href={officialLinks.rugcheck} target="_blank" rel="noopener noreferrer">RugCheck ↗</a>
             )}

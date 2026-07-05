@@ -47,7 +47,7 @@ export const roadmapPhases: RoadmapPhase[] = [
     title: "Scale & Entrench",
     items: [
       "Holder-gated depth: more Watchtower slots by rank — live; expanding holder perks",
-      "Free listings: CoinGecko & GeckoTerminal token info — submitted & in review; DexScreener as volume returns",
+      "Free listings: GeckoTerminal token info — verified & live; CoinGecko in review; DexScreener as volume returns",
       "Content flywheel (fresh explainer every cycle) + transparent, seeded give-back wallet",
       "Public-API adoption (“Scanned by GL1TCH” embeds), liquidity depth & partnerships as volume justifies",
     ],
