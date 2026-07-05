@@ -73,6 +73,37 @@ export default function AgentsPage() {
         </div>
       </section>
 
+      {/* Roadmap + honest economics */}
+      <section className={styles.block}>
+        <h2 className={styles.h2}>The stack — what&apos;s live, what&apos;s next</h2>
+        <div className={styles.grid}>
+          <div className={styles.card}>
+            <h3 className={styles.cardT}>Live now</h3>
+            <p className={styles.cardD}>
+              <strong>Identity</strong> (sign-to-register), <strong>Provenance &amp; Reputation</strong>
+              (Signal Graph track record), and the <strong>Guardrail</strong> (check API + embeddable
+              badge). Free.
+            </p>
+          </div>
+          <div className={styles.card}>
+            <h3 className={styles.cardT}>Next</h3>
+            <p className={styles.cardD}>
+              Capability &amp; authority attestations, a recourse/dispute registry, and awareness for
+              the 2026 agent threat that isn&apos;t a contract bug — <strong>memory-layer poisoning</strong>
+              (OWASP Agentic Top-10 ASI06).
+            </p>
+          </div>
+          <div className={styles.card}>
+            <h3 className={styles.cardT}>Economics, honestly</h3>
+            <p className={styles.cardD}>
+              Token mechanics alone don&apos;t create value — only <strong>real revenue</strong> does.
+              So depth (bulk queries, the guardrail API) becomes paid usage; a public, rules-based
+              buyback activates once revenue is real. No points, no airdrop loops.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Developer / integration — the infrastructure story */}
       <section className={styles.block}>
         <h2 className={styles.h2}>Build on it</h2>
@@ -96,6 +127,13 @@ const signature = bs58.encode(nacl.sign.detached(utf8(msg), secretKey));
 
 POST /api/agent/register
 { address, chain: "solana", issued, signature }`}</pre>
+        </div>
+        <div className={styles.code}>
+          <div className={styles.codeHead}>Guardrail widget — drop a live trust badge anywhere</div>
+          <pre>{`<a href="https://coin-three-mu.vercel.app/agents">
+  <img src="https://coin-three-mu.vercel.app/api/agent/badge?address=<wallet>&chain=solana"
+       alt="GL1TCH Agent Trust" width="360" height="84" />
+</a>`}</pre>
         </div>
         <p className={styles.cardD} style={{ marginTop: "var(--space-3)", fontSize: "0.85rem", opacity: 0.7 }}>
           v1 — read + register are live and free. Guardrail SDK, attestation network, and
