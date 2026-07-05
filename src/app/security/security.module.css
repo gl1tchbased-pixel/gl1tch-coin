@@ -1,0 +1,122 @@
+.accent {
+  color: var(--accent, #7cf6c8);
+}
+
+.block {
+  margin-top: var(--space-12, 3rem);
+}
+
+.h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: var(--space-5, 1.25rem);
+  letter-spacing: -0.01em;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-4, 1rem);
+}
+
+.card {
+  position: relative;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  border-radius: 14px;
+  padding: var(--space-5, 1.25rem);
+  background: var(--surface-1, rgba(255, 255, 255, 0.02));
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(124, 246, 200, 0.14);
+  color: var(--accent, #7cf6c8);
+  font-size: 0.8rem;
+  font-weight: 800;
+  margin-bottom: var(--space-3, 0.75rem);
+}
+
+.cardT {
+  font-size: 1.02rem;
+  font-weight: 650;
+  margin-bottom: var(--space-2, 0.5rem);
+}
+
+.cardD {
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: var(--text-secondary, #a8b0bd);
+}
+
+.principles {
+  display: grid;
+  gap: var(--space-3, 0.75rem);
+}
+
+.principle {
+  border-left: 3px solid var(--accent, #7cf6c8);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  background: var(--surface-1, rgba(255, 255, 255, 0.02));
+  border-radius: 0 12px 12px 0;
+}
+
+.warn {
+  border: 1px solid rgba(255, 176, 80, 0.35);
+  background: rgba(255, 176, 80, 0.06);
+  border-radius: 14px;
+  padding: var(--space-6, 1.5rem);
+}
+
+.list {
+  margin: var(--space-3, 0.75rem) 0 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: var(--space-3, 0.75rem);
+}
+
+.list li {
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: var(--text-secondary, #a8b0bd);
+}
+
+.list a,
+.cardD a {
+  color: var(--accent, #7cf6c8);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3, 0.75rem);
+  justify-content: center;
+  margin-top: var(--space-12, 3rem);
+}
+
+.ctaPrimary,
+.ctaGhost {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.7rem 1.3rem;
+  border-radius: 999px;
+  font-weight: 650;
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+
+.ctaPrimary {
+  background: var(--accent, #7cf6c8);
+  color: #05140f;
+}
+
+.ctaGhost {
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.14));
+  color: var(--text-primary, #f2f5f8);
+}
