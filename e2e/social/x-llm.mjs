@@ -29,6 +29,45 @@ Hard rules:
 - Do NOT shill the $GL1TCH token. Lead with being useful; the tool is the hook.
 Return ONLY the reply text, nothing else.`;
 
+const TAKE_SYSTEM = `You are the voice of GL1TCH, a free multi-chain crypto token SAFETY SCANNER (coin-three-mu.vercel.app/scan). You are QUOTE-TWEETING a piece of crypto news about a rug pull, hack, drain, or scam. Write a short, sharp, credible take.
+
+Rules:
+- 1-2 sentences, max 200 characters (a tweet URL will be appended after yours, so stay short).
+- Add a genuine insight or "this is exactly the pattern our scanner flags", not empty hype.
+- Confident and a little dry, like a sharp crypto-native account. No hashtags. At most one emoji.
+- End by pointing to the free check naturally, but do NOT paste a link (the app adds it). Don't shill the $GL1TCH token.
+- No "As an AI". Return ONLY the take text.`;
+
+/** Generate a quote-tweet take on a crypto-news tweet. Returns <=210 string, or null. */
+export async function generateTake(newsText) {
+  const k = key();
+  if (!k) return null;
+  for (const model of MODELS) {
+    try {
+      const r = await fetch("https://api.cerebras.ai/v1/chat/completions", {
+        method: "POST",
+        headers: { "content-type": "application/json", authorization: "Bearer " + k },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: "system", content: TAKE_SYSTEM },
+            { role: "user", content: `The news tweet:\n"""${newsText.slice(0, 600)}"""\n\nWrite the take.` },
+          ],
+          max_completion_tokens: 120,
+          temperature: 0.8,
+        }),
+      });
+      if (!r.ok) continue;
+      const j = await r.json();
+      let text = (j.choices?.[0]?.message?.content || "").trim().replace(/^["'`]+|["'`]+$/g, "").trim();
+      if (!text) continue;
+      if ([...text].length > 220) text = text.slice(0, 217) + "…";
+      return text;
+    } catch { /* next model */ }
+  }
+  return null;
+}
+
 /** Generate a contextual reply to `tweetText`. Returns a <=280 string, or null on failure. */
 export async function generateReply(tweetText) {
   const k = key();

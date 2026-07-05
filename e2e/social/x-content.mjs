@@ -140,6 +140,49 @@ ${SITE}/scan`,
 $GL1TCH reads the flags: insider bundling, sniper clusters, fake liquidity, mutable metadata, active mint authority. In plain English, for free.
 
 ${SITE}/scan`,
+
+  // --- more angles ---
+  `The scanner you never have to pay for.
+
+No subscription, no wallet connect, no "premium tier" to see the risk. Paste a token, read the verdict, keep your money. That's the whole deal.
+
+${SITE}/scan`,
+
+  `We don't ask you to trust the team. We're anonymous.
+
+We ask you to read the code (open source), scan our own token (we pass), and verify the on-chain facts yourself.
+
+Trust math, not promises: ${SITE}/proof`,
+
+  `Rugs don't announce themselves. Patterns do.
+
+Repeat deployer. Bundled supply. Unlocked LP. Mutable metadata. $GL1TCH reads the pattern and says it in one line — before you're the exit liquidity.
+
+${SITE}/scan`,
+
+  `Your reputation on GL1TCH is earned, not bought.
+
+Proof-of-Signal weighs *sustained* holding (7-day average) + the community you bring in. You can't flash-buy your way up. Climb Dormant → Beacon Prime.
+
+${SITE}/ranks`,
+
+  `Every scan makes the next one smarter.
+
+Website scans, Telegram scans, the hourly Rug Radar — all feed one Signal Graph. The more it's used, the better it catches repeat ruggers. A network effect on safety.
+
+${SITE}/scan`,
+
+  `Checked a token on 3 sites and got 3 answers?
+
+$GL1TCH cross-checks live sources into ONE plain-English verdict with a confidence score — and tells you which checks it couldn't verify. No black box.
+
+${SITE}/scan`,
+
+  `Solana moves fast. Rugs move faster.
+
+Rug Radar sweeps freshly-launched tokens every hour and flags the dangerous ones automatically — so you see the catch before the crowd sees the chart.
+
+${SITE}/radar`,
 ];
 
 // Multi-tweet threads — far higher reach than single tweets. Each inner array is one thread
