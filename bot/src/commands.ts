@@ -6,8 +6,12 @@ import { isVerifyEnabled } from "./config.js";
 import { store } from "./verify/index.js";
 import { RANK_TIERS } from "./ranks.js";
 import { referralStore } from "./referrals.js";
+import { proofOfSignal } from "./proof-of-signal/store.js";
 
 export const publicCommands = new Composer<Context>();
+
+/** Live referral count — keeps the referral store the single source of truth for referrals. */
+const refCount = (id: string): number => referralStore.count(id);
 
 const displayName = (ctx: Context): string =>
   ctx.from?.username ? `@${ctx.from.username}` : (ctx.from?.first_name || "Infected");
@@ -68,6 +72,37 @@ publicCommands.command("leaderboard", async (ctx) => {
     if (c > 0) mine = `\n\nYou: <b>#${referralStore.rank(uid)}</b> · ${c} infected`;
   }
   await ctx.reply(`🧬 <b>TOP INFECTORS</b>\n\n${rows.join("\n")}${mine}\n\n<code>/invite</code> to get your link · ${referralStore.total()} total infections`, HTML);
+});
+
+publicCommands.command("rep", async (ctx) => {
+  const uid = ctx.from?.id ? String(ctx.from.id) : "";
+  const top = proofOfSignal.leaderboard(refCount, 10);
+  const badgeIcon: Record<string, string> = {
+    "Beacon Prime": "🛰️", Beacon: "📡", Amplifier: "🔊", Signal: "📶", Dormant: "⚫",
+  };
+  const tierName = (r: number) => RANK_TIERS.find((t) => t.tier === r)?.rank ?? "Observer";
+
+  let mine = "";
+  if (uid) {
+    const rep = proofOfSignal.repFor(uid, refCount);
+    mine = rep
+      ? `\n\n<b>YOU</b> — ${badgeIcon[rep.badge] || "•"} <b>${rep.badge}</b> · <b>${rep.xp}</b> XP\n<i>${tierName(rep.tierRank)}${rep.confirmed ? " (confirmed)" : " (provisional)"} · ${rep.referrals} infected</i>`
+      : "\n\n<i>No reputation yet — <code>/verify</code> your holding and <code>/invite</code> friends to earn Signal XP.</i>";
+  }
+
+  if (!top.length) {
+    await ctx.reply(
+      `📡 <b>PROOF-OF-SIGNAL</b>\n\nReputation you earn by producing real signal — verified sustained holding + community you bring in. No paid rewards, status only.${mine}\n\n<code>/verify</code> · <code>/invite</code>`,
+      HTML
+    );
+    return;
+  }
+  const medal = (i: number) => (i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : `${i + 1}.`);
+  const rows = top.map((r, i) => `${medal(i)} ${badgeIcon[r.badge] || "•"} ${r.username} — <b>${r.xp}</b> XP`);
+  await ctx.reply(
+    `📡 <b>SIGNAL LEADERBOARD</b>\n\n${rows.join("\n")}${mine}\n\n<i>XP = verified sustained tier + referrals. Earn it: <code>/verify</code> · <code>/invite</code></i>`,
+    HTML
+  );
 });
 
 publicCommands.command("menu", async (ctx) => {

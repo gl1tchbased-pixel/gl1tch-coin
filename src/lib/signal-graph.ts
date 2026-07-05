@@ -51,6 +51,31 @@ export async function deployerReputation(
   }
 }
 
+export interface SignalRep {
+  userId: string;
+  username: string;
+  tierRank: number;
+  confirmed: boolean;
+  referrals: number;
+  xp: number;
+  badge: "Dormant" | "Signal" | "Amplifier" | "Beacon" | "Beacon Prime";
+}
+
+/** Public Proof-of-Signal leaderboard (top reputations). Empty array on any failure. */
+export async function signalLeaderboard(n = 10): Promise<SignalRep[]> {
+  try {
+    const r = await fetch(`${BASE}/signal/leaderboard?n=${n}`, {
+      signal: AbortSignal.timeout(4000),
+      next: { revalidate: 60 },
+    });
+    if (!r.ok) return [];
+    const d = (await r.json()) as { ok?: boolean; leaderboard?: SignalRep[] };
+    return d.ok && Array.isArray(d.leaderboard) ? d.leaderboard : [];
+  } catch {
+    return [];
+  }
+}
+
 /** Record a scan observation so the deployer's track record compounds. Fire-and-forget. */
 export function observeDeployer(obs: {
   deployer: string;

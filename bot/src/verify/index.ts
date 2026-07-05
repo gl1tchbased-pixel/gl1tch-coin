@@ -11,6 +11,8 @@ import { balanceHistory } from "./history-store.js";
 import { createVerifyServer, parseVerifyBody } from "./server.js";
 import { signalGraph } from "../signal-graph/store.js";
 import { isRecordable, type Observation } from "../signal-graph/graph.js";
+import { proofOfSignal } from "../proof-of-signal/store.js";
+import { referralStore } from "../referrals.js";
 import { claimPendingX, ackX } from "../agent/x-agent/xqueue.js";
 import { statsStore } from "../stats.js";
 
@@ -76,6 +78,13 @@ export function startVerification(bot: Bot): Server | null {
       return { status, body: { ok: false, error: result.error } };
     }
 
+    // Proof-of-Signal: record the verified sustained-holding tier (confirmed once the 7-day
+    // window is full) so the Signal Reputation leaderboard reflects real, anti-gamed holding.
+    if (!result.preLaunch) {
+      const tierRank = RANK_TIERS.find((t) => t.id === result.tierId)?.tier ?? 0;
+      proofOfSignal.syncHolder(String(result.tgUserId), "", tierRank, !result.provisional);
+    }
+
     // DM the user out-of-band so room links never live in the browser response.
     try {
       const lines = [
@@ -116,6 +125,7 @@ export function startVerification(bot: Bot): Server | null {
   statsStore.load();
   balanceHistory.load();
   signalGraph.load();
+  proofOfSignal.load();
 
   // Signal Graph: normalise a posted observation, coercing/validating before recording.
   const recordObservation = (raw: unknown): void => {
@@ -145,6 +155,7 @@ export function startVerification(bot: Bot): Server | null {
       token: config.stats.token,
       observe: recordObservation,
       deployer: (address, chain, excludeMint) => signalGraph.reputationFor(address, chain, excludeMint),
+      leaderboard: (n) => proofOfSignal.leaderboard((id) => referralStore.count(id), n),
     },
     ...(config.xBridge.token
       ? {

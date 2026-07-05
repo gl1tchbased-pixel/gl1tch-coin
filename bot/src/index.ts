@@ -6,6 +6,7 @@ import { scanCommands, autoScan } from "./scan.js";
 import { watchCommands, startWatchtower } from "./watch/index.js";
 import { walletCommands } from "./watch/wallet.js";
 import { referralStore } from "./referrals.js";
+import { proofOfSignal } from "./proof-of-signal/store.js";
 import { callbacks } from "./callbacks.js";
 import { xCallbacks } from "./agent/x-agent/handlers.js";
 import { adminCommands } from "./admin.js";
@@ -82,6 +83,7 @@ async function main() {
     { command: "unwatchwallet", description: "🚫 Stop watching a wallet" },
     { command: "invite", description: "🧬 Get your invite link — infect a friend" },
     { command: "leaderboard", description: "🧬 Top infectors" },
+    { command: "rep", description: "📡 Your Signal Reputation & leaderboard" },
     { command: "menu", description: "Open the control menu" },
     { command: "rank", description: "Rank ladder & verification" },
     { command: "verify", description: "Link wallet to verify your rank" },
@@ -95,6 +97,7 @@ async function main() {
     { command: "support", description: "How to get help" },
   ]);
   referralStore.load();
+  proofOfSignal.load();
   startVerification(bot);
   startAgent(bot);
   startWatchtower(bot);

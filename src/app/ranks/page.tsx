@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { RankChecker } from "@/components/web3/RankChecker";
+import { SignalLeaderboard } from "@/components/web3/SignalLeaderboard";
 
 export const metadata: Metadata = {
   title: "Verify Your Rank — GL1TCH",
@@ -29,6 +30,7 @@ export default function RanksPage() {
         </p>
       </div>
       <RankChecker />
+      <SignalLeaderboard />
     </section>
   );
 }
