@@ -4,19 +4,22 @@
 //   NODE_OPTIONS=--use-system-ca LAUNCH_CHROMIUM=1 node e2e/social/x-reply.mjs
 // Env: MAX (replies this run, default 3) · DRY=1 (find but don't reply) · HANDLES="a,b" (also
 //      check these accounts' latest tweets) · MIN_DAYS_PER_USER (default 7).
-import { openX, replyTo, searchLatest, store } from "./x-lib.mjs";
+import { openX, replyTo, searchLatest, followerCount, store } from "./x-lib.mjs";
+import { generateReply } from "./x-llm.mjs";
 
 const SITE = "coin-three-mu.vercel.app";
 const MAX = Number(process.env.MAX || 3);
 const MIN_DAYS_PER_USER = Number(process.env.MIN_DAYS_PER_USER || 7);
+const MIN_FOLLOWERS = Number(process.env.MIN_FOLLOWERS || 500); // skip tiny accounts (no reach)
 const DAY = 86400000;
 
 // Intent searches — people actively evaluating a token (buying-intent = potential users).
+// min_faves is a cheap engagement floor — skips dead/no-reach accounts before we even look.
 const QUERIES = [
-  `("is this a rug" OR "is this a scam" OR "is this safe") (solana OR token OR memecoin) -is:retweet lang:en`,
-  `("honeypot" OR "can't sell") (solana OR token) -is:retweet lang:en`,
-  `("is it safe to buy" OR "how do i know if" rug) -is:retweet lang:en`,
-  `("just got rugged" OR "another rug") solana -is:retweet lang:en`,
+  `("is this a rug" OR "is this a scam" OR "is this safe") (solana OR token OR memecoin) -is:retweet lang:en min_faves:3`,
+  `("honeypot" OR "can't sell") (solana OR token) -is:retweet lang:en min_faves:3`,
+  `("is it safe to buy" OR "how do i know if" rug) -is:retweet lang:en min_faves:2`,
+  `("just got rugged" OR "another rug") solana -is:retweet lang:en min_faves:2`,
 ];
 
 // Reply only to genuine questions: a real safety ask AND a question mark.
@@ -96,11 +99,18 @@ try {
   const queue = cands.filter(eligible).sort((a, b) => score(b) - score(a));
   console.log(`[x-reply] ${cands.length} candidates · ${queue.length} eligible · posting up to ${MAX}`);
 
+  let checked = 0;
   for (const t of queue) {
-    if (posted >= MAX) break;
-    const text = pickReply(t.id);
-    console.log(`\n→ @${t.user}: ${t.text.slice(0, 90).replace(/\n/g, " ")}…`);
-    if (process.env.DRY === "1") { console.log(`  [DRY] would reply: ${text.slice(0, 70)}…`); posted++; continue; }
+    if (posted >= MAX || checked > MAX * 5) break;
+    checked++;
+    // Follower gate — only reply to accounts with real reach (not ~100-follower accounts).
+    const fc = await followerCount(page, t.user).catch(() => null);
+    if (fc != null && fc < MIN_FOLLOWERS) { console.log(`  ↳ skip @${t.user} (${fc} followers < ${MIN_FOLLOWERS})`); continue; }
+    // Contextual LLM reply (Cerebras); fall back to a template if the LLM is unavailable.
+    const text = (await generateReply(t.text).catch(() => null)) || pickReply(t.id);
+    console.log(`\n→ @${t.user} (${fc ?? "?"} followers): ${t.text.slice(0, 80).replace(/\n/g, " ")}…`);
+    console.log(`  reply: ${text.slice(0, 90).replace(/\n/g, " ")}…`);
+    if (process.env.DRY === "1") { console.log("  [DRY] not posting"); posted++; continue; }
     const ok = await replyTo(page, t.url, text).catch(() => false);
     if (ok) {
       state.replied[t.id] = now; state.users[t.user] = now; st.write(state);

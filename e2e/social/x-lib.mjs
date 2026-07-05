@@ -116,6 +116,25 @@ export async function searchLatest(page, query, n = 10) {
   return out;
 }
 
+function parseCount(s) {
+  const m = String(s).replace(/,/g, "").match(/([\d.]+)\s*([KMB])?/i);
+  if (!m) return null;
+  const n = parseFloat(m[1]);
+  const mult = { k: 1e3, m: 1e6, b: 1e9 }[(m[2] || "").toLowerCase()] || 1;
+  return Math.round(n * mult);
+}
+
+/** Follower count for a handle (visits the profile). Null if it can't be read. */
+export async function followerCount(page, user) {
+  await page.goto(`https://x.com/${user}`, { waitUntil: "domcontentloaded" }).catch(() => {});
+  await page.waitForTimeout(2800);
+  const link = page.locator(`a[href="/${user}/verified_followers"], a[href="/${user}/followers"]`).first();
+  const txt = await link.innerText().catch(() => "");
+  // innerText looks like "1,234\nFollowers" or "12.3K Followers"
+  const num = txt.split(/\s+/).find((p) => /[\d.,KMB]/i.test(p));
+  return parseCount(num || txt);
+}
+
 /** Tiny JSON store on disk (replied-tweet ids, last-post date, etc.). */
 export function store(name) {
   const file = path.resolve(OUT, name);
