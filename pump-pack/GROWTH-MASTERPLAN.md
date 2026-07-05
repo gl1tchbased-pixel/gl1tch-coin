@@ -104,6 +104,12 @@ alternative (ads/KOLs) is the exact thing the research says fails.
   `/invite` + `/leaderboard`, status-only, durable on the Railway volume (`bot/src/referrals.ts`).
 - [ ] **B — Glitch Hunters (Zealy)** — DEFERRED (premature at our size; acquisition > retention).
   Revisit when the community is a few hundred strong. Native holder-rank ladder already covers levels.
+- [x] **SEO organic-discovery layer (2026-07-05)** — the biggest free lever (Google is the
+  only free channel; crypto ads banned). Prerendered `/scan/<token>` pages for 20 popular
+  tokens + `/learn` hub & 3 guides (rug pull / honeypot / is-token-safe) with Article +
+  FAQPage JSON-LD; sitemap + interlinks. Pulls non-branded search traffic → scanner → $GL1TCH.
+  Founder actions (Google Search Console, first holders, reply-guy, directories) in
+  `pump-pack/INVESTOR-GROWTH-ACTIONS.md`.
 - [ ] **F/G — deepen holder utility + community rug DB** — later.
 
 ## 8. Proposed build order (for joint refinement)
