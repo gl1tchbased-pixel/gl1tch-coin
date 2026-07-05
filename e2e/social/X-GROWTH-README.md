@@ -40,7 +40,11 @@ NODE_OPTIONS=--use-system-ca LAUNCH_CHROMIUM=1 node e2e/social/x-reply.mjs
 - `REPLY_INTERVAL_HOURS` — cycle gap for the scheduler (default 3).
 - `MAX` — replies per reply-run (default 3). Keep it low.
 - `MIN_DAYS_PER_USER` — don't reply to the same user more than once per N days (default 7).
+- `MIN_FOLLOWERS` — skip accounts below this follower count (default 500 — no tiny/no-reach accounts).
 - `HANDLES="alice,bob"` — also scan these specific accounts' recent tweets for reply targets.
+
+**Replies are LLM-generated** (Cerebras `gpt-oss-120b`, key in gitignored `bot/.env` as
+`CEREBRAS_API_KEY`) — contextual, human, on-brand; falls back to templates if the LLM is down.
 - `DRY=1` — do everything except actually post/reply.
 - `FORCE=1` — let `x-daily` post again the same day.
 
