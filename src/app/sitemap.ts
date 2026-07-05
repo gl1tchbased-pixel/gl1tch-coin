@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { OFFICIAL } from "@/lib/official";
+import { CANONICAL } from "@/lib/scan";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = OFFICIAL.SITE_URL;
@@ -10,6 +11,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/proof",
     "/radar",
     "/embed",
+    "/learn",
+    "/learn/how-to-spot-a-rug-pull",
+    "/learn/what-is-a-honeypot",
+    "/learn/how-to-check-if-a-token-is-safe",
     "/lore",
     "/links",
     "/whitepaper",
@@ -19,10 +24,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/press",
   ];
   const now = new Date();
-  return routes.map((path) => ({
+  const staticEntries: MetadataRoute.Sitemap = routes.map((path) => ({
     url: `${base}${path}`,
     lastModified: now,
     changeFrequency: "weekly",
     priority: path === "" ? 1 : 0.7,
   }));
+
+  // Indexable per-token scan pages for well-known tokens (high-intent search: "is X safe").
+  const scanEntries: MetadataRoute.Sitemap = CANONICAL.map((t) => ({
+    url: `${base}/scan/${t.chain}-${t.address}`,
+    lastModified: now,
+    changeFrequency: "daily" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticEntries, ...scanEntries];
 }
