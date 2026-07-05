@@ -7,8 +7,9 @@ import path from "node:path";
 import fs from "node:fs";
 import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
 
-const VIDEO = path.resolve(REPO, "pump-pack", "videos", "branded", "gl1tch-signal-graph.mp4");
-const MD = path.resolve(REPO, "pump-pack", "15-premium-features-announce.md");
+// Override with POST_FILE (md in pump-pack/) + VIDEO (basename in pump-pack/videos/branded/).
+const VIDEO = path.resolve(REPO, "pump-pack", "videos", "branded", process.env.VIDEO || "gl1tch-signal-graph.mp4");
+const MD = path.resolve(REPO, "pump-pack", process.env.POST_FILE || "15-premium-features-announce.md");
 
 const md = fs.readFileSync(MD, "utf8");
 const tweets = [...md.split("## TELEGRAM")[0].matchAll(/```\n([\s\S]*?)```/g)].map((m) => m[1].replace(/\n$/, ""));
