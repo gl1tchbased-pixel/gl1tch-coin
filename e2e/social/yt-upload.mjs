@@ -7,6 +7,18 @@ import fs from "node:fs";
 import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
 
 const PRESETS = {
+  mascot2: {
+    video: "gl1tch-mascot-hero.mp4",
+    title: "Meet GLITCHY 👻 the rogue-AI ghost of $GL1TCH #Shorts",
+    desc: `Meet GLITCHY — the flying rogue-AI ghost behind $GL1TCH. It glitches, it floats, and it does one genuinely useful thing: reads any token on any chain and flags the rug before you ape.
+
+🔍 Free scanner: https://coin-three-mu.vercel.app/scan
+📡 Rug Radar: https://coin-three-mu.vercel.app/radar
+💬 Telegram: https://t.me/gl1tch_infected
+
+Free · non-custodial · it never touches your wallet.
+#crypto #memecoin #solana #mascot #3d #web3 #AI #cryptoscanner #Shorts`,
+  },
   gecko: {
     video: "gl1tch-gecko-listed.mp4",
     title: "GL1TCH is now VERIFIED & LISTED on GeckoTerminal 🦎 #Shorts",

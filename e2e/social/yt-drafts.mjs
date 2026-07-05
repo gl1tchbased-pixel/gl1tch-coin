@@ -10,6 +10,8 @@ const PUBLISH = process.env.PUBLISH === "1";
 const META = [
   { match: /product tour/i, title: "GL1TCH — one free tool that reads every rug 👁 (full tour) #Shorts",
     desc: "Everything GL1TCH does, in 40 seconds. One free, non-custodial tool: scan any token on any chain, Rug Radar hunts fresh rugs live, Watchtower + Wallet Watch alert you when safety drops or a whale/dev sells, and it passes its own scan. Free. It never touches your wallet.\nSite: https://coin-three-mu.vercel.app\nTelegram: https://t.me/gl1tch_infected\n#crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #Shorts" },
+  { match: /mascot.?hero|meet glitchy/i, title: "Meet GLITCHY 👻 the rogue-AI ghost of $GL1TCH #Shorts",
+    desc: "Meet GLITCHY — the flying rogue-AI ghost behind $GL1TCH. It glitches, it floats, and it reads any token on any chain, flagging the rug before you ape. Free, non-custodial.\nScanner: https://coin-three-mu.vercel.app/scan\nTelegram: https://t.me/gl1tch_infected\n#crypto #memecoin #solana #mascot #3d #web3 #AI #Shorts" },
   { match: /wallet watch/i, title: "Get pinged when a whale or dev sells — GL1TCH Wallet Watch 🐋 #Shorts",
     desc: "GL1TCH can watch any Solana wallet — a whale, a token's dev, or your own bag — and ping you the moment it sells or moves a position out. Hold $GL1TCH, watch more wallets. Free, non-custodial.\nSite: https://coin-three-mu.vercel.app\nTelegram: https://t.me/gl1tch_infected\n#crypto #memecoin #solana #whalealert #rugpull #web3 #AI #Shorts" },
 ];

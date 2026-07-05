@@ -23,6 +23,7 @@ import { VerifyUs, VERIFY_US_FRAMES } from "./VerifyUs";
 import { RugRadarVideo, RUG_RADAR_FRAMES } from "./RugRadarVideo";
 import { ProductTour, PRODUCT_TOUR_FRAMES } from "./ProductTour";
 import { GeckoListed, GECKO_LISTED_FRAMES } from "./GeckoListed";
+import { MascotHero, MASCOT_HERO_FRAMES } from "./MascotHero";
 import { ScannerUpgraded, SCANNER_UPGRADED_FRAMES } from "./ScannerUpgraded";
 import { HolderTypes } from "./HolderTypes";
 import { LoreOrigin } from "./LoreOrigin";
@@ -51,6 +52,15 @@ export const Root = () => (
       id="gl1tch-scanner-upgraded"
       component={ScannerUpgraded}
       durationInFrames={SCANNER_UPGRADED_FRAMES}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    {/* Mascot Hero — Glitchy the flying ghost (MiniMax clips) in the brand shell, 9:16 ~20s */}
+    <Composition
+      id="gl1tch-mascot-hero"
+      component={MascotHero}
+      durationInFrames={MASCOT_HERO_FRAMES}
       fps={30}
       width={1080}
       height={1920}

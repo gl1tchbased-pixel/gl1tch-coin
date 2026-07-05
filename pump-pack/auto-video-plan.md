@@ -48,3 +48,4 @@ runs the next queued concept end-to-end (build → render → post to all 4).
 - 2026-07-05 — "Rug Radar: it hunts" (RugRadarVideo.tsx) → Telegram(#452), YouTube(gvQ-2bP6u6s), Instagram, X. ✅ all 4
 - 2026-07-05 — "Full Product Tour" (ProductTour.tsx, ~38s: scan/radar/watchtower/wallet/proof/embed/hold) → Telegram(#453), YouTube, Instagram, X. ✅ all 4
 - 2026-07-05 — "Verified & Listed on GeckoTerminal" (GeckoListed.tsx, ~18s milestone) → Telegram(#454), YouTube(OrvrewpZx00), Instagram, X. ✅ all 4
+- 2026-07-05 — "Meet Glitchy" mascot hero (MascotHero.tsx, MiniMax Hailuo-2.3 flying clips + brand shell, ~20s) → Telegram(#455), X, Instagram ✅; YouTube = titled draft (processing/Chrome-merge), needs 1-click publish.
