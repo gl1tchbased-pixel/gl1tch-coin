@@ -1,0 +1,51 @@
+name: Security
+
+# Phase -1 (PREMIUM-PLAN-v3): secret-leak scan, dependency audit, and the core invariant
+# check — no component may ever request a fund-transfer / approval signature.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  secrets:
+    name: Secret leak scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  audit:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Fail the build on a high/critical advisory in production deps.
+      - run: npm audit --omit=dev --audit-level=high
+        continue-on-error: false
+
+  invariant:
+    name: No fund/approval signature calls
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Core invariant: GL1TCH only ever requests ownership-proving message signatures.
+      # These calls move funds or grant allowances and must never appear in the app.
+      - name: Grep for forbidden web3 calls
+        run: |
+          set -e
+          PATTERN='eth_sendTransaction|sendTransaction\(|setApprovalForAll|increaseAllowance|\.approve\(|signAndSendTransaction'
+          if grep -rEn --include=*.ts --include=*.tsx "$PATTERN" src bot/src 2>/dev/null; then
+            echo "::error::Forbidden fund-transfer/approval call found — GL1TCH must only request ownership signatures (see docs/threat-model.md)."
+            exit 1
+          fi
+          echo "OK — no fund-transfer/approval calls."
