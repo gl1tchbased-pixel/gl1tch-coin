@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/scan/compare",
     "/proof",
     "/security",
+    "/agents",
     "/radar",
     "/embed",
     "/learn",

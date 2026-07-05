@@ -29,6 +29,7 @@ export interface VerifyServerOptions {
     deployer: (address: string, chain: string, excludeMint?: string) => unknown;
     leaderboard: (n: number) => unknown[];
     serial: (min: number) => unknown[];
+    agent: (address: string, chain: string) => unknown;
   };
 }
 
@@ -114,6 +115,19 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
       }
       res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=30", ...cors });
       res.end(JSON.stringify({ ok: true, reputation: opts.signal.deployer(address, chain, exclude) }));
+      return;
+    }
+    if (opts.signal && sPath === "/signal/agent" && req.method === "GET") {
+      const qs = new URLSearchParams((req.url ?? "").split("?")[1] ?? "");
+      const address = qs.get("address") ?? "";
+      const chain = qs.get("chain") ?? "solana";
+      if (!address) {
+        res.writeHead(400, { "Content-Type": "application/json", ...cors });
+        res.end(JSON.stringify({ ok: false, error: "address required" }));
+        return;
+      }
+      res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=30", ...cors });
+      res.end(JSON.stringify({ ok: true, agent: opts.signal.agent(address, chain) }));
       return;
     }
     if (opts.signal && sPath === "/signal/serial" && req.method === "GET") {

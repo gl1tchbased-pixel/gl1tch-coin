@@ -13,6 +13,8 @@ import { signalGraph } from "../signal-graph/store.js";
 import { isRecordable, type Observation } from "../signal-graph/graph.js";
 import { proofOfSignal } from "../proof-of-signal/store.js";
 import { referralStore } from "../referrals.js";
+import { agentTrustStore } from "../agent-trust/store.js";
+import { agentTrust } from "../agent-trust/trust.js";
 import { claimPendingX, ackX } from "../agent/x-agent/xqueue.js";
 import { statsStore } from "../stats.js";
 
@@ -126,6 +128,7 @@ export function startVerification(bot: Bot): Server | null {
   balanceHistory.load();
   signalGraph.load();
   proofOfSignal.load();
+  agentTrustStore.load();
 
   // Signal Graph: normalise a posted observation, coercing/validating before recording.
   const recordObservation = (raw: unknown): void => {
@@ -157,6 +160,21 @@ export function startVerification(bot: Bot): Server | null {
       deployer: (address, chain, excludeMint) => signalGraph.reputationFor(address, chain, excludeMint),
       leaderboard: (n) => proofOfSignal.leaderboard((id) => referralStore.count(id), n),
       serial: (min) => signalGraph.serialList(min),
+      // Agent Trust Layer: combine the agent registry (identity/attestations) with the
+      // Signal Graph deploy track record into a single trust assessment.
+      agent: (address, chain) => {
+        const rec = agentTrustStore.get(address, chain);
+        const rep = signalGraph.reputationFor(address, chain);
+        const trust = agentTrust({
+          verified: rec?.verified ?? false,
+          flaggedDeploys: rep.flaggedCount,
+          totalDeploys: rep.tokensSeen,
+          ageDays: null,
+          attestations: rec?.attestations ?? 0,
+          disputes: rec?.disputes ?? 0,
+        });
+        return { address, chain, ...trust, registered: !!rec, verified: rec?.verified ?? false };
+      },
     },
     ...(config.xBridge.token
       ? {

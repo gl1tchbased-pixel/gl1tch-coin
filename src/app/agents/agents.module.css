@@ -1,0 +1,38 @@
+.accent { color: var(--accent, #7cf6c8); }
+
+.lookup {
+  margin-top: var(--space-8, 2rem);
+  padding: var(--space-6, 1.5rem);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+  border-radius: 16px;
+  background: var(--surface-1, rgba(255, 255, 255, 0.02));
+}
+.lookupTitle { font-size: 1.3rem; font-weight: 750; text-align: center; margin: 0; }
+.lookupSub { font-size: 0.92rem; color: var(--text-secondary, #a8b0bd); text-align: center; margin: 0.5rem 0 1.25rem; }
+
+.block { margin-top: var(--space-12, 3rem); }
+.h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: var(--space-5, 1.25rem); letter-spacing: -0.01em; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-4, 1rem); }
+.card {
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  border-radius: 14px; padding: var(--space-5, 1.25rem);
+  background: var(--surface-1, rgba(255, 255, 255, 0.02));
+}
+.cardT { font-size: 1.05rem; font-weight: 700; margin-bottom: var(--space-2, 0.5rem); color: var(--accent, #7cf6c8); }
+.cardD { font-size: 0.94rem; line-height: 1.6; color: var(--text-secondary, #a8b0bd); }
+
+.thesis {
+  border-left: 3px solid var(--accent, #7cf6c8);
+  padding: var(--space-4, 1rem) var(--space-5, 1.25rem);
+  background: var(--surface-1, rgba(255, 255, 255, 0.02));
+  border-radius: 0 12px 12px 0;
+  display: grid; gap: var(--space-3, 0.75rem);
+}
+
+.cta { display: flex; flex-wrap: wrap; gap: var(--space-3, 0.75rem); justify-content: center; margin-top: var(--space-12, 3rem); }
+.ctaGhost {
+  display: inline-flex; align-items: center; padding: 0.7rem 1.3rem; border-radius: 999px;
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.14)); color: var(--text-primary, #f2f5f8);
+  text-decoration: none; font-weight: 650; font-size: 0.95rem;
+}

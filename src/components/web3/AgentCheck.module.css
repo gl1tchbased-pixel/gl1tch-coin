@@ -1,0 +1,43 @@
+.wrap { max-width: 720px; margin: 0 auto; }
+
+.form { display: flex; gap: 8px; flex-wrap: wrap; }
+.input {
+  flex: 1 1 260px; min-width: 0; padding: 12px 14px; border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.03);
+  color: inherit; font-family: ui-monospace, monospace; font-size: 14px;
+}
+.input:focus { outline: none; border-color: var(--accent, #7cf6c8); }
+.select {
+  padding: 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.03); color: inherit; font-size: 14px;
+}
+.btn {
+  padding: 12px 20px; border-radius: 10px; border: none; cursor: pointer;
+  background: var(--accent, #7cf6c8); color: #05140f; font-weight: 700; font-size: 14px;
+}
+.btn:disabled { opacity: 0.6; cursor: default; }
+
+.err { color: #ff8a8a; font-size: 14px; margin-top: 12px; }
+
+.result {
+  margin-top: 18px; padding: 18px; border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.02);
+}
+.lvlTrusted { border-color: rgba(124, 255, 79, 0.5); background: rgba(124, 255, 79, 0.06); }
+.lvlNeutral { border-color: rgba(255, 255, 255, 0.16); }
+.lvlCaution { border-color: rgba(255, 90, 90, 0.5); background: rgba(255, 90, 90, 0.07); }
+.lvlUnknown { border-color: rgba(255, 176, 80, 0.4); background: rgba(255, 176, 80, 0.05); }
+
+.head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.badge { font-weight: 800; font-size: 16px; letter-spacing: 1px; }
+.score { font-size: 34px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.score small { font-size: 15px; opacity: 0.5; font-weight: 600; }
+
+.flags { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; margin-bottom: 12px; }
+.on { color: var(--accent, #7cf6c8); }
+.off { color: rgba(245, 247, 248, 0.45); }
+
+.reasons { margin: 0; padding-left: 18px; display: grid; gap: 7px; }
+.reasons li { font-size: 14px; line-height: 1.5; color: rgba(245, 247, 248, 0.88); }
+
+.foot { margin: 14px 0 0; font-size: 12px; color: rgba(245, 247, 248, 0.45); }
