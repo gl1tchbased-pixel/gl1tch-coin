@@ -25,6 +25,7 @@ import { ProductTour, PRODUCT_TOUR_FRAMES } from "./ProductTour";
 import { GeckoListed, GECKO_LISTED_FRAMES } from "./GeckoListed";
 import { MascotHero, MASCOT_HERO_FRAMES } from "./MascotHero";
 import { ScannerUpgraded, SCANNER_UPGRADED_FRAMES } from "./ScannerUpgraded";
+import { SignalGraphVideo, SIGNAL_GRAPH_FRAMES } from "./SignalGraphVideo";
 import { HolderTypes } from "./HolderTypes";
 import { LoreOrigin } from "./LoreOrigin";
 import { RankLadder } from "./RankLadder";
@@ -47,6 +48,15 @@ const PRODUCED_LONG = 34 + TALK + 4 * 66 + 74; // + trust-beats montage (~21s)
 
 export const Root = () => (
   <>
+    {/* Signal Graph — premium-features announcement (memory · reputation · security), 9:16 ~20s */}
+    <Composition
+      id="gl1tch-signal-graph"
+      component={SignalGraphVideo}
+      durationInFrames={SIGNAL_GRAPH_FRAMES}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
     {/* Scanner Upgraded — V3 feature showcase (AI verdict, degen intel, verified, share) */}
     <Composition
       id="gl1tch-scanner-upgraded"
