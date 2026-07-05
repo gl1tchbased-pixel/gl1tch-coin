@@ -3,18 +3,27 @@
 > PREMIUM-PLAN-v3 rule #10 + Risk Kaydı: risky / hard-to-reverse decisions and accepted
 > risks are logged here. Update after every material architectural decision.
 
-## Accepted dependency advisories (transitive, tracked)
-The CI dependency audit (`.github/workflows/security.yml`) blocks any NEW high/critical
-advisory. The two below are **transitive dependencies of `@solana/web3.js@1.x`** with no
-clean upstream fix; they are explicitly allow-listed and tracked here, not silently ignored.
+## Dependency advisories
 
-| Advisory | Package | Path | Why accepted | Exit plan |
-|---|---|---|---|---|
-| GHSA-3gc7-fjrx-p6mg | bigint-buffer | @solana/web3.js → @solana/spl-token → … | Buffer overflow via `toBigIntLE()`; no upstream fix; we never call it with attacker-controlled length | Clears on `@solana/web3.js` v2 (`@solana/kit`) migration |
-| GHSA-848j-6mx2-7j84 | elliptic | @solana/web3.js internal | Risky crypto primitive; standard ed25519/secp usage inside web3.js, not our code | Same — web3.js v2 migration |
+### Fixed (2026-07-05)
+- **Next.js** → `16.2.10` — cleared ~10 Next.js CVEs (SSRF, cache poisoning, DoS, etc.).
+- **protobufjs** → override `^7.5.3` — cleared the **CRITICAL** prototype-pollution (GHSA-xq3m-2v4x-88gg) + several highs.
+- **ws** → override `^8.18.0` — cleared the DoS high (GHSA-96hv-2xvq-fx4p).
+- **form-data** — patched via `npm audit fix`.
 
-**Review:** re-check each time `@solana/web3.js` is upgraded, and whenever a v2 migration is
-scheduled. If a clean patched version becomes available, remove from the allowlist immediately.
+### Accepted (transitive, no clean fix — allow-listed in `scripts/audit-gate.mjs`)
+The CI gate (`.github/workflows/security.yml`) blocks any NEW high/critical; the below are
+explicitly allow-listed and tracked, not silently ignored.
+
+| Advisory | Package | Why accepted | Exit plan |
+|---|---|---|---|
+| GHSA-3gc7-fjrx-p6mg | bigint-buffer | Buffer overflow; no upstream fix; never called with attacker-controlled length | `@solana/web3.js` v2 migration |
+| GHSA-848j-6mx2-7j84 | elliptic | Risky primitive, standard usage inside web3.js, not our code | web3.js v2 migration |
+| GHSA-r5fr-rjxr-66jc | lodash | Transitive, no reachable patched version | Remove when the pinning dep updates |
+| GHSA-66ff-…, 75px-…, jvwf-…, 685m-…, wcpc-… | protobufjs | Residual highs affecting all 7.x; low real risk (we don't parse untrusted protobuf) | Remove if a patched line ships |
+
+**Review:** re-check on every `@solana/web3.js` / dependency upgrade. Remove from the allow-list
+the moment a clean patched version exists.
 
 ## Architectural decisions
 - 2026-07-05 — Phase -1 shipped: CSP, central input validation, best-effort per-IP rate

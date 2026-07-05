@@ -72,3 +72,4 @@ e2e/railway/out/rw-token.txt
 # verify-listing local artifacts
 e2e/verify/.profile*
 e2e/verify/out/
+audit.json
