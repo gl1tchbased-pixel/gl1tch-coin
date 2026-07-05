@@ -40,6 +40,10 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
+  // Serve RFC 9116 security.txt at its well-known path (public/ dot-dirs aren't served).
+  async rewrites() {
+    return [{ source: "/.well-known/security.txt", destination: "/api/security-txt" }];
+  },
 };
 
 export default nextConfig;
