@@ -22,6 +22,7 @@ import { WalletWatch, WALLET_WATCH_FRAMES } from "./WalletWatch";
 import { VerifyUs, VERIFY_US_FRAMES } from "./VerifyUs";
 import { RugRadarVideo, RUG_RADAR_FRAMES } from "./RugRadarVideo";
 import { ProductTour, PRODUCT_TOUR_FRAMES } from "./ProductTour";
+import { GeckoListed, GECKO_LISTED_FRAMES } from "./GeckoListed";
 import { ScannerUpgraded, SCANNER_UPGRADED_FRAMES } from "./ScannerUpgraded";
 import { HolderTypes } from "./HolderTypes";
 import { LoreOrigin } from "./LoreOrigin";
@@ -50,6 +51,15 @@ export const Root = () => (
       id="gl1tch-scanner-upgraded"
       component={ScannerUpgraded}
       durationInFrames={SCANNER_UPGRADED_FRAMES}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    {/* Gecko Listed — "verified & listed on GeckoTerminal" milestone announcement, 9:16 ~18s */}
+    <Composition
+      id="gl1tch-gecko-listed"
+      component={GeckoListed}
+      durationInFrames={GECKO_LISTED_FRAMES}
       fps={30}
       width={1080}
       height={1920}

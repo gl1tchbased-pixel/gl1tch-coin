@@ -7,6 +7,19 @@ import fs from "node:fs";
 import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
 
 const PRESETS = {
+  gecko: {
+    video: "gl1tch-gecko-listed.mp4",
+    title: "GL1TCH is now VERIFIED & LISTED on GeckoTerminal 🦎 #Shorts",
+    desc: `Milestone: $GL1TCH's token info is now verified & listed on GeckoTerminal — one of crypto's biggest on-chain data hubs (1.7M+ tokens, 100+ chains, 600+ DEXes). Logo, socials and website, all verified.
+
+Another receipt, not a promise — it stacks on: we pass our own scanner (LOW RISK), liquidity locked, 0% tax, mint & freeze renounced.
+
+Not financial advice — always DYOR.
+🌐 https://coin-three-mu.vercel.app
+💬 https://t.me/gl1tch_infected
+
+#crypto #memecoin #solana #geckoterminal #cryptoscanner #web3 #Shorts`,
+  },
   tour: {
     video: "gl1tch-product-tour.mp4",
     title: "GL1TCH — one free tool that reads every rug 👁 (full tour) #Shorts",
