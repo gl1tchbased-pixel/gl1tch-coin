@@ -7,6 +7,23 @@ import fs from "node:fs";
 import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
 
 const PRESETS = {
+  agent: {
+    video: "gl1tch-agent-trust.mp4",
+    title: "Know Your Agent — GL1TCH's trust layer for AI agents 🆔 #Shorts",
+    desc: `AI agents now hold wallets and trade on-chain — but nobody can tell if an agent is legit, reputable, or safe to let near funds. GL1TCH built the missing layer: Know Your Agent (KYA).
+
+🆔 Identity — an agent signs to register (proves ownership, moves nothing)
+🧠 Reputation — its on-chain track record via our Signal Graph
+🛡 Guardrail — one check (or one embeddable badge) before you trust an agent
+
+Free to check, open to integrate. The agent-trust stack has 8 layers; we own the two you can't fake — provenance & reputation — built from months of accumulated security data.
+
+🔗 https://coin-three-mu.vercel.app/agents
+💬 https://t.me/gl1tch_infected
+
+Not financial advice — DYOR.
+#crypto #AIagents #solana #web3 #cryptosecurity #AI #agenteconomy #Shorts`,
+  },
   signal: {
     video: "gl1tch-signal-graph.mp4",
     title: "The scanner just grew a MEMORY 🧠 GL1TCH Signal Graph #Shorts",

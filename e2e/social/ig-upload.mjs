@@ -8,6 +8,24 @@ import fs from "node:fs";
 import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
 
 const PRESETS = {
+  agent: {
+    video: "gl1tch-agent-trust.mp4",
+    caption: `Know Your Agent. 🆔
+
+AI agents now hold wallets and trade on-chain — but nobody can tell if one is safe to trust. GL1TCH built the missing layer.
+
+🆔 Identity — an agent signs to prove ownership (moves nothing)
+🧠 Reputation — its on-chain track record via our Signal Graph
+🛡 Guardrail — one check before you trust it
+
+Free to check, open to integrate. The trust layer for the AI-agent economy.
+
+🔗 coin-three-mu.vercel.app/agents
+💬 t.me/gl1tch_infected
+
+Not financial advice · DYOR.
+#crypto #AIagents #solana #web3 #cryptosecurity #AI #agenteconomy #defi #altcoins`,
+  },
   signal: {
     video: "gl1tch-signal-graph.mp4",
     caption: `The scanner just grew a memory. 🧠
