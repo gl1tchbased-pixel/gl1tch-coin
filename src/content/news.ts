@@ -33,6 +33,27 @@ export const TAG_LABEL: Record<NewsTag, string> = {
 
 export const newsItems: NewsItem[] = [
   {
+    id: "signal-graph",
+    date: "2026-07-05",
+    tag: "product",
+    title: "Signal Graph is live — the scanner now has a memory",
+    body: "Every token we scan is remembered against its deployer. When a wallet has shipped multiple tokens we've flagged, any fresh token from it inherits that track record — surfaced as a 'Serial deployer' warning right in the scan. It's a signal no single-token scanner (RugCheck, GoPlus) can produce, and it compounds with every scan. Scanning stays free and never gated.",
+  },
+  {
+    id: "proof-of-signal",
+    date: "2026-07-05",
+    tag: "community",
+    title: "Proof-of-Signal — reputation you can't fake or buy",
+    body: "A new Signal Reputation fuses the hardest-to-fake signals: verified *sustained* holding (gated on a 7-day average balance, so a balance flashed for one block can't unlock a tier) plus the community you bring in. Earn XP, climb from Dormant to Beacon Prime on the /ranks leaderboard. Status only — no paid rewards, ever. Check yours with /rep in the Telegram.",
+  },
+  {
+    id: "security-page",
+    date: "2026-07-05",
+    tag: "trust",
+    title: "Security & Transparency page + error monitoring",
+    body: "A tool that tells you what's safe has to be safe itself. Our new /security page lays out the whole posture — never a fund/approval signature, strict CSP, input validation, automated secret + dependency scanning, and a public threat model. We added production error monitoring, a responsible-disclosure policy (SECURITY.md + security.txt), and private vulnerability reporting. Verify every word yourself.",
+  },
+  {
     id: "site-upgrade",
     date: "2026-05-30",
     tag: "product",
