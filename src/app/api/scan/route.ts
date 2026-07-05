@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { scanToken, isVerified, applyVerified, rogueAiVerdict } from "@/lib/scan";
 import { searchTokens, detectChainMarket, scanEvm, GOPLUS_CHAIN } from "@/lib/scan-multichain";
 import { bumpStats } from "@/lib/stats";
+import { deployerReputation, observeDeployer } from "@/lib/signal-graph";
 import { parseScanInput } from "@/lib/validate";
 import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 
@@ -72,6 +73,27 @@ export async function GET(req: NextRequest) {
 
     // The rogue-AI's narrative read (after verified re-cast so it matches the verdict).
     if (result) result.aiVerdict = rogueAiVerdict(result);
+
+    // Signal Graph: attach the deployer's cross-scan track record (excluding this token so
+    // it never counts itself), then record this scan so the record compounds. Verified
+    // blue-chips skip it — their deployer history is irrelevant to a known-good token.
+    const deployer = result?.meta?.deployer;
+    if (result && deployer && !result.verified) {
+      const conf = typeof result.confidence === "number" ? result.confidence : 100;
+      result.meta.deployerReputation = await deployerReputation(deployer, result.chain, result.mint);
+      // Only feed the graph confident, meaningful reads (a timed-out scan isn't a signal).
+      if (conf >= 60) {
+        observeDeployer({
+          deployer,
+          chain: result.chain,
+          mint: result.mint,
+          verdict: result.verdict,
+          score: result.score,
+          name: result.name,
+          symbol: result.symbol,
+        });
+      }
+    }
 
     result.scannedAt = Date.now();
     // Feed the global counter (only confident reads count a "rug"), fire-and-forget.

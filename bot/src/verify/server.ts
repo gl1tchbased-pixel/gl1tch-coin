@@ -21,6 +21,13 @@ export interface VerifyServerOptions {
     get: () => { scanned: number; flagged: number };
     bump: (flagged: boolean, n?: number, flaggedN?: number) => void;
   };
+  /** Signal Graph endpoints: public GET /signal/deployer (deployer track record),
+   *  token-guarded POST /signal/observe (record a scan). Shares the stats token. */
+  signal?: {
+    token: string;
+    observe: (obs: unknown) => void;
+    deployer: (address: string, chain: string, excludeMint?: string) => unknown;
+  };
 }
 
 const RATE_WINDOW_MS = 60_000;
@@ -82,6 +89,46 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
         try {
           const b = sRaw ? (JSON.parse(sRaw) as { flagged?: boolean; n?: number; flaggedN?: number }) : {};
           opts.stats!.bump(!!b.flagged, typeof b.n === "number" ? b.n : 1, typeof b.flaggedN === "number" ? b.flaggedN : 0);
+          res.writeHead(200, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify({ ok: true }));
+        } catch {
+          res.writeHead(400, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify({ ok: false, error: "bad_json" }));
+        }
+      });
+      return;
+    }
+
+    // ---- Signal Graph: deployer track record ----
+    if (opts.signal && sPath === "/signal/deployer" && req.method === "GET") {
+      const qs = new URLSearchParams((req.url ?? "").split("?")[1] ?? "");
+      const address = qs.get("address") ?? "";
+      const chain = qs.get("chain") ?? "";
+      const exclude = qs.get("exclude") ?? undefined;
+      if (!address || !chain) {
+        res.writeHead(400, { "Content-Type": "application/json", ...cors });
+        res.end(JSON.stringify({ ok: false, error: "address+chain required" }));
+        return;
+      }
+      res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=30", ...cors });
+      res.end(JSON.stringify({ ok: true, reputation: opts.signal.deployer(address, chain, exclude) }));
+      return;
+    }
+    if (opts.signal && sPath === "/signal/observe" && req.method === "POST") {
+      const hdr = req.headers["x-stats-token"];
+      const token = (Array.isArray(hdr) ? hdr[0] : hdr) ?? "";
+      if (!opts.signal.token || token !== opts.signal.token) {
+        res.writeHead(401, { "Content-Type": "application/json", ...cors });
+        res.end(JSON.stringify({ ok: false, error: "unauthorized" }));
+        return;
+      }
+      let gRaw = "";
+      let gTooLarge = false;
+      req.on("data", (chunk) => { gRaw += chunk; if (gRaw.length > 4096) { gTooLarge = true; req.destroy(); } });
+      req.on("end", () => {
+        if (gTooLarge) return;
+        try {
+          opts.signal!.observe(gRaw ? JSON.parse(gRaw) : {});
           res.writeHead(200, { "Content-Type": "application/json", ...cors });
           res.end(JSON.stringify({ ok: true }));
         } catch {

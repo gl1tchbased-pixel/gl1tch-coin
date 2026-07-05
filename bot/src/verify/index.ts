@@ -9,6 +9,8 @@ import { readTokenBalance } from "./balance.js";
 import { handleVerification } from "./flow.js";
 import { balanceHistory } from "./history-store.js";
 import { createVerifyServer, parseVerifyBody } from "./server.js";
+import { signalGraph } from "../signal-graph/store.js";
+import { isRecordable, type Observation } from "../signal-graph/graph.js";
 import { claimPendingX, ackX } from "../agent/x-agent/xqueue.js";
 import { statsStore } from "../stats.js";
 
@@ -113,6 +115,24 @@ export function startVerification(bot: Bot): Server | null {
 
   statsStore.load();
   balanceHistory.load();
+  signalGraph.load();
+
+  // Signal Graph: normalise a posted observation, coercing/validating before recording.
+  const recordObservation = (raw: unknown): void => {
+    const b = (raw ?? {}) as Record<string, unknown>;
+    const obs: Partial<Observation> = {
+      deployer: typeof b.deployer === "string" ? b.deployer : undefined,
+      chain: typeof b.chain === "string" ? b.chain : undefined,
+      mint: typeof b.mint === "string" ? b.mint : undefined,
+      verdict: typeof b.verdict === "string" ? b.verdict : undefined,
+      score: typeof b.score === "number" ? b.score : null,
+      name: typeof b.name === "string" ? b.name : null,
+      symbol: typeof b.symbol === "string" ? b.symbol : null,
+      ts: typeof b.ts === "number" ? b.ts : Date.now(),
+    };
+    if (isRecordable(obs)) signalGraph.observe(obs);
+  };
+
   const server = createVerifyServer({
     origin: config.verify.siteOrigin,
     handle,
@@ -120,6 +140,11 @@ export function startVerification(bot: Bot): Server | null {
       token: config.stats.token,
       get: () => statsStore.get(),
       bump: (flagged, n, flaggedN) => statsStore.bump(flagged, n, flaggedN),
+    },
+    signal: {
+      token: config.stats.token,
+      observe: recordObservation,
+      deployer: (address, chain, excludeMint) => signalGraph.reputationFor(address, chain, excludeMint),
     },
     ...(config.xBridge.token
       ? {

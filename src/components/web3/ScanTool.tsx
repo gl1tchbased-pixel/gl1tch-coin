@@ -252,6 +252,29 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
             <div><span>24h vol</span>{fmtUsd(result.meta.volume24h)}</div>
           </div>
 
+          {/* Signal Graph — deployer's cross-scan track record (our proprietary memory) */}
+          {result.meta.deployerReputation && result.meta.deployerReputation.level !== "unknown" && (
+            <div
+              className={`${styles.deployerRep} ${
+                result.meta.deployerReputation.level === "serial"
+                  ? styles.repSerial
+                  : result.meta.deployerReputation.level === "watch"
+                    ? styles.repWatch
+                    : styles.repClean
+              }`}
+            >
+              <div className={styles.repHead}>
+                {result.meta.deployerReputation.level === "serial"
+                  ? "⚠ Serial deployer"
+                  : result.meta.deployerReputation.level === "watch"
+                    ? "◆ Deployer on watch"
+                    : "✓ Deployer track record"}
+                <span className={styles.repTag}>GL1TCH Signal Graph</span>
+              </div>
+              <p className={styles.repNote}>{result.meta.deployerReputation.note}</p>
+            </div>
+          )}
+
           {/* Multi-source transparency — we show our work */}
           {result.sources && result.sources.length > 0 && (
             <div className={styles.sources}>

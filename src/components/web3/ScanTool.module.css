@@ -334,6 +334,15 @@
 .shareBtn:hover { background: rgba(124, 255, 79, 0.08); transform: translateY(-1px); }
 .source { font-size: 12px; color: rgba(245, 247, 248, 0.4); }
 
+/* ---- Signal Graph: deployer track record ---- */
+.deployerRep { margin: 0 26px 18px; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); }
+.repSerial { border-color: rgba(255, 90, 90, 0.5); background: rgba(255, 90, 90, 0.08); }
+.repWatch { border-color: rgba(255, 176, 80, 0.5); background: rgba(255, 176, 80, 0.07); }
+.repClean { border-color: rgba(124, 255, 79, 0.35); background: rgba(124, 255, 79, 0.06); }
+.repHead { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+.repTag { margin-left: auto; font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(245, 247, 248, 0.5); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 9999px; padding: 3px 8px; }
+.repNote { font-size: 13.5px; line-height: 1.55; color: rgba(245, 247, 248, 0.82); margin: 0; }
+
 /* ---- multi-source transparency ---- */
 .sources { padding: 18px 26px; border-top: 1px solid rgba(255, 255, 255, 0.06); }
 .sourcesHead { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(245, 247, 248, 0.45); margin-bottom: 10px; }

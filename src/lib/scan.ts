@@ -8,6 +8,7 @@
  */
 
 import { fetchTokenMarket } from "@/lib/market-sources";
+import type { DeployerReputation } from "@/lib/signal-graph";
 
 const TOKEN_2022 = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
 
@@ -95,6 +96,7 @@ export interface ScanResult {
     deployPlatform: string | null;
     deployerCreated: number | null;
     deployerDead: number | null;
+    deployerReputation?: DeployerReputation | null; // GL1TCH Signal Graph track record
   };
   scannedAt: number;
 }
