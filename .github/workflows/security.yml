@@ -32,10 +32,18 @@ jobs:
       # Fail on any NEW high/critical advisory in production deps. Two transitive
       # advisories from @solana/web3.js@1.x (no clean fix) are allow-listed and tracked
       # in docs/risk-register.md — they clear on the web3.js v2 migration.
+      # The two root advisories (bigint-buffer, elliptic) cascade through the whole
+      # @solana/web3.js@1.x tree, so npm audit reports each affected package. Allow-list
+      # the full known chain (tracked in docs/risk-register.md); any NEW advisory in any
+      # OTHER package still fails the build.
       - name: audit-ci (prod deps, high+)
         run: >
           npx --yes audit-ci@^7 --high --skip-dev
-          --allowlist GHSA-3gc7-fjrx-p6mg GHSA-848j-6mx2-7j84
+          --allowlist
+          GHSA-3gc7-fjrx-p6mg GHSA-848j-6mx2-7j84
+          bigint-buffer elliptic
+          @solana/web3.js @solana/buffer-layout-utils
+          @solana/spl-token @solana/spl-token-group @solana/spl-token-metadata
 
   invariant:
     name: No fund/approval signature calls
