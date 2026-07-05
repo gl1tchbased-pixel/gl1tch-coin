@@ -4,9 +4,9 @@ import { AgentCheck } from "@/components/web3/AgentCheck";
 import styles from "./agents.module.css";
 
 export const metadata: Metadata = {
-  title: "Agent Trust Layer — GL1TCH",
+  title: "Agent Trust Layer — Know Your Agent (KYA) — GL1TCH",
   description:
-    "The trust layer for the AI-agent economy. Autonomous agents transact on-chain, but nobody can verify one is legit, reputable, or safe to let near funds. GL1TCH scores agent wallets — identity + on-chain track record — so you know before you trust.",
+    "KYA — Know Your Agent for on-chain AI. Autonomous agents transact on-chain, but nobody can verify one is legit, reputable, or safe to let near funds. GL1TCH scores agent wallets on the two trust-stack layers you can't fake — provenance & reputation — from accumulated security data.",
   alternates: { canonical: "/agents" },
 };
 
@@ -20,14 +20,15 @@ export default function AgentsPage() {
   return (
     <main className="container" style={{ paddingBlock: "var(--space-16)", maxWidth: 900 }}>
       <div style={{ textAlign: "center", marginBottom: "var(--space-10)" }}>
-        <span className="t-eyebrow">Agent Trust Layer · v0</span>
+        <span className="t-eyebrow">Agent Trust Layer · Know Your Agent</span>
         <h1 className="t-h1" style={{ marginTop: "var(--space-3)" }}>
-          The trust layer for the <span className={styles.accent}>AI-agent economy</span>.
+          <span className={styles.accent}>KYA</span> — Know Your Agent, for on-chain AI.
         </h1>
         <p className="t-body-lg" style={{ color: "var(--text-secondary)", maxWidth: 680, margin: "var(--space-4) auto 0" }}>
           Autonomous agents now hold wallets and transact on-chain — but nobody can tell if an
-          agent is legit, reputable, or safe to let near funds. That&apos;s the missing layer.
-          GL1TCH already built it for tokens; we&apos;re pointing it at agents.
+          agent is legit, reputable, or safe to let near funds. The agent-trust stack has eight
+          layers; GL1TCH owns the two you can&apos;t fake: <strong>provenance &amp; reputation</strong>,
+          built from the security data we&apos;ve already accumulated.
         </p>
       </div>
 
@@ -61,8 +62,13 @@ export default function AgentsPage() {
             primitives, aimed at agents, are a moat: copying us means rebuilding our data.
           </p>
           <p className={styles.cardD}>
-            Free to check. Deeper queries, agent registration, and the guardrail API tie to
-            holding — usage becomes revenue, revenue funds the token. No points, no airdrop loops.
+            Free to check. Deeper queries and the guardrail API tie to holding — usage becomes
+            revenue, revenue funds the token. No points, no airdrop loops (they don&apos;t work).
+          </p>
+          <p className={styles.cardD} style={{ fontSize: "0.85rem", opacity: 0.7 }}>
+            <strong>What we are, honestly:</strong> a reputation &amp; provenance signal — not key
+            custody or a hardware wallet. We tell you whether an agent has earned trust; we never
+            touch its keys or yours.
           </p>
         </div>
       </section>
