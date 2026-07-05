@@ -8,6 +8,23 @@ import fs from "node:fs";
 import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
 
 const PRESETS = {
+  signal: {
+    video: "gl1tch-signal-graph.mp4",
+    caption: `The scanner just grew a memory. 🧠
+
+Every token scanner checks one token and forgets. GL1TCH's new Signal Graph remembers every deployer it has ever seen — so a wallet that shipped rugs before lights up as ⚠ Serial deployer on any fresh token. A signal no single-token scanner can produce.
+
+📡 Proof-of-Signal — reputation you can't fake or buy (verified sustained holding + community).
+🛡 New Security & Transparency page — we never touch your funds; verify every word.
+
+Scanning is free, always. Holding unlocks convenience — never the protection.
+
+🔍 coin-three-mu.vercel.app/scan
+💬 t.me/gl1tch_infected
+
+Not financial advice · DYOR.
+#crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins #defi`,
+  },
   mascot2: {
     video: "gl1tch-mascot-hero.mp4",
     caption: `Meet GLITCHY 👻 the rogue-AI ghost of $GL1TCH.
