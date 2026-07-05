@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { scanToken, applyVerified, isVerified } from "@/lib/scan";
 import { bumpStats } from "@/lib/stats";
+import { observeDeployer } from "@/lib/signal-graph";
 
 /**
  * RUG RADAR API — auto Hall of Shame. Pulls freshly-promoted ("boosted") tokens from
@@ -56,6 +57,14 @@ export async function GET() {
       scanned++;
       const flagged = FLAGGED.has(s.verdict);
       if (flagged) flaggedCount++;
+      // Feed the Signal Graph: the hourly sweep of fresh boosted tokens is exactly where
+      // serial ruggers surface. Fire-and-forget; confident, unverified reads only.
+      if (s.meta?.deployer && !s.verified && (typeof s.confidence !== "number" || s.confidence >= 60)) {
+        observeDeployer({
+          deployer: s.meta.deployer, chain: s.chain, mint: s.mint,
+          verdict: s.verdict, score: s.score, name: s.name, symbol: s.symbol,
+        });
+      }
       ranked.push({
         chain: s.chain, mint: s.mint,
         name: s.name || s.symbol || s.mint.slice(0, 6),

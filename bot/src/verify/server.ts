@@ -28,6 +28,7 @@ export interface VerifyServerOptions {
     observe: (obs: unknown) => void;
     deployer: (address: string, chain: string, excludeMint?: string) => unknown;
     leaderboard: (n: number) => unknown[];
+    serial: (min: number) => unknown[];
   };
 }
 
@@ -113,6 +114,13 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
       }
       res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=30", ...cors });
       res.end(JSON.stringify({ ok: true, reputation: opts.signal.deployer(address, chain, exclude) }));
+      return;
+    }
+    if (opts.signal && sPath === "/signal/serial" && req.method === "GET") {
+      const qs = new URLSearchParams((req.url ?? "").split("?")[1] ?? "");
+      const min = Math.max(2, parseInt(qs.get("min") ?? "2", 10) || 2);
+      res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=60", ...cors });
+      res.end(JSON.stringify({ ok: true, serial: opts.signal.serial(min) }));
       return;
     }
     if (opts.signal && sPath === "/signal/leaderboard" && req.method === "GET") {

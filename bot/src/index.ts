@@ -10,7 +10,7 @@ import { proofOfSignal } from "./proof-of-signal/store.js";
 import { callbacks } from "./callbacks.js";
 import { xCallbacks } from "./agent/x-agent/handlers.js";
 import { adminCommands } from "./admin.js";
-import { messages } from "./content.js";
+import { messages, OFFICIAL } from "./content.js";
 import { startKb } from "./keyboards.js";
 import { startVerification } from "./verify/index.js";
 import { startAgent, activity } from "./agent/index.js";
@@ -101,8 +101,21 @@ async function main() {
   startVerification(bot);
   startAgent(bot);
   startWatchtower(bot);
+  startRadarPing();
   console.log("GL1TCH bot online. The signal is live.");
   await bot.start({ allowed_updates: ["message", "chat_member", "callback_query"] });
+}
+
+/** Trigger the Rug Radar's fresh-token sweep hourly so the Signal Graph keeps accruing
+ *  deployer history (the sweep feeds observeDeployer). The bot is always-on; Vercel Hobby
+ *  crons are once-a-day only, so this is the reliable hourly heartbeat. */
+function startRadarPing() {
+  const ping = () =>
+    fetch(`${OFFICIAL.SITE}/api/radar`)
+      .then((r) => console.log(`[radar] swept (${r.status})`))
+      .catch((e) => console.warn("[radar] ping failed:", (e as Error).message));
+  ping();
+  setInterval(ping, 60 * 60 * 1000).unref?.();
 }
 
 main().catch((err) => {

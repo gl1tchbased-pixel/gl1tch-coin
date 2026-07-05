@@ -68,6 +68,17 @@ export class SignalGraphStore {
     return reputation(rec, { excludeMint });
   }
 
+  /** All deployers the graph has flagged as serial (>= `min` flagged tokens), worst first.
+   *  This is the "caught a repeat rugger" feed powering the proof auto-share. */
+  serialList(min = 2): DeployerReputation[] {
+    const out: DeployerReputation[] = [];
+    for (const rec of this.byDeployer.values()) {
+      const rep = reputation(rec);
+      if (rep.level === "serial" && rep.flaggedCount >= min) out.push(rep);
+    }
+    return out.sort((a, b) => b.flaggedCount - a.flaggedCount);
+  }
+
   size(): number {
     return this.byDeployer.size;
   }

@@ -156,6 +156,7 @@ export function startVerification(bot: Bot): Server | null {
       observe: recordObservation,
       deployer: (address, chain, excludeMint) => signalGraph.reputationFor(address, chain, excludeMint),
       leaderboard: (n) => proofOfSignal.leaderboard((id) => referralStore.count(id), n),
+      serial: (min) => signalGraph.serialList(min),
     },
     ...(config.xBridge.token
       ? {

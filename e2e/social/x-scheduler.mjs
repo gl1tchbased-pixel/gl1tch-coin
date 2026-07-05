@@ -27,6 +27,7 @@ function run(script) {
 
 async function cycle() {
   await run("x-daily.mjs");   // idempotent — only posts once/day
+  await run("x-proof.mjs");   // shares a real serial-deployer catch (usually a no-op)
   await run("x-reply.mjs");   // rate-limited helpful replies
 }
 
