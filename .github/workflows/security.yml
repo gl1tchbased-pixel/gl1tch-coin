@@ -29,9 +29,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # Fail the build on a high/critical advisory in production deps.
-      - run: npm audit --omit=dev --audit-level=high
-        continue-on-error: false
+      # Fail on any NEW high/critical advisory in production deps. Two transitive
+      # advisories from @solana/web3.js@1.x (no clean fix) are allow-listed and tracked
+      # in docs/risk-register.md — they clear on the web3.js v2 migration.
+      - name: audit-ci (prod deps, high+)
+        run: >
+          npx --yes audit-ci@^7 --high --skip-dev
+          --allowlist GHSA-3gc7-fjrx-p6mg GHSA-848j-6mx2-7j84
 
   invariant:
     name: No fund/approval signature calls
