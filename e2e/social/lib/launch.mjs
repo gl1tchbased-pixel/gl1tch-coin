@@ -33,12 +33,19 @@ export async function launch(profileName) {
   for (const lock of ["SingletonLock", "SingletonCookie", "SingletonSocket"]) {
     try { fs.rmSync(path.resolve(profileDir, lock), { force: true }); } catch { /* */ }
   }
+  // LAUNCH_CHROMIUM=1 forces the bundled Chromium (isolated) — use when the user's real
+  // Chrome is open and would merge/detach the automation window (single-instance).
   let context, channel = "chrome";
-  try {
-    context = await chromium.launchPersistentContext(profileDir, { ...BASE, channel: "chrome" });
-  } catch {
+  if (process.env.LAUNCH_CHROMIUM === "1") {
     channel = "chromium";
     context = await chromium.launchPersistentContext(profileDir, BASE);
+  } else {
+    try {
+      context = await chromium.launchPersistentContext(profileDir, { ...BASE, channel: "chrome" });
+    } catch {
+      channel = "chromium";
+      context = await chromium.launchPersistentContext(profileDir, BASE);
+    }
   }
   const page = context.pages()[0] ?? (await context.newPage());
   await page.bringToFront().catch(() => {});
