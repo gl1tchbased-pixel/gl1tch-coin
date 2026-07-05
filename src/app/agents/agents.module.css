@@ -30,6 +30,22 @@
   display: grid; gap: var(--space-3, 0.75rem);
 }
 
+.code {
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+  border-radius: 12px; overflow: hidden; margin-bottom: var(--space-3, 0.75rem);
+  background: rgba(0, 0, 0, 0.25);
+}
+.codeHead {
+  font-size: 0.8rem; font-weight: 650; padding: 8px 14px;
+  color: var(--accent, #7cf6c8); border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+.code pre {
+  margin: 0; padding: 14px; overflow-x: auto;
+  font-family: ui-monospace, monospace; font-size: 12.5px; line-height: 1.6;
+  color: rgba(245, 247, 248, 0.9);
+}
+
 .cta { display: flex; flex-wrap: wrap; gap: var(--space-3, 0.75rem); justify-content: center; margin-top: var(--space-12, 3rem); }
 .ctaGhost {
   display: inline-flex; align-items: center; padding: 0.7rem 1.3rem; border-radius: 999px;

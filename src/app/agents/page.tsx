@@ -67,6 +67,36 @@ export default function AgentsPage() {
         </div>
       </section>
 
+      {/* Developer / integration — the infrastructure story */}
+      <section className={styles.block}>
+        <h2 className={styles.h2}>Build on it</h2>
+        <p className={styles.cardD} style={{ marginBottom: "var(--space-4)" }}>
+          The Agent Trust Layer is an open API. Any agent framework, wallet, or dapp can query an
+          agent&apos;s trust before letting it transact — and any agent can register itself.
+        </p>
+        <div className={styles.code}>
+          <div className={styles.codeHead}>Check an agent&apos;s trust</div>
+          <pre>{`GET /api/agent/check?address=<wallet>&chain=solana
+→ { score, level: "trusted|neutral|caution|unknown", reasons[] }`}</pre>
+        </div>
+        <div className={styles.code}>
+          <div className={styles.codeHead}>Register an agent (it signs, proving ownership — moves nothing)</div>
+          <pre>{`const issued = Date.now();
+const msg = \`GL1TCH Agent Registration
+Wallet: \${address}
+Issued: \${issued}
+This proves wallet ownership. It moves no funds and grants no access.\`;
+const signature = bs58.encode(nacl.sign.detached(utf8(msg), secretKey));
+
+POST /api/agent/register
+{ address, chain: "solana", issued, signature }`}</pre>
+        </div>
+        <p className={styles.cardD} style={{ marginTop: "var(--space-3)", fontSize: "0.85rem", opacity: 0.7 }}>
+          v1 — read + register are live and free. Guardrail SDK, attestation network, and
+          holding-gated depth are next. Not financial advice.
+        </p>
+      </section>
+
       <div className={styles.cta}>
         <Link href="/scan" className={styles.ctaGhost}>See the token scanner it grew from →</Link>
         <Link href="/security" className={styles.ctaGhost}>Our security posture ↗</Link>

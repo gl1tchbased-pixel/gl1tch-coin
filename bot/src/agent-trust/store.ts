@@ -76,6 +76,17 @@ export class AgentTrustStore {
     return rec;
   }
 
+  /** Record a positive attestation or a dispute against an agent (creates the record if new). */
+  attest(agentId: string, chain: string, kind: "attest" | "dispute"): AgentRecord {
+    const rec = this.get(agentId, chain) ?? this.register(agentId, chain);
+    if (kind === "attest") rec.attestations += 1;
+    else rec.disputes += 1;
+    rec.updatedAt = Date.now();
+    this.byAgent.set(key(chain, agentId), rec);
+    this.save();
+    return rec;
+  }
+
   size(): number {
     return this.byAgent.size;
   }

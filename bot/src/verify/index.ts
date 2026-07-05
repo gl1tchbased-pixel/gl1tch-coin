@@ -15,6 +15,7 @@ import { proofOfSignal } from "../proof-of-signal/store.js";
 import { referralStore } from "../referrals.js";
 import { agentTrustStore } from "../agent-trust/store.js";
 import { agentTrust } from "../agent-trust/trust.js";
+import { verifyAgentRegistration } from "../agent-trust/register.js";
 import { claimPendingX, ackX } from "../agent/x-agent/xqueue.js";
 import { statsStore } from "../stats.js";
 
@@ -174,6 +175,27 @@ export function startVerification(bot: Bot): Server | null {
           disputes: rec?.disputes ?? 0,
         });
         return { address, chain, ...trust, registered: !!rec, verified: rec?.verified ?? false };
+      },
+      registerAgent: (body) => {
+        const b = (body ?? {}) as Record<string, unknown>;
+        const address = typeof b.address === "string" ? b.address : "";
+        const chain = typeof b.chain === "string" ? b.chain : "solana";
+        const issued = typeof b.issued === "number" ? b.issued : 0;
+        const signature = typeof b.signature === "string" ? b.signature : "";
+        const label = typeof b.label === "string" ? b.label.slice(0, 60) : "";
+        const v = verifyAgentRegistration({ address, issued, signature });
+        if (!v.ok) return { ok: false, error: v.error };
+        const rec = agentTrustStore.register(address, chain, { label, verified: true });
+        return { ok: true, agent: { address: rec.agentId, chain: rec.chain, verified: rec.verified, label: rec.label } };
+      },
+      attestAgent: (body) => {
+        const b = (body ?? {}) as Record<string, unknown>;
+        const address = typeof b.address === "string" ? b.address : "";
+        const chain = typeof b.chain === "string" ? b.chain : "solana";
+        const kind = b.kind === "dispute" ? "dispute" : "attest";
+        if (!address) return { ok: false, error: "address required" };
+        agentTrustStore.attest(address, chain, kind);
+        return { ok: true };
       },
     },
     ...(config.xBridge.token

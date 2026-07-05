@@ -17,6 +17,35 @@ export interface AgentAssessment {
   verified: boolean;
 }
 
+/** The exact message an agent signs to register (must match the bot's agentRegMessage). */
+export function agentRegMessage(address: string, issuedMs: number): string {
+  return `GL1TCH Agent Registration\nWallet: ${address}\nIssued: ${issuedMs}\nThis proves wallet ownership. It moves no funds and grants no access.`;
+}
+
+export interface RegisterInput {
+  address: string;
+  chain?: string;
+  issued: number;
+  signature: string; // base58 ed25519 over agentRegMessage(address, issued)
+  label?: string;
+}
+
+/** Forward a signed agent registration to the bot. Returns {ok, error?}. */
+export async function registerAgent(input: RegisterInput): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const r = await fetch(`${BASE}/signal/agent/register`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ chain: "solana", ...input }),
+      signal: AbortSignal.timeout(6000),
+    });
+    const d = (await r.json()) as { ok?: boolean; error?: string };
+    return { ok: !!d.ok, error: d.error };
+  } catch {
+    return { ok: false, error: "unreachable" };
+  }
+}
+
 /** Trust assessment for an agent wallet. Null on any failure. */
 export async function agentCheck(address: string, chain = "solana"): Promise<AgentAssessment | null> {
   try {

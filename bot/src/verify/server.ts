@@ -30,6 +30,8 @@ export interface VerifyServerOptions {
     leaderboard: (n: number) => unknown[];
     serial: (min: number) => unknown[];
     agent: (address: string, chain: string) => unknown;
+    registerAgent: (body: unknown) => { ok: boolean; error?: string; agent?: unknown };
+    attestAgent: (body: unknown) => { ok: boolean; error?: string };
   };
 }
 
@@ -94,6 +96,47 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
           opts.stats!.bump(!!b.flagged, typeof b.n === "number" ? b.n : 1, typeof b.flaggedN === "number" ? b.flaggedN : 0);
           res.writeHead(200, { "Content-Type": "application/json", ...cors });
           res.end(JSON.stringify({ ok: true }));
+        } catch {
+          res.writeHead(400, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify({ ok: false, error: "bad_json" }));
+        }
+      });
+      return;
+    }
+
+    // ---- Agent Trust: self-registration (signature-authed) + attest/dispute ----
+    if (opts.signal && sPath === "/signal/agent/register" && req.method === "POST") {
+      let rRaw = ""; let rTooLarge = false;
+      req.on("data", (c) => { rRaw += c; if (rRaw.length > 4096) { rTooLarge = true; req.destroy(); } });
+      req.on("end", () => {
+        if (rTooLarge) return;
+        try {
+          const out = opts.signal!.registerAgent(rRaw ? JSON.parse(rRaw) : {});
+          res.writeHead(out.ok ? 200 : 400, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify(out));
+        } catch {
+          res.writeHead(400, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify({ ok: false, error: "bad_json" }));
+        }
+      });
+      return;
+    }
+    if (opts.signal && sPath === "/signal/agent/attest" && req.method === "POST") {
+      const hdr = req.headers["x-stats-token"];
+      const token = (Array.isArray(hdr) ? hdr[0] : hdr) ?? "";
+      if (!opts.signal.token || token !== opts.signal.token) {
+        res.writeHead(401, { "Content-Type": "application/json", ...cors });
+        res.end(JSON.stringify({ ok: false, error: "unauthorized" }));
+        return;
+      }
+      let aRaw = ""; let aTooLarge = false;
+      req.on("data", (c) => { aRaw += c; if (aRaw.length > 2048) { aTooLarge = true; req.destroy(); } });
+      req.on("end", () => {
+        if (aTooLarge) return;
+        try {
+          const out = opts.signal!.attestAgent(aRaw ? JSON.parse(aRaw) : {});
+          res.writeHead(out.ok ? 200 : 400, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify(out));
         } catch {
           res.writeHead(400, { "Content-Type": "application/json", ...cors });
           res.end(JSON.stringify({ ok: false, error: "bad_json" }));
