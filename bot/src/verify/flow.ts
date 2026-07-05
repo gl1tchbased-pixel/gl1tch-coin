@@ -1,5 +1,6 @@
 import { rankForBalance, unlockedTierIds, type RankTier } from "../ranks.js";
 import { VerifyStore } from "./store.js";
+import { sustainedBalance, effectiveBalance, type BalanceSnapshot } from "./sustained.js";
 
 export interface VerifyRequest {
   nonce: string;
@@ -16,6 +17,10 @@ export interface VerifyDeps {
   contractLive: boolean;
   /** Optional: grant access for the unlocked tiers; returns invite links to DM. */
   grantAccess?: (tgUserId: number, tierIds: RankTier["id"][]) => Promise<string[]>;
+  /** Optional anti-gaming layer: records the balance snapshot and returns the wallet's
+   *  history so the tier can be gated on a 7-day sustained average (see ./sustained.ts).
+   *  When absent, the tier rides on the current balance (legacy behaviour). */
+  recordHistory?: (wallet: string, balance: number) => BalanceSnapshot[];
 }
 
 export type VerifyResult =
@@ -26,7 +31,10 @@ export type VerifyResult =
       wallet: string;
       rank: string;
       tierId: RankTier["id"];
-      balance: number;
+      balance: number; // current on-chain balance (what we display)
+      sustainedBalance: number | null; // 7-day time-weighted average (null if not tracked)
+      provisional: boolean; // true until a full 7-day window of history confirms the tier
+      coverageDays: number; // days of held-balance history backing this tier
       unlocks: string;
       invites: string[];
       preLaunch: boolean;
@@ -48,18 +56,37 @@ export async function handleVerification(
 
   try {
     const balance = deps.contractLive ? await deps.readBalance(req.publicKey) : 0;
-    const tier = rankForBalance(balance);
+
+    // Anti-gaming: gate the tier on a 7-day sustained average when history is tracked, so
+    // a balance flashed for one block can't unlock a tier. Falls back to current balance
+    // (provisional) until a full window accrues, and pre-launch (no history recorded).
+    let sustainedAvg: number | null = null;
+    let provisional = false;
+    let coverageDays = 0;
+    let gating = balance;
+    if (deps.recordHistory && deps.contractLive) {
+      const snaps = deps.recordHistory(req.publicKey, balance);
+      const s = sustainedBalance(snaps, Date.now());
+      sustainedAvg = s.average;
+      provisional = !s.confirmed;
+      coverageDays = s.coverageMs / (24 * 60 * 60 * 1000);
+      gating = effectiveBalance(balance, s);
+    }
+
+    const tier = rankForBalance(gating);
 
     store.setVerification({
       tgUserId: pending.tgUserId,
       wallet: req.publicKey,
       tierId: tier.id,
       balance,
+      sustainedBalance: sustainedAvg,
+      provisional,
       verifiedAt: Date.now(),
     });
 
     const invites = deps.grantAccess
-      ? await deps.grantAccess(pending.tgUserId, unlockedTierIds(balance))
+      ? await deps.grantAccess(pending.tgUserId, unlockedTierIds(gating))
       : [];
 
     return {
@@ -69,6 +96,9 @@ export async function handleVerification(
       rank: tier.rank,
       tierId: tier.id,
       balance,
+      sustainedBalance: sustainedAvg,
+      provisional,
+      coverageDays,
       unlocks: tier.unlocks,
       invites,
       preLaunch: !deps.contractLive,

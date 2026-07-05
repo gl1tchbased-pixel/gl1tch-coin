@@ -12,7 +12,9 @@ export interface Verification {
   tgUserId: number;
   wallet: string;
   tierId: RankTier["id"];
-  balance: number;
+  balance: number; // current on-chain balance at verification time
+  sustainedBalance?: number | null; // 7-day time-weighted average (anti-gaming), if tracked
+  provisional?: boolean; // true until a full 7-day window confirms sustained holding
   verifiedAt: number;
 }
 

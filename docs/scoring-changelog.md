@@ -9,6 +9,13 @@
 `YYYY-MM-DD — <what changed> — <why> — <PR/commit>`
 
 ## Log
+- 2026-07-05 — Rank tiers gated on a **7-day sustained (time-weighted average) balance**
+  instead of an instant read — anti-gaming so a balance flashed for one block can't unlock a
+  tier (PREMIUM-PLAN-v3 Phase 0). Tier is *provisional* until a full 7-day window of holding
+  history accrues, then gated on `min(current, 7d-avg)`; a recent dump immediately loses perks.
+  Pure logic + tests in `bot/src/verify/sustained.ts`; durable history in `history-store.ts`.
+  Brand tier names (Observer/Infected/Signal Bearer/Core/Ghost Node) unchanged — renaming to
+  the plan's Scout/Sentinel/Operative is a founder brand decision, deliberately not auto-applied.
 - 2026-07-05 — Changelog created (Phase -1/0). Current engine (`src/lib/scan.ts`) weights:
   mint_authority 19 · freeze_authority 17 · lp_lock 15 · liquidity 12 · insiders 9 ·
   concentration 8 · deployer 8 · transfer_tax 5 · metadata_mutable 3 · rugcheck 4.

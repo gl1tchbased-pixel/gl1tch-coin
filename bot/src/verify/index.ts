@@ -7,6 +7,7 @@ import { VerifyStore } from "./store.js";
 import { verifySignature } from "./signature.js";
 import { readTokenBalance } from "./balance.js";
 import { handleVerification } from "./flow.js";
+import { balanceHistory } from "./history-store.js";
 import { createVerifyServer, parseVerifyBody } from "./server.js";
 import { claimPendingX, ackX } from "../agent/x-agent/xqueue.js";
 import { statsStore } from "../stats.js";
@@ -63,6 +64,7 @@ export function startVerification(bot: Bot): Server | null {
           readTokenBalance(connection, owner, config.verify.contractAddress),
         contractLive: isContractLive,
         grantAccess,
+        recordHistory: (wallet, balance) => balanceHistory.record(wallet, balance),
       },
       parsed
     );
@@ -80,6 +82,11 @@ export function startVerification(bot: Bot): Server | null {
           ? "\n<i>Token not live yet — ranks activate at launch. Re-verify after launch to claim higher tiers.</i>"
           : `\nBalance: <code>${result.balance.toLocaleString("en-US")}</code> $GL1TCH`,
       ];
+      if (!result.preLaunch && result.provisional && result.tierId !== "observer") {
+        lines.push(
+          `\n<i>Provisional — tiers confirm after 7 days of sustained holding (anti-gaming). ${Math.floor(result.coverageDays)}/7 days tracked so far.</i>`
+        );
+      }
       if (result.invites.length > 0) {
         lines.push("\nYour single-use room links (expire in 1h):");
         lines.push(result.invites.join("\n"));
@@ -105,6 +112,7 @@ export function startVerification(bot: Bot): Server | null {
   };
 
   statsStore.load();
+  balanceHistory.load();
   const server = createVerifyServer({
     origin: config.verify.siteOrigin,
     handle,
