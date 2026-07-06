@@ -7,6 +7,7 @@ import { TickerBar } from "@/components/layout/TickerBar";
 import { Scanlines } from "@/components/effects/Scanlines";
 import { ScrollProgress } from "@/components/effects/ScrollProgress";
 import { Web3Providers } from "@/components/web3/Providers";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -46,6 +47,7 @@ export default function RootLayout({
           <Footer />
           <TickerBar />
         </Web3Providers>
+        <Analytics />
       </body>
     </html>
   );

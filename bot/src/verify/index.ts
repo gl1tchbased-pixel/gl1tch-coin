@@ -197,6 +197,17 @@ export function startVerification(bot: Bot): Server | null {
         agentTrustStore.attest(address, chain, kind);
         return { ok: true };
       },
+      // Growth metrics — the instrument panel for the autonomous engine (measure, then optimize).
+      metrics: () => {
+        const stats = statsStore.get();
+        return {
+          scans: { total: stats.scanned, flagged: stats.flagged },
+          signalGraph: { deployers: signalGraph.size(), flaggedActors: signalGraph.flaggedList(1, 9999).length, serialDeployers: signalGraph.serialList(2).length },
+          agents: { registered: agentTrustStore.size() },
+          reputations: proofOfSignal.size(),
+          at: Date.now(),
+        };
+      },
       // Public directory: verified registered agents + flagged on-chain actors (Signal Graph).
       directory: () => {
         const verified = agentTrustStore.verifiedList(24).map((r) => {

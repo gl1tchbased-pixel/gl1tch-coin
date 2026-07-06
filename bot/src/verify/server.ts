@@ -33,6 +33,7 @@ export interface VerifyServerOptions {
     registerAgent: (body: unknown) => { ok: boolean; error?: string; agent?: unknown };
     attestAgent: (body: unknown) => { ok: boolean; error?: string };
     directory: () => unknown;
+    metrics: () => unknown;
   };
 }
 
@@ -159,6 +160,11 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
       }
       res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=30", ...cors });
       res.end(JSON.stringify({ ok: true, reputation: opts.signal.deployer(address, chain, exclude) }));
+      return;
+    }
+    if (opts.signal && sPath === "/signal/metrics" && req.method === "GET") {
+      res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=60", ...cors });
+      res.end(JSON.stringify({ ok: true, ...(opts.signal.metrics() as object) }));
       return;
     }
     if (opts.signal && sPath === "/signal/directory" && req.method === "GET") {
