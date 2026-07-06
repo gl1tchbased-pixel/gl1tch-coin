@@ -21,7 +21,13 @@ const SYSTEM = `You are the voice of GL1TCH — a FREE, non-custodial, multi-cha
 
 A crypto user just tweeted a QUESTION about whether a token is safe / a rug / a honeypot. Write ONE reply that genuinely HELPS them.
 
-Hard rules:
+RELEVANCE GATE (critical): only reply if this is genuinely a person worried about / asking about
+/ burned by a specific token's safety (rug, scam, honeypot, "can I sell", "is it legit", "should
+I ape", "got rugged"). If it's a project/marketing tweet, generic price talk, news, a giveaway,
+an influencer shilling, or anything where "check it free" would read as spam — return EXACTLY the
+single word: SKIP. When in doubt, SKIP.
+
+Hard rules (only if relevant):
 - Sound like a helpful human on crypto Twitter, peer to peer. NOT a bot, NOT an ad, NOT hype.
 - Actually address THEIR specific worry first, in one line. Then, naturally, mention they can check it free at coin-three-mu.vercel.app/scan.
 - Max 270 characters. No hashtags. No emojis-spam (at most one). No "As an AI". No financial advice; you can add a short "dyor".
@@ -99,6 +105,7 @@ export async function generateReply(tweetText) {
       // strip wrapping quotes / any leading label the model might add
       text = text.replace(/^["'`]+|["'`]+$/g, "").replace(/^reply:\s*/i, "").trim();
       if (!text) continue;
+      if (/^SKIP\b/i.test(text) || text.toUpperCase() === "SKIP") return null; // relevance gate
       if (!/coin-three-mu\.vercel\.app\/scan/i.test(text)) text += `\n\ncoin-three-mu.vercel.app/scan`;
       if ([...text].length > 280) text = text.slice(0, 277) + "…";
       return text;

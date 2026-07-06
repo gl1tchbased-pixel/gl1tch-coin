@@ -10,7 +10,7 @@ import { generateReply } from "./x-llm.mjs";
 const SITE = "coin-three-mu.vercel.app";
 const MAX = Number(process.env.MAX || 3);
 const MIN_DAYS_PER_USER = Number(process.env.MIN_DAYS_PER_USER || 7);
-const MIN_FOLLOWERS = Number(process.env.MIN_FOLLOWERS || 500); // skip tiny accounts (no reach)
+const MIN_FOLLOWERS = Number(process.env.MIN_FOLLOWERS || 150); // skip pure-spam tiny accounts, keep real retail
 const DAY = 86400000;
 
 // Intent searches — people actively evaluating a token (buying-intent = potential users).
@@ -22,8 +22,8 @@ const QUERIES = [
   `("just got rugged" OR "another rug") solana -is:retweet lang:en min_faves:2`,
 ];
 
-// Reply only to genuine questions: a real safety ask AND a question mark.
-const ASKING = /is (this|it) (a )?(safe|rug|scam|legit|honeypot)|how (do|can) i (check|know|tell)|is it safe to (buy|ape)|should i (buy|ape)|rug(ged)?\??$|honeypot/i;
+// Broad safety-relevance funnel (the LLM makes the final relevance + quality call via SKIP).
+const ASKING = /\b(rug|rugged|rug ?pull|scam|scammed|honeypot|can'?t sell|is (this|it) (safe|legit|a rug|a scam)|safe to (buy|ape)|should i (buy|ape)|got (rugged|scammed)|is it legit|looks like a rug|smells like a rug)\b/i;
 // Skip promos, ads, competitor/bot pitches, giveaways, and other people's shilling — these
 // aren't questions and replying reads as spam.
 const PROMO = /\b(add @|@\w+bot|our (bot|community|tool|platform)|join (our|the)|launch(ing|ed)?|presale|giveaway|airdrop|whitelist|\bWL\b|dm me|link in bio|use code|referral|sign ?up|👇)\b/i;
@@ -55,13 +55,13 @@ for (const [k, ts] of Object.entries(state.replied)) if (now - ts > 90 * DAY) de
 function pickReply(id) { return REPLIES[Number(BigInt(id) % BigInt(REPLIES.length))]; }
 function eligible(t) {
   if (!t.text) return false;
-  if (!isQuestion(t.text)) return false;            // must be an actual question
-  if (!ASKING.test(t.text)) return false;           // ...about safety/rugs
+  if (!ASKING.test(t.text)) return false;           // safety-relevant (rug/scam/honeypot/…)
   if (PROMO.test(t.text)) return false;             // not a promo/ad/shill
   if (PITCH.test(t.text)) return false;             // not a product/marketing pitch
-  if (!FIRST_PERSON.test(t.text)) return false;     // a real person asking (not 3rd-person marketing)
+  if (!FIRST_PERSON.test(t.text)) return false;     // a real person (not 3rd-person marketing)
   if (mentionCount(t.text) > 2) return false;       // mass-tag = spam/promo
-  if (t.text.length < 25) return false;             // too thin to be a real ask
+  if (t.text.length < 20) return false;             // too thin
+  // The LLM (generateReply) is the final relevance + quality judge → returns SKIP if unfit.
   if (state.replied[t.id]) return false;
   if (/gl1tch/i.test(t.text) || t.user.toLowerCase() === "gl1tchbased") return false; // not us
   const last = state.users[t.user];
