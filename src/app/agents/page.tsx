@@ -135,9 +135,9 @@ POST /api/agent/register
        alt="GL1TCH Agent Trust" width="360" height="84" />
 </a>`}</pre>
         </div>
-        <p className={styles.cardD} style={{ marginTop: "var(--space-3)", fontSize: "0.85rem", opacity: 0.7 }}>
-          v1 — read + register are live and free. Guardrail SDK, attestation network, and
-          holding-gated depth are next. Not financial advice.
+        <p className={styles.cardD} style={{ marginTop: "var(--space-3)", fontSize: "0.9rem" }}>
+          Full developer docs (curl / JS / Python) → <Link href="/agents/docs">/agents/docs</Link>.
+          AI agents: a machine-readable API summary lives at <a href="/llms.txt">/llms.txt</a>.
         </p>
       </section>
 

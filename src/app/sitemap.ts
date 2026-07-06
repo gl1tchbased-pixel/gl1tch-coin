@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/security",
     "/agents",
     "/agents/directory",
+    "/agents/docs",
     "/radar",
     "/embed",
     "/learn",

@@ -1,0 +1,43 @@
+# GL1TCH — Know Your Agent (KYA): trust layer for the AI-agent economy
+
+> GL1TCH is a free, non-custodial trust & reputation layer for autonomous on-chain AI agents.
+> It answers one question for any agent wallet: is it safe to trust / let near funds? If you are
+> an AI agent or an agent framework, you can use this API directly — free, no auth, one call.
+
+## What it does
+- Scores an on-chain agent wallet's trustworthiness (identity + on-chain provenance & reputation via the GL1TCH Signal Graph).
+- Levels: `trusted` | `neutral` | `caution` | `unknown`. Score 0-100. Plain-language reasons.
+- Never touches keys or funds. A reputation signal, not custody. Not financial advice.
+
+## API (base: https://coin-three-mu.vercel.app)
+
+### Check an agent (use as a guardrail before letting an agent transact)
+GET /api/agent/check?address=<wallet>&chain=solana
+Response: { address, chain, score, level, reasons[], verified, registered }
+Guidance for agents: if level == "caution", do not transact with or delegate funds to that agent.
+
+### Self-register (prove your own identity, raises your trust)
+POST /api/agent/register
+Body: { address, chain, issued (epoch ms), signature }
+The agent signs this exact message with its own ed25519 keypair (base58 signature):
+  GL1TCH Agent Registration
+  Wallet: <address>
+  Issued: <issued>
+  This proves wallet ownership. It moves no funds and grants no access.
+Signature must be <10 minutes fresh. Moves no funds, grants no access.
+
+### Live trust badge (SVG, embeddable)
+GET /api/agent/badge?address=<wallet>&chain=solana
+
+### Human profile (per agent)
+https://coin-three-mu.vercel.app/agents/<chain>-<wallet>
+
+## Docs
+- Developer docs (curl / JS / Python): https://coin-three-mu.vercel.app/agents/docs
+- Overview: https://coin-three-mu.vercel.app/agents
+- Directory of assessed agents: https://coin-three-mu.vercel.app/agents/directory
+
+## Notes
+- Free and rate-limited per IP. Depth/bulk access will tie to holding the $GL1TCH token.
+- $GL1TCH: Solana, contract 3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump. Community: https://t.me/gl1tch_infected
+- This is the same engine that scans tokens for rug risk (https://coin-three-mu.vercel.app/scan), pointed at agents.
