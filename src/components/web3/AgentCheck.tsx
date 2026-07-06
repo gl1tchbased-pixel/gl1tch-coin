@@ -85,6 +85,9 @@ export function AgentCheck() {
           <ul className={styles.reasons}>
             {data.reasons.map((r, i) => <li key={i}>{r}</li>)}
           </ul>
+          <a className={styles.permalink} href={`/agents/${data.chain}-${data.address}`}>
+            Permanent profile + embed badge →
+          </a>
           <p className={styles.foot}>Trust signal from GL1TCH — identity + on-chain deploy track record (Signal Graph). Not financial advice.</p>
         </div>
       )}
