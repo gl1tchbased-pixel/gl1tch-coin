@@ -7,10 +7,10 @@ import { heroContent } from "@/content/hero";
 import styles from "./Hero.module.css";
 
 const FEATURES = [
+  { label: "Know Your Agent", href: "/agents", icon: "🆔" },
   { label: "Rug Radar", href: "/radar", icon: "📡" },
   { label: "Watchtower", href: "/scan", icon: "👁" },
   { label: "Proof", href: "/proof", icon: "🛡" },
-  { label: "Embed badge", href: "/embed", icon: "</>" },
 ];
 
 export function Hero() {

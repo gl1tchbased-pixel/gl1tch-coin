@@ -1,4 +1,5 @@
 import { Hero } from "@/components/sections/Hero";
+import { AgentBanner } from "@/components/sections/AgentBanner";
 import { StatsCounter } from "@/components/sections/StatsCounter";
 import { LiveMarket } from "@/components/sections/LiveMarket";
 import { Manifesto } from "@/components/sections/Manifesto";
@@ -23,6 +24,9 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <div style={{ paddingBlock: "var(--space-6)" }}>
+        <AgentBanner />
+      </div>
       <div className="container" style={{ paddingBlock: "var(--space-6)" }}>
         <LiveCounter />
       </div>
