@@ -30,16 +30,31 @@ function topReason(checks: { label: string; status: string; value: string; expla
   return "passed contract checks · still DYOR";
 }
 
+async function dexList(url: string): Promise<{ chainId: string; tokenAddress: string }[]> {
+  try {
+    const r = await fetch(url, { signal: AbortSignal.timeout(9000) });
+    if (!r.ok) return [];
+    const j = await r.json();
+    return Array.isArray(j) ? j : (j?.data ?? []);
+  } catch {
+    return [];
+  }
+}
+
 export async function GET() {
   try {
-    const r = await fetch("https://api.dexscreener.com/token-boosts/latest/v1", { signal: AbortSignal.timeout(9000) });
-    const list = r.ok ? await r.json() : [];
-    const boosts: { chainId: string; tokenAddress: string }[] = Array.isArray(list) ? list : (list?.data ?? []);
-    // Solana only for v1 (native deep scan), de-dupe, cap the batch.
+    // Hunt where rugs actually live: freshly-added token profiles (mostly new pump.fun mints,
+    // high rug rate) PLUS boosted tokens. Boosts alone are paid-for and skew legit — the graph
+    // needs flagged deployers, so freshness matters.
+    const [profiles, boosts] = await Promise.all([
+      dexList("https://api.dexscreener.com/token-profiles/latest/v1"),
+      dexList("https://api.dexscreener.com/token-boosts/latest/v1"),
+    ]);
+    // Solana only for v1 (native deep scan), de-dupe, cap the batch. Fresh profiles first.
     const seen = new Set<string>();
-    const candidates = boosts
+    const candidates = [...profiles, ...boosts]
       .filter((b) => b.chainId === "solana" && b.tokenAddress && !seen.has(b.tokenAddress) && seen.add(b.tokenAddress))
-      .slice(0, 12);
+      .slice(0, 20);
 
     const scans = await Promise.all(
       candidates.map(async (c) => {
