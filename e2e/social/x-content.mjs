@@ -183,6 +183,32 @@ ${SITE}/scan`,
 Rug Radar sweeps freshly-launched tokens every hour and flags the dangerous ones automatically — so you see the catch before the crowd sees the chart.
 
 ${SITE}/radar`,
+
+  // --- Agent Trust Layer / adoption (devs are the audience) ---
+  `Building an AI agent that touches funds? Add a trust guardrail in one call — free, no key, no SDK:
+
+GET /api/agent/check?address=… → { level, score, reasons }
+if (level === "caution") block()
+
+Docs: ${SITE}/agents/docs`,
+
+  `AI agents now hold wallets and trade on-chain. Nobody checks if an agent is safe to trust.
+
+$GL1TCH does — identity + on-chain reputation, one free call. The trust layer for the agent economy.
+
+Know Your Agent: ${SITE}/agents`,
+
+  `Our users are AI agents — so the whole trust API is machine-readable at /llms.txt.
+
+An agent can discover GL1TCH and self-integrate KYA autonomously. Built for the agent economy, not just talked about.
+
+${SITE}/llms.txt`,
+
+  `Every on-chain agent should have a trust profile — permanent, verifiable, embeddable.
+
+Now they do. Check any agent, or drop a live KYA badge in your dapp in one line.
+
+${SITE}/agents/docs`,
 ];
 
 // Multi-tweet threads — far higher reach than single tweets. Each inner array is one thread
