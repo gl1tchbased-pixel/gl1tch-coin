@@ -106,8 +106,10 @@ try {
     // Follower gate — only reply to accounts with real reach (not ~100-follower accounts).
     const fc = await followerCount(page, t.user).catch(() => null);
     if (fc != null && fc < MIN_FOLLOWERS) { console.log(`  ↳ skip @${t.user} (${fc} followers < ${MIN_FOLLOWERS})`); continue; }
-    // Contextual LLM reply (Cerebras); fall back to a template if the LLM is unavailable.
-    const text = (await generateReply(t.text).catch(() => null)) || pickReply(t.id);
+    // Contextual LLM reply is the hard quality+relevance gate: null = SKIP (or LLM down) →
+    // don't reply at all (a template to a borderline target reads as spam). Quality over volume.
+    const text = await generateReply(t.text).catch(() => null);
+    if (!text) { console.log(`  ↳ skip @${t.user} (LLM: not a good fit)`); continue; }
     console.log(`\n→ @${t.user} (${fc ?? "?"} followers): ${t.text.slice(0, 80).replace(/\n/g, " ")}…`);
     console.log(`  reply: ${text.slice(0, 90).replace(/\n/g, " ")}…`);
     if (process.env.DRY === "1") { console.log("  [DRY] not posting"); posted++; continue; }
