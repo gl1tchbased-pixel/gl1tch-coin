@@ -16,6 +16,12 @@ const guides = [
   { href: "/learn/how-to-check-if-a-token-is-safe", t: "How to check if a token is safe", d: "An 8-point on-chain checklist to verify any token before you buy, on any chain." },
 ];
 
+const agentGuides = [
+  { href: "/learn/what-is-know-your-agent", t: "What is Know Your Agent (KYA)?", d: "The emerging standard for verifying autonomous AI agents before they touch funds — identity, provenance, reputation." },
+  { href: "/learn/how-to-verify-an-ai-agent", t: "How to verify an AI agent", d: "A practical checklist to trust-check any on-chain agent — and do it all in one free call." },
+  { href: "/learn/can-ai-agents-be-hacked", t: "Can AI agents be hacked?", d: "Yes — and 2026's defining agent vulnerability isn't a contract bug. It's memory poisoning." },
+];
+
 export default function LearnPage() {
   const popular = CANONICAL.filter((t) => t.symbol).slice(0, 10);
   return (
@@ -31,6 +37,19 @@ export default function LearnPage() {
 
       <div className={styles.grid}>
         {guides.map((g) => (
+          <Link key={g.href} href={g.href} className={styles.card}>
+            <h2 className={styles.cardTitle}>{g.t}</h2>
+            <p className={styles.cardDesc}>{g.d}</p>
+            <span className={styles.cardCta}>Read the guide →</span>
+          </Link>
+        ))}
+      </div>
+
+      <section className={styles.popular} style={{ marginTop: "var(--space-8)" }}>
+        <h2 className={styles.popularH}>AI agent safety — Know Your Agent</h2>
+      </section>
+      <div className={styles.grid}>
+        {agentGuides.map((g) => (
           <Link key={g.href} href={g.href} className={styles.card}>
             <h2 className={styles.cardTitle}>{g.t}</h2>
             <p className={styles.cardDesc}>{g.d}</p>

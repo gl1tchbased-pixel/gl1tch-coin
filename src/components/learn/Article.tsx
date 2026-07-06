@@ -22,6 +22,14 @@ export function Article({
   sections,
   faqs = [],
   ctaLine,
+  tool = { prompt: "Want the answer for a specific token?", href: "/scan", label: "Scan it free →" },
+  endPrimary = { href: "/scan", label: "Scan a token — free" },
+  endGhost = { href: "/radar", label: "See live rug catches" },
+  related = [
+    { href: "/learn/how-to-spot-a-rug-pull", label: "Spot a rug pull" },
+    { href: "/learn/what-is-a-honeypot", label: "What is a honeypot" },
+    { href: "/learn/how-to-check-if-a-token-is-safe", label: "Check if a token is safe" },
+  ],
 }: {
   slug: string;
   eyebrow: string;
@@ -30,6 +38,10 @@ export function Article({
   sections: Section[];
   faqs?: Faq[];
   ctaLine?: string;
+  tool?: { prompt: string; href: string; label: string };
+  endPrimary?: { href: string; label: string };
+  endGhost?: { href: string; label: string };
+  related?: { href: string; label: string }[];
 }) {
   const jsonLd = [
     {
@@ -67,8 +79,8 @@ export function Article({
 
       {/* Inline CTA — the reader came with intent; give the tool immediately. */}
       <div className={styles.toolCta}>
-        <span>Want the answer for a specific token?</span>
-        <Link href="/scan" className={styles.toolBtn}>Scan it free →</Link>
+        <span>{tool.prompt}</span>
+        <Link href={tool.href} className={styles.toolBtn}>{tool.label}</Link>
       </div>
 
       {sections.map((s) => (
@@ -95,13 +107,17 @@ export function Article({
       <section className={styles.end}>
         <p>{ctaLine || "GL1TCH is a free, non-custodial scanner that runs all of these checks for you in seconds — on any token, any chain."}</p>
         <div className={styles.endRow}>
-          <Link href="/scan" className={styles.endPrimary}>Scan a token — free</Link>
-          <Link href="/radar" className={styles.endGhost}>See live rug catches</Link>
+          <Link href={endPrimary.href} className={styles.endPrimary}>{endPrimary.label}</Link>
+          <Link href={endGhost.href} className={styles.endGhost}>{endGhost.label}</Link>
         </div>
         <p className={styles.related}>
-          Related: <Link href="/learn/how-to-spot-a-rug-pull">Spot a rug pull</Link> ·{" "}
-          <Link href="/learn/what-is-a-honeypot">What is a honeypot</Link> ·{" "}
-          <Link href="/learn/how-to-check-if-a-token-is-safe">Check if a token is safe</Link>
+          Related:{" "}
+          {related.map((r, i) => (
+            <span key={r.href}>
+              {i > 0 ? " · " : ""}
+              <Link href={r.href}>{r.label}</Link>
+            </span>
+          ))}
         </p>
       </section>
     </main>
