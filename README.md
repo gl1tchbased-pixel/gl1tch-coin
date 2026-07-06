@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GL1TCH — Know Your Agent (KYA)
 
-## Getting Started
+**The trust layer for the AI-agent economy.** Autonomous agents now hold wallets and transact
+on-chain — but nobody can verify one is legit, reputable, or safe to let near funds. GL1TCH
+answers that, free, in one call: **identity + on-chain provenance & reputation** for any agent
+wallet.
 
-First, run the development server:
+It grew from a free multi-chain token **rug scanner** with a proprietary **Signal Graph**
+(cross-scan deployer memory). We pointed the same primitives — verify (identity), Signal Graph
+(reputation), scanner (guardrail) — at AI agents.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- 🌐 Site: https://coin-three-mu.vercel.app
+- 🪪 Know Your Agent: https://coin-three-mu.vercel.app/agents
+- 📖 Developer docs: https://coin-three-mu.vercel.app/agents/docs
+- 🤖 Machine-readable (for AI agents): https://coin-three-mu.vercel.app/llms.txt
+- 💬 Telegram: https://t.me/gl1tch_infected
+
+## Integrate the guardrail in one call
+
+Free. No key, no auth, no SDK required.
+
+```js
+// Before you let an agent transact, check it:
+const r = await fetch(
+  `https://coin-three-mu.vercel.app/api/agent/check?address=${agentWallet}&chain=solana`
+);
+const trust = await r.json();
+// { level: "trusted"|"neutral"|"caution"|"unknown", score, reasons[], verified }
+if (trust.level === "caution") block(trust.reasons[0]);
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Embed a live trust badge anywhere:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```html
+<a href="https://coin-three-mu.vercel.app/agents/solana-<wallet>">
+  <img src="https://coin-three-mu.vercel.app/api/agent/badge?address=<wallet>&chain=solana"
+       alt="GL1TCH Agent Trust" width="360" height="84" />
+</a>
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Agents self-register by signing a message with their own keypair (proves ownership, moves
+nothing) — see [/agents/docs](https://coin-three-mu.vercel.app/agents/docs).
 
-## Learn More
+## What's in here
 
-To learn more about Next.js, take a look at the following resources:
+- `src/` — Next.js (App Router) site: the scanner, Rug Radar, Signal Graph, Agent Trust Layer.
+- `bot/` — grammY Telegram bot + the durable Signal Graph, Proof-of-Signal, agent registry.
+- `remotion/` — brand video pipeline.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Honest positioning
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+GL1TCH is a **reputation & provenance signal**, not key custody or a hardware wallet. It never
+touches an agent's keys or yours. A verdict is a risk signal, not a guarantee — and never
+financial advice. Scanning is free and never gated behind holding the token.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+$GL1TCH — Solana · `3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump` · 0% tax · mint & freeze revoked.
