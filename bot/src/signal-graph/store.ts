@@ -79,6 +79,16 @@ export class SignalGraphStore {
     return out.sort((a, b) => b.flaggedCount - a.flaggedCount);
   }
 
+  /** Deployers with >= `min` flagged tokens (worst first) — the "flagged actors" directory feed. */
+  flaggedList(min = 1, limit = 30): DeployerReputation[] {
+    const out: DeployerReputation[] = [];
+    for (const rec of this.byDeployer.values()) {
+      const rep = reputation(rec);
+      if (rep.flaggedCount >= min) out.push(rep);
+    }
+    return out.sort((a, b) => b.flaggedCount - a.flaggedCount || (a.worstScore ?? 100) - (b.worstScore ?? 100)).slice(0, limit);
+  }
+
   size(): number {
     return this.byDeployer.size;
   }

@@ -142,8 +142,8 @@ POST /api/agent/register
       </section>
 
       <div className={styles.cta}>
-        <Link href="/scan" className={styles.ctaGhost}>See the token scanner it grew from →</Link>
-        <Link href="/security" className={styles.ctaGhost}>Our security posture ↗</Link>
+        <Link href="/agents/directory" className={styles.ctaGhost}>Browse the agent directory →</Link>
+        <Link href="/scan" className={styles.ctaGhost}>The token scanner it grew from ↗</Link>
       </div>
     </main>
   );

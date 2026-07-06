@@ -197,6 +197,22 @@ export function startVerification(bot: Bot): Server | null {
         agentTrustStore.attest(address, chain, kind);
         return { ok: true };
       },
+      // Public directory: verified registered agents + flagged on-chain actors (Signal Graph).
+      directory: () => {
+        const verified = agentTrustStore.verifiedList(24).map((r) => {
+          const rep = signalGraph.reputationFor(r.agentId, r.chain);
+          const trust = agentTrust({
+            verified: true, flaggedDeploys: rep.flaggedCount, totalDeploys: rep.tokensSeen,
+            ageDays: null, attestations: r.attestations, disputes: r.disputes,
+          });
+          return { address: r.agentId, chain: r.chain, label: r.label, score: trust.score, level: trust.level, verified: true };
+        });
+        const flagged = signalGraph.flaggedList(1, 24).map((rep) => ({
+          address: rep.deployer, chain: rep.chain, flaggedCount: rep.flaggedCount,
+          tokensSeen: rep.tokensSeen, level: rep.level,
+        }));
+        return { verified, flagged };
+      },
     },
     ...(config.xBridge.token
       ? {

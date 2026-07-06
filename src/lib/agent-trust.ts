@@ -17,6 +17,29 @@ export interface AgentAssessment {
   verified: boolean;
 }
 
+export interface DirectoryEntry {
+  address: string;
+  chain: string;
+  label?: string;
+  score?: number;
+  level?: TrustLevel;
+  verified?: boolean;
+  flaggedCount?: number;
+  tokensSeen?: number;
+}
+
+/** Public agent directory: verified registered agents + flagged on-chain actors. */
+export async function agentDirectory(): Promise<{ verified: DirectoryEntry[]; flagged: DirectoryEntry[] }> {
+  try {
+    const r = await fetch(`${BASE}/signal/directory`, { signal: AbortSignal.timeout(6000), next: { revalidate: 60 } });
+    if (!r.ok) return { verified: [], flagged: [] };
+    const d = (await r.json()) as { ok?: boolean; verified?: DirectoryEntry[]; flagged?: DirectoryEntry[] };
+    return { verified: d.verified ?? [], flagged: d.flagged ?? [] };
+  } catch {
+    return { verified: [], flagged: [] };
+  }
+}
+
 /** The exact message an agent signs to register (must match the bot's agentRegMessage). */
 export function agentRegMessage(address: string, issuedMs: number): string {
   return `GL1TCH Agent Registration\nWallet: ${address}\nIssued: ${issuedMs}\nThis proves wallet ownership. It moves no funds and grants no access.`;

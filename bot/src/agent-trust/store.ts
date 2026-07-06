@@ -76,6 +76,14 @@ export class AgentTrustStore {
     return rec;
   }
 
+  /** Verified registered agents, newest first (the "verified agents" directory feed). */
+  verifiedList(limit = 30): AgentRecord[] {
+    return [...this.byAgent.values()]
+      .filter((r) => r.verified)
+      .sort((a, b) => b.updatedAt - a.updatedAt)
+      .slice(0, limit);
+  }
+
   /** Record a positive attestation or a dispute against an agent (creates the record if new). */
   attest(agentId: string, chain: string, kind: "attest" | "dispute"): AgentRecord {
     const rec = this.get(agentId, chain) ?? this.register(agentId, chain);

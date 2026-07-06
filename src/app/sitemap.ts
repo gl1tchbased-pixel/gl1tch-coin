@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/proof",
     "/security",
     "/agents",
+    "/agents/directory",
     "/radar",
     "/embed",
     "/learn",

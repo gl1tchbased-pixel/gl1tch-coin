@@ -46,6 +46,18 @@
   color: rgba(245, 247, 248, 0.9);
 }
 
+/* ---- directory rows ---- */
+.rows { display: grid; gap: 8px; }
+.row {
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px 12px;
+  padding: 12px 14px; border-radius: 10px; text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.07); background: rgba(255, 255, 255, 0.02); color: inherit;
+}
+.row:hover { border-color: rgba(255, 255, 255, 0.16); background: rgba(255, 255, 255, 0.04); }
+.rowName { font-family: ui-monospace, monospace; font-weight: 650; font-size: 14.5px; }
+.rowMeta { grid-column: 1; grid-row: 2; font-size: 12px; color: rgba(245, 247, 248, 0.5); }
+.rowScore { grid-column: 2; grid-row: 1 / span 2; font-weight: 800; font-size: 14px; font-variant-numeric: tabular-nums; }
+
 /* ---- per-agent profile ---- */
 .result {
   padding: var(--space-6, 1.5rem); border-radius: 16px;
