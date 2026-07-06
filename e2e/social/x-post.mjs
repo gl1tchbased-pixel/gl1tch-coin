@@ -69,11 +69,15 @@ await postBtn.click({ timeout: 15000 }).catch(async () => {
   await page.getByRole("button", { name: /^Post all$|^Post$|^Gönder$|^Tümünü gönder$/i }).first().click({ timeout: 10000 }).catch(() => console.log("[x] post button missed"));
 });
 
-await page.waitForTimeout(8000);
+// Reliable confirm: the composer's first textarea detaches on send, OR a "posts were sent"
+// toast appears (the count heuristic false-negatived — the post lands but reads UNCONFIRMED).
+const posted = await page
+  .waitForSelector('[data-testid="tweetTextarea_0"]', { state: "detached", timeout: 20000 })
+  .then(() => true)
+  .catch(() => false);
 await shot(page, "x-2-posted.png");
-
-// Success heuristic: composer closed (back to home) and a toast/timeline shows.
-const ok = (await page.locator('[data-testid="tweetTextarea_0"]').count()) === 0;
+const toast = (await page.getByText(/posts? (were|was) sent|Your post was sent|Gönderildi/i).count().catch(() => 0)) > 0;
+const ok = posted || toast;
 fs.writeFileSync(path.resolve(OUT, "x-result.txt"), `${ok ? "POSTED" : "UNCONFIRMED"}\n`);
 console.log(ok ? "[x] ✅ thread POSTED (verify on @gl1tchbased)" : "[x] ⚠️ could not confirm — see x-2-posted.png");
 await page.waitForTimeout(2000);
