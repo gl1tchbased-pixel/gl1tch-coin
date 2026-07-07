@@ -31,6 +31,15 @@ try {
 } catch (e) { console.error("[metrics] fetch failed:", e.message); process.exit(1); }
 if (!m?.ok) { console.error("[metrics] bad metrics response"); process.exit(1); }
 
+// --- fetch the coin's own market/trading state (the bottom line: is anyone buying?) ---
+const SITE = "https://coin-three-mu.vercel.app";
+const CA = "3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump";
+let mkt = null;
+try {
+  const s = await (await fetch(`${SITE}/api/scan?mint=${CA}&chain=solana`, { signal: AbortSignal.timeout(20000) })).json();
+  if (s?.meta) mkt = { price: s.meta.priceUsd, mcap: s.meta.marketCap, liq: s.meta.liquidityUsd, vol24: s.meta.volume24h, holders: s.meta.holderCount };
+} catch { /* market optional */ }
+
 // --- today's X activity from the scheduler log ---
 function xActivityToday() {
   try {
@@ -51,8 +60,23 @@ const x = xActivityToday();
 // --- deltas ---
 const d = (cur, was) => { const n = cur - (was ?? cur); return n > 0 ? `(+${n})` : n < 0 ? `(${n})` : ""; };
 const pm = prev?.m;
+const usd = (v) => (typeof v === "number" ? `$${v >= 1000 ? Math.round(v).toLocaleString("en-US") : v.toFixed(v < 1 ? 6 : 2)}` : "—");
 const lines = [
   `<b>📊 GL1TCH growth — ${today}</b>`,
+];
+// The bottom line first: is anyone buying/selling?
+if (mkt) {
+  const pmk = prev?.mkt;
+  const holderD = pmk ? d(mkt.holders ?? 0, pmk.holders ?? 0) : "";
+  const trading = (mkt.vol24 ?? 0) > 0 ? `✅ ${usd(mkt.vol24)}` : `⚪ $0 (no trades in 24h)`;
+  lines.push(
+    ``,
+    `<b>💰 Market — is anyone trading?</b>`,
+    `• 24h volume: <b>${trading}</b>`,
+    `• Holders: <b>${mkt.holders ?? "?"}</b> ${holderD} · MCap: ${usd(mkt.mcap)} · Liq: ${usd(mkt.liq)}`,
+  );
+}
+lines.push(
   ``,
   `<b>Scanner</b>`,
   `• Scans: <b>${m.scans.total}</b> ${d(m.scans.total, pm?.scans?.total)} · rugs caught: ${m.scans.flagged} ${d(m.scans.flagged, pm?.scans?.flagged)}`,
@@ -63,7 +87,7 @@ const lines = [
   ``,
   `<b>Agent Trust Layer</b>`,
   `• Agents registered: ${m.agents.registered} ${d(m.agents.registered, pm?.agents?.registered)} · reputations: ${m.reputations} ${d(m.reputations, pm?.reputations)}`,
-];
+);
 if (x) {
   const px = prev?.x;
   const since = px ? { replies: x.replies - px.replies, quotes: x.quotes - px.quotes, proofs: x.proofs - px.proofs } : null;
@@ -99,5 +123,5 @@ for (const id of admins) {
 
 // persist snapshot regardless (so deltas are day-over-day)
 fs.mkdirSync(path.dirname(SNAP), { recursive: true });
-fs.writeFileSync(SNAP, JSON.stringify({ date: today, m, x, at: Date.now() }));
+fs.writeFileSync(SNAP, JSON.stringify({ date: today, m, x, mkt, at: Date.now() }));
 console.log(`[metrics] snapshot saved · delivered to ${sent}/${admins.length} admin(s)`);
