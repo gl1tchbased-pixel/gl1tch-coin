@@ -3,7 +3,7 @@
 //   NODE_OPTIONS=--use-system-ca LAUNCH_CHROMIUM=1 node e2e/social/x-daily.mjs
 // FORCE=1 to post again the same day; DRY=1 to preview without posting.
 import { openX, postThread, store } from "./x-lib.mjs";
-import { postForDay, threadForDay, isThreadDay } from "./x-content.mjs";
+import { postForDay, threadForDay, isThreadDay, fetchMetrics, dataPostForDay, isDataDay } from "./x-content.mjs";
 
 const today = new Date().toISOString().slice(0, 10);
 const st = store("x-daily-state.json");
@@ -14,9 +14,19 @@ if (state.lastDate === today && process.env.FORCE !== "1") {
   process.exit(0);
 }
 
-// Threads (higher reach) on thread days, otherwise a single post. THREAD=1/THREAD=0 to force.
+// Threads (higher reach) on thread days; data-proof posts (live metrics) every 3rd day;
+// feature-rotation posts otherwise. THREAD=1/0 and DATA=1 to force.
 const wantThread = process.env.THREAD === "1" || (process.env.THREAD !== "0" && isThreadDay());
-const payload = wantThread ? threadForDay() : postForDay();
+let payload;
+if (wantThread) {
+  payload = threadForDay();
+} else if (process.env.DATA === "1" || isDataDay()) {
+  const metrics = await fetchMetrics();
+  payload = dataPostForDay(metrics) || postForDay(); // fall back to a feature post if metrics are down
+  if (dataPostForDay(metrics)) console.log("[x-daily] data-proof day (live metrics)");
+} else {
+  payload = postForDay();
+}
 const preview = Array.isArray(payload) ? payload.join("\n— — —\n") : payload;
 console.log(`[x-daily] today's ${Array.isArray(payload) ? `THREAD (${payload.length} tweets)` : "post"}:\n---\n${preview}\n---`);
 

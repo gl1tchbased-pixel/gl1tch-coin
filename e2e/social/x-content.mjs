@@ -299,6 +299,67 @@ export function postForDay(date = new Date()) {
   return POSTS[((dayNum % POSTS.length) + POSTS.length) % POSTS.length];
 }
 
+// --- Data-driven posts: inject LIVE metrics to prove robustness (credible = investor-ready) ---
+const BOT = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production-3f2c.up.railway.app").replace(/\/$/, "");
+const n = (x) => (typeof x === "number" ? x.toLocaleString("en-US") : x);
+
+/** Fetch live engine metrics (null on failure). */
+export async function fetchMetrics() {
+  try {
+    const r = await fetch(`${BOT}/signal/metrics`, { signal: AbortSignal.timeout(6000) });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return d?.ok ? d : null;
+  } catch { return null; }
+}
+
+// Each takes live metrics → a <=280 data-backed post. Rotated on data-days.
+export const DATA_POSTS = [
+  (m) => `GL1TCH has now scanned ${n(m.scans.total)} tokens and mapped ${n(m.signalGraph.deployers)} deployers into the Signal Graph.
+
+A scanner with memory — the moat compounds with every scan. This is what "real product" looks like.
+
+${SITE}/scan`,
+  (m) => `${n(m.signalGraph.deployers)} deployers tracked and counting.
+
+Every token GL1TCH scans is remembered against the wallet that shipped it — so a repeat rugger is flagged on its NEXT launch. No other scanner can do this.
+
+${SITE}/agents`,
+  (m) => `Not vaporware. Real numbers:
+
+🔍 ${n(m.scans.total)} tokens scanned
+🧠 ${n(m.signalGraph.deployers)} deployers mapped
+⚠ ${n(m.scans.flagged)} rugs flagged
+
+A memecoin with a used product + a data moat. Judge the product.
+
+${SITE}/thesis`,
+  (m) => `The Signal Graph just crossed ${n(m.signalGraph.deployers)} deployers.
+
+The more it's used, the smarter it gets at catching repeat ruggers. A network effect on rug detection — that's the moat.
+
+${SITE}/scan`,
+  (m) => `${n(m.scans.total)}+ scans in. Free, non-custodial, any chain.
+
+Every one feeds the Signal Graph + the agent-trust reputation layer. Usage compounds into a moat competitors can't copy.
+
+${SITE}/agents`,
+];
+
+/** Pick a data post for the day (deterministic). Returns null if metrics unavailable. */
+export function dataPostForDay(metrics, date = new Date()) {
+  if (!metrics?.scans || !metrics?.signalGraph) return null;
+  const dayNum = Math.floor(Date.parse(date.toISOString().slice(0, 10)) / 86400000);
+  const fn = DATA_POSTS[((dayNum % DATA_POSTS.length) + DATA_POSTS.length) % DATA_POSTS.length];
+  try { return fn(metrics); } catch { return null; }
+}
+
+/** Every 3rd day is a data-proof day (blends feature variety with credibility). */
+export function isDataDay(date = new Date()) {
+  const dayNum = Math.floor(Date.parse(date.toISOString().slice(0, 10)) / 86400000);
+  return dayNum % 3 === 2;
+}
+
 /** Thread for the day (rotates), used on thread days. */
 export function threadForDay(date = new Date()) {
   const dayNum = Math.floor(Date.parse(date.toISOString().slice(0, 10)) / 86400000);
