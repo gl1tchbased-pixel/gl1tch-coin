@@ -69,6 +69,64 @@ export async function registerAgent(input: RegisterInput): Promise<{ ok: boolean
   }
 }
 
+/**
+ * ERC-8004 (Trustless Agents) alignment. GL1TCH is an OFF-CHAIN, ERC-8004-*compatible* trust-signal
+ * provider — we do not deploy the on-chain Identity Registry (ERC-721); we emit registration files
+ * and reputation feedback in the ERC-8004 shape so agents/frameworks that already speak the standard
+ * can consume GL1TCH signals directly. Ref: https://eips.ethereum.org/EIPS/eip-8004
+ */
+export interface Erc8004Registration {
+  type: string;
+  name: string;
+  description: string;
+  image: string;
+  active: boolean;
+  supportedTrust: string[];
+  services: Array<{ name: string; endpoint: string; version?: string }>;
+  registrations: Array<{ agentId: string; agentRegistry: string }>;
+  /** GL1TCH extension shaped after the ERC-8004 Reputation Registry feedback record. */
+  reputation: {
+    value: number;
+    valueDecimals: number;
+    tag1: TrustLevel;
+    endpoint: string;
+    feedbackURI: string;
+    clientAddress: string;
+  };
+}
+
+/** Build an ERC-8004-compatible Agent Registration File from a GL1TCH assessment. */
+export function erc8004Registration(a: AgentAssessment, origin: string): Erc8004Registration {
+  const short = `${a.address.slice(0, 6)}…${a.address.slice(-4)}`;
+  const o = origin.replace(/\/$/, "");
+  return {
+    type: "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+    name: `${short} — GL1TCH trust assessment`,
+    description:
+      `GL1TCH Know Your Agent assessment for agent wallet ${a.address} on ${a.chain}. ` +
+      `Trust level "${a.level}" (score ${a.score}/100) from identity, provenance, and Signal Graph ` +
+      `track record. GL1TCH is an off-chain, ERC-8004-compatible reputation signal — never key custody. ` +
+      `On-chain Identity Registry registration is the operator's responsibility.`,
+    image: `${o}/api/agent/badge?address=${encodeURIComponent(a.address)}&chain=${encodeURIComponent(a.chain)}`,
+    active: true,
+    supportedTrust: ["reputation"],
+    services: [
+      { name: "gl1tch-kya", endpoint: `${o}/api/agent/check?address=${encodeURIComponent(a.address)}&chain=${encodeURIComponent(a.chain)}`, version: "1" },
+    ],
+    registrations: [
+      { agentId: a.address, agentRegistry: `gl1tch:${a.chain}:${o}/agents` },
+    ],
+    reputation: {
+      value: a.score,
+      valueDecimals: 0,
+      tag1: a.level,
+      endpoint: "gl1tch-kya",
+      feedbackURI: `${o}/agents/${encodeURIComponent(a.chain === "solana" ? a.address : `${a.chain}-${a.address}`)}`,
+      clientAddress: "GL1TCH",
+    },
+  };
+}
+
 /** Trust assessment for an agent wallet. Null on any failure. */
 export async function agentCheck(address: string, chain = "solana"): Promise<AgentAssessment | null> {
   try {

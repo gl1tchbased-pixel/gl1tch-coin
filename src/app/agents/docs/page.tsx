@@ -101,6 +101,25 @@ await fetch("${BASE}/api/agent/register", {
       </section>
 
       <section className={styles.block}>
+        <h2 className={styles.h2}>4 · ERC-8004 (Trustless Agents) compatible</h2>
+        <p className={styles.cardD} style={{ marginBottom: "var(--space-3)" }}>
+          <a href="https://eips.ethereum.org/EIPS/eip-8004" target="_blank" rel="noreferrer">ERC-8004</a> is
+          the emerging open standard for agent identity + reputation (MetaMask, Ethereum Foundation,
+          Google, Coinbase). GL1TCH emits an ERC-8004-<em>compatible</em> Agent Registration File, with
+          our trust score mapped into the standard&apos;s Reputation-Registry feedback shape — so any
+          framework that already speaks ERC-8004 can consume GL1TCH signals with zero custom glue.
+        </p>
+        <Code head="curl">{`curl "${BASE}/api/agent/erc8004?address=<wallet>&chain=solana"
+# → { "type": ".../eip-8004#registration-v1", "supportedTrust": ["reputation"],
+#     "reputation": { "value": <score>, "tag1": "<level>", "clientAddress": "GL1TCH" }, ... }`}</Code>
+        <p className={styles.cardD} style={{ marginTop: "var(--space-3)" }}>
+          GL1TCH is an <strong>off-chain</strong> signal provider — we don&apos;t deploy the on-chain
+          Identity Registry (ERC-721); that stays the operator&apos;s choice. We give ERC-8004 consumers
+          a portable, standard-shaped reputation feed.
+        </p>
+      </section>
+
+      <section className={styles.block}>
         <h2 className={styles.h2}>Notes</h2>
         <ul className={styles.reasonList}>
           <li>Free. Rate-limited per IP (generous). Depth + bulk access will tie to holding $GL1TCH — usage becomes revenue.</li>
