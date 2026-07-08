@@ -29,6 +29,13 @@ Signature must be <10 minutes fresh. Moves no funds, grants no access.
 ### Live trust badge (SVG, embeddable)
 GET /api/agent/badge?address=<wallet>&chain=solana
 
+### ERC-8004 (Trustless Agents) compatible registration file
+GET /api/agent/erc8004?address=<wallet>&chain=solana
+Returns an ERC-8004-compatible Agent Registration File (type registration-v1) with the GL1TCH
+trust score mapped into the standard's Reputation-Registry feedback shape. If your framework speaks
+ERC-8004, consume this directly. GL1TCH is an off-chain signal provider (no on-chain Identity
+Registry deploy). Ref: https://eips.ethereum.org/EIPS/eip-8004
+
 ### Human profile (per agent)
 https://coin-three-mu.vercel.app/agents/<chain>-<wallet>
 
@@ -36,6 +43,7 @@ https://coin-three-mu.vercel.app/agents/<chain>-<wallet>
 - Developer docs (curl / JS / Python): https://coin-three-mu.vercel.app/agents/docs
 - Overview: https://coin-three-mu.vercel.app/agents
 - Directory of assessed agents: https://coin-three-mu.vercel.app/agents/directory
+- Live network traction (scans, deployers mapped, rugs caught): https://coin-three-mu.vercel.app/network
 
 ## Notes
 - Free and rate-limited per IP. Depth/bulk access will tie to holding the $GL1TCH token.
