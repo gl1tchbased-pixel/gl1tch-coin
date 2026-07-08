@@ -10,6 +10,7 @@ const FEATURES = [
   { label: "Know Your Agent", href: "/agents", icon: "🆔" },
   { label: "Rug Radar", href: "/radar", icon: "📡" },
   { label: "Watchtower", href: "/scan", icon: "👁" },
+  { label: "Live Network", href: "/network", icon: "📊" },
   { label: "Proof", href: "/proof", icon: "🛡" },
 ];
 

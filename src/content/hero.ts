@@ -3,10 +3,10 @@ import { CTA_LABELS } from "./site";
 import { OFFICIAL } from "@/lib/official";
 
 export const heroContent: HeroContent = {
-  eyebrow: "ROGUE AI // LIVE",
+  eyebrow: "RISK INTELLIGENCE // LIVE",
   headline: "It Reads Every Rug.",
   subhead:
-    "GL1TCH is a rogue-AI meme on Solana with a free, non-custodial scanner that reads any token on any chain — flags the rug before you ape, and keeps watching after you buy. Zero tax. Fully renounced.",
+    "GL1TCH is crypto risk-intelligence infrastructure with a rogue-AI face: a free multi-chain scanner, the Signal Graph that remembers every deployer, and a Know Your Agent trust layer. Flags the rug before you ape — free, non-custodial, zero tax.",
   microcopy: "Free · non-custodial · it never touches your wallet.",
   primaryCta: {
     id: "hero-cta-primary",

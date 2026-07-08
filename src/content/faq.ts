@@ -5,7 +5,7 @@ export const faqItems: FAQItem[] = [
     id: "faq-what",
     question: "What is GL1TCH?",
     answer:
-      "A premium Solana-native meme brand and token built around a rogue-AI cult myth, with one flagship utility: holder-gated content and ranks.",
+      "Crypto risk-intelligence infrastructure with a rogue-AI face: a free multi-chain token scanner, the Signal Graph (a deployer-reputation database that remembers every wallet it sees), and a Know Your Agent trust layer for the AI-agent economy. The $GL1TCH token gates depth and access.",
   },
   {
     id: "faq-normal",
