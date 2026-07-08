@@ -344,6 +344,20 @@ ${SITE}/scan`,
 Every one feeds the Signal Graph + the agent-trust reputation layer. Usage compounds into a moat competitors can't copy.
 
 ${SITE}/agents`,
+  (m) => `We stopped calling ourselves a memecoin.
+
+GL1TCH is crypto risk-intelligence infrastructure: a scanner + the Signal Graph (${n(m.signalGraph.deployers)} deployers) + a Know Your Agent layer. Same class of entity-graph moat as Chainalysis/TRM.
+
+Live numbers: ${SITE}/network`,
+  (m) => `A serious project shows its traction, not just its slogans.
+
+So we publish ours, live:
+🔍 ${n(m.scans.total)} tokens scanned
+🧠 ${n(m.signalGraph.deployers)} deployers mapped
+⚠ ${n(m.scans.flagged)} rugs flagged
+🆔 ${n(m.agents.registered)} agent${m.agents.registered === 1 ? "" : "s"} assessed
+
+${SITE}/network`,
 ];
 
 /** Pick a data post for the day (deterministic). Returns null if metrics unavailable. */
