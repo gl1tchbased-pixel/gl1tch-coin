@@ -106,16 +106,18 @@ async function main() {
   await bot.start({ allowed_updates: ["message", "chat_member", "callback_query"] });
 }
 
-/** Trigger the Rug Radar's fresh-token sweep hourly so the Signal Graph keeps accruing
+/** Trigger the Rug Radar's fresh-token sweep every 30 min so the Signal Graph keeps accruing
  *  deployer history (the sweep feeds observeDeployer). The bot is always-on; Vercel Hobby
- *  crons are once-a-day only, so this is the reliable hourly heartbeat. */
+ *  crons are once-a-day only, so this is the reliable heartbeat. Interval is env-tunable
+ *  (RADAR_PING_MINUTES) and matches the radar route's 30-min cache so each ping does real work. */
 function startRadarPing() {
+  const minutes = Math.max(10, Math.min(120, Number(process.env.RADAR_PING_MINUTES) || 30));
   const ping = () =>
     fetch(`${OFFICIAL.SITE}/api/radar`)
       .then((r) => console.log(`[radar] swept (${r.status})`))
       .catch((e) => console.warn("[radar] ping failed:", (e as Error).message));
   ping();
-  setInterval(ping, 60 * 60 * 1000).unref?.();
+  setInterval(ping, minutes * 60 * 1000).unref?.();
 }
 
 main().catch((err) => {

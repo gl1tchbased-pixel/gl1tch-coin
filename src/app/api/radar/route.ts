@@ -41,28 +41,41 @@ async function dexList(url: string): Promise<{ chainId: string; tokenAddress: st
   }
 }
 
+// Batch + concurrency are env-tunable so coverage can grow without a code change.
+// Bigger batch = more distinct deployers per sweep; chunked concurrency keeps the RPC
+// (Helius) from bursting and rate-limiting, which would silently drop scans.
+const BATCH = Math.max(1, Math.min(80, Number(process.env.RADAR_BATCH) || 40));
+const CONCURRENCY = Math.max(1, Math.min(20, Number(process.env.RADAR_CONCURRENCY) || 10));
+
 export async function GET() {
   try {
     // Hunt where rugs actually live: freshly-added token profiles (mostly new pump.fun mints,
-    // high rug rate) PLUS boosted tokens. Boosts alone are paid-for and skew legit — the graph
-    // needs flagged deployers, so freshness matters.
-    const [profiles, boosts] = await Promise.all([
+    // high rug rate) PLUS boosted tokens (latest + top). Boosts alone are paid-for and skew
+    // legit — the graph needs flagged deployers, so fresh profiles come first.
+    const [profiles, boostsLatest, boostsTop] = await Promise.all([
       dexList("https://api.dexscreener.com/token-profiles/latest/v1"),
       dexList("https://api.dexscreener.com/token-boosts/latest/v1"),
+      dexList("https://api.dexscreener.com/token-boosts/top/v1"),
     ]);
     // Solana only for v1 (native deep scan), de-dupe, cap the batch. Fresh profiles first.
     const seen = new Set<string>();
-    const candidates = [...profiles, ...boosts]
+    const candidates = [...profiles, ...boostsLatest, ...boostsTop]
       .filter((b) => b.chainId === "solana" && b.tokenAddress && !seen.has(b.tokenAddress) && seen.add(b.tokenAddress))
-      .slice(0, 20);
+      .slice(0, BATCH);
 
-    const scans = await Promise.all(
-      candidates.map(async (c) => {
-        const res = await withTimeout(scanToken(c.tokenAddress).catch(() => null), 14000);
-        if (!res) return null;
-        return isVerified(res.chain, res.mint) ? applyVerified(res) : res;
-      })
-    );
+    // Scan in bounded-concurrency chunks (avoid a 40-wide RPC burst → rate-limit → dropped reads).
+    const scans: (Awaited<ReturnType<typeof scanToken>> | null)[] = [];
+    for (let i = 0; i < candidates.length; i += CONCURRENCY) {
+      const chunk = candidates.slice(i, i + CONCURRENCY);
+      const part = await Promise.all(
+        chunk.map(async (c) => {
+          const res = await withTimeout(scanToken(c.tokenAddress).catch(() => null), 14000);
+          if (!res) return null;
+          return isVerified(res.chain, res.mint) ? applyVerified(res) : res;
+        })
+      );
+      scans.push(...part);
+    }
 
     let scanned = 0;
     let flaggedCount = 0;
@@ -95,7 +108,7 @@ export async function GET() {
 
     return NextResponse.json(
       { scanned, flagged: flaggedCount, caught: ranked.slice(0, 8), updatedAt: Date.now() },
-      { headers: { "cache-control": "public, s-maxage=3600, stale-while-revalidate=7200" } }
+      { headers: { "cache-control": "public, s-maxage=1800, stale-while-revalidate=3600" } }
     );
   } catch (e) {
     return NextResponse.json({ error: e instanceof Error ? e.message : "radar failed", scanned: 0, flagged: 0, caught: [] }, { status: 200 });
