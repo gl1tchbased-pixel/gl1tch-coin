@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { latestPulse } from "@/lib/quantum/curby";
-import { SealDemo } from "./SealDemo";
 import styles from "./quantum.module.css";
 
 export const metadata: Metadata = {
@@ -35,11 +34,11 @@ const PILLARS = [
   {
     key: "C",
     name: "Quantum Seal",
-    tag: "post-quantum encryption",
-    body: "Holder data encrypted with ML-KEM-768 (FIPS 203) + AES-256-GCM — real post-quantum cryptography, today. Decryption is client-side, so a server compromise never sees plaintext.",
-    real: "NIST ML-KEM (Kyber), @noble/post-quantum",
-    href: "#seal",
-    cta: "Try it below →",
+    tag: "hybrid post-quantum encryption",
+    body: "Holder data sealed with a HYBRID of X25519 + ML-KEM-768 (FIPS 203), combined via HKDF into AES-256-GCM — the same defense-in-depth scheme now in TLS 1.3. An attacker must break BOTH classical and post-quantum crypto. Decryption is client-side, so a server compromise never sees plaintext.",
+    real: "X25519 + NIST ML-KEM-768 (Kyber), @noble",
+    href: "/quantum-core/seal",
+    cta: "Open the encryptor →",
   },
   {
     key: "D",
@@ -115,16 +114,6 @@ export default async function QuantumCorePage() {
             </div>
           </Link>
         ))}
-      </section>
-
-      <section id="seal" className={styles.section}>
-        <span className={styles.kicker}>Try it — live, in your browser</span>
-        <h2 className={styles.h2}>Quantum Seal (post-quantum encryption)</h2>
-        <p className={styles.body}>
-          Real ML-KEM-768. Encrypt a note to a freshly-generated post-quantum keypair and decrypt it
-          back — all client-side, nothing sent anywhere.
-        </p>
-        <SealDemo />
       </section>
 
       <section className={styles.section}>

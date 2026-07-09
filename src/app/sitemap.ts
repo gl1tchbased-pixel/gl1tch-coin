@@ -17,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/network",
     "/quantum-core",
     "/quantum-core/vault",
+    "/quantum-core/seal",
     "/quantum-core/forge",
     "/quantum-core/draw",
     "/quantum-core/beacon",

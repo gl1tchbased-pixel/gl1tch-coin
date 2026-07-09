@@ -28,8 +28,20 @@ export default function ForgePage() {
         <ForgeTool />
       </section>
 
+      <section className={styles.why}>
+        <h2 className={styles.h2}>How it works, and where it wins</h2>
+        <ul className={styles.list}>
+          <li><strong>QUBO / Ising.</strong> Your items + cap become an energy landscape where the best subset is the lowest-energy state — the universal language of quantum optimization.</li>
+          <li><strong>Simulated annealing.</strong> A solver inspired by quantum/thermal tunnelling explores that landscape and settles into a near-optimal answer. Deterministic (seeded), so results are reproducible.</li>
+          <li><strong>Where it wins.</strong> Genuinely multi-constraint, combinatorial problems — not simple sorts. A plain classical solver can beat it on well-structured cases; we say so.</li>
+          <li><strong>Future-ready.</strong> Because the problem is already in QUBO form, the same input could later be sent to real quantum hardware and compared — no rewrite.</li>
+        </ul>
+        <p className={styles.note}>Quantum-inspired, on classical hardware — not a quantum computer, and not investment advice.</p>
+      </section>
+
       <div className={styles.cta}>
         <Link href="/quantum-core" className={styles.btn}>← Quantum Core</Link>
+        <Link href="/quantum-core/seal" className={styles.btn}>Quantum Seal →</Link>
       </div>
     </main>
   );

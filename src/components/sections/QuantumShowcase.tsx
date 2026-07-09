@@ -22,7 +22,7 @@ interface Pulse {
 const PILLARS = [
   { k: "A", name: "Vault", tag: "readiness score", line: "Cryptographic-hygiene score, 0–100.", tech: "hygiene analysis" },
   { k: "B", name: "Draw", tag: "verifiable randomness", line: "Provably-fair draws seeded by a real quantum pulse.", tech: "NIST CURBy" },
-  { k: "C", name: "Seal", tag: "post-quantum encryption", line: "Holder data encrypted with ML-KEM-768, today.", tech: "FIPS 203 · ML-KEM" },
+  { k: "C", name: "Seal", tag: "hybrid post-quantum", line: "Holder data sealed with hybrid X25519 + ML-KEM-768.", tech: "X25519 + ML-KEM-768" },
   { k: "D", name: "Forge", tag: "quantum-inspired", line: "Combinatorial optimization via QUBO annealing.", tech: "QUBO / annealing" },
 ];
 

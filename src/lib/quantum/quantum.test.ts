@@ -184,13 +184,15 @@ describe("vault — readiness score", () => {
   });
 });
 
-describe("seal — post-quantum hybrid encryption", () => {
-  it("round-trips a message with ML-KEM-768 + AES-GCM", async () => {
+describe("seal — hybrid X25519 + ML-KEM-768 encryption", () => {
+  it("round-trips a message (hybrid KEM + AES-256-GCM)", async () => {
     const kp = sealKeypair();
     expect(kp.publicKey).toMatch(/^[0-9a-f]+$/);
     const msg = "GL1TCH quantum seal — secret holder note 🔐";
     const sealed = await seal(kp.publicKey, msg);
-    expect(sealed.alg).toBe("ml-kem-768+aes-256-gcm");
+    expect(sealed.alg).toBe("x25519+ml-kem-768+aes-256-gcm");
+    expect(sealed.ephPub).toMatch(/^[0-9a-f]{64}$/); // X25519 pub = 32 bytes
+    expect(sealed.kemCt.length).toBeGreaterThan(0);
     const out = await unseal(kp.secretKey, sealed);
     expect(out).toBe(msg);
   });
@@ -200,5 +202,22 @@ describe("seal — post-quantum hybrid encryption", () => {
     const b = sealKeypair();
     const sealed = await seal(a.publicKey, "top secret");
     await expect(unseal(b.secretKey, sealed)).rejects.toBeTruthy();
+  });
+
+  it("tampering the classical (X25519) leg breaks decryption", async () => {
+    const a = sealKeypair();
+    const other = sealKeypair();
+    const sealed = await seal(a.publicKey, "hybrid holds");
+    // Splice in a foreign ephemeral pubkey → classical shared secret changes → key mismatch.
+    const forged = await seal(other.publicKey, "x");
+    await expect(unseal(a.secretKey, { ...sealed, ephPub: forged.ephPub })).rejects.toBeTruthy();
+  });
+
+  it("tampering the post-quantum (ML-KEM) leg breaks decryption", async () => {
+    const a = sealKeypair();
+    const other = sealKeypair();
+    const sealed = await seal(a.publicKey, "hybrid holds");
+    const forged = await seal(other.publicKey, "x");
+    await expect(unseal(a.secretKey, { ...sealed, kemCt: forged.kemCt })).rejects.toBeTruthy();
   });
 });
