@@ -7,6 +7,24 @@ import fs from "node:fs";
 import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
 
 const PRESETS = {
+  quantum: {
+    video: "gl1tch-quantum-core.mp4",
+    title: "GL1TCH Quantum Core — real quantum tech you can verify yourself ⚛️ #Shorts",
+    desc: `Four working quantum components in one crypto product — honestly labelled, and independently verifiable:
+
+🔬 Vault — paste any token, get a 0–100 quantum-readiness score (authority, custody, deployer track record). Free, any chain.
+🎲 Draw — provably-fair draws seeded by a REAL NIST CURBy quantum pulse. Commit-reveal, then you recompute the winner yourself.
+🔐 Seal — post-quantum encryption (ML-KEM-768) that runs in your browser. A server breach never sees your plaintext.
+⚛️ Forge — a quantum-inspired optimizer (QUBO / simulated annealing).
+
+Zero trust required: two verifiable randomness sources (CURBy quantum + drand BLS, checked in your browser) and a tamper-evident, hash-chained Beacon. Non-custodial by design — winners get a verifiable record, never a payout.
+
+⚛️ Explore it live: https://coin-three-mu.vercel.app/quantum-core
+💬 https://t.me/gl1tch_infected
+
+Not financial advice — DYOR.
+#crypto #quantum #solana #postquantum #web3 #cryptosecurity #AI #Shorts`,
+  },
   agent: {
     video: "gl1tch-agent-trust.mp4",
     title: "Know Your Agent — GL1TCH's trust layer for AI agents 🆔 #Shorts",
