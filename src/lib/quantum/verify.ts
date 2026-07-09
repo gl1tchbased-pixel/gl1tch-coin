@@ -24,16 +24,20 @@ export interface CurbyRound {
   dataHash: string;
 }
 
-/** Fetch a specific CURBy round directly from the beacon (browser-safe, CORS *). */
-export async function fetchCurbyRound(index: number): Promise<CurbyRound | null> {
+/**
+ * Fetch a CURBy round directly from the beacon (browser-safe, CORS *). The path
+ * parameter is the ROUND number (e.g. 28297), not the pulse index — verified
+ * against the live API. Pass "latest" for the current round.
+ */
+export async function fetchCurbyRound(round: number | "latest"): Promise<CurbyRound | null> {
   try {
-    const r = await fetch(`${CURBY}/api/curbyq/round/${index}`, { cache: "no-store" });
+    const r = await fetch(`${CURBY}/api/curbyq/round/${round}`, { cache: "no-store" });
     if (!r.ok) return null;
     const json = await r.json();
     const rec = Array.isArray(json) ? json[json.length - 1] : json;
     const p = rec?.data?.content?.payload;
     const idx = rec?.data?.content?.index;
-    if (!p || typeof p.dataHash !== "string" || typeof idx !== "number") return null;
+    if (!p || p.stage !== "randomness" || typeof p.dataHash !== "string" || typeof idx !== "number") return null;
     return { index: idx, round: p.round, stage: p.stage, dataHash: p.dataHash.toLowerCase() };
   } catch {
     return null;
@@ -63,9 +67,10 @@ export async function verifyDrawIndependently(draw: Draw): Promise<DrawVerificat
     return { verified: false, checks: [{ key: "state", label: "Draw is revealed", ok: false, detail: `status: ${draw.status}` }] };
   }
 
-  // 1. Re-fetch the CURBy round and confirm the recorded value matches what CURBy published.
-  const round = await fetchCurbyRound(draw.pulse.index);
-  const valueMatch = !!round && round.dataHash === draw.pulse.valueHex;
+  // 1. Re-fetch the CURBy round (by round number) and confirm both the value and the index
+  //    match what CURBy actually published — GL1TCH cannot have swapped in a different pulse.
+  const round = await fetchCurbyRound(draw.pulse.round);
+  const valueMatch = !!round && round.dataHash === draw.pulse.valueHex && round.index === draw.pulse.index;
   checks.push({
     key: "curby",
     label: "CURBy value matches (re-fetched from random.colorado.edu)",

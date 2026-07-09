@@ -105,10 +105,11 @@ export function latestPulse(): Promise<QuantumPulse | null> {
   return fetchRounds("/round/latest");
 }
 
-/** A specific round by index (used to reveal the committed, targeted future round). */
-export function pulseByIndex(index: number): Promise<QuantumPulse | null> {
-  if (!Number.isInteger(index) || index < 0) return Promise.resolve(null);
-  return fetchRounds(`/round/${index}`);
+/** A specific finalized round by its ROUND number (the /round/{n} path key is the round, not
+ *  the pulse index — verified against the live API). */
+export function pulseByRound(round: number): Promise<QuantumPulse | null> {
+  if (!Number.isInteger(round) || round < 0) return Promise.resolve(null);
+  return fetchRounds(`/round/${round}`);
 }
 
 /**

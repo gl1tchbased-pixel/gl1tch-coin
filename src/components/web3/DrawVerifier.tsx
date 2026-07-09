@@ -30,8 +30,7 @@ export function DrawVerifier({ draw }: { draw: Draw }) {
     setBusy(true);
     setProbe(null);
     try {
-      const target = (draw.targetAfterIndex ?? 0) + 1;
-      const r = await fetchCurbyRound(draw.pulse?.index ?? target);
+      const r = await fetchCurbyRound(draw.pulse?.round ?? "latest");
       setProbe(
         r
           ? `✓ Reached CURBy directly from your browser — round ${r.round}, index ${r.index}. When this draw reveals, the winner will recompute from exactly this source.`
