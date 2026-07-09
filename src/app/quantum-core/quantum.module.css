@@ -38,22 +38,6 @@
 .h2 { font-size: clamp(1.5rem, 3.4vw, 2rem); font-weight: 800; letter-spacing: -0.02em; margin: var(--space-3) 0 var(--space-4); }
 .body { font-size: var(--fs-lg); line-height: 1.65; color: var(--text-secondary); max-width: 68ch; margin: 0 0 var(--space-5); }
 
-/* Seal demo */
-.demo { border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-5); background: var(--color-surface); max-width: 640px; }
-.demoLabel { display: block; font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: var(--space-2); }
-.demoInput { width: 100%; background: var(--color-void); border: 1px solid var(--color-border); border-radius: var(--radius-md); color: var(--text-primary); font-family: var(--font-body); font-size: var(--fs-sm); padding: var(--space-3); resize: vertical; }
-.demoInput:focus { outline: none; border-color: var(--color-signal); }
-.demoBtn { margin-top: var(--space-3); padding: 0.6rem 1.1rem; border-radius: var(--radius-full); border: 1px solid var(--color-border-signal); background: color-mix(in srgb, var(--color-signal) 12%, transparent); color: var(--text-primary); font-weight: 650; font-size: var(--fs-sm); cursor: pointer; transition: transform var(--duration-fast) var(--ease-out-expo); }
-.demoBtn:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--color-signal); }
-.demoBtn:disabled { opacity: 0.5; cursor: not-allowed; }
-.demoErr { color: var(--color-danger); font-size: var(--fs-sm); margin: var(--space-3) 0 0; }
-.demoOut { margin-top: var(--space-4); display: grid; gap: var(--space-2); }
-.demoRow { display: grid; grid-template-columns: 120px 1fr; gap: var(--space-3); align-items: baseline; }
-.demoK { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-.demoV { font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text-secondary); word-break: break-all; }
-.demoOk { color: var(--color-signal); }
-.demoNote { font-size: var(--fs-xs); color: var(--text-muted); margin: var(--space-3) 0 0; }
-
 /* Access matrix */
 .matrix { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3); }
 .tier { border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-4); background: var(--color-surface); }
@@ -73,5 +57,4 @@
 
 @media (max-width: 760px) {
   .pillars, .matrix, .pulseGrid { grid-template-columns: 1fr; }
-  .demoRow { grid-template-columns: 1fr; gap: var(--space-1); }
 }

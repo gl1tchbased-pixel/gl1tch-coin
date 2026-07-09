@@ -26,15 +26,15 @@ export function DrawVerifier({ draw }: { draw: Draw }) {
     }
   }
 
-  async function testConnection() {
+  async function previewSource() {
     setBusy(true);
     setProbe(null);
     try {
       const r = await fetchCurbyRound(draw.pulse?.round ?? "latest");
       setProbe(
         r
-          ? `✓ Reached CURBy directly from your browser — round ${r.round}, index ${r.index}. When this draw reveals, the winner will recompute from exactly this source.`
-          : "Couldn’t reach CURBy right now — try again in a moment."
+          ? `✓ Live CURBy quantum source reached from your browser — round ${r.round}, index ${r.index}. When this draw reveals, the winner recomputes from exactly this source.`
+          : "The quantum source is momentarily unreachable — try again shortly."
       );
     } finally {
       setBusy(false);
@@ -78,10 +78,10 @@ export function DrawVerifier({ draw }: { draw: Draw }) {
         <>
           <p className={styles.copy}>
             This draw hasn’t been revealed yet. When it is, you’ll recompute the winner here from the
-            live CURBy pulse — zero trust in GL1TCH. Test the connection now:
+            live CURBy quantum pulse — zero trust in GL1TCH. Preview the live source:
           </p>
-          <button className={styles.btn} onClick={testConnection} disabled={busy}>
-            {busy ? "Contacting CURBy…" : "Test the CURBy connection"}
+          <button className={styles.btn} onClick={previewSource} disabled={busy}>
+            {busy ? "Reaching CURBy…" : "Preview the live CURBy pulse"}
           </button>
           {probe && <p className={styles.probe}>{probe}</p>}
         </>
