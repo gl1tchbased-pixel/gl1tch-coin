@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { merkleRoot, winnerIndex, computeWinner, freezeCommitment, hashHex } from "./draw";
 import { quboEnergy, solveQUBO, optimizeSubset } from "./forge";
-import { vaultScore } from "./vault";
+import { vaultScore, vaultSignalsFromScan } from "./vault";
 import { sealKeypair, seal, unseal } from "./seal";
 
 describe("draw — commit-reveal", () => {
@@ -149,6 +149,38 @@ describe("vault — readiness score", () => {
     });
     expect(r.score).toBeGreaterThanOrEqual(0);
     expect(r.score).toBeLessThanOrEqual(100);
+  });
+
+  it("derives signals from a clean scan result", () => {
+    const s = vaultSignalsFromScan({
+      chain: "solana",
+      checks: [
+        { key: "mint_authority", status: "pass" },
+        { key: "freeze_authority", status: "pass" },
+        { key: "liquidity", status: "pass" },
+      ],
+      meta: { topHolderPct: 8, mutableMetadata: false, liquidityUsd: 50000, deployerReputation: { level: "clean" } },
+    });
+    expect(s.authoritiesRenounced).toBe(true);
+    expect(s.liquiditySecured).toBe(true);
+    expect(s.topHolderConcentration).toBeCloseTo(0.08);
+    expect(s.deployerReputation).toBe("clean");
+    expect(s.verifiedContract).toBe(true);
+    expect(s.transparency).toBe(true);
+    expect(vaultScore(s).level).toBe("hardened");
+  });
+
+  it("derives risk signals from an active-authority scan", () => {
+    const s = vaultSignalsFromScan({
+      checks: [
+        { key: "mint_authority", status: "fail" },
+        { key: "freeze_authority", status: "pass" },
+      ],
+      meta: { topHolderPct: 85, mutableMetadata: true, deployerReputation: { level: "serial", flaggedCount: 3 } },
+    });
+    expect(s.authoritiesRenounced).toBe(false);
+    expect(s.deployerReputation).toBe("serial");
+    expect(vaultScore(s).level).toBe("caution");
   });
 });
 

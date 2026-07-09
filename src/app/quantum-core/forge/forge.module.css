@@ -1,0 +1,10 @@
+.page { max-width: 860px; margin: 0 auto; padding: var(--space-16) var(--pad-side) var(--space-12); }
+.hero { text-align: center; padding-block: var(--space-6) var(--space-8); }
+.eyebrow { font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: 3px; text-transform: uppercase; color: var(--color-glitch); filter: brightness(1.4); }
+.title { font-size: clamp(1.8rem, 4.5vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; margin: var(--space-4) auto 0; max-width: 18ch; }
+.signal { color: var(--color-signal); }
+.lede { font-size: var(--fs-lg); line-height: 1.6; color: var(--text-secondary); max-width: 62ch; margin: var(--space-5) auto 0; }
+.card { border: 1px solid var(--color-border-signal); border-radius: var(--radius-xl); background: var(--color-surface); padding: var(--space-6); }
+.cta { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
+.btn { display: inline-flex; padding: 0.6rem 1.1rem; border-radius: var(--radius-full); border: 1px solid var(--color-border-signal); color: var(--text-primary); text-decoration: none; font-weight: 650; font-size: var(--fs-sm); }
+.btn:hover { border-color: var(--color-signal); }

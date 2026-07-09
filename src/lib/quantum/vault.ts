@@ -92,3 +92,56 @@ export function vaultScore(s: VaultSignals): VaultScore {
   const level: VaultLevel = score >= 90 ? "hardened" : score >= 70 ? "ready" : score >= 40 ? "neutral" : "caution";
   return { score, level, factors };
 }
+
+/** Minimal shape of a GL1TCH scan result (from /api/scan) that Vault reads. */
+export interface ScanLike {
+  chain?: string;
+  checks?: { key: string; status: string }[];
+  meta?: {
+    topHolderPct?: number | null;
+    lpLockedPct?: number | null;
+    mutableMetadata?: boolean | null;
+    liquidityUsd?: number | null;
+    deployerReputation?: { level?: string; flaggedCount?: number } | null;
+  };
+}
+
+const checkStatus = (checks: { key: string; status: string }[], key: string): string | undefined =>
+  checks.find((c) => c.key === key)?.status;
+
+/**
+ * Derive Vault readiness signals from an existing GL1TCH token scan — so the Vault
+ * score reuses the same on-chain intelligence the scanner already gathered. Honest:
+ * these are DERIVED signals, not a fresh measurement.
+ */
+export function vaultSignalsFromScan(scan: ScanLike): VaultSignals {
+  const checks = scan.checks ?? [];
+  const meta = scan.meta ?? {};
+
+  // Authority hygiene: renounced when the relevant authority checks pass and none fail.
+  const authKeys = ["mint_authority", "freeze_authority", "mintable", "ownership", "renounced"];
+  const authChecks = checks.filter((c) => authKeys.includes(c.key));
+  const authoritiesRenounced = authChecks.length > 0 && authChecks.every((c) => c.status === "pass");
+
+  const liqStatus = checkStatus(checks, "liquidity");
+  const liquiditySecured = liqStatus === "pass" || (typeof meta.lpLockedPct === "number" && meta.lpLockedPct >= 50);
+
+  const topHolderConcentration = typeof meta.topHolderPct === "number" ? Math.max(0, Math.min(1, meta.topHolderPct / 100)) : undefined;
+
+  const repLevel = (meta.deployerReputation?.level ?? "").toLowerCase();
+  const flagged = meta.deployerReputation?.flaggedCount ?? 0;
+  const deployerReputation: VaultSignals["deployerReputation"] = repLevel.includes("serial")
+    ? "serial"
+    : flagged > 0 || repLevel.includes("flag")
+    ? "flagged"
+    : repLevel.includes("clean") || repLevel.includes("trust")
+    ? "clean"
+    : "unknown";
+
+  const verifiedContract =
+    meta.mutableMetadata === false || checks.some((c) => /verif|source/.test(c.key) && c.status === "pass");
+
+  const transparency = typeof meta.liquidityUsd === "number" && meta.liquidityUsd > 0;
+
+  return { authoritiesRenounced, liquiditySecured, topHolderConcentration, deployerReputation, verifiedContract, transparency };
+}

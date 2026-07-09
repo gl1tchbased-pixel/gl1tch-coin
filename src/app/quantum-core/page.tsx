@@ -20,6 +20,8 @@ const PILLARS = [
     tag: "readiness score",
     body: "A 0–100 quantum-readiness score from cryptographic-hygiene signals — authority, custody, deployer track record, verification, transparency. Measures preparedness, not a live attack probability.",
     real: "Cryptography hygiene analysis",
+    href: "/quantum-core/vault",
+    cta: "Score a token →",
   },
   {
     key: "B",
@@ -27,6 +29,8 @@ const PILLARS = [
     tag: "verifiable randomness",
     body: "Fair draws seeded by real quantum randomness from NIST CURBy — a Bell-test beacon. Commit-reveal: the participant list is frozen and committed before the pulse exists, so no one can game the outcome. Anyone can recompute the winner.",
     real: "NIST CURBy — certified quantum beacon",
+    href: "/quantum-core/draw",
+    cta: "Enter the draw →",
   },
   {
     key: "C",
@@ -34,6 +38,8 @@ const PILLARS = [
     tag: "post-quantum encryption",
     body: "Holder data encrypted with ML-KEM-768 (FIPS 203) + AES-256-GCM — real post-quantum cryptography, today. Decryption is client-side, so a server compromise never sees plaintext.",
     real: "NIST ML-KEM (Kyber), @noble/post-quantum",
+    href: "#seal",
+    cta: "Try it below →",
   },
   {
     key: "D",
@@ -41,6 +47,8 @@ const PILLARS = [
     tag: "quantum-inspired optimization",
     body: "Combinatorial optimization via simulated annealing over QUBO/Ising — quantum-inspired, running on classical hardware. Not a quantum computer; honestly labelled, and useful only on genuinely multi-constraint problems.",
     real: "Quantum-inspired (QUBO / simulated annealing)",
+    href: "/quantum-core/forge",
+    cta: "Open the optimizer →",
   },
 ];
 
@@ -92,7 +100,7 @@ export default async function QuantumCorePage() {
 
       <section className={styles.pillars}>
         {PILLARS.map((p) => (
-          <article key={p.key} className={styles.pillar}>
+          <Link key={p.key} href={p.href} className={styles.pillar}>
             <div className={styles.pillarTop}>
               <span className={styles.pillarKey}>{p.key}</span>
               <div>
@@ -101,12 +109,15 @@ export default async function QuantumCorePage() {
               </div>
             </div>
             <p className={styles.pillarBody}>{p.body}</p>
-            <p className={styles.pillarReal}>Real tech: {p.real}</p>
-          </article>
+            <div className={styles.pillarFoot}>
+              <span className={styles.pillarReal}>{p.real}</span>
+              <span className={styles.pillarCta}>{p.cta}</span>
+            </div>
+          </Link>
         ))}
       </section>
 
-      <section className={styles.section}>
+      <section id="seal" className={styles.section}>
         <span className={styles.kicker}>Try it — live, in your browser</span>
         <h2 className={styles.h2}>Quantum Seal (post-quantum encryption)</h2>
         <p className={styles.body}>
