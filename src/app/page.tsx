@@ -7,6 +7,7 @@ import { LorePreview } from "@/components/sections/LorePreview";
 import { Tokenomics } from "@/components/sections/Tokenomics";
 import { TrustWall } from "@/components/sections/TrustWall";
 import { SecurityScan } from "@/components/sections/SecurityScan";
+import { QuantumShowcase } from "@/components/sections/QuantumShowcase";
 import { Difference } from "@/components/sections/Difference";
 import { WhyHold } from "@/components/sections/WhyHold";
 import { HowToBuy } from "@/components/sections/HowToBuy";
@@ -32,6 +33,7 @@ export default function Home() {
       </div>
       <StatsCounter />
       <LiveMarket />
+      <QuantumShowcase />
       <Manifesto />
       <LorePreview />
       <Marquee />
