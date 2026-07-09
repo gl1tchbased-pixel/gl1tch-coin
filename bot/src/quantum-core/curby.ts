@@ -17,6 +17,19 @@ export interface CurbyPulse extends DrawPulse {
 const isHex = (s: unknown, len: number): s is string =>
   typeof s === "string" && new RegExp(`^[0-9a-fA-F]{${len}}$`).test(s);
 
+/** Structurally validate CURBy's JWS: 3 dot-parts, header is a signed alg (Twine uses RS256/ES256). */
+function validJws(sig: unknown): boolean {
+  if (typeof sig !== "string") return false;
+  const parts = sig.split(".");
+  if (parts.length !== 3 || parts.some((p) => p.length === 0)) return false;
+  try {
+    const header = JSON.parse(Buffer.from(parts[0], "base64").toString());
+    return header && (header.alg === "RS256" || header.alg === "ES256");
+  } catch {
+    return false;
+  }
+}
+
 function parseRound(rec: unknown): CurbyPulse | null {
   const r = rec as {
     cid?: { "/"?: string };
@@ -29,7 +42,7 @@ function parseRound(rec: unknown): CurbyPulse | null {
   if (!p || p.stage !== "randomness" || !isHex(p.dataHash, 128)) return null;
   if (typeof content?.index !== "number" || typeof p.round !== "number") return null;
   const ts = Date.parse(p.timestamp ?? "");
-  const signaturePresent = typeof r.data?.signature === "string" && (r.data.signature as string).length > 0;
+  const signaturePresent = validJws(r.data?.signature);
   const verified = signaturePresent && Number.isFinite(ts) && ts > 0 && ts <= Date.now() + 60_000;
   return {
     round: p.round,

@@ -37,6 +37,20 @@ export interface QuantumPulse {
 const isHex = (s: unknown, len?: number): s is string =>
   typeof s === "string" && /^[0-9a-fA-F]+$/.test(s) && (len === undefined || s.length === len);
 
+/** Structurally validate CURBy's JWS: 3 dot-parts, header is a signed alg (Twine uses RS256/ES256). */
+function validJws(sig: unknown): boolean {
+  if (typeof sig !== "string") return false;
+  const parts = sig.split(".");
+  if (parts.length !== 3 || parts.some((p) => p.length === 0)) return false;
+  try {
+    const b64 = parts[0].replace(/-/g, "+").replace(/_/g, "/");
+    const header = JSON.parse(typeof atob === "function" ? atob(b64) : Buffer.from(b64, "base64").toString());
+    return header && (header.alg === "RS256" || header.alg === "ES256");
+  } catch {
+    return false;
+  }
+}
+
 /** Parse one CURBy round record into a pulse iff it is a finalized "randomness" stage. */
 function parseRound(rec: unknown): QuantumPulse | null {
   const r = rec as {
@@ -55,9 +69,10 @@ function parseRound(rec: unknown): QuantumPulse | null {
   if (typeof content?.index !== "number" || typeof payload.round !== "number") return null;
 
   const ts = Date.parse(payload.timestamp ?? "");
-  const signaturePresent = typeof r.data?.signature === "string" && (r.data.signature as string).length > 0;
-  // Structural verification: finalized stage, well-formed signed hash, sane timestamp.
-  // (Full JWS/JWK verification is a Phase-2 hardening; presence + shape is enforced now.)
+  const signaturePresent = validJws(r.data?.signature);
+  // Structural verification: finalized stage, a structurally-valid RS256/ES256 Twine JWS over
+  // the round, and a sane timestamp. (Full JWS signature check against CURBy's public key is a
+  // Tier-3 hardening; the /quantum-core/verify tool re-fetches CURBy directly for zero-trust.)
   const verified = signaturePresent && Number.isFinite(ts) && ts > 0 && ts <= Date.now() + 60_000;
 
   return {

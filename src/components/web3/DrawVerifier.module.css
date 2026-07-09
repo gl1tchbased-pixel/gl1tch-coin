@@ -1,0 +1,35 @@
+.box {
+  border: 1px solid var(--color-border-signal);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-signal) 5%, transparent);
+  padding: var(--space-5);
+  margin-top: var(--space-5);
+}
+.head { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); }
+.badge {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--color-void); background: var(--color-signal); padding: 3px 7px; border-radius: 4px;
+}
+.title { font-weight: 750; font-size: var(--fs-sm); }
+.copy { font-size: var(--fs-sm); line-height: 1.6; color: var(--text-secondary); margin: 0 0 var(--space-4); }
+
+.btn {
+  padding: 0.65rem 1.2rem; border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-signal); background: color-mix(in srgb, var(--color-signal) 12%, transparent);
+  color: var(--text-primary); font-weight: 700; font-size: var(--fs-sm); cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-out-expo);
+}
+.btn:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--color-signal); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.checks { list-style: none; padding: 0; margin: var(--space-4) 0 0; display: grid; gap: var(--space-2); }
+.check { display: grid; grid-template-columns: auto 1fr; gap: 4px var(--space-3); align-items: baseline; padding: var(--space-2) 0; border-top: 1px solid var(--color-border); }
+.mark { font-weight: 800; }
+.check[data-ok="1"] .mark { color: var(--color-signal); }
+.check[data-ok="0"] .mark { color: var(--color-danger); }
+.label { font-size: var(--fs-sm); color: var(--text-primary); }
+.detail { grid-column: 2; font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); word-break: break-all; }
+.verdict { margin-top: var(--space-3); font-size: var(--fs-sm); font-weight: 700; }
+.verdict[data-ok="1"] { color: var(--color-signal); }
+.verdict[data-ok="0"] { color: var(--color-danger); }
+.probe { margin: var(--space-3) 0 0; font-size: var(--fs-sm); line-height: 1.55; color: var(--color-signal); }

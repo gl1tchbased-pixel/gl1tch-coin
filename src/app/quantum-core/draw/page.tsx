@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { currentDraw } from "@/lib/quantum/client";
 import { DrawEntry } from "@/components/web3/DrawEntry";
+import { DrawVerifier } from "@/components/web3/DrawVerifier";
 import styles from "./draw.module.css";
 
 export const metadata: Metadata = {
@@ -54,6 +55,8 @@ export default async function DrawPage() {
           <div className={styles.entryZone}>
             <DrawEntry drawId={draw.id} open={!!open} />
           </div>
+
+          <DrawVerifier draw={draw} />
         </section>
       )}
 
