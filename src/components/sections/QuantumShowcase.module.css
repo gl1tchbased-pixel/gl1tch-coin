@@ -43,15 +43,18 @@
 .signal { color: var(--color-signal); text-shadow: 0 0 26px color-mix(in srgb, var(--color-signal) 45%, transparent); }
 .sub { font-size: clamp(0.95rem, 1.7vw, 1.1rem); line-height: 1.6; color: var(--text-secondary); margin: 0; }
 
-/* live pulse readout */
+/* two live verifiable sources */
+.sources { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin: var(--space-6) 0; }
 .pulse {
-  display: flex; align-items: center; gap: var(--space-4); flex-wrap: wrap;
-  margin: var(--space-6) 0;
+  display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-border); border-radius: var(--radius-lg);
   background: color-mix(in srgb, var(--color-void) 55%, transparent);
   backdrop-filter: blur(6px);
 }
+.srcTag { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+.srcTag[data-ok="1"] { color: var(--color-signal); }
+@media (max-width: 720px) { .sources { grid-template-columns: 1fr; } }
 .pulseLabel { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); white-space: nowrap; }
 .pulseData { display: flex; align-items: baseline; gap: var(--space-2) var(--space-3); flex-wrap: wrap; min-width: 0; }
 .pulseK { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-faint); text-transform: uppercase; }

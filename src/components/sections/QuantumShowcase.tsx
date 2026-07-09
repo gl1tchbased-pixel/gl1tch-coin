@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { latestDrand, type DrandPulse } from "@/lib/quantum/drand";
 import styles from "./QuantumShowcase.module.css";
 
 /**
@@ -27,14 +28,20 @@ const PILLARS = [
 
 export function QuantumShowcase() {
   const [pulse, setPulse] = useState<Pulse | null>(null);
+  const [drand, setDrand] = useState<DrandPulse | null>(null);
 
   useEffect(() => {
     let alive = true;
-    const load = () =>
+    const load = () => {
       fetch("/api/quantum-core/pulse", { cache: "no-store" })
         .then((r) => r.json())
         .then((d) => alive && setPulse(d))
         .catch(() => {});
+      // drand is fetched + BLS-verified right here in the browser (CORS-open).
+      latestDrand()
+        .then((d) => alive && setDrand(d))
+        .catch(() => {});
+    };
     load();
     const t = setInterval(load, 30_000);
     return () => {
@@ -68,23 +75,43 @@ export function QuantumShowcase() {
           </p>
         </div>
 
-        {/* Live quantum pulse readout */}
-        <div className={styles.pulse}>
-          <div className={styles.pulseLabel}>
-            <span className={styles.pulseDot} data-live={live ? "1" : "0"} />
-            Live CURBy quantum pulse
+        {/* Two independent, live, verifiable randomness sources */}
+        <div className={styles.sources}>
+          <div className={styles.pulse}>
+            <div className={styles.pulseLabel}>
+              <span className={styles.pulseDot} data-live={live ? "1" : "0"} />
+              CURBy · quantum (Bell-test)
+            </div>
+            <div className={styles.pulseData}>
+              {pulse?.ready ? (
+                <>
+                  <span className={styles.pulseK}>round</span><b className={styles.pulseV}>{pulse.round}</b>
+                  <span className={styles.pulseK}>value</span>
+                  <code className={styles.pulseHash}>{(pulse.valueHex ?? "").slice(0, 32)}…</code>
+                  <span className={styles.srcTag} data-ok={live ? "1" : "0"}>{live ? "✓ signed" : "…"}</span>
+                </>
+              ) : (
+                <span className={styles.pulseWait}>fetching finalized quantum round…</span>
+              )}
+            </div>
           </div>
-          <div className={styles.pulseData}>
-            {pulse?.ready ? (
-              <>
-                <span className={styles.pulseK}>round</span><b className={styles.pulseV}>{pulse.round}</b>
-                <span className={styles.pulseK}>index</span><b className={styles.pulseV}>{pulse.index}</b>
-                <span className={styles.pulseK}>value</span>
-                <code className={styles.pulseHash}>{(pulse.valueHex ?? "").slice(0, 40)}…</code>
-              </>
-            ) : (
-              <span className={styles.pulseWait}>fetching finalized quantum round…</span>
-            )}
+          <div className={styles.pulse}>
+            <div className={styles.pulseLabel}>
+              <span className={styles.pulseDot} data-live={drand?.verified ? "1" : "0"} />
+              drand · threshold-BLS (League of Entropy)
+            </div>
+            <div className={styles.pulseData}>
+              {drand ? (
+                <>
+                  <span className={styles.pulseK}>round</span><b className={styles.pulseV}>{drand.round}</b>
+                  <span className={styles.pulseK}>value</span>
+                  <code className={styles.pulseHash}>{drand.randomness.slice(0, 32)}…</code>
+                  <span className={styles.srcTag} data-ok={drand.verified ? "1" : "0"}>{drand.verified ? "✓ BLS-verified in your browser" : "unverified"}</span>
+                </>
+              ) : (
+                <span className={styles.pulseWait}>fetching + verifying drand round…</span>
+              )}
+            </div>
           </div>
         </div>
 

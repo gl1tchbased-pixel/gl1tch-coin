@@ -152,6 +152,7 @@ export default async function QuantumCorePage() {
         <ul className={styles.honestyList}>
           <li><strong>Live now:</strong> all four pillars — Vault scoring, the CURBy quantum pulse, Seal (ML-KEM) in your browser, the Forge optimizer, plus the full commit-reveal <Link href="/quantum-core/draw" className={styles.inlineA}>Draw</Link> + public <Link href="/quantum-core/beacon" className={styles.inlineA}>Beacon</Link> log. All real and testable.</li>
           <li>The Draw executor is scheduled server-side and cannot be triggered by any request — no user can influence timing. Every winner is recomputable from the published pulse + frozen entry list.</li>
+          <li><strong>Two independent verifiable sources.</strong> CURBy (quantum) drives reward draws; drand (League-of-Entropy threshold-BLS) is a second source we fully verify in your browser — used for reward-free features only, never to downgrade a reward draw.</li>
           <li><strong>Deliberately deferred (founder-gated + audited):</strong> any SOL reward pool or on-chain NFT. GL1TCH is a reputation &amp; provenance signal — <em>never</em> key custody. Draw winners get a verifiable Beacon record, not a payout.</li>
           <li>Forge is quantum-<em>inspired</em>, not a quantum computer. It is not investment advice. Not financial advice.</li>
         </ul>
