@@ -27,6 +27,7 @@ import { MascotHero, MASCOT_HERO_FRAMES } from "./MascotHero";
 import { ScannerUpgraded, SCANNER_UPGRADED_FRAMES } from "./ScannerUpgraded";
 import { SignalGraphVideo, SIGNAL_GRAPH_FRAMES } from "./SignalGraphVideo";
 import { AgentTrustVideo, AGENT_TRUST_FRAMES } from "./AgentTrustVideo";
+import { QuantumCoreVideo, QUANTUM_CORE_FRAMES } from "./QuantumCoreVideo";
 import { HolderTypes } from "./HolderTypes";
 import { LoreOrigin } from "./LoreOrigin";
 import { RankLadder } from "./RankLadder";
@@ -49,6 +50,15 @@ const PRODUCED_LONG = 34 + TALK + 4 * 66 + 74; // + trust-beats montage (~21s)
 
 export const Root = () => (
   <>
+    {/* Quantum Core — the flagship: Vault · Draw · Seal · Forge + zero-trust proof, 9:16 ~28s */}
+    <Composition
+      id="gl1tch-quantum-core"
+      component={QuantumCoreVideo}
+      durationInFrames={QUANTUM_CORE_FRAMES}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
     {/* Agent Trust Layer — "Know Your Agent" pivot (identity · reputation · guardrail), 9:16 ~23s */}
     <Composition
       id="gl1tch-agent-trust"
