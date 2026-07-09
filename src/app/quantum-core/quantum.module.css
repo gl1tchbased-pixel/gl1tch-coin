@@ -61,6 +61,8 @@
 .honestyList { list-style: none; padding: 0; margin: 0 0 var(--space-5); display: grid; gap: var(--space-3); }
 .honestyList li { position: relative; padding-left: var(--space-5); font-size: var(--fs-sm); line-height: 1.6; color: var(--text-secondary); }
 .honestyList li::before { content: "▹"; position: absolute; left: 0; color: var(--color-signal); }
+.inlineA { color: var(--color-signal); text-decoration: none; }
+.inlineA:hover { text-decoration: underline; }
 
 .ctaRow { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .ctaBtn { display: inline-flex; align-items: center; padding: 0.6rem 1.1rem; border-radius: var(--radius-full); border: 1px solid var(--color-border-signal); color: var(--text-primary); text-decoration: none; font-weight: 650; font-size: var(--fs-sm); transition: transform var(--duration-fast) var(--ease-out-expo); }

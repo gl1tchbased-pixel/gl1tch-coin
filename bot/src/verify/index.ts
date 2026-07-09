@@ -2,7 +2,8 @@ import type { Bot } from "grammy";
 import { Connection } from "@solana/web3.js";
 import type { Server } from "node:http";
 import { config, isContractLive } from "../config.js";
-import { RANK_TIERS, type RankTier } from "../ranks.js";
+import { RANK_TIERS, rankForBalance, type RankTier } from "../ranks.js";
+import { sustainedBalance, effectiveBalance } from "./sustained.js";
 import { VerifyStore } from "./store.js";
 import { verifySignature } from "./signature.js";
 import { readTokenBalance } from "./balance.js";
@@ -18,6 +19,9 @@ import { agentTrust } from "../agent-trust/trust.js";
 import { verifyAgentRegistration } from "../agent-trust/register.js";
 import { claimPendingX, ackX } from "../agent/x-agent/xqueue.js";
 import { statsStore } from "../stats.js";
+import { quantumCore } from "../quantum-core/store.js";
+import { startQuantumCore } from "../quantum-core/executor.js";
+import { verifyDrawEntry } from "../quantum-core/enter.js";
 
 /** Shared store — the bot issues nonces here and the HTTP endpoint consumes them. */
 export const store = new VerifyStore();
@@ -130,6 +134,27 @@ export function startVerification(bot: Bot): Server | null {
   signalGraph.load();
   proofOfSignal.load();
   agentTrustStore.load();
+  quantumCore.load();
+
+  /** Draw entry: verify wallet ownership (signature) + a sustained Infected+ balance
+   *  (Proof-of-Signal, spec §5). A flash-buy can't enter — you must have linked your
+   *  wallet through /verify (which records the 7-day balance history) first. */
+  const enterDraw = (body: unknown): { ok: boolean; error?: string; count?: number } => {
+    const b = (body ?? {}) as Record<string, unknown>;
+    const address = typeof b.address === "string" ? b.address : "";
+    const drawId = typeof b.drawId === "string" ? b.drawId : "";
+    const issued = typeof b.issued === "number" ? b.issued : 0;
+    const signature = typeof b.signature === "string" ? b.signature : "";
+    const v = verifyDrawEntry({ address, drawId, issued, signature });
+    if (!v.ok) return { ok: false, error: v.error };
+    const snaps = balanceHistory.get(address);
+    if (snaps.length === 0) return { ok: false, error: "verify_first" };
+    const now = Date.now();
+    const current = snaps[snaps.length - 1].balance;
+    const eff = effectiveBalance(current, sustainedBalance(snaps, now));
+    if (rankForBalance(eff).tier < 2) return { ok: false, error: "insufficient_balance" };
+    return quantumCore.addParticipant(drawId, address);
+  };
 
   // Signal Graph: normalise a posted observation, coercing/validating before recording.
   const recordObservation = (raw: unknown): void => {
@@ -225,6 +250,12 @@ export function startVerification(bot: Bot): Server | null {
         return { verified, flagged };
       },
     },
+    quantum: {
+      beacon: (limit) => quantumCore.beaconLog(limit),
+      current: () => quantumCore.current() ?? null,
+      status: (id) => quantumCore.get(id) ?? null,
+      enter: enterDraw,
+    },
     ...(config.xBridge.token
       ? {
           xBridge: {
@@ -248,5 +279,6 @@ export function startVerification(bot: Bot): Server | null {
   server.listen(config.verify.port, () => {
     console.log(`[verify] listening on :${config.verify.port} (origin ${config.verify.siteOrigin})`);
   });
+  startQuantumCore(); // scheduled commit-reveal Draw executor (externally untriggerable)
   return server;
 }

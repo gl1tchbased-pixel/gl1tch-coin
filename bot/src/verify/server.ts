@@ -35,6 +35,13 @@ export interface VerifyServerOptions {
     directory: () => unknown;
     metrics: () => unknown;
   };
+  /** Quantum Core: public read (beacon/draw), signature-authed POST /quantum/draw/enter. */
+  quantum?: {
+    beacon: (limit: number) => unknown[];
+    current: () => unknown;
+    status: (id: string) => unknown;
+    enter: (body: unknown) => { ok: boolean; error?: string; count?: number };
+  };
 }
 
 const RATE_WINDOW_MS = 60_000;
@@ -216,6 +223,48 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
           opts.signal!.observe(gRaw ? JSON.parse(gRaw) : {});
           res.writeHead(200, { "Content-Type": "application/json", ...cors });
           res.end(JSON.stringify({ ok: true }));
+        } catch {
+          res.writeHead(400, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify({ ok: false, error: "bad_json" }));
+        }
+      });
+      return;
+    }
+
+    // ---- Quantum Core: public reads + signature-authed draw entry ----
+    if (opts.quantum && sPath === "/quantum/beacon" && req.method === "GET") {
+      const qs = new URLSearchParams((req.url ?? "").split("?")[1] ?? "");
+      const limit = Math.min(Math.max(parseInt(qs.get("limit") ?? "50", 10) || 50, 1), 200);
+      res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=15", ...cors });
+      res.end(JSON.stringify({ ok: true, beacon: opts.quantum.beacon(limit) }));
+      return;
+    }
+    if (opts.quantum && sPath === "/quantum/draw/current" && req.method === "GET") {
+      res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=15", ...cors });
+      res.end(JSON.stringify({ ok: true, draw: opts.quantum.current() }));
+      return;
+    }
+    if (opts.quantum && sPath === "/quantum/draw/status" && req.method === "GET") {
+      const qs = new URLSearchParams((req.url ?? "").split("?")[1] ?? "");
+      const id = qs.get("id") ?? "";
+      if (!id) {
+        res.writeHead(400, { "Content-Type": "application/json", ...cors });
+        res.end(JSON.stringify({ ok: false, error: "id required" }));
+        return;
+      }
+      res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=15", ...cors });
+      res.end(JSON.stringify({ ok: true, draw: opts.quantum.status(id) }));
+      return;
+    }
+    if (opts.quantum && sPath === "/quantum/draw/enter" && req.method === "POST") {
+      let qRaw = ""; let qTooLarge = false;
+      req.on("data", (c) => { qRaw += c; if (qRaw.length > 4096) { qTooLarge = true; req.destroy(); } });
+      req.on("end", () => {
+        if (qTooLarge) return;
+        try {
+          const out = opts.quantum!.enter(qRaw ? JSON.parse(qRaw) : {});
+          res.writeHead(out.ok ? 200 : 400, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify(out));
         } catch {
           res.writeHead(400, { "Content-Type": "application/json", ...cors });
           res.end(JSON.stringify({ ok: false, error: "bad_json" }));
