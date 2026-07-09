@@ -124,6 +124,35 @@
 .navLink:hover { color: var(--color-static); }
 .navLink:hover::after { transform: scaleX(1); }
 
+/* Featured nav item (Quantum Core) — flagship, made to stand out. */
+.navFeatured {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-signal);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border-signal);
+  background: color-mix(in srgb, var(--color-signal) 8%, transparent);
+}
+.navFeatured::after { display: none; }
+.navFeatured:hover {
+  color: var(--color-signal);
+  border-color: var(--color-signal);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--color-signal) 35%, transparent);
+}
+.navBadge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  padding: 3px 5px;
+  border-radius: 4px;
+  color: var(--color-void);
+  background: var(--color-signal);
+}
+
 .cta { display: flex; align-items: center; gap: var(--space-3); }
 
 .burger {
@@ -176,6 +205,12 @@
   font-size: var(--fs-2xl);
   font-weight: 600;
   color: var(--color-static);
+}
+.overlayFeatured {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-signal);
 }
 .overlayWallet { display: flex; justify-content: center; }
 .overlayCta { width: 80%; max-width: 320px; }

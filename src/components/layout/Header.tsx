@@ -45,11 +45,20 @@ export function Header() {
         </Link>
 
         <nav className={styles.nav} aria-label="Primary">
-          {NAV_LINKS.map((link) => (
-            <Link key={link.id} id={link.id} href={link.href} className={styles.navLink}>
-              {link.label}
-            </Link>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const featured = "featured" in link && link.featured;
+            return (
+              <Link
+                key={link.id}
+                id={link.id}
+                href={link.href}
+                className={featured ? `${styles.navLink} ${styles.navFeatured}` : styles.navLink}
+              >
+                {link.label}
+                {featured && <span className={styles.navBadge}>NEW</span>}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className={styles.cta}>
@@ -79,16 +88,20 @@ export function Header() {
             ✕
           </button>
           <nav className={styles.overlayNav}>
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.id}
-                href={link.href}
-                className={styles.overlayLink}
-                onClick={() => setMenuOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const featured = "featured" in link && link.featured;
+              return (
+                <Link
+                  key={link.id}
+                  href={link.href}
+                  className={featured ? `${styles.overlayLink} ${styles.overlayFeatured}` : styles.overlayLink}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {link.label}
+                  {featured && <span className={styles.navBadge}>NEW</span>}
+                </Link>
+              );
+            })}
           </nav>
           <div className={styles.overlayWallet}>
             <ConnectWallet />

@@ -15,6 +15,7 @@ export const META_DESCRIPTION =
 
 export const NAV_LINKS = [
   { id: "nav-scan", label: "Scanner", href: "/scan" },
+  { id: "nav-quantum", label: "Quantum", href: "/quantum-core", featured: true },
   { id: "nav-proof", label: "Proof", href: "/proof" },
   { id: "nav-radar", label: "Rug Radar", href: "/radar" },
   { id: "nav-learn", label: "Learn", href: "/learn" },
