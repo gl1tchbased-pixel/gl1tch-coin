@@ -8,6 +8,15 @@ import fs from "node:fs";
 import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
 
 const PRESETS = {
+  quantum: {
+    video: "gl1tch-quantum-core.mp4",
+    caption: `⚛️ Real quantum tech — honestly labelled, and you can verify it yourself.
+
+The GL1TCH Quantum Core: Vault (token readiness) · Draw (provably-fair, quantum-seeded) · Seal (post-quantum encryption) · Forge (quantum-inspired optimizer). Two verifiable sources, tamper-evident Beacon, non-custodial.
+
+Live → coin-three-mu.vercel.app/quantum-core
+#crypto #quantum #solana #postquantum #web3`,
+  },
   agent: {
     video: "gl1tch-agent-trust.mp4",
     caption: `Know Your Agent. 🆔
