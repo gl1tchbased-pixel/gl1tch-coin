@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { beaconLog } from "@/lib/quantum/client";
+import { BeaconChainStatus } from "@/components/web3/BeaconChainStatus";
 import styles from "./beacon.module.css";
 
 export const metadata: Metadata = {
@@ -36,6 +37,8 @@ export default async function BeaconPage() {
           <code className={styles.formula}>winnerIndex = sha256(pulseValue ‖ merkleRoot) mod poolSize</code>
         </p>
       </header>
+
+      {log.length > 0 && <BeaconChainStatus entries={log} />}
 
       {log.length === 0 ? (
         <p className={styles.empty}>No draw events yet — the first weekly draw opens shortly. Check back.</p>

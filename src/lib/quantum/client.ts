@@ -38,6 +38,9 @@ export interface BeaconEntry {
   drawId: string;
   event: DrawStatus | "opened";
   detail: Record<string, unknown>;
+  seq?: number;
+  prevHash?: string;
+  hash?: string;
 }
 
 /** The exact message a wallet signs to enter — MUST match bot/src/quantum-core/enter.ts. */

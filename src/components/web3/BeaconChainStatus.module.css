@@ -1,0 +1,13 @@
+.box {
+  display: flex; align-items: flex-start; gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border-signal); border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--color-signal) 6%, transparent);
+  margin-bottom: var(--space-6);
+}
+.box[data-ok="0"] { border-color: var(--color-danger); background: color-mix(in srgb, var(--color-danger) 8%, transparent); }
+.mark { font-size: var(--fs-xl); font-weight: 800; line-height: 1; color: var(--color-signal); flex: none; }
+.box[data-ok="0"] .mark { color: var(--color-danger); }
+.text { display: flex; flex-direction: column; gap: 4px; }
+.title { font-weight: 750; font-size: var(--fs-sm); }
+.sub { font-size: var(--fs-xs); color: var(--text-muted); line-height: 1.5; }

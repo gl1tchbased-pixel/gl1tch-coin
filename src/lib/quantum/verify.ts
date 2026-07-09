@@ -12,8 +12,10 @@
  *
  * If all three hold, the result is correct no matter who ran the draw.
  */
+import { sha256 } from "@noble/hashes/sha2.js";
+import { bytesToHex, utf8ToBytes } from "@noble/hashes/utils.js";
 import { merkleRoot, winnerIndex } from "./draw";
-import type { Draw } from "./client";
+import type { Draw, BeaconEntry } from "./client";
 
 const CURBY = (typeof process !== "undefined" && process.env.CURBY_URL) || "https://random.colorado.edu";
 
@@ -100,3 +102,50 @@ export async function verifyDrawIndependently(draw: Draw): Promise<DrawVerificat
 
   return { verified: valueMatch && rootMatch && winnerMatch, checks };
 }
+
+// ---- Beacon hash-chain verification (Twine-style tamper-evidence, byte-identical to the bot) ----
+
+const BEACON_GENESIS = "genesis";
+
+/** Canonical string of a beacon entry — MUST match bot/src/quantum-core/logic.ts::beaconCanonical. */
+export function beaconCanonical(e: Pick<BeaconEntry, "seq" | "at" | "drawId" | "event" | "detail">): string {
+  return `${e.seq}|${e.at}|${e.drawId}|${e.event}|${JSON.stringify(e.detail)}`;
+}
+
+export function beaconHash(prevHash: string, e: Pick<BeaconEntry, "seq" | "at" | "drawId" | "event" | "detail">): string {
+  return bytesToHex(sha256(utf8ToBytes(prevHash + "|" + beaconCanonical(e))));
+}
+
+export interface BeaconChainResult {
+  ok: boolean;
+  length: number;
+  brokenAt?: number;
+  reason?: string;
+}
+
+/**
+ * Verify the Beacon is an unbroken hash chain: every entry's hash recomputes from
+ * its content + the previous entry's hash. Any edit, deletion, or insertion breaks
+ * it. `entries` may be newest-first (as the API returns) — set `newestFirst`.
+ * The first retained entry's prevHash is taken as the anchor (the log may be a window).
+ */
+export function verifyBeaconChain(entries: BeaconEntry[], newestFirst = true): BeaconChainResult {
+  const chron = newestFirst ? [...entries].reverse() : [...entries];
+  if (chron.length === 0) return { ok: true, length: 0 };
+  for (let i = 0; i < chron.length; i++) {
+    const e = chron[i];
+    if (typeof e.hash !== "string" || typeof e.prevHash !== "string" || typeof e.seq !== "number") {
+      return { ok: false, length: chron.length, brokenAt: i, reason: "entry not chained" };
+    }
+    if (i > 0 && e.prevHash !== chron[i - 1].hash) {
+      return { ok: false, length: chron.length, brokenAt: i, reason: "prevHash mismatch (link broken)" };
+    }
+    const recomputed = beaconHash(e.prevHash, e);
+    if (recomputed !== e.hash) {
+      return { ok: false, length: chron.length, brokenAt: i, reason: "hash mismatch (entry altered)" };
+    }
+  }
+  return { ok: true, length: chron.length };
+}
+
+void BEACON_GENESIS;

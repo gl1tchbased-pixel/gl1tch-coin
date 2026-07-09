@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { verifyDrawIndependently } from "./verify";
+import { verifyDrawIndependently, verifyBeaconChain, beaconHash } from "./verify";
 import { merkleRoot, winnerIndex } from "./draw";
-import type { Draw } from "./client";
+import type { Draw, BeaconEntry } from "./client";
 
 const VALUE = "dd376b2d4754de41b4e9e7e2b654e5520978039e6aea21ebe2730c65e7598ed9913737e24580d09c11881e6c5736c06d6297364d39be393ea71d441fabcdef01";
 
@@ -68,5 +68,52 @@ describe("verifyDrawIndependently", () => {
     d.status = "committed";
     const res = await verifyDrawIndependently(d);
     expect(res.verified).toBe(false);
+  });
+});
+
+describe("verifyBeaconChain — Twine-style tamper-evidence", () => {
+  // Same parity vector as bot/src/quantum-core/logic.test.ts.
+  function chain(): BeaconEntry[] {
+    const e0 = { seq: 0, at: 1783583567558, drawId: "draw-2949", event: "opened" as const, detail: { closesAt: 1784188367558, type: "weekly" } };
+    const h0 = beaconHash("genesis", e0);
+    const e1 = { seq: 1, at: 1783600000000, drawId: "draw-2949", event: "committed" as const, detail: { merkleRoot: "abc", poolSize: 5, targetAfterIndex: 84646 } };
+    const h1 = beaconHash(h0, e1);
+    // API returns newest-first
+    return [
+      { ...e1, prevHash: h0, hash: h1 },
+      { ...e0, prevHash: "genesis", hash: h0 },
+    ];
+  }
+
+  it("matches the bot parity vector", () => {
+    const e0 = { seq: 0, at: 1783583567558, drawId: "draw-2949", event: "opened" as const, detail: { closesAt: 1784188367558, type: "weekly" } };
+    expect(beaconHash("genesis", e0)).toBe("443293c6078b554bd5f94c75d39f98bc429a87560b0c83ecd5a426136f334c1e");
+  });
+
+  it("verifies an intact chain", () => {
+    const r = verifyBeaconChain(chain());
+    expect(r.ok).toBe(true);
+    expect(r.length).toBe(2);
+  });
+
+  it("detects a tampered entry (altered detail)", () => {
+    const c = chain();
+    (c[1].detail as { type: string }).type = "hacked";
+    const r = verifyBeaconChain(c);
+    expect(r.ok).toBe(false);
+    expect(r.reason).toMatch(/hash mismatch|link broken/);
+  });
+
+  it("detects a broken link (deleted middle entry)", () => {
+    const c = chain();
+    // remove the genesis entry → the remaining entry's prevHash no longer anchors, but a single
+    // entry still self-verifies; instead corrupt the link explicitly:
+    c[0].prevHash = "deadbeef";
+    const r = verifyBeaconChain(c);
+    expect(r.ok).toBe(false);
+  });
+
+  it("treats an empty log as ok", () => {
+    expect(verifyBeaconChain([]).ok).toBe(true);
   });
 });

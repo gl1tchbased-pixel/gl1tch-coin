@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { Draw, BeaconEntry } from "./logic.js";
+import { beaconHash, BEACON_GENESIS, type Draw, type BeaconEntry } from "./logic.js";
 
 /**
  * Durable Quantum Core store — draws + append-only Beacon log. Same Railway-volume
@@ -30,10 +30,32 @@ export class QuantumCoreStore {
       };
       for (const d of parsed.draws ?? []) this.draws.set(d.id, d);
       this.beacon = parsed.beacon ?? [];
+      if (this.ensureChain()) this.save(); // backfill hash-chain for any pre-chain entries
       console.log(`[quantum] loaded ${this.draws.size} draws, ${this.beacon.length} beacon entries`);
     } catch {
       console.log(`[quantum] no store at ${STORE_PATH} (starting empty)`);
     }
+  }
+
+  /** Backfill seq/prevHash/hash for any pre-chain entries (leaves already-hashed ones intact,
+   *  so a trimmed window stays internally consistent). Returns true if anything changed. */
+  private ensureChain(): boolean {
+    let changed = false;
+    let prev = BEACON_GENESIS;
+    for (let i = 0; i < this.beacon.length; i++) {
+      const e = this.beacon[i];
+      if (typeof e.hash === "string" && typeof e.seq === "number") {
+        prev = e.hash; // trust an already-chained entry
+        continue;
+      }
+      const seq = i > 0 ? (this.beacon[i - 1].seq ?? i - 1) + 1 : 0;
+      e.seq = seq;
+      e.prevHash = prev;
+      e.hash = beaconHash(prev, { seq, at: e.at, drawId: e.drawId, event: e.event, detail: e.detail });
+      prev = e.hash;
+      changed = true;
+    }
+    return changed;
   }
 
   private save(): void {
@@ -62,7 +84,11 @@ export class QuantumCoreStore {
   }
 
   logBeacon(entry: BeaconEntry): void {
-    this.beacon.push(entry);
+    const last = this.beacon[this.beacon.length - 1];
+    const seq = last ? (last.seq ?? this.beacon.length - 1) + 1 : 0;
+    const prevHash = last?.hash ?? BEACON_GENESIS;
+    const hash = beaconHash(prevHash, { seq, at: entry.at, drawId: entry.drawId, event: entry.event, detail: entry.detail });
+    this.beacon.push({ ...entry, seq, prevHash, hash });
     if (this.beacon.length > BEACON_CAP) this.beacon = this.beacon.slice(-BEACON_CAP);
     this.save();
   }

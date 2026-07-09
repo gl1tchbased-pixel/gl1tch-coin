@@ -6,6 +6,7 @@ import {
   freezeCommit,
   revealDraw,
   drawIdForPeriod,
+  beaconHash,
   type Draw,
   type DrawPulse,
 } from "./logic.js";
@@ -94,5 +95,17 @@ describe("logic — commit-reveal lifecycle", () => {
   it("drawIdForPeriod is stable within a period and advances across periods", () => {
     expect(drawIdForPeriod(500, 1000)).toBe(drawIdForPeriod(999, 1000));
     expect(drawIdForPeriod(500, 1000)).not.toBe(drawIdForPeriod(1500, 1000));
+  });
+});
+
+describe("logic — beacon hash chain (parity vector, must match site verify.ts)", () => {
+  const e0 = { seq: 0, at: 1783583567558, drawId: "draw-2949", event: "opened" as const, detail: { closesAt: 1784188367558, type: "weekly" } };
+  const e1 = { seq: 1, at: 1783600000000, drawId: "draw-2949", event: "committed" as const, detail: { merkleRoot: "abc", poolSize: 5, targetAfterIndex: 84646 } };
+  it("reproduces the genesis-linked hash vector", () => {
+    expect(beaconHash("genesis", e0)).toBe("443293c6078b554bd5f94c75d39f98bc429a87560b0c83ecd5a426136f334c1e");
+  });
+  it("reproduces the linked second-entry hash vector", () => {
+    const h0 = beaconHash("genesis", e0);
+    expect(beaconHash(h0, e1)).toBe("0838e9dec160a42f1998de4650ba161d795106993398dba6fe7ad433e91fc27d");
   });
 });

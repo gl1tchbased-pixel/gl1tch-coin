@@ -74,7 +74,23 @@ export interface BeaconEntry {
   drawId: string;
   event: DrawStatus | "opened";
   detail: Record<string, unknown>;
+  /** Hash-chain fields (Twine-style tamper-evidence, no key/tx — set by the store). */
+  seq?: number;
+  prevHash?: string;
+  hash?: string;
 }
+
+/** Canonical string of a beacon entry (byte-identical on bot + site) for hashing. */
+export function beaconCanonical(e: Pick<BeaconEntry, "seq" | "at" | "drawId" | "event" | "detail">): string {
+  return `${e.seq}|${e.at}|${e.drawId}|${e.event}|${JSON.stringify(e.detail)}`;
+}
+
+/** Hash of a beacon entry linked to the previous entry's hash → an append-only chain. */
+export function beaconHash(prevHash: string, e: Pick<BeaconEntry, "seq" | "at" | "drawId" | "event" | "detail">): string {
+  return sha(Buffer.from(prevHash + "|" + beaconCanonical(e), "utf8"));
+}
+
+export const BEACON_GENESIS = "genesis";
 
 export interface Transition {
   draw: Draw;
