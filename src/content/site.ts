@@ -13,20 +13,17 @@ export const META_TITLE =
 export const META_DESCRIPTION =
   "GL1TCH is crypto risk-intelligence infrastructure: a free multi-chain token scanner, the Signal Graph deployer-reputation database, and a Know Your Agent (ERC-8004-compatible) trust layer. Flags the rug before you ape — free, non-custodial.";
 
+// A deliberately short primary nav — the core products + proof. Everything else
+// (Learn, Lore, Ranks, Tokenomics, Roadmap, FAQ, …) lives in the footer, keeping
+// the header uncluttered and premium.
 export const NAV_LINKS = [
   { id: "nav-scan", label: "Scanner", href: "/scan" },
   { id: "nav-quantum", label: "Quantum", href: "/quantum-core", featured: true },
-  { id: "nav-proof", label: "Proof", href: "/proof" },
+  { id: "nav-agents", label: "Agent Trust", href: "/agents" },
   { id: "nav-radar", label: "Rug Radar", href: "/radar" },
-  { id: "nav-learn", label: "Learn", href: "/learn" },
-  { id: "nav-lore", label: "Lore", href: "/lore" },
-  { id: "nav-tokenomics", label: "Tokenomics", href: "/#tokenomics" },
-  { id: "nav-buy", label: "How to Buy", href: "/#how-to-buy" },
-  { id: "nav-ranks", label: "Ranks", href: "/ranks" },
-  { id: "nav-roadmap", label: "Roadmap", href: "/#roadmap" },
+  { id: "nav-proof", label: "Proof", href: "/proof" },
   { id: "nav-live", label: "Live", href: "/live" },
   { id: "nav-whitepaper", label: "Whitepaper", href: "/whitepaper" },
-  { id: "nav-faq", label: "FAQ", href: "/#faq" },
 ] as const;
 
 export const FOOTER_LINKS = [
