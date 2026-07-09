@@ -137,9 +137,11 @@ export function startVerification(bot: Bot): Server | null {
   quantumCore.load();
 
   /** Draw entry: verify wallet ownership (signature) + a sustained Infected+ balance
-   *  (Proof-of-Signal, spec §5). A flash-buy can't enter — you must have linked your
-   *  wallet through /verify (which records the 7-day balance history) first. */
-  const enterDraw = (body: unknown): { ok: boolean; error?: string; count?: number } => {
+   *  (Proof-of-Signal, spec §5). Self-serve — the signature proves ownership, so we read
+   *  the live balance and record a snapshot right here (exactly what /verify does), no
+   *  separate Telegram step needed. The 7-day sustained average still governs future entries,
+   *  so a flash-buy can't farm draws over time (effectiveBalance = min(current, avg)). */
+  const enterDraw = async (body: unknown): Promise<{ ok: boolean; error?: string; count?: number }> => {
     const b = (body ?? {}) as Record<string, unknown>;
     const address = typeof b.address === "string" ? b.address : "";
     const drawId = typeof b.drawId === "string" ? b.drawId : "";
@@ -147,8 +149,17 @@ export function startVerification(bot: Bot): Server | null {
     const signature = typeof b.signature === "string" ? b.signature : "";
     const v = verifyDrawEntry({ address, drawId, issued, signature });
     if (!v.ok) return { ok: false, error: v.error };
-    const snaps = balanceHistory.get(address);
-    if (snaps.length === 0) return { ok: false, error: "verify_first" };
+    let snaps = balanceHistory.get(address);
+    if (snaps.length === 0) {
+      // First time this wallet is seen: read its live balance (read-only) and start its
+      // Proof-of-Signal history — same effect as running /verify, without leaving the site.
+      try {
+        const bal = await readTokenBalance(connection, address, config.verify.contractAddress);
+        snaps = balanceHistory.record(address, bal);
+      } catch {
+        return { ok: false, error: "balance_read_failed" };
+      }
+    }
     const now = Date.now();
     const current = snaps[snaps.length - 1].balance;
     const eff = effectiveBalance(current, sustainedBalance(snaps, now));

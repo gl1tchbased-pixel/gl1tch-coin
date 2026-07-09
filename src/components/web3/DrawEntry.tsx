@@ -10,13 +10,14 @@ import styles from "./DrawEntry.module.css";
 type Phase = "idle" | "signing" | "posting" | "done" | "error";
 
 const ERRORS: Record<string, string> = {
-  verify_first: "Link your wallet first: run /verify in Telegram so your 7-day balance is on record.",
-  insufficient_balance: "You need a sustained Infected+ balance (100K+ $GL1TCH) to enter.",
+  insufficient_balance: "You need at least 100K $GL1TCH (Infected tier) in this wallet to enter.",
+  balance_read_failed: "Couldn’t read your balance just now — try again in a moment.",
   already_entered: "This wallet is already entered in the current draw.",
   window_closed: "The entry window just closed. Catch the next draw.",
   draw_closed: "This draw is no longer open for entries.",
   stale: "Your signature expired. Please sign again.",
   bad_signature: "Signature did not match your wallet. Try again.",
+  verify_first: "Link your wallet first: run /verify in Telegram so your balance is on record.",
   unreachable: "Couldn’t reach the draw service. Try again shortly.",
 };
 
@@ -73,7 +74,7 @@ export function DrawEntry({ drawId, open }: { drawId: string; open: boolean }) {
           <button className={styles.button} onClick={enter} disabled={phase === "signing" || phase === "posting" || !signMessage}>
             {phase === "signing" ? "Sign in wallet…" : phase === "posting" ? "Entering…" : "Sign & enter draw (free)"}
           </button>
-          <p className={styles.hint}>Signing proves wallet ownership. It moves no funds and grants no access.</p>
+          <p className={styles.hint}>Requires 100K+ $GL1TCH (Infected tier). Signing proves wallet ownership — it moves no funds and grants no access.</p>
         </>
       )}
       {error && <p className={styles.err}>{error}</p>}

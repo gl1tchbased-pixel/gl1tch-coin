@@ -40,7 +40,7 @@ export interface VerifyServerOptions {
     beacon: (limit: number) => unknown[];
     current: () => unknown;
     status: (id: string) => unknown;
-    enter: (body: unknown) => { ok: boolean; error?: string; count?: number };
+    enter: (body: unknown) => Promise<{ ok: boolean; error?: string; count?: number }>;
   };
 }
 
@@ -259,10 +259,10 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
     if (opts.quantum && sPath === "/quantum/draw/enter" && req.method === "POST") {
       let qRaw = ""; let qTooLarge = false;
       req.on("data", (c) => { qRaw += c; if (qRaw.length > 4096) { qTooLarge = true; req.destroy(); } });
-      req.on("end", () => {
+      req.on("end", async () => {
         if (qTooLarge) return;
         try {
-          const out = opts.quantum!.enter(qRaw ? JSON.parse(qRaw) : {});
+          const out = await opts.quantum!.enter(qRaw ? JSON.parse(qRaw) : {});
           res.writeHead(out.ok ? 200 : 400, { "Content-Type": "application/json", ...cors });
           res.end(JSON.stringify(out));
         } catch {
