@@ -1,5 +1,15 @@
 import { describe, it, expect } from "vitest";
-import { deriveResult, requestIdOf, canonicalCommitment, type Commitment } from "./random";
+import {
+  deriveResult,
+  requestIdOf,
+  canonicalCommitment,
+  listRoot,
+  parseAllocationSalt,
+  verifyRandomResult,
+  ALLOC_PREFIX,
+  type Commitment,
+  type FulfilledRecord,
+} from "./random";
 
 /**
  * Byte-identity with the bot. These exact vectors are also asserted in
@@ -32,6 +42,48 @@ describe("site ⇄ bot derivation parity", () => {
     };
     expect(canonicalCommitment(c)).toContain("spec=ints:1:100:5");
     expect(requestIdOf(c)).toBe("8ceace15e5909094290f93d1e3b3aa28ccf0cd1bdfa4dfc0224895f7a1209367");
+  });
+});
+
+describe("allocation verification (root binding + winner mapping)", () => {
+  const entrants = ["alice.sol", "bob.sol", "carol.sol", "dave.sol", "erin.sol"];
+  const root = listRoot(entrants);
+  const spec = { kind: "pick", n: entrants.length, k: 2 } as const;
+  const salt = `${ALLOC_PREFIX}:${root}:drop-1`;
+  const commitment: Commitment = {
+    v: 1, keyHash: "c".repeat(64), spec, salt, source: "drand-quicknet",
+    chainHash: "d".repeat(64), targetRound: 777, committedAt: 1_700_000_000_000,
+  };
+  const id = requestIdOf(commitment);
+  const seed = "7".repeat(64);
+  const result = deriveResult(seed, id, spec);
+  const baseRec: FulfilledRecord = {
+    id, status: "fulfilled", spec, salt, chainHash: "d".repeat(64), targetRound: 777,
+    committedAt: 1_700_000_000_000, commitmentString: canonicalCommitment(commitment),
+    result, proof: { round: 777, randomness: seed, signature: "00" },
+    mode: "allocation", entrants, listRoot: root, winners: result.values.map((i) => entrants[i]),
+  };
+
+  it("salt encodes the list root", () => {
+    expect(parseAllocationSalt(salt)).toEqual({ root, userSalt: "drop-1" });
+  });
+  it("entrant list matches its committed root, winners map from indices", () => {
+    const rep = verifyRandomResult(baseRec);
+    const rootCheck = rep.checks.find((c) => c.label === "Entrant list → committed root");
+    const winCheck = rep.checks.find((c) => c.label === "Winners ← derived indices");
+    expect(rootCheck?.ok).toBe(true);
+    expect(winCheck?.ok).toBe(true);
+    expect(new Set(baseRec.winners).size).toBe(2);
+  });
+  it("a swapped entrant breaks the committed-root check (tamper-evident)", () => {
+    const tampered = { ...baseRec, entrants: ["MALLORY.sol", ...entrants.slice(1)] };
+    const rep = verifyRandomResult(tampered);
+    expect(rep.checks.find((c) => c.label === "Entrant list → committed root")?.ok).toBe(false);
+    expect(rep.ok).toBe(false);
+  });
+  it("altered winners break the winner-mapping check", () => {
+    const rep = verifyRandomResult({ ...baseRec, winners: ["alice.sol", "alice.sol"] });
+    expect(rep.checks.find((c) => c.label === "Winners ← derived indices")?.ok).toBe(false);
   });
 });
 

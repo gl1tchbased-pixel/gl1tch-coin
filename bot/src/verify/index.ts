@@ -336,7 +336,7 @@ export function startVerification(bot: Bot): Server | null {
           return { status: 429, body: { ok: false, error: "rate_limited — your tier's randomness ceiling; hold more $GL1TCH" } };
         }
         const b = (body ?? {}) as Record<string, unknown>;
-        return requestRandom({ apiKey: key, tier: info.tier, tierId: info.tierId, spec: b.spec, salt: b.salt });
+        return requestRandom({ apiKey: key, tier: info.tier, tierId: info.tierId, spec: b.spec, salt: b.salt, labels: b.labels, winners: b.winners });
       },
       get: (id) => getRandom(id),
       log: (limit) => randomStore.events(limit),

@@ -10,6 +10,7 @@
 import { sha256 } from "@noble/hashes/sha2.js";
 import { bytesToHex, utf8ToBytes } from "@noble/hashes/utils.js";
 import { verifyDrandRound } from "./drand";
+import { merkleRoot } from "./draw";
 
 const sha = (s: string): string => bytesToHex(sha256(utf8ToBytes(s)));
 export const hashHex = (s: string): string => sha(s);
@@ -124,6 +125,20 @@ export function deriveResult(seedHex: string, requestId: string, spec: RandomSpe
   return { kind: "pick", values: out };
 }
 
+/** Allocation binding (byte-identical to bot/src/random/logic.ts). */
+export const ALLOC_PREFIX = "alloc/v1";
+export function listRoot(labels: string[]): string {
+  return merkleRoot(labels);
+}
+export function parseAllocationSalt(salt: string): { root: string; userSalt: string } | null {
+  const p = `${ALLOC_PREFIX}:`;
+  if (!salt.startsWith(p)) return null;
+  const rest = salt.slice(p.length);
+  const i = rest.indexOf(":");
+  if (i < 0) return null;
+  return { root: rest.slice(0, i), userSalt: rest.slice(i + 1) };
+}
+
 /** The full proof shape returned by the service for a fulfilled request. */
 export interface RandomProof {
   round: number;
@@ -142,6 +157,11 @@ export interface FulfilledRecord {
   commitmentString: string;
   result?: RandomResult;
   proof?: RandomProof;
+  // Allocation mode extras:
+  mode?: "allocation";
+  entrants?: string[];
+  listRoot?: string;
+  winners?: string[];
 }
 
 export interface VerifyReport {
@@ -188,6 +208,26 @@ export function verifyRandomResult(rec: FulfilledRecord): VerifyReport {
     ok: same,
     detail: same ? "recomputed output matches exactly" : "recomputed output differs",
   });
+
+  // 4. allocation mode: the published entrant list must hash to the root bound in the salt,
+  //    and the winners must be exactly the derived indices mapped onto that list.
+  if (rec.mode === "allocation" && rec.entrants) {
+    const bound = parseAllocationSalt(rec.salt);
+    const recomputedRoot = listRoot(rec.entrants);
+    const rootOk = !!bound && bound.root === recomputedRoot;
+    checks.push({
+      label: "Entrant list → committed root",
+      ok: rootOk,
+      detail: rootOk ? `${rec.entrants.length} entrants hash to the salt-bound Merkle root` : "entrant list does not match the committed root",
+    });
+    const expectedWinners = redo.values.map((i) => rec.entrants![i]);
+    const winnersOk = JSON.stringify(expectedWinners) === JSON.stringify(rec.winners ?? []);
+    checks.push({
+      label: "Winners ← derived indices",
+      ok: winnersOk,
+      detail: winnersOk ? "winners are the derived indices mapped onto the frozen list" : "winners do not match the derivation",
+    });
+  }
 
   return { ok: checks.every((c) => c.ok), checks };
 }

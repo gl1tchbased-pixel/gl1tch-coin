@@ -1,5 +1,15 @@
 import { randomStore, type RandomRecord } from "./store.js";
-import { validateSpec, requestIdOf, deriveResult, canonicalCommitment, DERIVATION_RECIPE, type Commitment } from "./logic.js";
+import {
+  validateSpec,
+  requestIdOf,
+  deriveResult,
+  canonicalCommitment,
+  DERIVATION_RECIPE,
+  validateLabels,
+  listRoot,
+  allocationSalt,
+  type Commitment,
+} from "./logic.js";
 import { latestRound, roundByNumber, integrityOk, DRAND_CHAIN } from "./drand.js";
 import { createHash } from "node:crypto";
 
@@ -26,8 +36,11 @@ export interface RequestArgs {
   apiKey: string;
   tier: number;
   tierId: string;
-  spec: unknown;
+  spec?: unknown;
   salt?: unknown;
+  // Allocation / whitelist / giveaway mode (instead of a raw spec):
+  labels?: unknown; // the entrant list
+  winners?: unknown; // how many to pick
 }
 
 export interface PublicRecord {
@@ -54,6 +67,11 @@ export interface PublicRecord {
   };
   fulfilledAt?: number;
   error?: string;
+  // Allocation mode extras (present only for entrant-list requests):
+  mode?: "allocation";
+  entrants?: string[];
+  listRoot?: string;
+  winners?: string[];
 }
 
 const DRAND_URL = (process.env.DRAND_URL || "https://api.drand.sh").replace(/\/$/, "");
@@ -88,15 +106,46 @@ export function publicView(rec: RandomRecord, now = Date.now()): PublicRecord {
     };
   }
   if (rec.status === "void") out.error = rec.error;
+  // Allocation projection: expose the frozen entrant list + map winning indices → entrants.
+  if (rec.labels && rec.listRoot) {
+    out.mode = "allocation";
+    out.entrants = rec.labels;
+    out.listRoot = rec.listRoot;
+    if (rec.status === "fulfilled" && rec.result) {
+      out.winners = rec.result.values.map((i) => rec.labels![i]).filter((x): x is string => typeof x === "string");
+    }
+  }
   return out;
 }
 
 /** Create a new randomness request. Returns the public record (pending). */
 export async function requestRandom(args: RequestArgs): Promise<{ status: number; body: Record<string, unknown> }> {
-  const v = validateSpec(args.spec);
-  if (!v.ok) return { status: 400, body: { ok: false, error: v.error } };
+  const userSalt = typeof args.salt === "string" ? args.salt.slice(0, MAX_SALT) : "";
 
-  const salt = typeof args.salt === "string" ? args.salt.slice(0, MAX_SALT) : "";
+  // Two shapes: allocation (an entrant list + winner count) or a raw spec.
+  let spec: Commitment["spec"];
+  let salt: string;
+  let labels: string[] | undefined;
+  let root: string | undefined;
+
+  if (args.labels !== undefined) {
+    const lv = validateLabels(args.labels);
+    if (!lv.ok) return { status: 400, body: { ok: false, error: lv.error } };
+    const winners = typeof args.winners === "number" ? args.winners : NaN;
+    if (!Number.isInteger(winners) || winners < 1 || winners > lv.labels.length) {
+      return { status: 400, body: { ok: false, error: "winners must be an integer in 1..entrants.length" } };
+    }
+    labels = lv.labels;
+    root = listRoot(lv.labels);
+    // Bind the frozen list into the salt → tamper-evident without a schema change.
+    salt = allocationSalt(root, userSalt);
+    spec = { kind: "pick", n: lv.labels.length, k: winners };
+  } else {
+    const v = validateSpec(args.spec);
+    if (!v.ok) return { status: 400, body: { ok: false, error: v.error } };
+    spec = v.spec;
+    salt = userSalt;
+  }
 
   const latest = await latestRound();
   if (!latest) return { status: 503, body: { ok: false, error: "drand_unreachable" } };
@@ -106,7 +155,7 @@ export async function requestRandom(args: RequestArgs): Promise<{ status: number
   const commitment: Commitment = {
     v: 1,
     keyHash: sha(args.apiKey),
-    spec: v.spec,
+    spec,
     salt,
     source: "drand-quicknet",
     chainHash: DRAND_CHAIN,
@@ -127,6 +176,7 @@ export async function requestRandom(args: RequestArgs): Promise<{ status: number
     tierId: args.tierId,
     commitment,
     availableAt,
+    ...(labels ? { labels, listRoot: root } : {}),
   };
   randomStore.create(rec);
   return { status: 200, body: publicView(rec) as unknown as Record<string, unknown> };

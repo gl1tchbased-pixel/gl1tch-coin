@@ -28,6 +28,8 @@ export interface RandomRecord {
   tierId: string;
   commitment: Commitment;
   availableAt: number; // best-effort ETA (targetRound maturity) for UX
+  labels?: string[]; // allocation/giveaway: the frozen entrant list (bound via salt Merkle root)
+  listRoot?: string; // Merkle root of `labels` (also bound into commitment.salt)
   result?: RandomResult;
   seedRandomness?: string;
   seedSignature?: string;

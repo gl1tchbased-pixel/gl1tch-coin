@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { merkleRoot } from "../quantum-core/logic.js";
 
 /**
  * Quantum Randomness — verifiable RNG derivation (pure, deterministic, no I/O).
@@ -165,6 +166,50 @@ export function deriveResult(seedHex: string, requestId: string, spec: RandomSpe
     out.push(pool[i]);
   }
   return { kind: "pick", values: out };
+}
+
+/**
+ * Allocation / whitelist / giveaway binding. The entrant list is frozen into a Merkle
+ * root (same scheme as the Draw) and that root is bound into the request's SALT — so the
+ * list becomes tamper-evident WITHOUT changing the commitment schema (parity vectors stay
+ * valid). Winners = deriveResult(pick k of n) mapped back onto the frozen list.
+ */
+export const ALLOC_PREFIX = "alloc/v1";
+export const MAX_ENTRANTS = 10000;
+export const MAX_LABEL_LEN = 120;
+
+/** Merkle root of the entrant list — reuses the Draw's byte-identical scheme (bot ⇄ site). */
+export function listRoot(labels: string[]): string {
+  return merkleRoot(labels);
+}
+
+export function allocationSalt(root: string, userSalt: string): string {
+  return `${ALLOC_PREFIX}:${root}:${userSalt}`;
+}
+
+/** Recover the bound root + user salt from an allocation salt (null if not an alloc salt). */
+export function parseAllocationSalt(salt: string): { root: string; userSalt: string } | null {
+  const p = `${ALLOC_PREFIX}:`;
+  if (!salt.startsWith(p)) return null;
+  const rest = salt.slice(p.length);
+  const i = rest.indexOf(":");
+  if (i < 0) return null;
+  return { root: rest.slice(0, i), userSalt: rest.slice(i + 1) };
+}
+
+/** Validate + normalise an untrusted entrant list (trimmed, unique, bounded). */
+export function validateLabels(raw: unknown): { ok: true; labels: string[] } | { ok: false; error: string } {
+  if (!Array.isArray(raw)) return { ok: false, error: "entrants must be an array" };
+  if (raw.length < 2 || raw.length > MAX_ENTRANTS) return { ok: false, error: `entrants must be 2..${MAX_ENTRANTS}` };
+  const labels: string[] = [];
+  for (const x of raw) {
+    if (typeof x !== "string") return { ok: false, error: "each entrant must be a string" };
+    const t = x.trim();
+    if (!t || t.length > MAX_LABEL_LEN) return { ok: false, error: `entrants must be 1..${MAX_LABEL_LEN} chars` };
+    labels.push(t);
+  }
+  if (new Set(labels).size !== labels.length) return { ok: false, error: "entrants must be unique" };
+  return { ok: true, labels };
 }
 
 /** Human-readable recompute recipe embedded in every proof (self-documenting). */

@@ -47,6 +47,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "invalid JSON" }, { status: 400 });
   }
   const b = (body ?? {}) as Record<string, unknown>;
-  const out = await forwardRandomRequest(key, b.spec, b.salt);
+  // Forward whichever shape the caller used: { spec, salt } or allocation { labels, winners, salt }.
+  const payload = Array.isArray(b.labels)
+    ? { labels: b.labels, winners: b.winners, salt: b.salt }
+    : { spec: b.spec, salt: b.salt };
+  const out = await forwardRandomRequest(key, payload);
   return NextResponse.json(out.body, { status: out.status });
 }

@@ -19,6 +19,13 @@
   font-family: var(--font-mono); font-size: var(--fs-sm);
 }
 .input:focus { outline: none; border-color: var(--color-signal); }
+.textarea {
+  width: 100%; padding: 0.6rem 0.8rem; border-radius: var(--radius-md); resize: vertical;
+  border: 1px solid var(--color-border); background: var(--color-surface); color: var(--text-primary);
+  font-family: var(--font-mono); font-size: var(--fs-sm); line-height: 1.5;
+}
+.textarea:focus { outline: none; border-color: var(--color-signal); }
+.entrantTally { align-self: end; font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-muted); padding-bottom: 8px; }
 .hint { font-size: var(--fs-xs); color: var(--text-muted); margin: 0 0 var(--space-4); line-height: 1.5; }
 .link { color: var(--color-signal); text-decoration: none; font-weight: 600; }
 .link:hover { text-decoration: underline; }
@@ -63,8 +70,17 @@
 
 .pending { margin: var(--space-3) 0 0; font-size: var(--fs-sm); line-height: 1.6; color: var(--text-secondary); }
 
+.share { margin-top: var(--space-4); }
+.shareRow { display: flex; gap: var(--space-2); align-items: center; margin-top: 6px; }
+.shareUrl { flex: 1; font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-secondary); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 8px 10px; overflow-x: auto; white-space: nowrap; }
+.copy { padding: 8px 12px; border-radius: var(--radius-md); border: 1px solid var(--color-border-signal); background: color-mix(in srgb, var(--color-signal) 12%, transparent); color: var(--text-primary); font-size: var(--fs-xs); font-weight: 700; cursor: pointer; white-space: nowrap; }
+.copy:hover { border-color: var(--color-signal); }
+
 .resultBox { margin-top: var(--space-4); border: 1px solid var(--color-border-signal); border-radius: var(--radius-lg); padding: var(--space-4); background: var(--color-surface); }
 .resultTag { display: inline-block; font-family: var(--font-mono); font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--color-signal); margin-bottom: var(--space-3); }
+.winners { margin: 0; padding-left: 1.4rem; display: grid; gap: 6px; }
+.winner { font-family: var(--font-mono); font-size: var(--fs-sm); font-weight: 700; color: var(--text-primary); word-break: break-all; }
+.winner::marker { color: var(--color-signal); font-weight: 800; }
 .values { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { font-family: var(--font-mono); font-size: var(--fs-sm); font-weight: 700; padding: 4px 9px; border-radius: 6px; background: color-mix(in srgb, var(--color-signal) 14%, transparent); color: var(--text-primary); }
 .more { font-size: var(--fs-xs); color: var(--text-muted); align-self: center; }

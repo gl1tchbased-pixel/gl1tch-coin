@@ -7,13 +7,14 @@
 
 const BASE = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production-3f2c.up.railway.app").replace(/\/$/, "");
 
-/** Forward a randomness request (the caller's API key gates it on the bot too). */
-export async function forwardRandomRequest(key: string, spec: unknown, salt: unknown): Promise<{ status: number; body: unknown }> {
+/** Forward a randomness request (the caller's API key gates it on the bot too).
+ *  `payload` is either { spec, salt } or an allocation { labels, winners, salt }. */
+export async function forwardRandomRequest(key: string, payload: Record<string, unknown>): Promise<{ status: number; body: unknown }> {
   try {
     const r = await fetch(`${BASE}/random/request`, {
       method: "POST",
       headers: { "content-type": "application/json", "x-gl1tch-key": key },
-      body: JSON.stringify({ spec, salt }),
+      body: JSON.stringify(payload),
       signal: AbortSignal.timeout(9000),
     });
     return { status: r.status, body: await r.json() };
