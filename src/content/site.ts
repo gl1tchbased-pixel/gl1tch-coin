@@ -32,6 +32,7 @@ export const FOOTER_LINKS = [
   { id: "foot-security", label: "Security", href: "/security" },
   { id: "foot-agents", label: "Agent Trust", href: "/agents" },
   { id: "foot-thesis", label: "Thesis", href: "/thesis" },
+  { id: "foot-token", label: "Why Hold", href: "/token" },
   { id: "foot-network", label: "Network Stats", href: "/network" },
   { id: "foot-quantum", label: "Quantum Core", href: "/quantum-core" },
   { id: "foot-radar", label: "Rug Radar", href: "/radar" },
