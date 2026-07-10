@@ -6,6 +6,10 @@ Her tweet ≤280. Ana CTA: `coin-three-mu.vercel.app/quantum-core/random`
 
 Neden önemli (investor framing): bu, tokenin GEREKLİ olduğu üçüncü canlı lane — ciddi/programatik kullanım $GL1TCH tutmayı gerektiriyor. "Faydalı ürün ≠ değerli token" sorusuna somut cevap.
 
+**VIDEO (hazır):** `public/brand/gl1tch-quantum-randomness.mp4` (9:16, ~23s, marka paleti, motion-graphics). Remotion composition: `gl1tch-quantum-randomness`.
+Yeniden render: `npx remotion render remotion/index.ts gl1tch-quantum-randomness public/brand/gl1tch-quantum-randomness.mp4`
+Yayın presetleri hazır: `node e2e/social/yt-upload.mjs randomness` · `node e2e/social/ig-upload.mjs randomness` (founder login gerekir). X için cover tweet'e videoyu ekle.
+
 ---
 
 ## X THREAD

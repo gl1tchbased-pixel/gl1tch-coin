@@ -7,6 +7,25 @@ import fs from "node:fs";
 import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
 
 const PRESETS = {
+  randomness: {
+    video: "gl1tch-quantum-randomness.mp4",
+    title: "Provably-fair randomness you can verify yourself 🎲 GL1TCH #Shorts",
+    desc: `"Provably fair" usually means "trust us." Ours means you check it — in your own browser.
+
+🎲 Commit → your request locks onto a FUTURE quantum-grade drand round that doesn't exist yet, so nobody (not even us) can bias it.
+🔍 Reveal → that round finalizes and seeds your result.
+✅ Verify → BLS-check the seed and re-derive the output on YOUR device. Zero trust in GL1TCH.
+
+🏆 Running a giveaway, mint, whitelist or allocation? Paste your entrants, draw the winners, and hand everyone a shareable proof link + live "provably fair" badge. End the "was it rigged?" debate for good.
+
+Free, non-custodial, holder-gated with $GL1TCH — the Chainlink-VRF guarantee without the price tag.
+
+🎲 Try the live console: https://coin-three-mu.vercel.app/quantum-core/random
+💬 https://t.me/gl1tch_infected
+
+Not financial advice — DYOR.
+#crypto #solana #randomness #VRF #web3 #GL1TCH #Shorts`,
+  },
   quantum: {
     video: "gl1tch-quantum-core.mp4",
     title: "GL1TCH Quantum Core — real quantum tech you can verify yourself ⚛️ #Shorts",

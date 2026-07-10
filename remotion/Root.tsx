@@ -28,6 +28,7 @@ import { ScannerUpgraded, SCANNER_UPGRADED_FRAMES } from "./ScannerUpgraded";
 import { SignalGraphVideo, SIGNAL_GRAPH_FRAMES } from "./SignalGraphVideo";
 import { AgentTrustVideo, AGENT_TRUST_FRAMES } from "./AgentTrustVideo";
 import { QuantumCoreVideo, QUANTUM_CORE_FRAMES } from "./QuantumCoreVideo";
+import { RandomnessVideo, RANDOMNESS_FRAMES } from "./RandomnessVideo";
 import { HolderTypes } from "./HolderTypes";
 import { LoreOrigin } from "./LoreOrigin";
 import { RankLadder } from "./RankLadder";
@@ -55,6 +56,15 @@ export const Root = () => (
       id="gl1tch-quantum-core"
       component={QuantumCoreVideo}
       durationInFrames={QUANTUM_CORE_FRAMES}
+      fps={30}
+      width={1080}
+      height={1920}
+    />
+    {/* Quantum Randomness — verifiable RNG-as-a-service + provably-fair giveaways, 9:16 ~23s */}
+    <Composition
+      id="gl1tch-quantum-randomness"
+      component={RandomnessVideo}
+      durationInFrames={RANDOMNESS_FRAMES}
       fps={30}
       width={1080}
       height={1920}

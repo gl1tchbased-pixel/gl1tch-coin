@@ -8,6 +8,15 @@ import fs from "node:fs";
 import { launch, waitForLogin, shot, REPO, OUT } from "./lib/launch.mjs";
 
 const PRESETS = {
+  randomness: {
+    video: "gl1tch-quantum-randomness.mp4",
+    caption: `🎲 Randomness anyone can verify — nobody can rig.
+
+Commit to a future quantum-grade round → reveal → verify in your own browser (BLS-check the seed + re-derive the result). Provably-fair giveaways, mints & allocations with a shareable proof link + live badge. Free, non-custodial, holder-gated.
+
+Live → coin-three-mu.vercel.app/quantum-core/random
+#crypto #solana #randomness #web3 #postquantum`,
+  },
   quantum: {
     video: "gl1tch-quantum-core.mp4",
     caption: `⚛️ Real quantum tech — honestly labelled, and you can verify it yourself.
