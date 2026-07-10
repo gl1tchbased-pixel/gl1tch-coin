@@ -16,8 +16,8 @@ export interface WPSection {
 
 export const WHITEPAPER_META = {
   title: "GL1TCH Whitepaper",
-  version: "v2.0",
-  subtitle: "A Premium, Solana-Native Rogue-AI Cult Token",
+  version: "v3.0",
+  subtitle: "A Solana-Native Risk-Intelligence Brand with a Required-Utility Token",
   updated: "2026",
 };
 
@@ -28,11 +28,15 @@ export const whitepaperSections: WPSection[] = [
     blocks: [
       {
         type: "p",
-        text: "GL1TCH ($GL1TCH) is a Solana-native meme brand and token built around a single premise: attention propagates like an infection, and the communities that understand this spread faster than institutions can react. GL1TCH packages that idea as a rogue-AI cult myth, a premium brand system, and exactly one focused on-chain utility — wallet-verified ranks that gate content and access.",
+        text: "GL1TCH ($GL1TCH) is a Solana-native brand and token that began as a rogue-AI cult myth and grew into a working risk-intelligence platform. The premise is unchanged — attention propagates like an infection — but the project now ships real, non-custodial products: a free multi-chain token-safety Scanner, a proprietary cross-scan deployer-reputation database (the Signal Graph), a Know-Your-Agent trust layer for the AI-agent economy, and the Quantum Core — a suite of genuinely working, honestly-labelled quantum-grade tools (readiness Vault, verifiable Draw, post-quantum Seal, quantum-inspired Forge, and verifiable Randomness-as-a-service).",
       },
       {
         type: "p",
-        text: "GL1TCH is engineered for trust from day one: zero buy/sell tax, a fair launch with no presale, no team allocation, and no vesting overhang, with revoked mint and freeze authorities and burned or locked liquidity — every guarantee verifiable on-chain. This document specifies the brand, technical foundation, token economics, value model, utility, governance, launch, security, treasury, roadmap, verification steps, competitive positioning, and risks in full.",
+        text: "Crucially, the token is engineered to be REQUIRED, not decorative. The free tools are the funnel; holding $GL1TCH is the access key to depth — higher API throughput, Signal Graph history, holder-gated randomness/allocation, and sustained-holding rank tiers. A useful product does not, by itself, make a valuable token; value accrual must be engineered separately, and this document is explicit about what is live versus planned (Section 7).",
+      },
+      {
+        type: "p",
+        text: "GL1TCH is built for trust from day one: zero buy/sell tax, a fair launch with no presale, no team allocation, and no vesting overhang, with revoked mint and freeze authorities and burned or locked liquidity — every guarantee verifiable on-chain. The team is anonymous and substitutes verifiability (recomputable proofs, open on-chain state, a planned third-party audit) for doxxing. This document specifies the brand, technical foundation, product suite, token economics, value model, utilities, governance, launch, security, treasury, roadmap, verification steps, competitive positioning, and risks in full.",
       },
     ],
   },
@@ -70,7 +74,7 @@ export const whitepaperSections: WPSection[] = [
     blocks: [
       {
         type: "p",
-        text: "GL1TCH is issued as an SPL token on Solana. Solana is chosen for one reason above all: speed of propagation. A meme is a real-time object; the chain that hosts it must keep pace with the feed.",
+        text: "GL1TCH is issued on Solana. Solana is chosen for one reason above all: speed of propagation. Attention is a real-time object; the chain that hosts it must keep pace with the feed, and its fees must be low enough that frequent balance verification (every rank check, key mint, and draw entry) is effectively free.",
       },
       {
         type: "table",
@@ -79,12 +83,12 @@ export const whitepaperSections: WPSection[] = [
           ["Finality", "Sub-second", "Trades and rank checks feel instant"],
           ["Typical fee", "Fractions of a cent", "No friction for small holders or frequent verification"],
           ["Throughput", "Thousands of TPS", "Survives launch-window demand spikes"],
-          ["Token standard", "SPL Token", "Broad wallet, DEX, and tooling support"],
+          ["Token standard", "Token-2022 (no transfer fee)", "Modern SPL standard, wide support, zero-tax at protocol level"],
         ],
       },
       {
         type: "p",
-        text: "GL1TCH uses the standard SPL Token program rather than Token-2022 extensions. This is deliberate: maximum compatibility with wallets, DEXs, aggregators, and analytics, and zero room for surprises such as hidden transfer hooks or fees. The token does exactly one thing — it transfers — and the trust guarantees in Section 11 are enforced at the protocol level by revoking the relevant authorities.",
+        text: "GL1TCH launched (verified on-chain, 2026-05-29) as a Token-2022 mint with NO transfer-fee extension enabled — so buys and sells are zero-tax at the protocol level, not merely by policy. Token-2022 is the modern SPL standard; GL1TCH uses it plainly, with no transfer hooks, no hidden fees, and a fixed one-billion supply. The trust guarantees in Section 11 are enforced on-chain by revoking the mint and freeze authorities, and are surfaced live on the site's Trust Wall, which reads real on-chain state rather than hardcoded values.",
       },
     ],
   },
@@ -97,10 +101,10 @@ export const whitepaperSections: WPSection[] = [
         headers: ["Parameter", "Value"],
         rows: [
           ["Ticker", "$GL1TCH"],
-          ["Chain", "Solana (SPL Token)"],
+          ["Chain", "Solana (Token-2022, no transfer fee)"],
           ["Total supply", "1,000,000,000 (fixed, no inflation)"],
           ["Decimals", "6"],
-          ["Buy / sell tax", "0%"],
+          ["Buy / sell tax", "0% (no transfer-fee extension)"],
           ["Mint authority", "Revoked"],
           ["Freeze authority", "Revoked"],
           ["Liquidity", "Burned or locked"],
@@ -172,30 +176,96 @@ export const whitepaperSections: WPSection[] = [
         type: "p",
         text: "This is a self-reinforcing loop — an attention flywheel — built on a fixed-supply, zero-tax base. It is a structural model of demand, not a guarantee of price.",
       },
+      {
+        type: "p",
+        text: "Engineered value accrual (the honest part). Research on utility tokens is blunt: a useful product does NOT automatically make a valuable token, and 'usage raises the price via fees' is false unless the link is explicitly built (Uniswap earned tens of millions in fees while UNI holders received none). GL1TCH answers the two questions serious investors actually ask — (1) is the token REQUIRED, and (2) does value ACCRUE — separately and honestly.",
+      },
+      {
+        type: "list",
+        items: [
+          "Required utility — LIVE: programmatic/bulk Scanner throughput, holder-gated Randomness + Allocation, Signal Graph depth, and sustained-holding rank tiers all require holding $GL1TCH. The token is the access key, not a decoration.",
+          "Value-accrual mechanism — DESIGNED, STAGED, NOT LIVE: the intended path is to route real revenue (B2B risk-API, verifiable-randomness-as-a-service, agent-trust API) into token demand via a fee-to-buyback or fee-share mechanism, on the proven templates of Chainlink Payment Abstraction, Sky Smart Burn, and GMX (which pays stakers a share of real fees).",
+          "The condition — EXPLICIT: any such mechanism activates ONLY once real revenue exists, after a third-party audit and founder approval. Anything that could hold user funds is deliberately deferred and founder/audit-gated. We will never claim that usage magically lifts the price — that claim is false and we do not make it.",
+        ],
+      },
     ],
   },
   {
     id: "utility",
-    title: "8. Flagship Utility — Holder-Gated Ranks",
+    title: "8. Utilities — The Token As Access Key",
     blocks: [
       {
         type: "p",
-        text: "GL1TCH ships exactly one flagship utility. This is a deliberate choice: focus over sprawl. The system never takes custody of user funds — it only reads on-chain balances and grants access, deliberately avoiding the smart-contract risk of staking or lockup models.",
+        text: "GL1TCH is non-custodial by design: no utility ever takes custody of user funds. Every gate works the same safe way — a wallet proves ownership by signing a message (which moves nothing) or is read on-chain, and access/rate/depth is granted accordingly. There is no staking contract, no lockup, and no approval that could move funds; keys and ranks gate access, never assets. Thresholds are expressed as a share of supply so they stay meaningful regardless of price.",
       },
       {
         type: "p",
-        text: "Verification flow: a holder connects a Solana wallet (Phantom, Solflare, or Backpack) on the site or via the Telegram bot; the system reads the wallet's $GL1TCH balance on-chain; the corresponding rank and access are granted. Thresholds are expressed as a percentage of supply so they remain meaningful regardless of price, and are fine-tuned after launch once the holder distribution is visible.",
+        text: "Anti-gaming: rank and key tiers are governed by a 7-day sustained (average) balance, not a spot snapshot — a flash-buy unlocks nothing. The token's utilities are:",
+      },
+      {
+        type: "list",
+        items: [
+          "Holder-gated ranks — wallet-verified tiers that gate community rooms, lore, and coordination (via site or Telegram bot).",
+          "Metered API keys — the free human Scanner stays free; programmatic/bulk throughput is $GL1TCH-gated, with the requests-per-minute rate scaling by sustained-holding tier. This is the token's required utility for integrators.",
+          "Verifiable Randomness + Allocation — requesting provably-fair randomness or running a giveaway/whitelist draw requires a holder key (see Section 10).",
+          "Signal Graph & analysis depth — deeper deployer-reputation history and higher-tier scanning are reserved for holders.",
+          "Governance weight — Signal Votes are weighted by verified rank (Section 9).",
+        ],
       },
       {
         type: "table",
         headers: ["Rank", "Threshold", "Unlocks"],
         rows: [
-          ["Observer", "0%", "Public archive and rooms"],
-          ["Infected", "0.01% (100,000)", "Holder badge, holder-only channel"],
-          ["Signal Bearer", "0.1% (1,000,000)", "Creator channel, raid coordination, early lore"],
-          ["Core Node", "0.5% (5,000,000)", "Inner strategy room, governance signals"],
-          ["Ghost Node", "1% (10,000,000)", "Top-tier room, direct line to core, exclusive archive"],
+          ["Observer", "0%", "Public archive, free Scanner, public proofs"],
+          ["Infected", "0.01% (100,000)", "Holder rooms · API key (metered) · Randomness/Allocation · Draw entry"],
+          ["Signal Bearer", "0.1% (1,000,000)", "+ Higher API rate · Seal archive · Forge · Signal Graph history"],
+          ["Core Node", "0.5% (5,000,000)", "+ Higher API rate · compare/export · multi-constraint Forge"],
+          ["Ghost Node", "1% (10,000,000)", "+ Top API rate · priority pools · inner strategy room"],
         ],
+      },
+    ],
+  },
+  {
+    id: "products",
+    title: "8B. The Product Suite",
+    blocks: [
+      {
+        type: "p",
+        text: "The free tools are the funnel that gives the token something real to gate. All are non-custodial and live today:",
+      },
+      {
+        type: "list",
+        items: [
+          "Scanner — a free, multi-chain token-safety scanner (web + Telegram): authority/custody checks, liquidity, deployer history, an AI verdict, verified blue-chip recognition, compare, shareable cards, and an embeddable badge.",
+          "Watchtower — continuous re-scans with token AND wallet alerts (whale / developer sells), holder-gated by rank for more slots.",
+          "Signal Graph — a proprietary cross-scan database of deployer reputation: every scan compounds a track record that flags serial ruggers across tokens.",
+          "Know Your Agent (KYA) — a trust layer for the AI-agent economy, mapping our score into the ERC-8004 reputation shape so agent frameworks can consume it.",
+          "Proof — a public self-scan: GL1TCH holds its own token to the same standard, verifiable by anyone.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "quantum",
+    title: "8C. Quantum Core & Verifiable Randomness",
+    blocks: [
+      {
+        type: "p",
+        text: "The Quantum Core is a suite of five genuinely working, honestly-labelled components. Nothing here is a buzzword: each maps to a real technology and is independently verifiable.",
+      },
+      {
+        type: "list",
+        items: [
+          "Vault — a 0–100 quantum-readiness score from cryptographic-hygiene signals (authority, custody, deployer track record, verification, transparency). Preparedness, not a live-attack probability.",
+          "Draw — provably-fair draws seeded by real NIST CURBy quantum randomness via commit-reveal: the entry list is frozen and committed BEFORE the pulse exists, so no one can bias the outcome, and anyone can recompute the winner.",
+          "Seal — holder data sealed with a HYBRID of X25519 + ML-KEM-768 (FIPS 203) via HKDF into AES-256-GCM — the defense-in-depth scheme now used in TLS 1.3. Decryption is client-side; a server breach never sees plaintext.",
+          "Forge — combinatorial optimization by simulated annealing over QUBO/Ising: quantum-INSPIRED, running on classical hardware. Honestly labelled — not a quantum computer.",
+          "Randomness-as-a-service — the Draw's fairness engine exposed as a developer API: request a random number, shuffle, or a giveaway/allocation draw; it commits to a FUTURE drand (League-of-Entropy threshold-BLS) round, reveals on maturity, and returns a proof anyone can BLS-verify and re-derive in their own browser. Provably-fair giveaways produce a shareable proof link. Holder-gated; the Chainlink-VRF guarantee, made free and non-custodial.",
+        ],
+      },
+      {
+        type: "p",
+        text: "Two independent, verifiable randomness sources back the system: NIST CURBy (quantum, Bell-test) drives reward draws; drand (threshold-BLS) is fully verified in the browser and powers the reward-free Randomness API. Every event is written to a tamper-evident, hash-chained public Beacon. The rule throughout: don't trust — verify. Winners and results are recomputable from public data on the user's own device; GL1TCH is a reputation and provenance signal, never key custody, and draw winners receive a verifiable Beacon record, not a payout.",
       },
     ],
   },
@@ -292,10 +362,11 @@ export const whitepaperSections: WPSection[] = [
       {
         type: "list",
         items: [
-          "Phase 1 — Build the Myth: brand standards, lore bible, premium website and whitepaper, official-links page; seed the first Observers.",
-          "Phase 2 — Seed the Network: controlled propagation across X/TG, Signal Bearer recruitment, Telegram bot, ranks framework, give-back wallet.",
-          "Phase 3 — Launch the Signal: fair launch on Pump.fun, simultaneous contract-address reveal, authority revocation, LP burn/lock, live Trust Wall, ranks utility activated.",
-          "Phase 4 — Scale the System: retention via the content flywheel and ranks progression, Signal Votes governance, expanded lore, multilingual content (TR/EN), and an evaluation of self-managed liquidity migration if justified.",
+          "Phase 1–3 — Myth, Network, Launch (DONE): brand + lore, premium site, Telegram bot + ranks framework, and a fair Token-2022 zero-tax launch with authorities revoked and a live Trust Wall.",
+          "Phase 4 — Ship the Scanner (DONE): free multi-chain safety scanner (web + Telegram), Watchtower alerts, AI verdict, verified blue-chips, compare, shareable cards + embeddable badge, and the public Proof self-scan.",
+          "Phase 5 — Scale & Entrench (ACTIVE): holder-gated depth, free listings (GeckoTerminal live), the content flywheel, and public-API adoption as volume justifies.",
+          "Phase 6 — Quantum Core (DONE): Vault, Draw, Seal, Forge, and verifiable Randomness-as-a-service + provably-fair Allocation, all non-custodial with a tamper-evident public Beacon and in-browser verification.",
+          "Phase 7 — Make the Token Required (ACTIVE): metered $GL1TCH-gated API keys and holder-gated randomness are live; the honest, staged value-accrual mechanism (route real revenue to holders via fee→buyback / fee-share) and a third-party audit of the crypto + non-custodial claims are planned, activating only on real revenue + audit + founder approval.",
         ],
       },
     ],

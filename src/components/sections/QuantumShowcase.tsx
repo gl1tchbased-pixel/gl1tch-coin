@@ -24,6 +24,7 @@ const PILLARS = [
   { k: "B", name: "Draw", tag: "verifiable randomness", line: "Provably-fair draws seeded by a real quantum pulse.", tech: "NIST CURBy" },
   { k: "C", name: "Seal", tag: "hybrid post-quantum", line: "Holder data sealed with hybrid X25519 + ML-KEM-768.", tech: "X25519 + ML-KEM-768" },
   { k: "D", name: "Forge", tag: "quantum-inspired", line: "Combinatorial optimization via QUBO annealing.", tech: "QUBO / annealing" },
+  { k: "E", name: "Randomness", tag: "verifiable RNG-as-a-service", line: "Provably-fair RNG + giveaways for any builder — verify it in your browser.", tech: "drand · commit-reveal" },
 ];
 
 export function QuantumShowcase() {
@@ -69,9 +70,10 @@ export function QuantumShowcase() {
             <span className={styles.signal}>Honestly labelled.</span>
           </h2>
           <p className={styles.sub}>
-            Four components that actually work today — a readiness Vault, verifiable quantum Draw,
-            post-quantum Seal, and quantum-inspired Forge. Holder-gated. Non-custodial. Every claim
-            maps to a technology that produces measurable value now.
+            Five components that actually work today — a readiness Vault, verifiable quantum Draw,
+            post-quantum Seal, quantum-inspired Forge, and verifiable Randomness-as-a-service.
+            Holder-gated. Non-custodial. Every claim maps to a technology that produces measurable
+            value now.
           </p>
         </div>
 
@@ -134,6 +136,7 @@ export function QuantumShowcase() {
 
         <div className={styles.actions}>
           <Link href="/quantum-core" className={styles.primary}>Enter the Quantum Core →</Link>
+          <Link href="/quantum-core/random" className={styles.ghost}>Randomness API</Link>
           <Link href="/quantum-core/draw" className={styles.ghost}>Provably-fair Draw</Link>
           <Link href="/quantum-core/beacon" className={styles.ghost}>Public Beacon</Link>
         </div>

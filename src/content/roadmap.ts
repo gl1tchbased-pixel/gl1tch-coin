@@ -53,4 +53,26 @@ export const roadmapPhases: RoadmapPhase[] = [
     ],
     status: "active",
   },
+  {
+    phase: 6,
+    title: "Quantum Core",
+    items: [
+      "Five working components — Vault (readiness score), Draw (NIST-CURBy verifiable randomness), Seal (X25519 + ML-KEM-768 post-quantum), Forge (quantum-inspired optimizer) — all live",
+      "Verifiable Randomness-as-a-service: commit-reveal seeded by a future drand round, revealed on maturity, BLS-verified + re-derived in your browser",
+      "Provably-fair Allocation/Giveaway: freeze an entrant list, draw winners from a quantum-grade seed, hand everyone a shareable proof link",
+      "Tamper-evident, hash-chained public Beacon + zero-trust independent verification — non-custodial throughout",
+    ],
+    status: "done",
+  },
+  {
+    phase: 7,
+    title: "Make the Token Required",
+    items: [
+      "Metered API keys: the free human scanner stays free; programmatic/bulk throughput is $GL1TCH-gated, rate scaled by sustained-holding tier — live",
+      "Randomness + Allocation gated by a holder key — usage demand becomes token demand (live)",
+      "Honest, staged value-accrual: route real B2B/randomness/API revenue to holders (fee→buyback / fee-share, GMX/Chainlink/Sky model) — designed, activates only on real revenue + third-party audit + founder approval",
+      "Third-party audit of the crypto + non-custodial claims (the anonymous-team trust substitute) — planned",
+    ],
+    status: "active",
+  },
 ];
