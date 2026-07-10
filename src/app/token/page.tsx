@@ -27,7 +27,7 @@ const PILLARS = [
 const UTILITY = [
   { t: "Signal Graph depth", d: "Early-rug alerts + full deployer reputation history — the data moat that compounds with every scan." },
   { t: "Risk-API access", d: "Bulk + programmatic scanning depth and rate — the CertiK-SkyInsights lane, but token-gated." },
-  { t: "Quantum Draw entry", d: "Provably-fair, quantum-seeded draws — verifiable-randomness the way VRF sells it." },
+  { t: "Verifiable randomness API", d: "Provably-fair RNG-as-a-service (drand-seeded, BLS-verifiable) for mints, raffles & allocations — the Chainlink-VRF lane, holder-gated. Plus Quantum Draw entry." },
   { t: "Know Your Agent", d: "Agent trust scoring depth + API keys for the AI-agent economy." },
   { t: "Sustained-holding tiers", d: "A 7-day average balance gate (anti-gaming) — a flash-buy unlocks nothing." },
 ];

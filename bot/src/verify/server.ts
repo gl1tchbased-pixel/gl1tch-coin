@@ -48,6 +48,14 @@ export interface VerifyServerOptions {
     issue: (body: unknown) => Promise<{ ok: boolean; error?: string; key?: string; tier?: number; tierId?: string; ratePerMin?: number }>;
     check: (key: string) => { ok: boolean; tier?: number; tierId?: string; ratePerMin?: number };
   };
+  /** Quantum Randomness (holder-gated verifiable RNG). POST /random/request (x-gl1tch-key
+   *  authed) commits to a future drand round; GET /random/get?id= reveals on maturity;
+   *  GET /random/log is the public tamper-evident event log. */
+  random?: {
+    request: (key: string, body: unknown) => Promise<{ status: number; body: Record<string, unknown> }>;
+    get: (id: string) => Promise<{ status: number; body: Record<string, unknown> }>;
+    log: (limit: number) => unknown[];
+  };
 }
 
 const RATE_WINDOW_MS = 60_000;
@@ -70,7 +78,7 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
     const cors = {
       "Access-Control-Allow-Origin": opts.origin,
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, x-stats-token",
+      "Access-Control-Allow-Headers": "Content-Type, x-stats-token, x-gl1tch-key",
       Vary: "Origin",
     };
 
@@ -301,6 +309,45 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
       const key = qs.get("key") ?? "";
       res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=30", ...cors });
       res.end(JSON.stringify(opts.apiKeys.check(key)));
+      return;
+    }
+
+    // ---- Quantum Randomness: holder-gated verifiable RNG ----
+    if (opts.random && sPath === "/random/request" && req.method === "POST") {
+      const kh = req.headers["x-gl1tch-key"];
+      const key = (Array.isArray(kh) ? kh[0] : kh) ?? "";
+      let rRaw = ""; let rTooLarge = false;
+      req.on("data", (c) => { rRaw += c; if (rRaw.length > 4096) { rTooLarge = true; req.destroy(); } });
+      req.on("end", async () => {
+        if (rTooLarge) return;
+        try {
+          const out = await opts.random!.request(key, rRaw ? JSON.parse(rRaw) : {});
+          res.writeHead(out.status, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify(out.body));
+        } catch {
+          res.writeHead(400, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify({ ok: false, error: "bad_json" }));
+        }
+      });
+      return;
+    }
+    if (opts.random && sPath === "/random/get" && req.method === "GET") {
+      const qs = new URLSearchParams((req.url ?? "").split("?")[1] ?? "");
+      const id = qs.get("id") ?? "";
+      opts.random.get(id).then((out) => {
+        res.writeHead(out.status, { "Content-Type": "application/json", "cache-control": "public, max-age=5", ...cors });
+        res.end(JSON.stringify(out.body));
+      }).catch(() => {
+        res.writeHead(500, { "Content-Type": "application/json", ...cors });
+        res.end(JSON.stringify({ ok: false, error: "internal" }));
+      });
+      return;
+    }
+    if (opts.random && sPath === "/random/log" && req.method === "GET") {
+      const qs = new URLSearchParams((req.url ?? "").split("?")[1] ?? "");
+      const limit = Math.min(Math.max(parseInt(qs.get("limit") ?? "50", 10) || 50, 1), 200);
+      res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=15", ...cors });
+      res.end(JSON.stringify({ ok: true, log: opts.random.log(limit) }));
       return;
     }
 

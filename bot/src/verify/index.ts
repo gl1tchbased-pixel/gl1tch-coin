@@ -24,6 +24,8 @@ import { startQuantumCore } from "../quantum-core/executor.js";
 import { verifyDrawEntry } from "../quantum-core/enter.js";
 import { apiKeys } from "../api-keys/store.js";
 import { verifyApiKeyReq, newApiKey } from "../api-keys/keys.js";
+import { randomStore } from "../random/store.js";
+import { requestRandom, getRandom } from "../random/service.js";
 
 /** Shared store — the bot issues nonces here and the HTTP endpoint consumes them. */
 export const store = new VerifyStore();
@@ -138,9 +140,22 @@ export function startVerification(bot: Bot): Server | null {
   agentTrustStore.load();
   quantumCore.load();
   apiKeys.load();
+  randomStore.load();
 
   // Tier → programmatic API rate (requests/min). Holding more $GL1TCH = more throughput.
   const RATE_BY_TIER: Record<number, number> = { 2: 120, 3: 300, 4: 600, 5: 1200 };
+
+  // Randomness is heavier than a scan → a tighter per-tier ceiling (requests/min per key).
+  const RANDOM_RATE_BY_TIER: Record<number, number> = { 2: 30, 3: 80, 4: 200, 5: 500 };
+  const randomHits = new Map<string, number[]>();
+  const randomRateLimited = (key: string, tier: number): boolean => {
+    const limit = RANDOM_RATE_BY_TIER[tier] ?? 30;
+    const now = Date.now();
+    const recent = (randomHits.get(key) ?? []).filter((t) => now - t < 60_000);
+    recent.push(now);
+    randomHits.set(key, recent);
+    return recent.length > limit;
+  };
 
   /** Issue a tiered API key: prove wallet ownership (signature) + a sustained Infected+
    *  balance, then mint a key whose rate scales with tier. Self-serve balance read (same as
@@ -307,6 +322,24 @@ export function startVerification(bot: Bot): Server | null {
         const r = apiKeys.check(key);
         return r ? { ok: true, ...r } : { ok: false };
       },
+    },
+    random: {
+      // Holder-gated: only a valid $GL1TCH-minted key may request randomness. The key
+      // gates rate/access only — non-custodial, no funds, no prizes. Full BLS verification
+      // of the drand seed is done independently by the site / any verifier.
+      request: async (key, body) => {
+        const info = apiKeys.check(key);
+        if (!info) {
+          return { status: 401, body: { ok: false, error: "invalid_key — mint a $GL1TCH API key at /token" } };
+        }
+        if (randomRateLimited(key, info.tier)) {
+          return { status: 429, body: { ok: false, error: "rate_limited — your tier's randomness ceiling; hold more $GL1TCH" } };
+        }
+        const b = (body ?? {}) as Record<string, unknown>;
+        return requestRandom({ apiKey: key, tier: info.tier, tierId: info.tierId, spec: b.spec, salt: b.salt });
+      },
+      get: (id) => getRandom(id),
+      log: (limit) => randomStore.events(limit),
     },
     ...(config.xBridge.token
       ? {

@@ -49,6 +49,15 @@ const PILLARS = [
     href: "/quantum-core/forge",
     cta: "Open the optimizer →",
   },
+  {
+    key: "E",
+    name: "Quantum Randomness",
+    tag: "verifiable RNG-as-a-service",
+    body: "The Draw's fairness engine, exposed as a developer API. Request a random number, shuffle, or winner; it commits to a FUTURE drand round, reveals on maturity, and returns a proof anyone can BLS-verify + re-derive in-browser. The Chainlink-VRF pattern, free + holder-gated — the token's required utility for builders.",
+    real: "drand quicknet (threshold-BLS) · commit-reveal",
+    href: "/quantum-core/random",
+    cta: "Open the console →",
+  },
 ];
 
 const TIERS = [
@@ -147,6 +156,7 @@ export default async function QuantumCorePage() {
         </ul>
         <div className={styles.ctaRow}>
           <Link href="/quantum-core/draw" className={styles.ctaBtn}>Enter the Draw →</Link>
+          <Link href="/quantum-core/random" className={styles.ctaBtn}>Randomness API →</Link>
           <Link href="/quantum-core/beacon" className={styles.ctaBtn}>Public Beacon →</Link>
           <Link href="/scan" className={styles.ctaBtn}>Token scanner →</Link>
           <Link href="/network" className={styles.ctaBtn}>Network stats →</Link>

@@ -21,6 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/quantum-core/seal",
     "/quantum-core/forge",
     "/quantum-core/draw",
+    "/quantum-core/random",
     "/quantum-core/beacon",
     "/radar",
     "/embed",
