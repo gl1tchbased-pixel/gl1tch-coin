@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ApiKeyMinter } from "@/components/web3/ApiKeyMinter";
 import styles from "./token.module.css";
 
 export const metadata: Metadata = {
@@ -92,6 +93,20 @@ export default function TokenPage() {
               <p className={styles.cardD}>{u.d}</p>
             </div>
           ))}
+        </div>
+
+        <div className={styles.mintBox}>
+          <div>
+            <span className={styles.mintTag}>live now</span>
+            <h3 className={styles.cardT}>Mint your API key</h3>
+            <p className={styles.cardD}>
+              The free human scanner stays free. But programmatic / bulk throughput is token-gated:
+              prove a sustained $GL1TCH balance and mint a rate-tiered key (higher tier → more
+              requests/min). This is the token&apos;s required utility, live — usage demand becomes
+              token demand.
+            </p>
+          </div>
+          <ApiKeyMinter />
         </div>
       </section>
 

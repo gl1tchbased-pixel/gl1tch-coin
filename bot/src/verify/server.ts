@@ -42,6 +42,12 @@ export interface VerifyServerOptions {
     status: (id: string) => unknown;
     enter: (body: unknown) => Promise<{ ok: boolean; error?: string; count?: number }>;
   };
+  /** API keys: signature-authed POST /keys/issue (mint a tiered key from sustained balance),
+   *  public GET /keys/check?key= (site validates a key's tier/rate). */
+  apiKeys?: {
+    issue: (body: unknown) => Promise<{ ok: boolean; error?: string; key?: string; tier?: number; tierId?: string; ratePerMin?: number }>;
+    check: (key: string) => { ok: boolean; tier?: number; tierId?: string; ratePerMin?: number };
+  };
 }
 
 const RATE_WINDOW_MS = 60_000;
@@ -270,6 +276,31 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
           res.end(JSON.stringify({ ok: false, error: "bad_json" }));
         }
       });
+      return;
+    }
+
+    // ---- API keys: signature-authed issue + public check ----
+    if (opts.apiKeys && sPath === "/keys/issue" && req.method === "POST") {
+      let kRaw = ""; let kTooLarge = false;
+      req.on("data", (c) => { kRaw += c; if (kRaw.length > 4096) { kTooLarge = true; req.destroy(); } });
+      req.on("end", async () => {
+        if (kTooLarge) return;
+        try {
+          const out = await opts.apiKeys!.issue(kRaw ? JSON.parse(kRaw) : {});
+          res.writeHead(out.ok ? 200 : 400, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify(out));
+        } catch {
+          res.writeHead(400, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify({ ok: false, error: "bad_json" }));
+        }
+      });
+      return;
+    }
+    if (opts.apiKeys && sPath === "/keys/check" && req.method === "GET") {
+      const qs = new URLSearchParams((req.url ?? "").split("?")[1] ?? "");
+      const key = qs.get("key") ?? "";
+      res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=30", ...cors });
+      res.end(JSON.stringify(opts.apiKeys.check(key)));
       return;
     }
 

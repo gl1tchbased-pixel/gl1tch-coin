@@ -5,6 +5,7 @@ import { bumpStats } from "@/lib/stats";
 import { deployerReputation, observeDeployer } from "@/lib/signal-graph";
 import { parseScanInput } from "@/lib/validate";
 import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
+import { checkApiKey } from "@/lib/apikey";
 
 /**
  * GL1TCH SCANNER API — multi-chain, read-only.
@@ -18,11 +19,20 @@ export const dynamic = "force-dynamic";
 const isEvm = (s: string) => /^0x[0-9a-fA-F]{40}$/.test(s);
 
 export async function GET(req: NextRequest) {
-  // Rate limit (Phase -1): best-effort per-IP cap on this public endpoint.
+  // Rate limit. The free human scanner stays generous (40/min per IP). A $GL1TCH-holder API key
+  // (x-gl1tch-key) unlocks far higher programmatic/bulk throughput scaled by tier — the token's
+  // required utility: depth/rate demand becomes token demand.
   sweepBuckets();
-  const rl = rateLimit(`scan:${clientIp(req)}`, 40, 60_000);
+  const apiKey = req.headers.get("x-gl1tch-key") ?? "";
+  const keyInfo = apiKey ? await checkApiKey(apiKey) : null;
+  const rl = keyInfo
+    ? rateLimit(`scan:k:${apiKey}`, keyInfo.ratePerMin, 60_000)
+    : rateLimit(`scan:${clientIp(req)}`, 40, 60_000);
   if (!rl.ok) {
-    return NextResponse.json({ error: "rate limited — slow down" }, { status: 429, headers: { "retry-after": String(rl.retryAfter) } });
+    return NextResponse.json(
+      { error: keyInfo ? "rate limited — your tier's limit; hold more $GL1TCH for higher throughput" : "rate limited — hold $GL1TCH for a higher-rate API key: coin-three-mu.vercel.app/token" },
+      { status: 429, headers: { "retry-after": String(rl.retryAfter) } }
+    );
   }
 
   // Central input validation (Phase -1): reject malformed input before any RPC/fetch (SSRF guard).

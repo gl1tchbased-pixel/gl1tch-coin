@@ -22,6 +22,8 @@ import { statsStore } from "../stats.js";
 import { quantumCore } from "../quantum-core/store.js";
 import { startQuantumCore } from "../quantum-core/executor.js";
 import { verifyDrawEntry } from "../quantum-core/enter.js";
+import { apiKeys } from "../api-keys/store.js";
+import { verifyApiKeyReq, newApiKey } from "../api-keys/keys.js";
 
 /** Shared store — the bot issues nonces here and the HTTP endpoint consumes them. */
 export const store = new VerifyStore();
@@ -135,6 +137,38 @@ export function startVerification(bot: Bot): Server | null {
   proofOfSignal.load();
   agentTrustStore.load();
   quantumCore.load();
+  apiKeys.load();
+
+  // Tier → programmatic API rate (requests/min). Holding more $GL1TCH = more throughput.
+  const RATE_BY_TIER: Record<number, number> = { 2: 120, 3: 300, 4: 600, 5: 1200 };
+
+  /** Issue a tiered API key: prove wallet ownership (signature) + a sustained Infected+
+   *  balance, then mint a key whose rate scales with tier. Self-serve balance read (same as
+   *  the draw). The free human scanner stays free — keys unlock programmatic/bulk/depth. */
+  const issueApiKey = async (body: unknown): Promise<{ ok: boolean; error?: string; key?: string; tier?: number; tierId?: string; ratePerMin?: number }> => {
+    const b = (body ?? {}) as Record<string, unknown>;
+    const address = typeof b.address === "string" ? b.address : "";
+    const issued = typeof b.issued === "number" ? b.issued : 0;
+    const signature = typeof b.signature === "string" ? b.signature : "";
+    const v = verifyApiKeyReq({ address, issued, signature });
+    if (!v.ok) return { ok: false, error: v.error };
+    let snaps = balanceHistory.get(address);
+    if (snaps.length === 0) {
+      try {
+        const bal = await readTokenBalance(connection, address, config.verify.contractAddress);
+        snaps = balanceHistory.record(address, bal);
+      } catch {
+        return { ok: false, error: "balance_read_failed" };
+      }
+    }
+    const current = snaps[snaps.length - 1].balance;
+    const eff = effectiveBalance(current, sustainedBalance(snaps, Date.now()));
+    const rank = rankForBalance(eff);
+    if (rank.tier < 2) return { ok: false, error: "insufficient_balance" };
+    const ratePerMin = RATE_BY_TIER[rank.tier] ?? 120;
+    const rec = apiKeys.issue({ key: newApiKey(), wallet: address, tier: rank.tier, tierId: rank.id, ratePerMin });
+    return { ok: true, key: rec.key, tier: rec.tier, tierId: rec.tierId, ratePerMin: rec.ratePerMin };
+  };
 
   /** Draw entry: verify wallet ownership (signature) + a sustained Infected+ balance
    *  (Proof-of-Signal, spec §5). Self-serve — the signature proves ownership, so we read
@@ -266,6 +300,13 @@ export function startVerification(bot: Bot): Server | null {
       current: () => quantumCore.current() ?? null,
       status: (id) => quantumCore.get(id) ?? null,
       enter: enterDraw,
+    },
+    apiKeys: {
+      issue: issueApiKey,
+      check: (key) => {
+        const r = apiKeys.check(key);
+        return r ? { ok: true, ...r } : { ok: false };
+      },
     },
     ...(config.xBridge.token
       ? {
