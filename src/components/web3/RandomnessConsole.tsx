@@ -21,7 +21,7 @@ type ApiRecord = FulfilledRecord & {
 
 const KEY_LS = "gl1tch_api_key";
 
-export function RandomnessConsole() {
+export function RandomnessConsole({ initialId }: { initialId?: string } = {}) {
   const [apiKey, setApiKey] = useState("");
   const [kind, setKind] = useState<Kind>("allocation");
   const [min, setMin] = useState(1);
@@ -58,19 +58,19 @@ export function RandomnessConsole() {
     return null;
   }, [stopPoll]);
 
-  // Load a saved key + (if present) an ?id= proof link → read-only verify view.
+  // Load a saved key + (if present) a proof id (path prop or ?id= query) → read-only verify.
   useEffect(() => {
     const saved = typeof window !== "undefined" ? window.localStorage.getItem(KEY_LS) : null;
     if (saved) setApiKey(saved);
     const url = new URL(window.location.href);
-    const id = url.searchParams.get("id");
+    const id = initialId ?? url.searchParams.get("id");
     if (id && /^[0-9a-f]{64}$/.test(id)) {
       setReadOnly(true);
       refresh(id).then((d) => {
         if (d && d.status === "pending") poll.current = setInterval(() => refresh(id), 3000);
       });
     }
-  }, [refresh]);
+  }, [refresh, initialId]);
 
   useEffect(() => stopPoll, [stopPoll]);
 
@@ -127,7 +127,7 @@ export function RandomnessConsole() {
     : kind === "pick" ? `pick ${k} of ${n}`
     : `draw ${winners} of ${entrantCount || "?"}`;
 
-  const shareUrl = rec ? `${typeof window !== "undefined" ? window.location.origin : ""}/quantum-core/random?id=${rec.id}` : "";
+  const shareUrl = rec ? `${typeof window !== "undefined" ? window.location.origin : ""}/quantum-core/random/${rec.id}` : "";
   const isAlloc = rec?.mode === "allocation";
 
   return (
