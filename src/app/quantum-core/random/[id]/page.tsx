@@ -57,7 +57,10 @@ export default async function RandomProofPage({ params }: { params: Promise<{ id
   const { id } = await params;
   if (!/^[0-9a-f]{64}$/.test(id)) notFound();
 
-  const embed = `<a href="${SITE}/quantum-core/random/${id}" target="_blank" rel="noopener">✓ Provably fair by GL1TCH — verify ↗</a>`;
+  const proofUrl = `${SITE}/quantum-core/random/${id}`;
+  const badgeUrl = `${SITE}/api/random/badge?id=${id}`;
+  const htmlEmbed = `<a href="${proofUrl}" target="_blank" rel="noopener">\n  <img src="${badgeUrl}" alt="Provably fair by GL1TCH" height="42" />\n</a>`;
+  const mdEmbed = `[![Provably fair by GL1TCH](${badgeUrl})](${proofUrl})`;
 
   return (
     <main className={styles.page}>
@@ -80,8 +83,18 @@ export default async function RandomProofPage({ params }: { params: Promise<{ id
       <section className={styles.section}>
         <span className={styles.kicker}>Embed this proof</span>
         <h2 className={styles.h2}>Show your community it’s fair.</h2>
-        <p className={styles.body}>Drop this badge on your site or in your announcement — it links back to this verifiable proof:</p>
-        <pre className={styles.code}><code>{embed}</code></pre>
+        <p className={styles.body}>
+          Drop this live badge on your site, README, or announcement — it shows the proof’s status and
+          links back here so anyone can verify it:
+        </p>
+        <p className={styles.note} style={{ marginBottom: "0.75rem" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={badgeUrl} alt="Provably fair by GL1TCH" height={42} />
+        </p>
+        <p className={styles.note} style={{ margin: "0.5rem 0 0.25rem" }}>HTML</p>
+        <pre className={styles.code}><code>{htmlEmbed}</code></pre>
+        <p className={styles.note} style={{ margin: "0.5rem 0 0.25rem" }}>Markdown</p>
+        <pre className={styles.code}><code>{mdEmbed}</code></pre>
         <div className={styles.cta}>
           <Link href="/quantum-core/random" className={styles.btnPrimary}>Run your own →</Link>
           <Link href="/quantum-core" className={styles.btnGhost}>← Quantum Core</Link>
