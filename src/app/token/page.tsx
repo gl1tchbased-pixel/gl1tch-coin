@@ -47,7 +47,7 @@ const TRUST = [
 
 const SCORECARD = [
   { k: "Required in-product utility", v: "Live — the access key to depth", s: "✓" },
-  { k: "Engineered value accrual", v: "Designed — activates on real revenue (fee→buyback / stake)", s: "⏳" },
+  { k: "Engineered value accrual", v: "Designed — activates on real revenue (fee→buyback / stake)", s: "⏳", href: "/buyback" },
   { k: "Traction", v: "Early, but published live", s: "📈", href: "/network" },
   { k: "Team", v: "Anonymous — substituted by verifiability + planned audit", s: "🔒" },
   { k: "Non-custodial · no fake numbers", v: "By design — never key custody, never invented metrics", s: "✓" },
