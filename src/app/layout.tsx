@@ -30,12 +30,38 @@ export const metadata: Metadata = {
   },
 };
 
+// Site-wide entity markup — the canonical Organization + WebSite Google uses for the
+// knowledge panel and sitelinks. sameAs binds the official social accounts to the brand.
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${OFFICIAL.SITE_URL}/#organization`,
+      name: "GL1TCH",
+      url: OFFICIAL.SITE_URL,
+      logo: `${OFFICIAL.SITE_URL}/brand/gl1tch-logo-256.png`,
+      description: META_DESCRIPTION,
+      sameAs: [OFFICIAL.X_URL, OFFICIAL.TG_URL, OFFICIAL.IG_URL, OFFICIAL.REDDIT_URL, OFFICIAL.GITHUB_URL],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${OFFICIAL.SITE_URL}/#website`,
+      name: "GL1TCH",
+      url: OFFICIAL.SITE_URL,
+      description: META_DESCRIPTION,
+      publisher: { "@id": `${OFFICIAL.SITE_URL}/#organization` },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         <a href="#main" className="skip-link">
           Skip to content
         </a>

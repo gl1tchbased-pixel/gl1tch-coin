@@ -24,9 +24,29 @@ const STEPS = [
   { n: "04", t: "Verify", d: "Anyone re-fetches the round, BLS-checks it against the published public key, and re-derives your exact result. Zero trust in GL1TCH." },
 ];
 
+const appJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "GL1TCH Quantum Randomness",
+  applicationCategory: "DeveloperApplication",
+  operatingSystem: "Web",
+  url: "https://coin-three-mu.vercel.app/quantum-core/random",
+  description:
+    "Holder-gated, provably-fair verifiable randomness-as-a-service seeded by the drand quantum-grade beacon. Commit to a future round, reveal on maturity, and verify the result in your own browser. Free, non-custodial, zero-trust.",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  isAccessibleForFree: true,
+  featureList: [
+    "Verifiable random integers, shuffles, and picks",
+    "Provably-fair giveaways and allocations",
+    "In-browser BLS verification + re-derivation",
+    "Shareable, embeddable proof",
+  ],
+};
+
 export default function RandomPage() {
   return (
     <main className={styles.page}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }} />
       <header className={styles.hero}>
         <span className={styles.eyebrow}>Quantum Core · verifiable RNG-as-a-service</span>
         <h1 className={styles.title}>
