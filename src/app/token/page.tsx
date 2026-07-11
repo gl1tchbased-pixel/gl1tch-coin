@@ -53,9 +53,51 @@ const SCORECARD = [
   { k: "Non-custodial · no fake numbers", v: "By design — never key custody, never invented metrics", s: "✓" },
 ];
 
+// The diligence questions, answered honestly. Also emitted as FAQPage JSON-LD for rich results.
+const FAQ = [
+  {
+    q: "Is holding $GL1TCH actually required, or just optional?",
+    a: "Required for depth. The free human tools (scanner, quantum pulse, beacon) stay free — that's the funnel. But programmatic/bulk API throughput, verifiable randomness + allocation, Signal Graph deployer history, and the sustained-holding rank tiers all require holding $GL1TCH. The token is the access key, not a decoration.",
+  },
+  {
+    q: "Does value actually accrue to the token?",
+    a: "Honestly: the required-utility half is live; the value-accrual half is designed and staged, not live. The plan is to route real revenue (risk-API, randomness-as-a-service, agent-trust API) into token demand via a fee-to-buyback or fee-share mechanism, on the proven Chainlink / Sky / GMX templates. It activates ONLY on real revenue, after a third-party audit and founder approval. We never claim that usage magically lifts the price — that claim is false and we don't make it.",
+  },
+  {
+    q: "The team is anonymous — why should an investor trust it?",
+    a: "Trust is built through verifiability, not doxxing. Winners, quantum seeds, and risk verdicts are all recomputable on your own device; the code is open, wallets are public, and a third-party audit of the crypto + non-custodial claims is planned. Serious capital has backed anonymous teams that proved competence on-chain (LooksRare, samczsun).",
+  },
+  {
+    q: "Is my wallet or my funds ever at risk?",
+    a: "No — the system is non-custodial by design and it's a CI-enforced invariant. Every gate works by a wallet signing a message that proves ownership and moves nothing; there is no staking contract, no lockup, and no approval that could move funds. Keys and ranks gate access and rate, never assets.",
+  },
+  {
+    q: "What is live today versus planned?",
+    a: "Live: the multi-chain scanner, Signal Graph, Know Your Agent, the full Quantum Core (Vault, Draw, Seal, Forge), verifiable Randomness + provably-fair Allocation, metered $GL1TCH-gated API keys, and a tamper-evident public Beacon. Planned (founder + audit-gated): the fee-to-holder value-accrual mechanism and a third-party audit.",
+  },
+  {
+    q: "How is the randomness provably fair?",
+    a: "Your request commits to a FUTURE drand round that doesn't exist yet, so nobody — including us — can bias the seed. When that round finalizes it seeds the result deterministically. Every result ships with a proof (the drand round + BLS signature) that you BLS-verify and re-derive in your own browser. Zero trust in GL1TCH.",
+  },
+  {
+    q: "What are the risks?",
+    a: "$GL1TCH is a high-risk, internet-native asset: tiny market cap, thin liquidity, and early traction. Value is driven by attention and adoption, not cash flows, and could go to zero. This page is radically honest by design — it is not financial advice, and you should never commit funds you can't afford to lose.",
+  },
+];
+
 export default function TokenPage() {
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQ.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
   return (
     <main className={styles.page}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <header className={styles.hero}>
         <span className={styles.eyebrow}>The investment case · radically honest</span>
         <h1 className={styles.title}>
@@ -168,6 +210,19 @@ export default function TokenPage() {
           Built on proven templates — CertiK (risk-API), Chainlink · Sky · GMX (value-accrual),
           Chainlink VRF (verifiable randomness) — honestly labelled. Not financial advice.
         </p>
+      </section>
+
+      <section className={styles.section}>
+        <span className={styles.kicker}>Investor FAQ</span>
+        <h2 className={styles.h2}>The questions, answered honestly.</h2>
+        <div className={styles.faq}>
+          {FAQ.map((f) => (
+            <details key={f.q} className={styles.faqItem}>
+              <summary className={styles.faqQ}>{f.q}</summary>
+              <p className={styles.faqA}>{f.a}</p>
+            </details>
+          ))}
+        </div>
       </section>
 
       <div className={styles.cta}>

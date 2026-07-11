@@ -46,6 +46,16 @@
 .scoreRow a.scoreV:hover { color: var(--color-signal); }
 .note { font-size: var(--fs-xs); color: var(--text-muted); margin: var(--space-4) 0 0; line-height: 1.6; }
 
+/* Investor FAQ */
+.faq { display: grid; gap: var(--space-2); }
+.faqItem { border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); overflow: hidden; transition: border-color var(--duration-normal); }
+.faqItem[open] { border-color: var(--color-border-signal); }
+.faqQ { cursor: pointer; list-style: none; padding: var(--space-4) var(--space-5); font-size: var(--fs-base, 1rem); font-weight: 700; color: var(--text-primary); display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.faqQ::-webkit-details-marker { display: none; }
+.faqQ::after { content: "+"; font-family: var(--font-mono); font-size: 1.3rem; color: var(--color-signal); flex: 0 0 auto; transition: transform var(--duration-normal) var(--ease-out-expo); }
+.faqItem[open] .faqQ::after { transform: rotate(45deg); }
+.faqA { margin: 0; padding: 0 var(--space-5) var(--space-5); font-size: var(--fs-sm); line-height: 1.65; color: var(--text-secondary); }
+
 .cta { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-8); }
 .btnPrimary, .btnGhost { display: inline-flex; align-items: center; padding: 0.8rem 1.5rem; border-radius: var(--radius-full); font-weight: 750; font-size: var(--fs-sm); text-decoration: none; transition: transform var(--duration-fast) var(--ease-out-expo); }
 .btnPrimary { background: var(--color-signal); color: #05140f; box-shadow: 0 0 30px -6px color-mix(in srgb, var(--color-signal) 55%, transparent); }
