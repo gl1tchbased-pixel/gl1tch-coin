@@ -32,6 +32,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/learn/what-is-know-your-agent",
     "/learn/how-to-verify-an-ai-agent",
     "/learn/can-ai-agents-be-hacked",
+    "/learn/how-to-run-a-provably-fair-giveaway",
     "/lore",
     "/links",
     "/whitepaper",

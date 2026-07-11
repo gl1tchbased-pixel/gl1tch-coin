@@ -22,6 +22,10 @@ const agentGuides = [
   { href: "/learn/can-ai-agents-be-hacked", t: "Can AI agents be hacked?", d: "Yes — and 2026's defining agent vulnerability isn't a contract bug. It's memory poisoning." },
 ];
 
+const fairnessGuides = [
+  { href: "/learn/how-to-run-a-provably-fair-giveaway", t: "How to run a provably-fair giveaway", d: "A random.org screenshot proves nothing. Draw winners nobody can dispute — and let anyone verify the result themselves." },
+];
+
 export default function LearnPage() {
   const popular = CANONICAL.filter((t) => t.symbol).slice(0, 10);
   return (
@@ -50,6 +54,19 @@ export default function LearnPage() {
       </section>
       <div className={styles.grid}>
         {agentGuides.map((g) => (
+          <Link key={g.href} href={g.href} className={styles.card}>
+            <h2 className={styles.cardTitle}>{g.t}</h2>
+            <p className={styles.cardDesc}>{g.d}</p>
+            <span className={styles.cardCta}>Read the guide →</span>
+          </Link>
+        ))}
+      </div>
+
+      <section className={styles.popular} style={{ marginTop: "var(--space-8)" }}>
+        <h2 className={styles.popularH}>Provably-fair randomness</h2>
+      </section>
+      <div className={styles.grid}>
+        {fairnessGuides.map((g) => (
           <Link key={g.href} href={g.href} className={styles.card}>
             <h2 className={styles.cardTitle}>{g.t}</h2>
             <p className={styles.cardDesc}>{g.d}</p>
