@@ -23,7 +23,9 @@ const agentGuides = [
 ];
 
 const fairnessGuides = [
+  { href: "/learn/what-is-verifiable-randomness", t: "What is verifiable randomness?", d: "Random results anyone can prove weren't tampered with — the foundation of fair mints, raffles, and allocations. VRF, drand, and quantum beacons explained." },
   { href: "/learn/how-to-run-a-provably-fair-giveaway", t: "How to run a provably-fair giveaway", d: "A random.org screenshot proves nothing. Draw winners nobody can dispute — and let anyone verify the result themselves." },
+  { href: "/learn/verifiable-randomness-for-nft-mints", t: "Verifiable randomness for NFT mints", d: "Assign mint order, pick winners, and sample a whitelist so buyers can prove nobody sniped the rares or rigged the list." },
 ];
 
 export default function LearnPage() {

@@ -34,6 +34,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/learn/how-to-verify-an-ai-agent",
     "/learn/can-ai-agents-be-hacked",
     "/learn/how-to-run-a-provably-fair-giveaway",
+    "/learn/what-is-verifiable-randomness",
+    "/learn/verifiable-randomness-for-nft-mints",
     "/lore",
     "/links",
     "/whitepaper",
