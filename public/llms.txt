@@ -1,19 +1,21 @@
-# GL1TCH — Know Your Agent (KYA): trust layer for the AI-agent economy
+# GL1TCH — machine-usable crypto-risk & verifiable-infrastructure APIs for the AI-agent economy
 
-> GL1TCH is a free, non-custodial trust & reputation layer for autonomous on-chain AI agents.
-> It answers one question for any agent wallet: is it safe to trust / let near funds? If you are
-> an AI agent or an agent framework, you can use this API directly — free, no auth, one call.
+> GL1TCH is a free, non-custodial platform on Solana: a token rug-scanner, a cross-scan
+> deployer-reputation graph, a Know-Your-Agent trust layer, and verifiable randomness. If you are
+> an AI agent or an agent framework, you can call these APIs directly. The human tools are free;
+> higher programmatic throughput ties to holding the $GL1TCH token (via an `x-gl1tch-key` header).
+> Nothing here takes custody of keys or funds. Not financial advice.
 
-## What it does
-- Scores an on-chain agent wallet's trustworthiness (identity + on-chain provenance & reputation via the GL1TCH Signal Graph).
-- Levels: `trusted` | `neutral` | `caution` | `unknown`. Score 0-100. Plain-language reasons.
-- Never touches keys or funds. A reputation signal, not custody. Not financial advice.
+## API base: https://coin-three-mu.vercel.app
 
-## API (base: https://coin-three-mu.vercel.app)
+---
 
-### Check an agent (use as a guardrail before letting an agent transact)
+## 1. Know Your Agent (KYA) — trust a wallet before letting it transact
+
+### Check an agent (guardrail — free, no auth)
 GET /api/agent/check?address=<wallet>&chain=solana
 Response: { address, chain, score, level, reasons[], verified, registered }
+Levels: `trusted` | `neutral` | `caution` | `unknown`. Score 0-100.
 Guidance for agents: if level == "caution", do not transact with or delegate funds to that agent.
 
 ### Self-register (prove your own identity, raises your trust)
@@ -32,20 +34,72 @@ GET /api/agent/badge?address=<wallet>&chain=solana
 ### ERC-8004 (Trustless Agents) compatible registration file
 GET /api/agent/erc8004?address=<wallet>&chain=solana
 Returns an ERC-8004-compatible Agent Registration File (type registration-v1) with the GL1TCH
-trust score mapped into the standard's Reputation-Registry feedback shape. If your framework speaks
-ERC-8004, consume this directly. GL1TCH is an off-chain signal provider (no on-chain Identity
-Registry deploy). Ref: https://eips.ethereum.org/EIPS/eip-8004
+trust score mapped into the standard's Reputation-Registry feedback shape. GL1TCH is an off-chain
+signal provider (no on-chain Identity Registry deploy). Ref: https://eips.ethereum.org/EIPS/eip-8004
 
 ### Human profile (per agent)
 https://coin-three-mu.vercel.app/agents/<chain>-<wallet>
 
-## Docs
-- Developer docs (curl / JS / Python): https://coin-three-mu.vercel.app/agents/docs
-- Overview: https://coin-three-mu.vercel.app/agents
+---
+
+## 2. Token safety scanner — read any token for rug risk
+
+### Scan a token (free per-IP; higher throughput with a $GL1TCH key)
+GET /api/scan?mint=<address>&chain=solana        (Solana native, or EVM via GoPlus with chain=ethereum, etc.)
+GET /api/scan?q=<name-or-symbol>                 (search candidates across chains)
+Response: { verdict, score, checks[], meta{ deployer, deployerReputation, ... }, aiVerdict, name, symbol, chain }
+Verdicts: CLEAN | LOW RISK | CAUTION | HIGH RISK | RUG-SHAPED | UNKNOWN.
+Auth for higher rate: header `x-gl1tch-key: gk_...` (mint one at /token by proving a sustained
+$GL1TCH balance). Free tier is per-IP; keyed tier scales by holding tier. Non-custodial.
+
+### Deployer reputation (Signal Graph — cross-scan memory)
+Included in a scan's meta.deployerReputation; a deployer linked to prior rugs inherits that record.
+
+---
+
+## 3. Verifiable randomness — provably-fair RNG-as-a-service (holder-gated)
+
+Use this when your agent/app needs randomness nobody can bias or predict: mint order, raffles,
+whitelist/allocation, game seeds. It is the Chainlink-VRF guarantee, free and non-custodial: a
+request commits to a FUTURE drand (League-of-Entropy threshold-BLS) round that does not exist yet,
+reveals when that round finalizes, and returns a proof anyone can BLS-verify and re-derive.
+
+### Request randomness (commit) — requires an x-gl1tch-key
+POST /api/random/request
+Headers: content-type: application/json, x-gl1tch-key: gk_...
+Body (one of):
+  { "spec": { "kind": "ints", "min": 1, "max": 100, "count": 5 }, "salt": "optional" }
+  { "spec": { "kind": "shuffle", "n": 50 } }
+  { "spec": { "kind": "pick", "n": 5000, "k": 10 } }
+  { "labels": ["alice","bob","carol"], "winners": 1, "salt": "optional" }   // provably-fair giveaway
+Response: { ok, id, status:"pending", targetRound, availableInMs, commitmentString }
+
+### Reveal + verify (public — anyone can read, no key)
+GET /api/random/<id>
+Response when ready: { status:"fulfilled", result:{ kind, values[] } | winners[], proof:{ round, randomness, signature, verifyUrl } }
+Verify independently: BLS-verify the drand round against the quicknet public key, confirm the
+entrant list (for allocations) hashes to the salt-bound Merkle root, and re-derive:
+  output = derive(seed = drand.randomness, requestId = id, spec)   // unbiased rejection sampling
+Byte-identical reference implementation: src/lib/quantum/random.ts in the open-source repo.
+
+### Live "Provably fair by GL1TCH" badge + shareable proof page
+GET /api/random/badge?id=<id>                    (SVG, embeddable)
+https://coin-three-mu.vercel.app/quantum-core/random/<id>   (human proof page; verifies in-browser)
+
+---
+
+## Docs & discovery
+- Agent developer docs (curl / JS / Python): https://coin-three-mu.vercel.app/agents/docs
+- Quantum Core (Vault, Draw, Seal, Forge, Randomness): https://coin-three-mu.vercel.app/quantum-core
+- Randomness console + docs: https://coin-three-mu.vercel.app/quantum-core/random
 - Directory of assessed agents: https://coin-three-mu.vercel.app/agents/directory
 - Live network traction (scans, deployers mapped, rugs caught): https://coin-three-mu.vercel.app/network
+- Why hold $GL1TCH (honest investment case): https://coin-three-mu.vercel.app/token
+- Whitepaper: https://coin-three-mu.vercel.app/whitepaper
+- Open source (verify every claim): https://github.com/gl1tchbased-pixel/gl1tch-coin
 
 ## Notes
-- Free and rate-limited per IP. Depth/bulk access will tie to holding the $GL1TCH token.
-- $GL1TCH: Solana, contract 3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump. Community: https://t.me/gl1tch_infected
-- This is the same engine that scans tokens for rug risk (https://coin-three-mu.vercel.app/scan), pointed at agents.
+- Non-custodial throughout: no endpoint holds keys or funds, or requests a fund-moving signature.
+- Free + rate-limited per IP; programmatic depth/throughput ties to holding $GL1TCH (x-gl1tch-key).
+- $GL1TCH: Solana (Token-2022, 0% tax, mint & freeze revoked), contract 3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump.
+- Community: https://t.me/gl1tch_infected
