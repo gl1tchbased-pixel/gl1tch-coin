@@ -68,7 +68,7 @@ const T: Record<Voice, Partial<Record<Category, TemplateFn[]>>> = {
       () =>
         `${TICKER} on Solana:\n✓ Mint authority — null\n✓ Freeze authority — null\n✓ Transfer fee — none (Token-2022)\n✓ RugCheck risk score: 1 (Low)\n\nVerify yourself. ${FACTS.rugcheck}`,
       () =>
-        `No presale. No allocation. No vesting. No team wallet.\nFounder dev-buy: 3.57%, from the open curve.\n\nEverything is on Solscan.\n\n${TICKER}`,
+        `No presale. No allocation. No vesting. No team wallet.\n\nEverything is on Solscan.\n\n${TICKER}`,
       () =>
         `Supply: 1,000,000,000 — fixed forever.\nMint authority: null.\nFreeze authority: null.\nThis is not "audited later". It's audited now.\n\n${TICKER}`,
     ],
@@ -149,8 +149,6 @@ const T: Record<Voice, Partial<Record<Category, TemplateFn[]>>> = {
         `Other memes: "trust us PDF"\n${TICKER}: Solscan or it didn't happen.`,
       () =>
         `Other memes: "audit coming soon"\n${TICKER}: RugCheck 1/Low. 0 risks. Shipped.`,
-      () =>
-        `Other memes: team wallet "for marketing".\n${TICKER}: founder bought 3.57% on the open curve. Same price as you.\n\nHere's the wallet: ${FACTS.giveback}`,
     ],
     evergreen: [
       () =>

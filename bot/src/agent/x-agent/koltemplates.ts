@@ -98,7 +98,7 @@ export const KOL_TEMPLATES: KolTemplate[] = [
       "• <b>Stays up</b>: at least 7 days, not deleted\n\n" +
       "Your SOL address?\n\n" +
       "Key facts brief: 0 tax (Token-2022), mint+freeze revoked, RugCheck 1/Low " +
-      "0 risks, give-back wallet on-chain, founder bought 3.57% on open curve.",
+      "0 risks, give-back wallet on-chain.",
   },
   {
     id: "decline-grift",

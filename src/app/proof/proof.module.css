@@ -109,6 +109,7 @@
 .flagTag { font-family: var(--font-mono); font-weight: 700; color: #ffc44f; font-size: 15px; }
 .flagBody { margin: var(--space-3) 0 0; font-size: 15px; line-height: 1.6; color: var(--text-secondary); }
 .flagBody strong { color: var(--text-primary); }
+.flagBody a { color: var(--color-signal); text-decoration: underline; text-underline-offset: 2px; }
 
 /* third party */
 .tpGrid {

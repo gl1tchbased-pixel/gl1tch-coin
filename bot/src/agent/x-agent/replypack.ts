@@ -50,14 +50,14 @@ export const REPLY_PACK: ReplyTemplate[] = [
     bio: "Bonk Guy · viral memecoin trader",
     trigger: "pump.fun finds, calling new coins, meme reviews",
     reply:
-      "Watching one with utility-first posture: $GL1TCH. Tier-gated TG rooms for holders, public give-back wallet, founder bag 3.57% from the open curve.",
+      "Watching one with utility-first posture: $GL1TCH. Tier-gated TG rooms for holders, public give-back wallet.",
   },
   {
     handle: "ansemtrades",
     bio: "Trader · chart calls",
     trigger: "low-cap finds, technical setups, SOL spec plays",
     reply:
-      "Low cap clean spec on SOL: mint+freeze revoked, RugCheck 1, Token-2022 zero tax, founder dev-buy 3.57% on-curve. $GL1TCH. DYOR.",
+      "Low cap clean spec on SOL: mint+freeze revoked, RugCheck 1, Token-2022 zero tax. $GL1TCH. DYOR.",
   },
   {
     handle: "pumpdotfun",

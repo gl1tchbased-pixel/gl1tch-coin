@@ -44,7 +44,6 @@ export const REDDIT_POSTS: RedditPost[] = [
       "- ✅ Freeze authority: **null**\n" +
       "- ✅ Tax: **0%** (Token-2022, transfer-fee extension never enabled)\n" +
       "- ✅ RugCheck risk score: **1/Low**, 0 risks flagged\n" +
-      "- ✅ Founder dev-buy: **3.57%**, bought from the open curve same price as everyone\n" +
       "- ✅ Give-back wallet: public on-chain (CSxey8FbMS5dDG7Z5usH9gmXgLQqXTN6m25NRdqAC6g4)\n" +
       "- ✅ Real utility shipped on day 1: hold → /verify in their TG bot → " +
       "tier-gated private rooms (Observer → Infected → Bearer → Core → Ghost)\n\n" +
@@ -71,7 +70,7 @@ export const REDDIT_POSTS: RedditPost[] = [
       "- Mint + freeze authority renounced (Solscan-verifiable)\n" +
       "- Holder-gated Telegram rooms went live (signature-based /verify, read-only)\n" +
       "- Public on-chain give-back wallet — every disbursement = a tx\n" +
-      "- Founder dev-buy 3.57% from the open curve, no presale\n\n" +
+      "- No presale, no team allocation\n\n" +
       "Five tiers (Observer → Infected → Bearer → Core → Ghost), each unlocks a " +
       "deeper TG room. Hold to climb. That's the whole utility — one thing, " +
       "shipped, not a 6-month roadmap.\n\n" +
@@ -138,9 +137,7 @@ export const REDDIT_POSTS: RedditPost[] = [
       "- Mint authority: **revoked (null)**\n" +
       "- Freeze authority: **revoked (null)**\n" +
       "- Public give-back wallet (on-chain, audit anytime): `CSxey8FbMS5dDG7Z5usH9gmXgLQqXTN6m25NRdqAC6g4`\n" +
-      "- No presale. No allocation. No vesting. No team wallet.\n" +
-      "- Founder dev-buy: **3.57%**, bought from the open curve same price as " +
-      "everyone\n\n" +
+      "- No presale. No allocation. No vesting. No team wallet.\n\n" +
       "**📦 Utility (shipped on day 1):**\n" +
       "Five-tier holder-gated Telegram rooms (Observer → Infected → Bearer → " +
       "Core → Ghost). Hold $GL1TCH → DM the official bot → /verify → sign a " +
@@ -148,8 +145,7 @@ export const REDDIT_POSTS: RedditPost[] = [
       "invite. Read-only signature flow — never asks for seed or spend authority.\n\n" +
       "**👥 Socials:**\n" +
       "- X: x.com/gl1tchbased\n" +
-      "- Telegram: t.me/gl1tch_infected\n" +
-      "- DexScreener: dexscreener.com/solana/3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump\n\n" +
+      "- Telegram: t.me/gl1tch_infected\n\n" +
       "**⚠ Risks:**\n" +
       "Low MC, low organic activity (Jupiter standard 'new listing' warnings). " +
       "Could die like most pump.fun launches. Difference is: you can verify " +

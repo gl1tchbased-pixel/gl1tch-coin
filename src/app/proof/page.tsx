@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ProofScan } from "@/components/web3/ProofScan";
 import {
   OFFICIAL,
@@ -35,12 +36,15 @@ const wallets = [
   { label: "Give-back wallet", addr: GIVEBACK_WALLET, href: officialLinks.givebackWallet, note: "Public · every payout is a readable tx" },
 ];
 
+// On-chain receipt for the deployer's full exit (39.8M GL1TCH sold, balance → 0).
+const DEPLOYER_EXIT_TX =
+  "https://solscan.io/tx/5p6HLidcvfW1stiCvRPE3qBrv4F2SfN9mxXgsmpAytXHWSqbv6NhjCMdBdwtbGM7cyu7YkcwHuqa3cLsWCY2f3PV";
+
 const thirdParty = [
   { label: "RugCheck", href: officialLinks.rugcheck, note: "score 1 · cleanest band" },
   { label: "GeckoTerminal", href: `https://www.geckoterminal.com/solana/tokens/${CONTRACT_ADDRESS}`, note: "live price & pool" },
   { label: "SolSniffer", href: officialLinks.solsniffer, note: "independent safety scan" },
   { label: "Solscan", href: officialLinks.explorer, note: "raw on-chain truth" },
-  { label: "DexScreener", href: officialLinks.dexscreener, note: "market & pair" },
   { label: "Pump.fun", href: officialLinks.pumpfun, note: "origin" },
 ];
 
@@ -129,11 +133,19 @@ export default function ProofPage() {
             </p>
           </div>
           <div className={styles.flag}>
-            <span className={styles.flagTag}>⚠ &quot;95.9% top holder&quot;</span>
+            <span className={styles.flagTag}>⚠ &quot;100% top holder&quot;</span>
             <p className={styles.flagBody}>
-              That top account is the <strong>locked liquidity pool</strong>, not a
-              person waiting to dump. The founder holds ~3.57%. Don&apos;t take our
-              word — open the holder list on Solscan and see.
+              That account is the <strong>liquidity pool</strong>, not a person.
+              Right now it holds the entire supply: no wallet holds any GL1TCH —
+              including the deployer, which sold its full position on{" "}
+              <a href={DEPLOYER_EXIT_TX} target="_blank" rel="noopener noreferrer">
+                2026-08-20
+              </a>
+              . Don&apos;t take our word — open the holder list and the{" "}
+              <a href={solscanAccount(DEPLOYER_WALLET)} target="_blank" rel="noopener noreferrer">
+                deployer&apos;s history
+              </a>{" "}
+              on Solscan.
             </p>
           </div>
         </div>
@@ -158,7 +170,7 @@ export default function ProofPage() {
           GL1TCH doesn&apos;t ask for your trust — it hands you the receipts.
         </p>
         <div className={styles.ctaBtns}>
-          <a href="/scan" className={styles.ctaPrimary}>Scan any token →</a>
+          <Link href="/scan" className={styles.ctaPrimary}>Scan any token →</Link>
           <a href={OFFICIAL.TG_URL} target="_blank" rel="noopener noreferrer" className={styles.ctaGhost}>Join Telegram</a>
         </div>
       </div>
