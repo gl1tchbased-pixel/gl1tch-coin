@@ -34,6 +34,7 @@ describe("trust report", () => {
     if (!hasCA) {
       expect(TRUST_REPORT.mintRevoked).toBe(false);
       expect(TRUST_REPORT.freezeRevoked).toBe(false);
+      expect(TRUST_REPORT.metadataImmutable).toBe(false);
       expect(TRUST_REPORT.lpBurnedOrLocked).toBe(false);
       expect(TRUST_REPORT.rugcheckScore).toBeNull();
     }

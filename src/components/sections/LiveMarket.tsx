@@ -9,7 +9,8 @@ import {
   fmtPrice,
   fmtPct,
   pctTone,
-  PRIMARY_PAIR,
+  GECKO_CHART_EMBED,
+  GECKO_POOL_URL,
   type MarketSnapshot,
 } from "@/lib/market";
 import { CONTRACT_ADDRESS, links as officialLinks } from "@/lib/official";
@@ -22,16 +23,13 @@ const JUP_SWAP = CONTRACT_ADDRESS
 const BIRDEYE = CONTRACT_ADDRESS
   ? `https://birdeye.so/token/${CONTRACT_ADDRESS}?chain=solana`
   : "https://birdeye.so";
-const GECKO = `https://www.geckoterminal.com/solana/pools/${PRIMARY_PAIR}`;
-// GeckoTerminal embed — DexScreener delisted the low-volume pair, so its iframe
-// renders blank. GeckoTerminal still serves the live chart for the same pool.
-const CHART_EMBED = `https://www.geckoterminal.com/solana/pools/${PRIMARY_PAIR}?embed=1&info=0&swaps=0&grayscale=0&light_chart=0&chart_type=price&resolution=15m`;
 
+// No DexScreener: it delisted the low-volume pair, so its pages and embed are
+// blank. GeckoTerminal still tracks the same pool.
 const VERIFY_LINKS = [
   { label: "Solscan", href: officialLinks.explorer },
   { label: "RugCheck", href: officialLinks.rugcheck },
-  { label: "DexScreener", href: officialLinks.dexscreener },
-  { label: "GeckoTerminal", href: GECKO },
+  { label: "GeckoTerminal", href: GECKO_POOL_URL },
   { label: "Birdeye", href: BIRDEYE },
 ].filter((l) => l.href);
 
@@ -119,7 +117,7 @@ export function LiveMarket() {
         {!hasData && snap && (
           <Reveal className={styles.warming}>
             Live data is warming up. Open the{" "}
-            <a href={GECKO} target="_blank" rel="noopener noreferrer">
+            <a href={GECKO_POOL_URL} target="_blank" rel="noopener noreferrer">
               GeckoTerminal chart ↗
             </a>{" "}
             for the latest tape.
@@ -153,7 +151,7 @@ export function LiveMarket() {
         {showChart && (
           <div className={styles.chartWrap}>
             <iframe
-              src={CHART_EMBED}
+              src={GECKO_CHART_EMBED}
               title="GL1TCH / SOL live chart"
               className={styles.chart}
               loading="lazy"

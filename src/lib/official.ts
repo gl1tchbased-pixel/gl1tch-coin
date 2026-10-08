@@ -45,6 +45,8 @@ export const links = {
   explorer: CONTRACT_ADDRESS
     ? `https://solscan.io/token/${CONTRACT_ADDRESS}`
     : "",
+  // Not linked from the UI: DexScreener delisted the pair (low volume), so this page
+  // shows no market. Re-link it if DexScreener re-indexes the pool.
   dexscreener: CONTRACT_ADDRESS
     ? `https://dexscreener.com/solana/${CONTRACT_ADDRESS}`
     : "",
@@ -74,6 +76,9 @@ export const TRUST_REPORT = {
   freezeRevoked: true,
   // Token-2022 mint with NO transfer fee extension → buys/sells are zero-tax at protocol level.
   zeroTax: true,
+  // Verified 2026-10-08 via getAccountInfo (jsonParsed): tokenMetadata.updateAuthority and
+  // metadataPointer.authority are both null → name, symbol and image URI can never change.
+  metadataImmutable: true,
   // Verified 2026-06-28 via RugCheck + our own scanner: LP 100% locked/burned. The dev cannot pull the pool.
   lpBurnedOrLocked: true,
   // RugCheck normalized risk score. Lower is better; 1 with no risks = clean.

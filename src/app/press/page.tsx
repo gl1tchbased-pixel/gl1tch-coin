@@ -79,8 +79,8 @@ export default function PressPage() {
           {officialLinks.explorer && (
             <a href={officialLinks.explorer} target="_blank" rel="noopener noreferrer">Solscan ↗</a>
           )}
-          {officialLinks.dexscreener && (
-            <a href={officialLinks.dexscreener} target="_blank" rel="noopener noreferrer">DexScreener ↗</a>
+          {officialLinks.geckoterminal && (
+            <a href={officialLinks.geckoterminal} target="_blank" rel="noopener noreferrer">GeckoTerminal ↗</a>
           )}
           {officialLinks.rugcheck && (
             <a href={officialLinks.rugcheck} target="_blank" rel="noopener noreferrer">RugCheck ↗</a>

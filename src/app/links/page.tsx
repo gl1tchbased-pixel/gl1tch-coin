@@ -105,9 +105,6 @@ export default function LinksPage() {
             {officialLinks.explorer && (
               <a href={officialLinks.explorer} target="_blank" rel="noopener noreferrer">Solscan ↗</a>
             )}
-            {officialLinks.dexscreener && (
-              <a href={officialLinks.dexscreener} target="_blank" rel="noopener noreferrer">DEXScreener ↗</a>
-            )}
             {officialLinks.geckoterminal && (
               <a href={officialLinks.geckoterminal} target="_blank" rel="noopener noreferrer">GeckoTerminal ↗</a>
             )}

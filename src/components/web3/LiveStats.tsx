@@ -7,6 +7,7 @@ import {
   fmtPrice,
   fmtPct,
   pctTone,
+  marketSourceName,
   type MarketSnapshot,
 } from "@/lib/market";
 import styles from "./LiveStats.module.css";
@@ -34,6 +35,7 @@ export function LiveStats() {
   }, []);
 
   const tone = pctTone(snap?.priceChange24h ?? null);
+  const source = marketSourceName(snap);
 
   const cards = [
     { label: "Price", value: fmtPrice(snap?.priceUsd ?? null), big: true },
@@ -61,7 +63,9 @@ export function LiveStats() {
       </div>
       <span className={styles.updated}>
         <span className={styles.dot} aria-hidden="true" />
-        {snap ? `Live · refreshed ${updatedAt} · on-chain` : "Connecting to live market…"}
+        {snap
+          ? `Live · refreshed ${updatedAt}${source ? ` · via ${source}` : ""}`
+          : "Connecting to live market…"}
       </span>
     </div>
   );

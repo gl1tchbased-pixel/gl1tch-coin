@@ -9,7 +9,7 @@ import {
   links as officialLinks,
 } from "@/lib/official";
 import { TICKER } from "@/content/site";
-import { PRIMARY_PAIR } from "@/lib/market";
+import { GECKO_POOL_URL } from "@/lib/market";
 import styles from "./live.module.css";
 
 export const metadata: Metadata = {
@@ -25,15 +25,34 @@ const JUP_SWAP = CONTRACT_ADDRESS
 const BIRDEYE = CONTRACT_ADDRESS
   ? `https://birdeye.so/token/${CONTRACT_ADDRESS}?chain=solana`
   : "https://birdeye.so";
-const GECKO = `https://www.geckoterminal.com/solana/pools/${PRIMARY_PAIR}`;
 
+// No DexScreener: it dropped the pair, so its token page shows no market.
 const verifyLinks = [
   { label: "Solscan", href: officialLinks.explorer },
   { label: "RugCheck", href: officialLinks.rugcheck },
-  { label: "DexScreener", href: officialLinks.dexscreener },
-  { label: "GeckoTerminal", href: GECKO },
+  { label: "GeckoTerminal", href: GECKO_POOL_URL },
   { label: "Birdeye", href: BIRDEYE },
 ].filter((l) => l.href);
+
+// Only guarantees TRUST_REPORT marks as verified get a checkmark.
+const trustItems = [
+  { ok: TRUST_REPORT.zeroTax, text: "Zero tax — 0% buy / 0% sell" },
+  {
+    ok: TRUST_REPORT.mintRevoked && TRUST_REPORT.freezeRevoked,
+    text: "Mint & freeze authority revoked",
+  },
+  { ok: TRUST_REPORT.mintRevoked, text: "Fixed 1,000,000,000 supply" },
+  {
+    ok: TRUST_REPORT.metadataImmutable,
+    text: "Metadata immutable — name, ticker & logo can't change",
+  },
+  {
+    ok: TRUST_REPORT.rugcheckScore != null,
+    text: `RugCheck risk score ${TRUST_REPORT.rugcheckScore} · ${
+      TRUST_REPORT.rugcheckRiskLevel ?? "—"
+    } risk (lower is safer)`,
+  },
+].filter((t) => t.ok);
 
 export default function LivePage() {
   return (
@@ -77,14 +96,11 @@ export default function LivePage() {
         <div className={styles.card}>
           <h2 className={styles.cardTitle}>Verified On-Chain</h2>
           <ul className={styles.trust}>
-            <li><span className={styles.ok}>✓</span> Zero tax — 0% buy / 0% sell</li>
-            <li><span className={styles.ok}>✓</span> Mint &amp; freeze authority revoked</li>
-            <li><span className={styles.ok}>✓</span> Fixed 1,000,000,000 supply</li>
-            <li>
-              <span className={styles.ok}>✓</span> RugCheck{" "}
-              {TRUST_REPORT.rugcheckScore ?? "—"} ·{" "}
-              {TRUST_REPORT.rugcheckRiskLevel ?? ""} risk
-            </li>
+            {trustItems.map((t) => (
+              <li key={t.text}>
+                <span className={styles.ok}>✓</span> {t.text}
+              </li>
+            ))}
           </ul>
           <Link href="/#trust" className={styles.trustLink}>
             See the full Trust Wall →
@@ -93,9 +109,10 @@ export default function LivePage() {
       </div>
 
       <p className={styles.disclaimer}>
-        Market data is pulled live from DexScreener and may lag the chain by a few
-        seconds. Nothing here is financial advice. Always confirm the contract
-        address before buying.
+        Market data comes from public aggregators (GeckoTerminal, or DexScreener
+        when it lists the pair) and refreshes about every 30 seconds, so it can
+        trail the chain by a minute or two. Nothing here is financial advice.
+        Always confirm the contract address before buying.
       </p>
 
       <div className={styles.footer}>

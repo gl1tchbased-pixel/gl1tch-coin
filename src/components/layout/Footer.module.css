@@ -32,7 +32,8 @@
 
 .social {
   display: flex;
-  gap: var(--space-5);
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-5);
 }
 .socialLink {
   display: inline-flex;

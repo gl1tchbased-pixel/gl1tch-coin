@@ -49,7 +49,7 @@ export function TickerBar() {
     { label: "", value: "MINT & FREEZE REVOKED", tone: "trust" },
     {
       label: "",
-      value: `RUGCHECK ${TRUST_REPORT.rugcheckScore ?? "—"} · ${TRUST_REPORT.rugcheckRiskLevel ?? ""} RISK`,
+      value: `RUGCHECK RISK SCORE ${TRUST_REPORT.rugcheckScore ?? "—"} · ${(TRUST_REPORT.rugcheckRiskLevel ?? "").toUpperCase()}`,
       tone: "trust",
     },
     { label: "", value: "GIVE-BACK WALLET PUBLIC", tone: "trust" },

@@ -16,6 +16,15 @@ import { CONTRACT_ADDRESS } from "@/lib/official";
 /** The launch pair (GL1TCH/SOL on Pump.fun) — preferred when multiple pairs exist. */
 export const PRIMARY_PAIR = "9fi2sFnnySPhNwJZPzZwxZT3xQnjPa9dh3EQbVNCstRW";
 
+export const GECKO_POOL_URL = `https://www.geckoterminal.com/solana/pools/${PRIMARY_PAIR}`;
+
+/**
+ * GeckoTerminal chart embed for the launch pool. Daily candles on purpose: the
+ * pool trades rarely, and intraday resolutions (15m) render an empty chart
+ * whenever the last trade falls outside GeckoTerminal's intraday window.
+ */
+export const GECKO_CHART_EMBED = `${GECKO_POOL_URL}?embed=1&info=0&swaps=0&grayscale=0&light_chart=0&chart_type=price&resolution=1d`;
+
 export interface MarketSnapshot {
   priceUsd: number | null;
   priceChange24h: number | null;
@@ -170,6 +179,14 @@ export async function fetchMarket(
   } catch {
     return EMPTY;
   }
+}
+
+/** Which aggregator a snapshot came from, for honest source labels in the UI. */
+export function marketSourceName(snap: MarketSnapshot | null): string | null {
+  const url = snap?.url ?? "";
+  if (url.includes("geckoterminal.com")) return "GeckoTerminal";
+  if (url.includes("dexscreener.com")) return "DexScreener";
+  return null;
 }
 
 /* ---- Formatters (compact, locale-stable) ---- */
