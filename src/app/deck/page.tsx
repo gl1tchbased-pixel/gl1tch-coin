@@ -178,8 +178,9 @@ export default function DeckPage() {
           The project also launched a community token, $GL1TCH, on Pump.fun on 29 May 2026
           (Token-2022, mint and freeze authority revoked, 0% tax). The deployer wallet sold its
           full position on 20 August 2026; the on-chain receipt is on the{" "}
-          <Link className={styles.link} href="/proof">proof page</Link>. The token has no active
-          market. <strong>No grant funds go to the token, buybacks or liquidity.</strong>
+          <Link className={styles.link} href="/proof">proof page</Link>. The token trades very
+          thinly (a few thousand dollars of liquidity).{" "}
+          <strong>No grant funds go to the token, buybacks or liquidity.</strong>
         </p>
       </article>
 
