@@ -9,7 +9,7 @@ import styles from "./EmbedTool.module.css";
  * auto-updates and links back to the full scan → free distribution flywheel.
  */
 
-const SITE = "https://coin-three-mu.vercel.app";
+const SITE = "https://gl1tchbased.xyz";
 const CHAINS = ["solana", "ethereum", "bsc", "base", "arbitrum", "polygon", "optimism", "avalanche"];
 
 export function EmbedTool() {

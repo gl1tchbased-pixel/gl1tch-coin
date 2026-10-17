@@ -173,7 +173,7 @@ export default async function OpengraphImage() {
                 color: GREEN,
               }}
             >
-              coin-three-mu.vercel.app · SIGNAL_LIVE
+              gl1tchbased.xyz · SIGNAL_LIVE
             </div>
           </div>
 

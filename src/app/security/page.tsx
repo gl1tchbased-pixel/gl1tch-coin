@@ -78,7 +78,7 @@ export default function SecurityPage() {
               funds or grants an allowance — it is a scam. Close it.</li>
             <li>The only signature we would ever request is a plain-text <em>message</em> that says it
               proves ownership and moves nothing. Read what you sign.</li>
-            <li>Only trust the official domain: <strong>coin-three-mu.vercel.app</strong> and the links on
+            <li>Only trust the official domain: <strong>gl1tchbased.xyz</strong> and the links on
               our <Link href="/links">official links</Link> page. Admins never DM first.</li>
           </ul>
         </div>

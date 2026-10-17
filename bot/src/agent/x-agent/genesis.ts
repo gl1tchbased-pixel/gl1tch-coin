@@ -53,7 +53,7 @@ export const GENESIS_CARDS = [
       "② DM this bot: /verify → sign the free message\n" +
       "③ Bot auto-promotes you to Genesis when verified balance &gt;= 100k AND " +
       "you're among the first 100 wallets to verify at that level\n\n" +
-      "Slots: 100. Filled: tracked on coin-three-mu.vercel.app/genesis\n\n" +
+      "Slots: 100. Filled: tracked on gl1tchbased.xyz/genesis\n\n" +
       "Pump.fun: pump.fun/coin/3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump",
   },
   {

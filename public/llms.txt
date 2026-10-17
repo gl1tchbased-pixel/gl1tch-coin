@@ -6,7 +6,7 @@
 > higher programmatic throughput ties to holding the $GL1TCH token (via an `x-gl1tch-key` header).
 > Nothing here takes custody of keys or funds. Not financial advice.
 
-## API base: https://coin-three-mu.vercel.app
+## API base: https://gl1tchbased.xyz
 
 ---
 
@@ -38,7 +38,7 @@ trust score mapped into the standard's Reputation-Registry feedback shape. GL1TC
 signal provider (no on-chain Identity Registry deploy). Ref: https://eips.ethereum.org/EIPS/eip-8004
 
 ### Human profile (per agent)
-https://coin-three-mu.vercel.app/agents/<chain>-<wallet>
+https://gl1tchbased.xyz/agents/<chain>-<wallet>
 
 ---
 
@@ -84,18 +84,18 @@ Byte-identical reference implementation: src/lib/quantum/random.ts in the open-s
 
 ### Live "Provably fair by GL1TCH" badge + shareable proof page
 GET /api/random/badge?id=<id>                    (SVG, embeddable)
-https://coin-three-mu.vercel.app/quantum-core/random/<id>   (human proof page; verifies in-browser)
+https://gl1tchbased.xyz/quantum-core/random/<id>   (human proof page; verifies in-browser)
 
 ---
 
 ## Docs & discovery
-- Agent developer docs (curl / JS / Python): https://coin-three-mu.vercel.app/agents/docs
-- Quantum Core (Vault, Draw, Seal, Forge, Randomness): https://coin-three-mu.vercel.app/quantum-core
-- Randomness console + docs: https://coin-three-mu.vercel.app/quantum-core/random
-- Directory of assessed agents: https://coin-three-mu.vercel.app/agents/directory
-- Live network traction (scans, deployers mapped, rugs caught): https://coin-three-mu.vercel.app/network
-- Why hold $GL1TCH (honest investment case): https://coin-three-mu.vercel.app/token
-- Whitepaper: https://coin-three-mu.vercel.app/whitepaper
+- Agent developer docs (curl / JS / Python): https://gl1tchbased.xyz/agents/docs
+- Quantum Core (Vault, Draw, Seal, Forge, Randomness): https://gl1tchbased.xyz/quantum-core
+- Randomness console + docs: https://gl1tchbased.xyz/quantum-core/random
+- Directory of assessed agents: https://gl1tchbased.xyz/agents/directory
+- Live network traction (scans, deployers mapped, rugs caught): https://gl1tchbased.xyz/network
+- Why hold $GL1TCH (honest investment case): https://gl1tchbased.xyz/token
+- Whitepaper: https://gl1tchbased.xyz/whitepaper
 - Open source (verify every claim): https://github.com/gl1tchbased-pixel/gl1tch-coin
 
 ## Notes

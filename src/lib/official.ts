@@ -23,7 +23,7 @@ export const OFFICIAL = {
   TG_URL: "https://t.me/gl1tch_infected",
   IG_URL: "https://instagram.com/gl1tch_infected",
   REDDIT_URL: "https://reddit.com/user/gl1tch_infected",
-  SITE_URL: "https://coin-three-mu.vercel.app",
+  SITE_URL: "https://gl1tchbased.xyz",
   GITHUB_URL: "https://github.com/gl1tchbased-pixel/gl1tch-coin",
 } as const;
 

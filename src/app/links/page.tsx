@@ -28,7 +28,7 @@ const channels = [
   { id: "link-tg", label: "Official Telegram", handle: "t.me/gl1tch_infected", href: OFFICIAL.TG_URL, Icon: TelegramIcon },
   { id: "link-ig", label: "Official Instagram", handle: "@gl1tch_infected", href: OFFICIAL.IG_URL, Icon: InstagramIcon },
   { id: "link-rd", label: "Official Reddit", handle: "u/gl1tch_infected", href: OFFICIAL.REDDIT_URL, Icon: RedditIcon },
-  { id: "link-site", label: "Official Website", handle: "coin-three-mu.vercel.app", href: OFFICIAL.SITE_URL, Icon: GlobeIcon },
+  { id: "link-site", label: "Official Website", handle: "gl1tchbased.xyz", href: OFFICIAL.SITE_URL, Icon: GlobeIcon },
 ];
 
 const trustRows = [

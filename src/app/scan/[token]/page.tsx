@@ -15,7 +15,7 @@ export const dynamicParams = true; // still allow scanning any other token on de
 /** /scan/<chain>-<address> — a shareable scan permalink that unfurls into a branded
  *  verdict card (opengraph-image.tsx in this segment) on X / Telegram / Discord. */
 
-const SITE = "https://coin-three-mu.vercel.app";
+const SITE = "https://gl1tchbased.xyz";
 
 function parse(token: string): { chain: string; address: string } {
   const dec = decodeURIComponent(token);

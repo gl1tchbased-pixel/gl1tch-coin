@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
     : rateLimit(`scan:${clientIp(req)}`, 40, 60_000);
   if (!rl.ok) {
     return NextResponse.json(
-      { error: keyInfo ? "rate limited — your tier's limit; hold more $GL1TCH for higher throughput" : "rate limited — hold $GL1TCH for a higher-rate API key: coin-three-mu.vercel.app/token" },
+      { error: keyInfo ? "rate limited — your tier's limit; hold more $GL1TCH for higher throughput" : "rate limited — hold $GL1TCH for a higher-rate API key: gl1tchbased.xyz/token" },
       { status: 429, headers: { "retry-after": String(rl.retryAfter) } }
     );
   }

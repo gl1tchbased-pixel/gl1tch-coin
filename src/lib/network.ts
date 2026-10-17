@@ -5,7 +5,7 @@
  * a serious risk-intelligence project shows its traction.
  */
 
-const BASE = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production-3f2c.up.railway.app").replace(/\/$/, "");
+const BASE = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production.up.railway.app").replace(/\/$/, "");
 
 export interface NetworkMetrics {
   scans: { total: number; flagged: number };

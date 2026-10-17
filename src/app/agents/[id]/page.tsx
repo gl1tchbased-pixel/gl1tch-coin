@@ -4,7 +4,7 @@ import { agentCheck } from "@/lib/agent-trust";
 import { isAddress } from "@/lib/validate";
 import styles from "../agents.module.css";
 
-const SITE = "https://coin-three-mu.vercel.app";
+const SITE = "https://gl1tchbased.xyz";
 
 function parse(id: string): { chain: string; address: string } {
   const dec = decodeURIComponent(id);

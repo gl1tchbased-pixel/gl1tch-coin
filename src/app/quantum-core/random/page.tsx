@@ -30,7 +30,7 @@ const appJsonLd = {
   name: "GL1TCH Quantum Randomness",
   applicationCategory: "DeveloperApplication",
   operatingSystem: "Web",
-  url: "https://coin-three-mu.vercel.app/quantum-core/random",
+  url: "https://gl1tchbased.xyz/quantum-core/random",
   description:
     "Holder-gated, provably-fair verifiable randomness-as-a-service seeded by the drand quantum-grade beacon. Commit to a future round, reveal on maturity, and verify the result in your own browser. Free, non-custodial, zero-trust.",
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
@@ -104,14 +104,14 @@ export default function RandomPage() {
         </p>
         <pre className={styles.code}>
           <code>{`# 1) Commit a request (holder-gated)
-curl -X POST https://coin-three-mu.vercel.app/api/random/request \\
+curl -X POST https://gl1tchbased.xyz/api/random/request \\
   -H "x-gl1tch-key: gk_your_key" \\
   -H "content-type: application/json" \\
   -d '{"spec":{"kind":"pick","n":5000,"k":10},"salt":"mint-2"}'
 # → { id, status:"pending", targetRound, availableInMs, commitmentString }
 
 # 2) Reveal on maturity (public — anyone can read)
-curl https://coin-three-mu.vercel.app/api/random/<id>
+curl https://gl1tchbased.xyz/api/random/<id>
 # → { status:"fulfilled", result:{ values:[…] },
 #     proof:{ round, randomness, signature } }`}</code>
         </pre>

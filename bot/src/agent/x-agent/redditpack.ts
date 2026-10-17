@@ -75,7 +75,7 @@ export const REDDIT_POSTS: RedditPost[] = [
       "deeper TG room. Hold to climb. That's the whole utility — one thing, " +
       "shipped, not a 6-month roadmap.\n\n" +
       "CA: `3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump`\n\n" +
-      "Site: coin-three-mu.vercel.app\n\n" +
+      "Site: gl1tchbased.xyz\n\n" +
       "Curve hasn't graduated yet — still early. Sharing the build approach in " +
       "case anyone here is launching and wants a template for shipping clean.",
     notes:
@@ -115,7 +115,7 @@ export const REDDIT_POSTS: RedditPost[] = [
       "Not posting for the chart — posting because Solana memes can be done with " +
       "a higher bar and most teams just choose not to. Sharing the playbook in " +
       "case it's useful.\n\n" +
-      "Site: coin-three-mu.vercel.app · RugCheck verify: rugcheck.xyz/tokens/3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump",
+      "Site: gl1tchbased.xyz · RugCheck verify: rugcheck.xyz/tokens/3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump",
     notes:
       "Conservative sub. Lead with technical/build value. Avoid 'gem', 'moon', '100x' — those get downvoted/removed. Best window: 13:00-17:00 UTC (US work hours).",
   },
@@ -131,7 +131,7 @@ export const REDDIT_POSTS: RedditPost[] = [
       "**Supply:** 1,000,000,000 — fixed forever (mint authority null)\n" +
       "**Tax:** 0% buy / 0% sell (Token-2022, no transfer-fee extension)\n" +
       "**Liquidity:** still on Pump.fun bonding curve (pre-graduation)\n" +
-      "**Site:** coin-three-mu.vercel.app\n\n" +
+      "**Site:** gl1tchbased.xyz\n\n" +
       "**🛡 Audit / Trust (all verifiable on-chain right now):**\n" +
       "- RugCheck risk score: **1/Low** (0 risks flagged) — rugcheck.xyz/tokens/3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump\n" +
       "- Mint authority: **revoked (null)**\n" +

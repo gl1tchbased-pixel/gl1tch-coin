@@ -9,7 +9,7 @@ import styles from "./Article.module.css";
  * to build a learning center around.
  */
 
-const SITE = "https://coin-three-mu.vercel.app";
+const SITE = "https://gl1tchbased.xyz";
 
 export type Section = { h: string; body: React.ReactNode };
 export type Faq = { q: string; a: string };

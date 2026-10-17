@@ -1,22 +1,30 @@
 /**
  * Global scan-counter client — talks to the bot's /stats endpoints (backed by the
- * Railway /data volume). Increments are fire-and-forget so they never block a scan.
+ * Railway /data volume). Increments run after the response so they never block a scan.
  */
 
-const BASE = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production-3f2c.up.railway.app").replace(/\/$/, "");
+import { after } from "next/server";
+
+const BASE = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production.up.railway.app").replace(/\/$/, "");
 const TOKEN = process.env.STATS_TOKEN || "";
 
 export type ScanStats = { scanned: number; flagged: number };
 
-/** Fire-and-forget increment. `flagged` bumps the rug counter by 1; or pass n/flaggedN for batches. */
+/** Non-blocking increment. `flagged` bumps the rug counter by 1; or pass n/flaggedN for batches.
+ *  Runs via after() — a bare un-awaited fetch can be cut off once the function returns. */
 export function bumpStats(opts: { flagged?: boolean; n?: number; flaggedN?: number }): void {
   if (!TOKEN) return;
-  void fetch(`${BASE}/stats/scan`, {
-    method: "POST",
-    headers: { "content-type": "application/json", "x-stats-token": TOKEN },
-    body: JSON.stringify(opts),
-    signal: AbortSignal.timeout(4000),
-  }).catch(() => {});
+  after(() =>
+    fetch(`${BASE}/stats/scan`, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-stats-token": TOKEN },
+      body: JSON.stringify(opts),
+      signal: AbortSignal.timeout(4000),
+    }).then(
+      () => {},
+      () => {}
+    )
+  );
 }
 
 export async function getStats(): Promise<ScanStats | null> {

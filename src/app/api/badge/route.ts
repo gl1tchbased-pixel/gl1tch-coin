@@ -5,14 +5,14 @@ import { NextRequest } from "next/server";
  * docs to show their token's GL1TCH verdict, linking back to the full scan — a free
  * distribution flywheel ("✓ Scanned by GL1TCH — CLEAN").
  *
- *   <a href="https://coin-three-mu.vercel.app/scan/<chain>-<addr>">
- *     <img src="https://coin-three-mu.vercel.app/api/badge?t=<chain>-<addr>" alt="GL1TCH scan" />
+ *   <a href="https://gl1tchbased.xyz/scan/<chain>-<addr>">
+ *     <img src="https://gl1tchbased.xyz/api/badge?t=<chain>-<addr>" alt="GL1TCH scan" />
  *   </a>
  */
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const SITE = "https://coin-three-mu.vercel.app";
+const SITE = "https://gl1tchbased.xyz";
 const TONE: Record<string, string> = {
   CLEAN: "#7CFF4F", "LOW RISK": "#A6FF8C", CAUTION: "#FFD14F", "HIGH RISK": "#FF9D4F", "RUG-SHAPED": "#FF5C5C", UNKNOWN: "#9aa0a6",
 };

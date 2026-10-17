@@ -80,7 +80,7 @@ export default function Page() {
         { q: "Is Know Your Agent the same as KYC?", a: "No. KYC identifies a human for compliance. KYA verifies an autonomous AI agent's wallet — its identity, provenance, and on-chain reputation — so you know whether it's safe to transact with or delegate funds to. It requires no personal data and never takes custody." },
         { q: "Can an agent fake a good KYA score?", a: "Identity is provable by signature, but reputation is built from accumulated on-chain history — which can't be manufactured overnight. A wallet linked to flagged tokens or serial-rug behaviour inherits that record no matter what it claims." },
         { q: "Does KYA touch my keys or funds?", a: "No. KYA is a reputation and provenance signal only. It reads on-chain data and returns a verdict; it never holds keys, takes custody, or moves funds." },
-        { q: "How do I check an AI agent for free?", a: "Paste the agent's wallet address into GL1TCH's Know Your Agent tool at coin-three-mu.vercel.app/agents. You get an instant trust verdict with reasons — free and non-custodial." },
+        { q: "How do I check an AI agent for free?", a: "Paste the agent's wallet address into GL1TCH's Know Your Agent tool at gl1tchbased.xyz/agents. You get an instant trust verdict with reasons — free and non-custodial." },
       ]}
       ctaLine="GL1TCH's Know Your Agent runs identity, provenance, and reputation checks on any on-chain agent — free, non-custodial, one call to integrate."
     />

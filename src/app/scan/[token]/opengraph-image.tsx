@@ -14,7 +14,7 @@ const PURPLE = "#7A3CFF";
 const RED = "#FF5C5C";
 const INK = "#050505";
 const PAPER = "#F5F7F8";
-const SITE = "https://coin-three-mu.vercel.app";
+const SITE = "https://gl1tchbased.xyz";
 
 const TONE: Record<string, string> = {
   CLEAN: GREEN, "LOW RISK": "#A6FF8C", CAUTION: "#FFD14F", "HIGH RISK": "#FF9D4F", "RUG-SHAPED": RED, UNKNOWN: "#9aa0a6",
@@ -109,7 +109,7 @@ export default async function Image({ params }: { params: Promise<{ token: strin
         {/* footer */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", zIndex: 2 }}>
           <div style={{ display: "flex", fontSize: 22, color: "rgba(245,247,248,0.6)" }}>scanned by GL1TCH · non-custodial · any chain</div>
-          <div style={{ display: "flex", fontSize: 22, fontWeight: 700, color: GREEN }}>coin-three-mu.vercel.app/scan</div>
+          <div style={{ display: "flex", fontSize: 22, fontWeight: 700, color: GREEN }}>gl1tchbased.xyz/scan</div>
         </div>
       </div>
     ),

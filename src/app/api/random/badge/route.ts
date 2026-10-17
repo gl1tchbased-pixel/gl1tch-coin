@@ -6,8 +6,8 @@ import { NextRequest } from "next/server";
  * and links back to the verifiable proof page — a free distribution flywheel where every fair
  * draw advertises GL1TCH.
  *
- *   <a href="https://coin-three-mu.vercel.app/quantum-core/random/<id>">
- *     <img src="https://coin-three-mu.vercel.app/api/random/badge?id=<id>" alt="Provably fair by GL1TCH" />
+ *   <a href="https://gl1tchbased.xyz/quantum-core/random/<id>">
+ *     <img src="https://gl1tchbased.xyz/api/random/badge?id=<id>" alt="Provably fair by GL1TCH" />
  *   </a>
  *
  * With no ?id= it renders a generic "Provably Fair · GL1TCH" badge.
@@ -15,7 +15,7 @@ import { NextRequest } from "next/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const SITE = "https://coin-three-mu.vercel.app";
+const SITE = "https://gl1tchbased.xyz";
 const GREEN = "#7CFF4F";
 const PURPLE = "#7A3CFF";
 const GRAY = "#9aa0a6";

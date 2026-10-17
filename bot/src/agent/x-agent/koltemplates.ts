@@ -55,7 +55,7 @@ export const KOL_TEMPLATES: KolTemplate[] = [
       "engagement: $20/post for one genuine tweet about the project.\n\n" +
       "If interested I'll send the brief + key facts. If not, no worries — " +
       "just had to ask the right voices first.\n\n" +
-      "coin-three-mu.vercel.app",
+      "gl1tchbased.xyz",
   },
   {
     id: "opener-mid",
@@ -70,7 +70,7 @@ export const KOL_TEMPLATES: KolTemplate[] = [
       "Genesis Bearer tier badge in our private holder rooms.\n\n" +
       "If thesis lands for you, brief is ready. If not, no pressure — bag the " +
       "smaller calls.\n\n" +
-      "coin-three-mu.vercel.app",
+      "gl1tchbased.xyz",
   },
   {
     id: "followup",

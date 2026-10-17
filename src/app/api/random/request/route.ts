@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   const keyInfo = key ? await checkApiKey(key) : null;
   if (!keyInfo) {
     return NextResponse.json(
-      { ok: false, error: "a $GL1TCH API key is required — mint one at coin-three-mu.vercel.app/token" },
+      { ok: false, error: "a $GL1TCH API key is required — mint one at gl1tchbased.xyz/token" },
       { status: 401 }
     );
   }

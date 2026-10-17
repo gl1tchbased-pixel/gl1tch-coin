@@ -101,7 +101,7 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
   }
 
   const embedToken = result ? `${result.chain}-${result.mint}` : "";
-  const embedOrigin = typeof window !== "undefined" ? window.location.origin : "https://coin-three-mu.vercel.app";
+  const embedOrigin = typeof window !== "undefined" ? window.location.origin : "https://gl1tchbased.xyz";
   function copyEmbed() {
     if (!result) return;
     const html = `<a href="${embedOrigin}/scan/${embedToken}" target="_blank" rel="noopener"><img src="${embedOrigin}/api/badge?t=${embedToken}" alt="GL1TCH safety scan" width="360" height="84"/></a>`;

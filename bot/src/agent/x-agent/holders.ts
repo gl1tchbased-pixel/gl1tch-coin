@@ -128,7 +128,7 @@ export function deltaToVariant(d: HolderDelta): Variant | null {
   // Frame two ways depending on magnitude.
   const text =
     d.delta >= 10
-      ? `🛠 GROWTH LOG\n\n+${d.delta} new holders on $GL1TCH in the last ~24h.\nTotal: ${d.current}.\nNo paid acquisition. No fake volume. Just signal.\n\ncoin-three-mu.vercel.app`
+      ? `🛠 GROWTH LOG\n\n+${d.delta} new holders on $GL1TCH in the last ~24h.\nTotal: ${d.current}.\nNo paid acquisition. No fake volume. Just signal.\n\ngl1tchbased.xyz`
       : `🛠 GROWTH LOG\n\n+${d.delta} new holder${d.delta === 1 ? "" : "s"} today on $GL1TCH.\nTotal: ${d.current}.\nQuiet days build cleanest charts.\n\n$GL1TCH`;
   return {
     id: `holders-${d.current}-${Date.now().toString(36)}`,

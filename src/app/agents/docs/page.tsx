@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/agents/docs" },
 };
 
-const BASE = "https://coin-three-mu.vercel.app";
+const BASE = "https://gl1tchbased.xyz";
 
 function Code({ head, children }: { head: string; children: string }) {
   return (

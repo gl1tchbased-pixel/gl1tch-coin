@@ -78,10 +78,10 @@ export default function Page() {
         },
       ]}
       faqs={[
-        { q: "How do I know if an AI agent is safe?", a: "Verify four things: can it prove wallet ownership (identity), how old and how funded the wallet is, whether it has deployed or interacted with known scams (provenance), and its accumulated on-chain reputation. GL1TCH checks all four in one free call at coin-three-mu.vercel.app/agents." },
+        { q: "How do I know if an AI agent is safe?", a: "Verify four things: can it prove wallet ownership (identity), how old and how funded the wallet is, whether it has deployed or interacted with known scams (provenance), and its accumulated on-chain reputation. GL1TCH checks all four in one free call at gl1tchbased.xyz/agents." },
         { q: "Can I verify an agent without giving it access to my wallet?", a: "Yes. Verification is read-only — you check the agent's public wallet address. The agent proving its own identity is also non-custodial: it signs a message that moves no funds and grants no access." },
         { q: "What does an 'unknown' agent verdict mean?", a: "It means GL1TCH has no trust signal for that wallet yet — no history, no verified identity. Unknown is not a safety guarantee; it's a reason to be careful, especially before delegating funds." },
-        { q: "Is there an API to verify agents automatically?", a: "Yes. GET /api/agent/check?address=<wallet> returns a JSON verdict (level, score, reasons). Use it as a guardrail before an agent transacts. Free — see coin-three-mu.vercel.app/agents/docs." },
+        { q: "Is there an API to verify agents automatically?", a: "Yes. GET /api/agent/check?address=<wallet> returns a JSON verdict (level, score, reasons). Use it as a guardrail before an agent transacts. Free — see gl1tchbased.xyz/agents/docs." },
       ]}
       ctaLine="GL1TCH verifies any on-chain AI agent — identity, provenance, and reputation — in one free, non-custodial call."
     />

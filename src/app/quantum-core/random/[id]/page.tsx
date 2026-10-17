@@ -7,7 +7,7 @@ import styles from "../random.module.css";
 
 export const dynamic = "force-dynamic";
 
-const SITE = "https://coin-three-mu.vercel.app";
+const SITE = "https://gl1tchbased.xyz";
 
 interface Rec {
   ok?: boolean;

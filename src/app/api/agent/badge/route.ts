@@ -5,14 +5,14 @@ import { NextRequest } from "next/server";
  * Any agent framework, wallet, or dapp drops this in to show an agent's live KYA trust,
  * linking back to the full assessment. A free distribution + adoption flywheel.
  *
- *   <a href="https://coin-three-mu.vercel.app/agents">
- *     <img src="https://coin-three-mu.vercel.app/api/agent/badge?address=<wallet>&chain=solana" alt="GL1TCH Agent Trust" />
+ *   <a href="https://gl1tchbased.xyz/agents">
+ *     <img src="https://gl1tchbased.xyz/api/agent/badge?address=<wallet>&chain=solana" alt="GL1TCH Agent Trust" />
  *   </a>
  */
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const SITE = "https://coin-three-mu.vercel.app";
+const SITE = "https://gl1tchbased.xyz";
 const TONE: Record<string, string> = {
   trusted: "#7CFF4F", neutral: "#9aa0a6", caution: "#FF5C5C", unknown: "#FFD14F",
 };

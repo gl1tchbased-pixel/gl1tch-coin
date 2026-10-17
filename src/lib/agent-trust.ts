@@ -3,7 +3,7 @@
  * holds the agent registry + Signal Graph) for an agent wallet's trust assessment.
  */
 
-const BASE = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production-3f2c.up.railway.app").replace(/\/$/, "");
+const BASE = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production.up.railway.app").replace(/\/$/, "");
 
 export type TrustLevel = "unknown" | "caution" | "neutral" | "trusted";
 

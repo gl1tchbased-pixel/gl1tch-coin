@@ -7,7 +7,7 @@ export const OFFICIAL = {
   TG: "https://t.me/gl1tch_infected",
   IG: "https://instagram.com/gl1tch_infected",
   REDDIT: "https://reddit.com/user/gl1tch_infected",
-  SITE: "https://coin-three-mu.vercel.app",
+  SITE: "https://gl1tchbased.xyz",
   GITHUB: "https://github.com/gl1tchbased-pixel/gl1tch-coin",
   CONTRACT: "3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump",
   GIVEBACK_WALLET: "CSxey8FbMS5dDG7Z5usH9gmXgLQqXTN6m25NRdqAC6g4",
@@ -133,7 +133,7 @@ export function linksText(): string {
     `• Telegram: <a href="${OFFICIAL.TG}">t.me/gl1tch_infected</a>\n` +
     `• Instagram: <a href="${OFFICIAL.IG}">@gl1tch_infected</a>\n` +
     `• Reddit: <a href="${OFFICIAL.REDDIT}">u/gl1tch_infected</a>\n` +
-    `• Site: <a href="${OFFICIAL.SITE}">coin-three-mu.vercel.app</a>`;
+    `• Site: <a href="${OFFICIAL.SITE}">gl1tchbased.xyz</a>`;
   const trustBlock =
     LAUNCH_STATUS === "LIVE"
       ? "\n\n<b>Third-party audit:</b>\n" +

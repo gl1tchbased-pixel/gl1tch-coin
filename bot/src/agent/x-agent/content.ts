@@ -134,7 +134,7 @@ export function generateBatch(seed: number, count = 6): Variant[] {
 /** A short, single-line reply suggestion targeted at a specific external post. */
 export function buildReply(seed: number): Variant {
   const lines = [
-    `On-chain transparency is the only proof. $GL1TCH: mint+freeze null, RugCheck 1/Low, 0% tax. coin-three-mu.vercel.app`,
+    `On-chain transparency is the only proof. $GL1TCH: mint+freeze null, RugCheck 1/Low, 0% tax. gl1tchbased.xyz`,
     `Solana memes that ship the audit: $GL1TCH. RugCheck score 1, Token-2022 zero tax, public give-back wallet. DYOR.`,
     `If you want the proof first, not the promise: $GL1TCH. rugcheck.xyz/tokens/3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump`,
     `One utility, shipped on day one: hold → verify → climb the ranks. $GL1TCH on Solana.`,

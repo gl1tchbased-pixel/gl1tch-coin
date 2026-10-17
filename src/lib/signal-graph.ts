@@ -1,11 +1,13 @@
 /**
  * Signal Graph client (PREMIUM-PLAN-v3, Phase 0). Talks to the bot's /signal endpoints
  * (backed by the Railway volume) — our proprietary cross-scan memory of which deployer
- * shipped which token and how it scored. Observations are fire-and-forget; reputation
+ * shipped which token and how it scored. Observations run after the response; reputation
  * reads use a tight timeout and degrade to null so the scan never blocks on the graph.
  */
 
-const BASE = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production-3f2c.up.railway.app").replace(/\/$/, "");
+import { after } from "next/server";
+
+const BASE = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production.up.railway.app").replace(/\/$/, "");
 const TOKEN = process.env.STATS_TOKEN || "";
 
 export type ReputationLevel = "unknown" | "clean" | "watch" | "serial";
@@ -76,7 +78,7 @@ export async function signalLeaderboard(n = 10): Promise<SignalRep[]> {
   }
 }
 
-/** Record a scan observation so the deployer's track record compounds. Fire-and-forget. */
+/** Record a scan observation so the deployer's track record compounds. Non-blocking (runs via after()). */
 export function observeDeployer(obs: {
   deployer: string;
   chain: string;
@@ -87,10 +89,15 @@ export function observeDeployer(obs: {
   symbol?: string | null;
 }): void {
   if (!TOKEN || !obs.deployer) return;
-  void fetch(`${BASE}/signal/observe`, {
-    method: "POST",
-    headers: { "content-type": "application/json", "x-stats-token": TOKEN },
-    body: JSON.stringify({ ...obs, ts: Date.now() }),
-    signal: AbortSignal.timeout(4000),
-  }).catch(() => {});
+  after(() =>
+    fetch(`${BASE}/signal/observe`, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-stats-token": TOKEN },
+      body: JSON.stringify({ ...obs, ts: Date.now() }),
+      signal: AbortSignal.timeout(4000),
+    }).then(
+      () => {},
+      () => {}
+    )
+  );
 }

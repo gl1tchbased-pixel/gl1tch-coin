@@ -13,7 +13,7 @@ const GREEN = "#7CFF4F";
 const PURPLE = "#7A3CFF";
 const INK = "#050505";
 const PAPER = "#F5F7F8";
-const SITE = "https://coin-three-mu.vercel.app";
+const SITE = "https://gl1tchbased.xyz";
 
 interface Rec {
   status?: string;

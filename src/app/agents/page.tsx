@@ -130,8 +130,8 @@ POST /api/agent/register
         </div>
         <div className={styles.code}>
           <div className={styles.codeHead}>Guardrail widget — drop a live trust badge anywhere (links to the agent&apos;s profile)</div>
-          <pre>{`<a href="https://coin-three-mu.vercel.app/agents/solana-<wallet>">
-  <img src="https://coin-three-mu.vercel.app/api/agent/badge?address=<wallet>&chain=solana"
+          <pre>{`<a href="https://gl1tchbased.xyz/agents/solana-<wallet>">
+  <img src="https://gl1tchbased.xyz/api/agent/badge?address=<wallet>&chain=solana"
        alt="GL1TCH Agent Trust" width="360" height="84" />
 </a>`}</pre>
         </div>
