@@ -25,7 +25,7 @@ const DURATION = Number(arg("duration", "6"));
 const RES = arg("res", "1080P");
 const MODEL = arg("model", "MiniMax-Hailuo-02");
 const OUT = arg("out", "pump-pack/videos/mascot-minimax.mp4");
-const IMGARG = arg("img", "https://coin-three-mu.vercel.app/brand/glitchy-1024.png");
+const IMGARG = arg("img", "https://gl1tchbased.xyz/brand/glitchy-1024.png");
 const PROMPT = arg("prompt",
   "The glossy 3D chibi ghost character floats and bobs gently in the air, arms crossed with a mischievous confident smirk. Its glitched RGB eye flickers with digital static while the other cyan eye glows brighter. The colorful voxel pixel cubes dissolving from its lower body swirl, scatter and partly reform like living data. Subtle chromatic-aberration glitch pulses ripple across the surface. Cyan and magenta neon rim light shimmers over the pearlescent body. Slow smooth cinematic camera push-in, shallow depth of field. Dark moody studio background, premium high-detail 3D render."
 );

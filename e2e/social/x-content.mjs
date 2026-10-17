@@ -3,7 +3,7 @@
 // feature we shipped, the rug-proof tokenomics, and the free/non-custodial ethos.
 // Deterministic day-picker so it walks the whole set before repeating.
 
-const SITE = "coin-three-mu.vercel.app";
+const SITE = "gl1tchbased.xyz";
 
 export const POSTS = [
   // --- Signal Graph (the differentiator) ---

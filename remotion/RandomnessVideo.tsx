@@ -75,7 +75,7 @@ const Cta: React.FC = () => {
       <div style={{ position: "absolute", top: 700, left: 0, right: 0, textAlign: "center", padding: "0 56px" }}>
         <Chroma text={"DON'T TRUST.\nVERIFY."} size={100} split={split} />
       </div>
-      <div style={{ position: "absolute", top: 1060, left: 0, right: 0, textAlign: "center", fontSize: 40, fontWeight: 800, color: GREEN }}>coin-three-mu.vercel.app/quantum-core/random</div>
+      <div style={{ position: "absolute", top: 1060, left: 0, right: 0, textAlign: "center", fontSize: 40, fontWeight: 800, color: GREEN }}>gl1tchbased.xyz/quantum-core/random</div>
       <div style={{ position: "absolute", top: 1140, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 27, color: "rgba(245,247,248,0.82)" }}>@gl1tchbased · t.me/gl1tch_infected</div>
       <div style={{ position: "absolute", bottom: 150, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 24, letterSpacing: 3, color: GREEN, opacity: 0.85 }}>free · holder-gated · non-custodial</div>
     </AbsoluteFill>

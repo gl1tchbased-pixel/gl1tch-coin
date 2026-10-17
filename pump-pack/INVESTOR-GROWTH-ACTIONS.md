@@ -19,7 +19,7 @@ a real tool:
 
 ## 🔴 YOUR MOVES (only a human can — ranked by impact ÷ effort)
 
-1. **Google Search Console (10 min, biggest unlock).** Add `coin-three-mu.vercel.app`,
+1. **Google Search Console (10 min, biggest unlock).** Add `gl1tchbased.xyz`,
    verify, and submit `/sitemap.xml`. This makes Google crawl all the new pages in days
    instead of weeks. → search.google.com/search-console
 2. **Seed the give-back wallet (5 min).** Send a small symbolic amount to

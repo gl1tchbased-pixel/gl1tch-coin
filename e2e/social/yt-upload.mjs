@@ -20,7 +20,7 @@ const PRESETS = {
 
 Free, non-custodial, holder-gated with $GL1TCH — the Chainlink-VRF guarantee without the price tag.
 
-🎲 Try the live console: https://coin-three-mu.vercel.app/quantum-core/random
+🎲 Try the live console: https://gl1tchbased.xyz/quantum-core/random
 💬 https://t.me/gl1tch_infected
 
 Not financial advice — DYOR.
@@ -38,7 +38,7 @@ Not financial advice — DYOR.
 
 Zero trust required: two verifiable randomness sources (CURBy quantum + drand BLS, checked in your browser) and a tamper-evident, hash-chained Beacon. Non-custodial by design — winners get a verifiable record, never a payout.
 
-⚛️ Explore it live: https://coin-three-mu.vercel.app/quantum-core
+⚛️ Explore it live: https://gl1tchbased.xyz/quantum-core
 💬 https://t.me/gl1tch_infected
 
 Not financial advice — DYOR.
@@ -55,7 +55,7 @@ Not financial advice — DYOR.
 
 Free to check, open to integrate. The agent-trust stack has 8 layers; we own the two you can't fake — provenance & reputation — built from months of accumulated security data.
 
-🔗 https://coin-three-mu.vercel.app/agents
+🔗 https://gl1tchbased.xyz/agents
 💬 https://t.me/gl1tch_infected
 
 Not financial advice — DYOR.
@@ -72,8 +72,8 @@ Also new:
 
 Scanning is free and always will be. Holding $GL1TCH unlocks convenience — never the protection itself.
 
-🔍 Scan any token: https://coin-three-mu.vercel.app/scan
-🛡 Security: https://coin-three-mu.vercel.app/security
+🔍 Scan any token: https://gl1tchbased.xyz/scan
+🛡 Security: https://gl1tchbased.xyz/security
 💬 Telegram: https://t.me/gl1tch_infected
 
 Not financial advice — always DYOR.
@@ -84,8 +84,8 @@ Not financial advice — always DYOR.
     title: "Meet GLITCHY 👻 the rogue-AI ghost of $GL1TCH #Shorts",
     desc: `Meet GLITCHY — the flying rogue-AI ghost behind $GL1TCH. It glitches, it floats, and it does one genuinely useful thing: reads any token on any chain and flags the rug before you ape.
 
-🔍 Free scanner: https://coin-three-mu.vercel.app/scan
-📡 Rug Radar: https://coin-three-mu.vercel.app/radar
+🔍 Free scanner: https://gl1tchbased.xyz/scan
+📡 Rug Radar: https://gl1tchbased.xyz/radar
 💬 Telegram: https://t.me/gl1tch_infected
 
 Free · non-custodial · it never touches your wallet.
@@ -99,7 +99,7 @@ Free · non-custodial · it never touches your wallet.
 Another receipt, not a promise — it stacks on: we pass our own scanner (LOW RISK), liquidity locked, 0% tax, mint & freeze renounced.
 
 Not financial advice — always DYOR.
-🌐 https://coin-three-mu.vercel.app
+🌐 https://gl1tchbased.xyz
 💬 https://t.me/gl1tch_infected
 
 #crypto #memecoin #solana #geckoterminal #cryptoscanner #web3 #Shorts`,
@@ -117,7 +117,7 @@ Not financial advice — always DYOR.
 🧬 Hold $GL1TCH → guard up to 200 tokens/wallets
 
 Free. Non-custodial. It never touches your wallet.
-🌐 https://coin-three-mu.vercel.app
+🌐 https://gl1tchbased.xyz
 💬 https://t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #Shorts`,
@@ -129,8 +129,8 @@ Free. Non-custodial. It never touches your wallet.
 
 Clean token? Add the free "Scanned by GL1TCH" badge to your site — it stays live.
 
-📡 Radar: https://coin-three-mu.vercel.app/radar
-🔍 Scan anything: https://coin-three-mu.vercel.app/scan
+📡 Radar: https://gl1tchbased.xyz/radar
+🔍 Scan anything: https://gl1tchbased.xyz/scan
 💬 Telegram: https://t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #Shorts`,
@@ -143,7 +143,7 @@ $GL1TCH = LOW RISK. Mint authority revoked · freeze revoked · 0% tax · liquid
 
 We're anonymous — but the code is open and every wallet is public. Don't take our word: verify each claim yourself on Solscan, RugCheck & GitHub.
 
-🛡 Proof page: https://coin-three-mu.vercel.app/proof
+🛡 Proof page: https://gl1tchbased.xyz/proof
 💬 /proof in Telegram: https://t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #Shorts`,
@@ -160,7 +160,7 @@ We're anonymous — but the code is open and every wallet is public. Don't take 
 🐋 Hold $GL1TCH, watch MORE wallets: free 3 → Infected 10 → Bearer 25 → Core 50 → Ghost 200. Your rank = your watch slots (/verify).
 
 💬 /watchwallet in Telegram: https://t.me/gl1tch_infected
-🔍 Scanner: https://coin-three-mu.vercel.app/scan
+🔍 Scanner: https://gl1tchbased.xyz/scan
 
 #crypto #memecoin #solana #whalealert #rugpull #cryptoscanner #web3 #AI #Shorts`,
   },
@@ -170,7 +170,7 @@ We're anonymous — but the code is open and every wallet is public. Don't take 
     desc: `Meet GL1TCH — a rogue-AI meme on Solana with a FREE, non-custodial token scanner.
 Scan any coin on any chain: honeypot, LP lock, mint/freeze, tax, holders — explained in plain English. It reads the chain; it never touches your wallet.
 
-🔍 Scanner: https://coin-three-mu.vercel.app/scan
+🔍 Scanner: https://gl1tchbased.xyz/scan
 💬 Telegram: https://t.me/gl1tch_infected
 
 #crypto #memecoin #solana #cryptoscanner #rugpull #web3 #AI #Shorts`,
@@ -185,7 +185,7 @@ Scan any coin on any chain: honeypot, LP lock, mint/freeze, tax, holders — exp
 📡 Shareable — every scan gets a branded card + an embeddable badge
 
 Free · non-custodial · any chain.
-🔍 https://coin-three-mu.vercel.app/scan
+🔍 https://gl1tchbased.xyz/scan
 💬 https://t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #Shorts`,
@@ -199,7 +199,7 @@ Free · non-custodial · any chain.
 3) it catches any drop — LP unlocked, an authority returns, verdict falls.
 4) it pings you — before the chart even moves.
 
-🔍 Scan: https://coin-three-mu.vercel.app/scan
+🔍 Scan: https://gl1tchbased.xyz/scan
 💬 /watch in Telegram: https://t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #Shorts`,
@@ -209,7 +209,7 @@ Free · non-custodial · any chain.
     title: "6 Chains, 1 Scanner — check ANY token, any chain 🔍 #Shorts",
     desc: `Most rug-checkers only work on one chain. GL1TCH reads them all — Solana, Ethereum, Base, BNB, Arbitrum, Polygon, Optimism, Avalanche + more. Same plain-English verdict everywhere: honeypot, LP lock, mint/freeze, tax, holders.
 
-🔍 Scan: https://coin-three-mu.vercel.app/scan
+🔍 Scan: https://gl1tchbased.xyz/scan
 💬 Telegram: https://t.me/gl1tch_infected
 
 #crypto #memecoin #solana #ethereum #cryptoscanner #rugpull #web3 #Shorts`,
@@ -219,7 +219,7 @@ Free · non-custodial · any chain.
     title: "Anatomy of a Rug — caught in 5 seconds 🔍 #Shorts",
     desc: `It 100x'd in a day. Then it went to zero. The traps were there the whole time — unlocked liquidity, a live mint authority, a 61% whale wallet. GL1TCH reads all of it in 5 seconds, before you ape.
 
-🔍 Scan any token: https://coin-three-mu.vercel.app/scan
+🔍 Scan any token: https://gl1tchbased.xyz/scan
 💬 Telegram: https://t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #Shorts`,
@@ -229,7 +229,7 @@ Free · non-custodial · any chain.
     title: "GL1TCH — the rogue AI that reads every rug 👻🔍 #Shorts",
     desc: `There's a glitch in the machine. GL1TCH is a rogue-AI meme on Solana that does one genuinely useful thing — it reads any token on any chain and flags the rug before you ape. Free, non-custodial.
 
-🔍 Scanner: https://coin-three-mu.vercel.app/scan
+🔍 Scanner: https://gl1tchbased.xyz/scan
 💬 Telegram: https://t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #glitch #Shorts`,
@@ -240,7 +240,7 @@ Free · non-custodial · any chain.
     desc: `Your bag was fine at midnight — by 3am it was a rug. You were asleep. GL1TCH wasn't.
 /watch any token and the rogue AI keeps re-scanning it. The moment its safety drops — LP unlocked, an authority returns, verdict falls — it pings you. Before the chart even moves.
 
-🔍 Scanner: https://coin-three-mu.vercel.app/scan
+🔍 Scanner: https://gl1tchbased.xyz/scan
 💬 Telegram: https://t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #Shorts`,

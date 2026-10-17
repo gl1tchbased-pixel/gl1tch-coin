@@ -36,7 +36,7 @@ Tiers: Observer · Infected (100k) · Signal Bearer (1M) · Core (5M) · Ghost (
 • Anyone offering "verification" outside this bot = scam.
 
 <b>🌐 Official channels (only trust these)</b>
-Site: coin-three-mu.vercel.app
+Site: gl1tchbased.xyz
 X: x.com/gl1tchbased
 Instagram: instagram.com/gl1tch_infected
 Reddit: reddit.com/user/gl1tch_infected

@@ -32,7 +32,7 @@ if (!BOT_TOKEN || !CHAT_ID) {
   process.exit(1);
 }
 
-const VIDEO_URL = "https://coin-three-mu.vercel.app/brand/glitchy-share-landscape.mp4";
+const VIDEO_URL = "https://gl1tchbased.xyz/brand/glitchy-share-landscape.mp4";
 
 const CAPTION = `👻 <b>GLITCHY IS HERE.</b>
 
@@ -45,7 +45,7 @@ now he lives in every wallet that holds $GL1TCH.
 🟢 0% Tax · Renounced · LP burned
 🟢 CA: <code>3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump</code>
 
-→ site: https://coin-three-mu.vercel.app
+→ site: https://gl1tchbased.xyz
 → chart: https://dexscreener.com/solana/9fi2sFnnySPhNwJZPzZwxZT3xQnjPa9dh3EQbVNCstRW
 
 drop him in your PFP.

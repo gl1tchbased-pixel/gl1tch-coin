@@ -25,7 +25,7 @@ and impact. If you can, suggest a fix.
 
 ## Scope
 
-**In scope:** the website (`coin-three-mu.vercel.app`), the scanner engine and its API,
+**In scope:** the website (`gl1tchbased.xyz`), the scanner engine and its API,
 and the Telegram bot.
 
 **Out of scope / please don't:** anything that harms real users or funds — no testing against
@@ -43,7 +43,7 @@ These are guarantees we enforce; a break in any of them is a valid, high-priorit
 - **Scoring is free and never gated** behind holding the token.
 
 See [`docs/threat-model.md`](docs/threat-model.md) for our threat model, and
-[the public Security & Transparency page](https://coin-three-mu.vercel.app/security).
+[the public Security & Transparency page](https://gl1tchbased.xyz/security).
 
 ## No paid bounty (yet)
 

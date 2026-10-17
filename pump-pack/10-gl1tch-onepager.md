@@ -100,7 +100,7 @@ You're either a host or a witness. Exposure is irreversible.
 
 ## Official Links (anything else is a scam)
 
-- **Website:** https://coin-three-mu.vercel.app
+- **Website:** https://gl1tchbased.xyz
 - **X / Twitter:** https://x.com/gl1tchbased
 - **Telegram:** https://t.me/gl1tch_infected
 - ⚠️ **Admins NEVER DM first.** Only the CA, TG and site above are real.

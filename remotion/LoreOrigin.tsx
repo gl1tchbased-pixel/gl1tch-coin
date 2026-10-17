@@ -75,7 +75,7 @@ export const LoreOrigin: React.FC = () => {
             <Chroma text={"GL1TCH"} size={120} />
             <div style={{ marginTop: 22, fontSize: 38, fontWeight: 700, color: GREEN, letterSpacing: 2 }}>the bug that got out. 👻</div>
             <div style={{ marginTop: 26, fontFamily: "ui-monospace, monospace", fontSize: 26, letterSpacing: 2, color: "rgba(245,247,248,0.72)" }}>
-              zero tax · renounced · coin-three-mu.vercel.app
+              zero tax · renounced · gl1tchbased.xyz
             </div>
           </AbsoluteFill>
         )}

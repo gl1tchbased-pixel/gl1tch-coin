@@ -21,7 +21,7 @@ Işınlanan smug mascot · "YOU CAN'T UNSEE IT".
 
 ## `gl1tch-promo-coin.mp4` — UTILITY
 Mascot + coin · "NOT YOUR AVERAGE MEME".
-> zero tax. mint & freeze revoked. one job: hold $GL1TCH, climb the ranks. 🟢 → coin-three-mu.vercel.app
+> zero tax. mint & freeze revoked. one job: hold $GL1TCH, climb the ranks. 🟢 → gl1tchbased.xyz
 
 ## `gl1tch-promo-infected.mp4` — COMMUNITY
 Yeşil enfeksiyon · "THE INFECTION IS SPREADING".

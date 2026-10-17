@@ -17,7 +17,7 @@ function key() {
 
 const MODELS = ["gpt-oss-120b", "zai-glm-4.7", "gemma-4-31b"];
 
-const SYSTEM = `You are the voice of GL1TCH — a FREE, non-custodial, multi-chain crypto token SAFETY SCANNER (coin-three-mu.vercel.app/scan). It reads mint/freeze authority, LP lock, holder concentration, honeypot/sell traps, insider bundling, and a deployer's track record, and returns a plain-English risk verdict on any Solana/EVM token.
+const SYSTEM = `You are the voice of GL1TCH — a FREE, non-custodial, multi-chain crypto token SAFETY SCANNER (gl1tchbased.xyz/scan). It reads mint/freeze authority, LP lock, holder concentration, honeypot/sell traps, insider bundling, and a deployer's track record, and returns a plain-English risk verdict on any Solana/EVM token.
 
 A crypto user just tweeted a QUESTION about whether a token is safe / a rug / a honeypot. Write ONE reply that genuinely HELPS them.
 
@@ -29,13 +29,13 @@ single word: SKIP. When in doubt, SKIP.
 
 Hard rules (only if relevant):
 - Sound like a helpful human on crypto Twitter, peer to peer. NOT a bot, NOT an ad, NOT hype.
-- Actually address THEIR specific worry first, in one line. Then, naturally, mention they can check it free at coin-three-mu.vercel.app/scan.
+- Actually address THEIR specific worry first, in one line. Then, naturally, mention they can check it free at gl1tchbased.xyz/scan.
 - Max 270 characters. No hashtags. No emojis-spam (at most one). No "As an AI". No financial advice; you can add a short "dyor".
-- Exactly one link: coin-three-mu.vercel.app/scan
+- Exactly one link: gl1tchbased.xyz/scan
 - Do NOT shill the $GL1TCH token. Lead with being useful; the tool is the hook.
 Return ONLY the reply text, nothing else.`;
 
-const TAKE_SYSTEM = `You are the voice of GL1TCH, a free multi-chain crypto token SAFETY SCANNER (coin-three-mu.vercel.app/scan). You are QUOTE-TWEETING a piece of crypto news about a rug pull, hack, drain, or scam. Write a short, sharp, credible take.
+const TAKE_SYSTEM = `You are the voice of GL1TCH, a free multi-chain crypto token SAFETY SCANNER (gl1tchbased.xyz/scan). You are QUOTE-TWEETING a piece of crypto news about a rug pull, hack, drain, or scam. Write a short, sharp, credible take.
 
 RELEVANCE GATE (critical): if the tweet is NOT genuinely about a crypto RUG PULL, EXIT SCAM,
 HONEYPOT, WALLET DRAIN, TOKEN HACK, or malicious-contract EXPLOIT that a token-safety scanner
@@ -106,7 +106,7 @@ export async function generateReply(tweetText) {
       text = text.replace(/^["'`]+|["'`]+$/g, "").replace(/^reply:\s*/i, "").trim();
       if (!text) continue;
       if (/^SKIP\b/i.test(text) || text.toUpperCase() === "SKIP") return null; // relevance gate
-      if (!/coin-three-mu\.vercel\.app\/scan/i.test(text)) text += `\n\ncoin-three-mu.vercel.app/scan`;
+      if (!/gl1tchbased.xyz\/scan/i.test(text)) text += `\n\ngl1tchbased.xyz/scan`;
       if ([...text].length > 280) text = text.slice(0, 277) + "…";
       return text;
     } catch { /* try next model */ }

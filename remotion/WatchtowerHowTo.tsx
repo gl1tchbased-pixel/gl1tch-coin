@@ -184,7 +184,7 @@ const Cta: React.FC = () => {
         <Chroma text={"WATCH ANY TOKEN.\nWE GUARD IT."} size={84} split={split} />
       </div>
       <div style={{ position: "absolute", top: 1060, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 34, color: GREEN }}>Telegram: <span style={{ color: PAPER }}>/watch &lt;token&gt;</span></div>
-      <div style={{ position: "absolute", top: 1120, left: 0, right: 0, textAlign: "center", fontSize: 36, fontWeight: 800, color: GREEN }}>coin-three-mu.vercel.app/scan</div>
+      <div style={{ position: "absolute", top: 1120, left: 0, right: 0, textAlign: "center", fontSize: 36, fontWeight: 800, color: GREEN }}>gl1tchbased.xyz/scan</div>
       <div style={{ position: "absolute", bottom: 150, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 24, letterSpacing: 3, color: GREEN, opacity: 0.85 }}>t.me/gl1tch_infected · free · non-custodial</div>
     </AbsoluteFill>
   );

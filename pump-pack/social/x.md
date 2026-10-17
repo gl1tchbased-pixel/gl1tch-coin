@@ -15,7 +15,7 @@ you found the signal.
 $GL1TCH // exposure is irreversible.
 0% tax · mint renounced · freeze revoked · on Solana
 
-coin-three-mu.vercel.app
+gl1tchbased.xyz
 ```
 
 ## Kısa varyant (12s)
@@ -35,7 +35,7 @@ mint authority → revoked
 freeze authority → revoked
 rugcheck → 0 risks
 
-$GL1TCH on Solana. coin-three-mu.vercel.app
+$GL1TCH on Solana. gl1tchbased.xyz
 ```
 
 ## Adımlar
@@ -45,4 +45,4 @@ $GL1TCH on Solana. coin-three-mu.vercel.app
 
 ## İpuçları
 - Video tweet'leri X'te daha çok erişir. İlk yorumda `pump.fun` linki verme — ana tweet'e koy.
-- Profil bio'da coin-three-mu.vercel.app + diğer kanallar.
+- Profil bio'da gl1tchbased.xyz + diğer kanallar.

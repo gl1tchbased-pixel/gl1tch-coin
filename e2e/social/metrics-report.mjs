@@ -32,7 +32,7 @@ try {
 if (!m?.ok) { console.error("[metrics] bad metrics response"); process.exit(1); }
 
 // --- fetch the coin's own market/trading state (the bottom line: is anyone buying?) ---
-const SITE = "https://coin-three-mu.vercel.app";
+const SITE = "https://gl1tchbased.xyz";
 const CA = "3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump";
 let mkt = null;
 try {

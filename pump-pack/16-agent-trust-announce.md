@@ -15,7 +15,7 @@ Agents now hold wallets and trade on-chain. Nobody can tell if an agent is safe 
 
 So we built Know Your Agent. 🧵
 
-coin-three-mu.vercel.app/agents
+gl1tchbased.xyz/agents
 ```
 
 ### Reply 2 — the moat
@@ -35,7 +35,7 @@ How it works, live today:
 🧠 Reputation — its on-chain track record via our Signal Graph
 🛡 Guardrail — one check before you trust it
 
-Free: coin-three-mu.vercel.app/agents
+Free: gl1tchbased.xyz/agents
 ```
 
 ### Reply 4 — open infrastructure
@@ -60,7 +60,7 @@ AI agents will out-trade humans on-chain. They need a trust layer.
 
 We're building it — free to check, open to integrate.
 
-coin-three-mu.vercel.app/agents
+gl1tchbased.xyz/agents
 @gl1tchbased · t.me/gl1tch_infected
 
 Know Your Agent.
@@ -79,7 +79,7 @@ AI agents now hold wallets and trade on-chain — but nobody can tell if an agen
 🆔 <b>Identity</b> — an agent signs to register (proves ownership, moves nothing)
 🧠 <b>Reputation</b> — its on-chain track record via our Signal Graph
 🛡 <b>Guardrail</b> — one check (or one embeddable badge) before you trust an agent
-→ coin-three-mu.vercel.app/agents
+→ gl1tchbased.xyz/agents
 
 <b>Why it's a moat:</b> the agent-trust stack has 8 layers; we own the two you can't fake — provenance &amp; reputation — built from months of accumulated security data. Copy us, you still need our data.
 

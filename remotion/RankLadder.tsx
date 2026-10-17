@@ -105,7 +105,7 @@ export const RankLadder: React.FC = () => {
           <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", textAlign: "center", padding: "0 60px", opacity: op * dim, transform: `scale(${sc})` }}>
             <Chroma text={"CLIMB THE LADDER"} size={72} />
             <div style={{ marginTop: 36, fontSize: 56, fontWeight: 800, color: GREEN, letterSpacing: 2 }}>$GL1TCH</div>
-            <div style={{ marginTop: 14, fontSize: 27, letterSpacing: 2, color: "rgba(245,247,248,0.7)" }}>hold · verify · climb · coin-three-mu.vercel.app</div>
+            <div style={{ marginTop: 14, fontSize: 27, letterSpacing: 2, color: "rgba(245,247,248,0.7)" }}>hold · verify · climb · gl1tchbased.xyz</div>
           </AbsoluteFill>
         );
       })()}

@@ -7,7 +7,7 @@
 
 ## Sabit veriler (her postta tutarlı kullan)
 - **CA:** `3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump`
-- **Site:** https://coin-three-mu.vercel.app
+- **Site:** https://gl1tchbased.xyz
 - **Al:** Jupiter (siteden link) · **Chart:** DexScreener
 - **X:** @gl1tchbased · **TG:** https://t.me/gl1tch_infected
 - **Trust:** Zero-tax · Token-2022 · mint+freeze revoked · LP burned · RugCheck risk skoru 1 (düşük)

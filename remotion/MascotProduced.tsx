@@ -154,7 +154,7 @@ export const Outro: React.FC = () => {
         <div style={{ width: 14, height: 44, background: GREEN, opacity: cursorOn ? 1 : 0.15, boxShadow: `0 0 14px ${GREEN}` }} />
       </div>
       <div style={{ position: "absolute", top: 1410, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 28, letterSpacing: 4, color: "rgba(245,247,248,0.6)", opacity: interpolate(frame, [24, 40], [0, 1], { extrapolateRight: "clamp" }) }}>
-        coin-three-mu.vercel.app · pump.fun
+        gl1tchbased.xyz · pump.fun
       </div>
       <GlitchIn />
     </AbsoluteFill>

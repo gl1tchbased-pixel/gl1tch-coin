@@ -73,7 +73,7 @@ const Cta: React.FC = () => {
       <div style={{ position: "absolute", top: 700, left: 0, right: 0, textAlign: "center", padding: "0 56px" }}>
         <Chroma text={"KNOW YOUR\nAGENT."} size={98} split={split} />
       </div>
-      <div style={{ position: "absolute", top: 1040, left: 0, right: 0, textAlign: "center", fontSize: 42, fontWeight: 800, color: GREEN }}>coin-three-mu.vercel.app/agents</div>
+      <div style={{ position: "absolute", top: 1040, left: 0, right: 0, textAlign: "center", fontSize: 42, fontWeight: 800, color: GREEN }}>gl1tchbased.xyz/agents</div>
       <div style={{ position: "absolute", top: 1120, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 27, color: "rgba(245,247,248,0.82)" }}>@gl1tchbased · t.me/gl1tch_infected</div>
       <div style={{ position: "absolute", bottom: 150, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 24, letterSpacing: 3, color: GREEN, opacity: 0.85 }}>the trust layer for the agent economy</div>
     </AbsoluteFill>

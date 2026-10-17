@@ -24,7 +24,7 @@ Mascot ekranda ışınlanıp dördüncü duvarı yıkıyor, smug bakış. Hızl�
 Mascot + dönen holografik coin, güven veren premium görünüm. Tanıtım/utility postu için.
 **Caption:**
 > zero tax. mint & freeze revoked. one job: hold $GL1TCH, climb the ranks. 🟢
-> not your average meme coin → coin-three-mu.vercel.app
+> not your average meme coin → gl1tchbased.xyz
 
 ## 4. `gl1tch-infected-9x16.mp4` — VIRAL / community
 Yeşil dijital "enfeksiyon" ekrana yayılıyor — `@gl1tch_infected` kimliğiyle birebir.

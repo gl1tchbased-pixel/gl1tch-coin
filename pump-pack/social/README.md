@@ -29,7 +29,7 @@ how to find the signal in 3 steps. 🟢
 3 · /verify → enter your room
 
 0% tax · renounced · on Solana
-coin-three-mu.vercel.app   (#Shorts for YouTube)
+gl1tchbased.xyz   (#Shorts for YouTube)
 
 #GL1TCH #Solana #howtobuy #pumpfun #SolanaMemecoin #glitchart #web3
 ```
@@ -41,7 +41,7 @@ other memecoins vs $GL1TCH. you decide. 🟢
 0% tax · founder on-curve · mint renounced · freeze revoked
 the cleanest signal on Solana.
 
-coin-three-mu.vercel.app   (#Shorts for YouTube)
+gl1tchbased.xyz   (#Shorts for YouTube)
 
 #GL1TCH #Solana #memecoin #cryptocomparison #pumpfun #SolanaMemecoin #web3
 ```

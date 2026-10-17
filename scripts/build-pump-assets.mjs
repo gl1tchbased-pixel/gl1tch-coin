@@ -246,7 +246,7 @@ async function asset06_howtobuy() {
 
     <text x="${w/2}" y="${h*0.95}" text-anchor="middle"
           class="mono" font-size="22" fill="${MUTED}" letter-spacing="4">
-      coin-three-mu.vercel.app · t.me/gl1tch_infected
+      gl1tchbased.xyz · t.me/gl1tch_infected
     </text>
   `);
   await plateAsset("06-how-to-buy.jpg", inner, w, h);

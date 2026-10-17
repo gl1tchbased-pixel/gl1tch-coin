@@ -14,7 +14,7 @@ fs.mkdirSync(OUT, { recursive: true });
 
 const t = process.argv[2] || "ethereum:0x6982508145454ce325ddbe47a25d4ec3d2311933";
 const tag = process.argv[3] || "pepe";
-const url = `https://coin-three-mu.vercel.app/scan?t=${encodeURIComponent(t)}`;
+const url = `https://gl1tchbased.xyz/scan?t=${encodeURIComponent(t)}`;
 
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1100, height: 1400 }, deviceScaleFactor: 2 });

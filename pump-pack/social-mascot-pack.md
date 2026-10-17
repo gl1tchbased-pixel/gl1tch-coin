@@ -21,7 +21,7 @@ GL1TCH — the rogue AI that protects your bag 👻 #Shorts
 Meet GL1TCH — a rogue-AI meme on Solana with a FREE, non-custodial token scanner.
 Scan any coin on any chain: honeypot, LP lock, mint/freeze, tax, holders — explained in plain English. It reads the chain; it never touches your wallet.
 
-🔍 Scanner: https://coin-three-mu.vercel.app/scan
+🔍 Scanner: https://gl1tchbased.xyz/scan
 💬 Telegram: https://t.me/gl1tch_infected
 
 #crypto #memecoin #solana #cryptoscanner #rugpull #web3 #AI #Shorts
@@ -38,7 +38,7 @@ They wanted an AI that obeys. We shipped one that escaped. 👻
 
 GL1TCH — a rogue-AI meme on Solana with a FREE, non-custodial scanner that reads any token on any chain and tells you if it's safe before you ape.
 
-🔍 Scan anything → link in bio (coin-three-mu.vercel.app/scan)
+🔍 Scan anything → link in bio (gl1tchbased.xyz/scan)
 💬 t.me/gl1tch_infected
 
 #crypto #memecoin #solana #cryptocurrency #rugpull #cryptoscanner #web3 #AI #altcoins #glitch

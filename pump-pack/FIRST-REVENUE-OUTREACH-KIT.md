@@ -33,13 +33,13 @@
 Saw you're running a <mint/whitelist/giveaway>. If you want to kill the "was it rigged?" doubt
 up front: we built a FREE tool that draws winners from a quantum-grade public beacon and gives
 everyone a proof link they can verify themselves (no trust in you or us). 2-min to run:
-coin-three-mu.vercel.app/quantum-core/random — happy to help you set it up.
+gl1tchbased.xyz/quantum-core/random — happy to help you set it up.
 ```
 
 **B. Scanner API (to a wallet/dapp/bot builder):**
 ```
 If you ever want a rug-check before a swap, ours is one free call:
-GET coin-three-mu.vercel.app/api/scan?mint=<addr>&chain=solana → { verdict, score, reasons }
+GET gl1tchbased.xyz/api/scan?mint=<addr>&chain=solana → { verdict, score, reasons }
 Free per-IP; higher throughput is token-gated but the endpoint's open to try. No SDK, no auth.
 ```
 
@@ -47,7 +47,7 @@ Free per-IP; higher throughput is token-gated but the endpoint's open to try. No
 ```
 Building agents that transact on-chain? Before you let one near funds, one call trust-checks it
 (identity + on-chain reputation), ERC-8004-compatible:
-GET coin-three-mu.vercel.app/api/agent/check?address=<wallet>&chain=solana
+GET gl1tchbased.xyz/api/agent/check?address=<wallet>&chain=solana
 Free, non-custodial. Would love feedback if you try it.
 ```
 
@@ -55,7 +55,7 @@ Free, non-custodial. Would love feedback if you try it.
 ```
 We run a free, non-custodial multi-chain rug scanner + a cross-scan deployer-reputation graph.
 You can drop a live "Scanned by GL1TCH" badge in your group or docs, and members get free scans:
-coin-three-mu.vercel.app/embed — open to a collab.
+gl1tchbased.xyz/embed — open to a collab.
 ```
 
 ## Rules of engagement (protect the brand)

@@ -96,7 +96,7 @@ The honest weak point. With no budget we can't inject LP, so we build trust *aro
 > scanner; we pass it live.**
 
 ## STATUS (updated 2026-06-28)
-- [x] **1A `/proof` page LIVE** — coin-three-mu.vercel.app/proof (live self-scan LOW RISK 78, verify-yourself links, wallet map, open-source, honest yellow-flags). In nav/footer/sitemap.
+- [x] **1A `/proof` page LIVE** — gl1tchbased.xyz/proof (live self-scan LOW RISK 78, verify-yourself links, wallet map, open-source, honest yellow-flags). In nav/footer/sitemap.
 - [x] **1C honest yellow-flags** (thin-but-locked liquidity + "95.9% = locked LP, not a person") — on /proof.
 - [x] **2A open-source callout** + [x] **2B wallet map** (deployer/give-back/contract → Solscan) — on /proof.
 - [x] **5A LP commitment** — "100% locked, we can't pull it" messaging shipped on /proof + video.

@@ -19,7 +19,7 @@ $GL1TCH's Signal Graph now remembers every deployer it has ever seen. Ship two r
 
 No single-token scanner can do this.
 
-coin-three-mu.vercel.app/scan
+gl1tchbased.xyz/scan
 ```
 
 ### Reply 2 — what it is
@@ -55,13 +55,13 @@ A tool that tells you what's safe has to be safe itself.
 
 New /security page: never a fund or approval signature, strict CSP, automated secret + dependency scanning, a public threat model, responsible disclosure.
 
-Verify every word: coin-three-mu.vercel.app/security
+Verify every word: gl1tchbased.xyz/security
 ```
 
 ### Reply 6 — CTA
 ```
 Scan any token, any chain, free:
-coin-three-mu.vercel.app/scan
+gl1tchbased.xyz/scan
 
 Check your Signal Reputation in the Telegram — /rep:
 t.me/gl1tch_infected
@@ -80,15 +80,15 @@ Ana gruba gönder (`t.me/gl1tch_infected`). Pin'lemek istersen eski pini koru, b
 
 <b>1) Signal Graph — the scanner now has a memory 🧠</b>
 Every token we scan is remembered against its deployer. A wallet that has shipped multiple flagged tokens now lights up as <b>⚠ Serial deployer</b> on any fresh launch — a signal no single-token scanner can produce. It compounds with every scan.
-→ Try it: coin-three-mu.vercel.app/scan
+→ Try it: gl1tchbased.xyz/scan
 
 <b>2) Proof-of-Signal — reputation you can't fake or buy 📡</b>
 Your Signal Reputation fuses verified <i>sustained</i> holding (7-day average — flashing a balance for one block earns nothing) with the community you bring in. Climb Dormant → Beacon Prime. Status only, no paid rewards.
-→ Check yours: <code>/rep</code>  ·  Leaderboard: coin-three-mu.vercel.app/ranks
+→ Check yours: <code>/rep</code>  ·  Leaderboard: gl1tchbased.xyz/ranks
 
 <b>3) Security &amp; Transparency 🛡</b>
 A tool that tells you what's safe has to be safe itself. New page lays out the whole posture — never a fund/approval signature, strict CSP, automated secret + dependency scanning, public threat model, responsible disclosure.
-→ Read + verify: coin-three-mu.vercel.app/security
+→ Read + verify: gl1tchbased.xyz/security
 
 <b>Scanning is free and always will be.</b> Holding $GL1TCH unlocks convenience — never the protection itself.
 

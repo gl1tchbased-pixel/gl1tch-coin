@@ -17,7 +17,7 @@ const BEATS = [
   { kind: "step", n: "1", head: "GET PHANTOM + SOL", sub: "wallet + a little Solana" },
   { kind: "step", n: "2", head: "BUY ON PUMP.FUN", sub: "search $GL1TCH · swap SOL" },
   { kind: "step", n: "3", head: "/VERIFY · ENTER ROOM", sub: "sign · unlock your tier" },
-  { kind: "cta", big: "$GL1TCH", small: "coin-three-mu.vercel.app · pump.fun" },
+  { kind: "cta", big: "$GL1TCH", small: "gl1tchbased.xyz · pump.fun" },
 ];
 const PER = 84;
 

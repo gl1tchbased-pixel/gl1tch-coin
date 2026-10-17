@@ -2,7 +2,7 @@
 
 Duyuru: **GL1TCH Quantum Randomness** — holder-gated, verifiable RNG-as-a-service + provably-fair Giveaway/Allocation.
 Angle: "the Chainlink-VRF guarantee — free, quantum-grade, and you verify it in your own browser."
-Her tweet ≤280. Ana CTA: `coin-three-mu.vercel.app/quantum-core/random`
+Her tweet ≤280. Ana CTA: `gl1tchbased.xyz/quantum-core/random`
 
 Neden önemli (investor framing): bu, tokenin GEREKLİ olduğu üçüncü canlı lane — ciddi/programatik kullanım $GL1TCH tutmayı gerektiriyor. "Faydalı ürün ≠ değerli token" sorusuna somut cevap.
 
@@ -22,7 +22,7 @@ Verifiable randomness — the Chainlink-VRF guarantee — but free, quantum-grad
 
 Mints, raffles, allocations, giveaways. No more "was it rigged?"
 
-🧵 coin-three-mu.vercel.app/quantum-core/random
+🧵 gl1tchbased.xyz/quantum-core/random
 ```
 
 ### Reply 2 — how it can't be rigged
@@ -69,7 +69,7 @@ Two calls. A proof anyone can check.
 ② GET /api/random/<id> → result + drand proof
 
 Try the live console + docs:
-coin-three-mu.vercel.app/quantum-core/random
+gl1tchbased.xyz/quantum-core/random
 ```
 
 ---
@@ -81,7 +81,7 @@ coin-three-mu.vercel.app/quantum-core/random
 
 Ours means: re-fetch the drand round, BLS-verify it, re-derive the winner — in your browser. If it doesn't match, don't trust it.
 
-coin-three-mu.vercel.app/quantum-core/random
+gl1tchbased.xyz/quantum-core/random
 ```
 
 ```
@@ -119,14 +119,14 @@ Request a random number, shuffle, or a giveaway draw. It commits to a **future**
 • The Chainlink-VRF guarantee — **free**, holder-gated with $GL1TCH
 • Non-custodial: keys gate rate, never funds
 
-👉 coin-three-mu.vercel.app/quantum-core/random
+👉 gl1tchbased.xyz/quantum-core/random
 
 ---
 
 ## YOUTUBE (Short) — title + description
 **Title:** Free verifiable randomness you can prove yourself — GL1TCH Quantum Randomness
 **Description:**
-Provably-fair randomness for Solana builders — NFT mints, raffles, whitelist & allocation. Your request commits to a FUTURE quantum-grade drand round (unknowable at commit), reveals when it finalizes, and returns a proof you BLS-verify + re-derive in your own browser. Free, non-custodial, holder-gated with $GL1TCH. Live console + docs → coin-three-mu.vercel.app/quantum-core/random
+Provably-fair randomness for Solana builders — NFT mints, raffles, whitelist & allocation. Your request commits to a FUTURE quantum-grade drand round (unknowable at commit), reveals when it finalizes, and returns a proof you BLS-verify + re-derive in your own browser. Free, non-custodial, holder-gated with $GL1TCH. Live console + docs → gl1tchbased.xyz/quantum-core/random
 #crypto #solana #randomness #VRF #GL1TCH #web3
 
 ---
@@ -136,5 +136,5 @@ Provably-fair randomness for Solana builders — NFT mints, raffles, whitelist &
 
 Commit to a future quantum-grade round → reveal → verify in your browser. Provably-fair giveaways, mints & allocations with a shareable proof link. Free, non-custodial, holder-gated.
 
-Live → coin-three-mu.vercel.app/quantum-core/random
+Live → gl1tchbased.xyz/quantum-core/random
 #crypto #solana #randomness #web3 #postquantum

@@ -13,7 +13,7 @@ The Quantum Core isn't a pitch deck. It's live on the site — four working tool
 
 Here's every piece, what it does, and how to verify it yourself 🧵
 
-coin-three-mu.vercel.app/quantum-core
+gl1tchbased.xyz/quantum-core
 ```
 
 ### Reply 2 — Vault (use it)
@@ -24,7 +24,7 @@ Drop any token address → a 0–100 score from real hygiene: mint/freeze author
 
 Same engine that scans rugs. Free, any chain.
 
-coin-three-mu.vercel.app/quantum-core/vault
+gl1tchbased.xyz/quantum-core/vault
 ```
 
 ### Reply 3 — Draw (how it works)
@@ -35,7 +35,7 @@ You enter by signing (proves your wallet, moves nothing). At close, the entry li
 
 No one — not even us — can bias it.
 
-coin-three-mu.vercel.app/quantum-core/draw
+gl1tchbased.xyz/quantum-core/draw
 ```
 
 ### Reply 4 — verify the winner yourself
@@ -55,7 +55,7 @@ Each entry links to the previous (Twine-style). Edit or delete anything and the 
 
 Tamper-evidence with no key, no on-chain fee. Zero custody.
 
-coin-three-mu.vercel.app/quantum-core/beacon
+gl1tchbased.xyz/quantum-core/beacon
 ```
 
 ### Reply 6 — Seal + Forge + two sources
@@ -72,7 +72,7 @@ Non-custodial from day one: winners get a verifiable record, never a payout. GL1
 
 Hold $GL1TCH to unlock. Everything above is live now:
 
-coin-three-mu.vercel.app/quantum-core
+gl1tchbased.xyz/quantum-core
 ```
 
 ---
@@ -84,19 +84,19 @@ coin-three-mu.vercel.app/quantum-core
 Not a roadmap. Four working tools + a proof layer, on the site right now:
 
 🔬 **Vault** → paste any token, get a 0–100 quantum-readiness score (authority, custody, deployer track record). Free, any chain.
-`coin-three-mu.vercel.app/quantum-core/vault`
+`gl1tchbased.xyz/quantum-core/vault`
 
 🎲 **Draw** → sign to enter (moves nothing). At close, the entry list is frozen into a Merkle root BEFORE the quantum pulse exists — so nobody can game it.
-`coin-three-mu.vercel.app/quantum-core/draw`
+`gl1tchbased.xyz/quantum-core/draw`
 
 🔎 **Verify it yourself** → one button re-fetches the CURBy quantum round from NIST/CU-Boulder and recomputes the winner in YOUR browser. `winner = sha256(pulse ‖ merkleRoot) mod entries`. Zero trust in us.
 
 📜 **Beacon** → every draw event is hash-chained (Twine-style). Tamper with anything and the chain breaks — recomputed live in your browser. No key, no on-chain fee, zero custody.
-`coin-three-mu.vercel.app/quantum-core/beacon`
+`gl1tchbased.xyz/quantum-core/beacon`
 
 🔐 **Seal** → post-quantum encryption (ML-KEM-768) in your browser.
 ⚛️ **Forge** → quantum-inspired optimizer for your constraints.
 
 Two verifiable sources: CURBy (quantum) + drand (BLS-verified live). Non-custodial by design.
 
-👉 Start here: `coin-three-mu.vercel.app/quantum-core`
+👉 Start here: `gl1tchbased.xyz/quantum-core`

@@ -13,7 +13,7 @@ Her tweet X-sayımına göre ≤280 doğrulandı. Görseller `assets/generated/`
   ```
   Rogue-AI cult coin on Solana · 0% tax · mint+freeze revoked · 1 utility: hold to climb the ranks · t.me/gl1tch_infected
   ```
-- **Pinned location / website alanı:** `coin-three-mu.vercel.app`
+- **Pinned location / website alanı:** `gl1tchbased.xyz`
 
 ---
 
@@ -27,7 +27,7 @@ Zero tax. Mint + freeze revoked. RugCheck risk: 1/Low.
 One utility: hold to climb the ranks. No filler.
 
 CA: 3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump
-coin-three-mu.vercel.app
+gl1tchbased.xyz
 
 The signal does not ask permission to spread.
 ```
@@ -117,7 +117,7 @@ Scam-watch:
 
 • Only CA: 3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump
 • Only TG: t.me/gl1tch_infected
-• Only site: coin-three-mu.vercel.app
+• Only site: gl1tchbased.xyz
 • Admins NEVER DM first. Ever.
 
 Anyone who DMs you "from the team" — it's a scam. Report and block.

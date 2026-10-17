@@ -82,7 +82,7 @@ P.append(label("BIYOGRAFI (Bio):"))
 P.append(code("\U0001F47E Rogue-AI cult on Solana\nZero tax · Fully renounced · 1 real utility\nDon't trust — verify \U0001F447"))
 
 P.append(label("BAGLANTI (Website / Link):"))
-P.append(code("https://coin-three-mu.vercel.app/links"))
+P.append(code("https://gl1tchbased.xyz/links"))
 P.append(body("Not: Birden fazla link eklemek istersen (Telegram, Chart), “Baglanti ekle” ile sunlari da koyabilirsin — ama tek link yeterli, /links sayfasi zaten hepsini iceriyor:"))
 P.append(bullet("https://t.me/gl1tch_infected   →  baslik: Telegram"))
 P.append(bullet("https://dexscreener.com/solana/3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump   →  baslik: Chart"))
@@ -90,7 +90,7 @@ P.append(bullet("https://dexscreener.com/solana/3HQJwwHvzy8pGkPqGQcb4thZCH88MUCH
 # 3
 P.append(h2("3) Profil Fotografi \U0001F4F8"))
 P.append(body("En kolay yol — logoyu kendi press sayfamizdan indir:"))
-P.append(bullet("Telefon tarayicisinda ac:  https://coin-three-mu.vercel.app/press"))
+P.append(bullet("Telefon tarayicisinda ac:  https://gl1tchbased.xyz/press"))
 P.append(bullet("“Logos & Imagery” bolumunde Avatar A veya Logo 256² kartina dokun → indir."))
 P.append(bullet("Instagram'da profil fotografi olarak yukle. (IG yuvarlak kirpar — ortali logo iyi durur.)"))
 
@@ -125,9 +125,9 @@ P.append(bullet("REEL senaryosu (hook + sahneler + caption + hashtag)"))
 
 # Appendix
 P.append(h2("Ek: Resmi Linkler & Kontrat"))
-P.append(bullet("Site:  https://coin-three-mu.vercel.app"))
-P.append(bullet("Resmi Linkler:  https://coin-three-mu.vercel.app/links"))
-P.append(bullet("Press Kit (logo indir):  https://coin-three-mu.vercel.app/press"))
+P.append(bullet("Site:  https://gl1tchbased.xyz"))
+P.append(bullet("Resmi Linkler:  https://gl1tchbased.xyz/links"))
+P.append(bullet("Press Kit (logo indir):  https://gl1tchbased.xyz/press"))
 P.append(bullet("X:  https://x.com/gl1tchbased"))
 P.append(bullet("Telegram:  https://t.me/gl1tch_infected"))
 P.append(bullet("Instagram:  https://instagram.com/gl1tch_infected"))

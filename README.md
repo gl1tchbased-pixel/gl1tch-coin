@@ -9,13 +9,13 @@ The team is anonymous — so we don't ask you to trust us. **Everything is verif
 open, every wallet is public, and every draw, random result, and risk verdict is recomputable on
 your own device.
 
-- 🌐 Site: https://coin-three-mu.vercel.app
-- 🛡 Free token scanner: https://coin-three-mu.vercel.app/scan
-- ⚛️ Quantum Core: https://coin-three-mu.vercel.app/quantum-core
-- 🎲 Verifiable randomness: https://coin-three-mu.vercel.app/quantum-core/random
-- 🪪 Know Your Agent: https://coin-three-mu.vercel.app/agents
-- 💹 Why hold $GL1TCH (honest investment case): https://coin-three-mu.vercel.app/token
-- 📄 Whitepaper: https://coin-three-mu.vercel.app/whitepaper
+- 🌐 Site: https://gl1tchbased.xyz
+- 🛡 Free token scanner: https://gl1tchbased.xyz/scan
+- ⚛️ Quantum Core: https://gl1tchbased.xyz/quantum-core
+- 🎲 Verifiable randomness: https://gl1tchbased.xyz/quantum-core/random
+- 🪪 Know Your Agent: https://gl1tchbased.xyz/agents
+- 💹 Why hold $GL1TCH (honest investment case): https://gl1tchbased.xyz/token
+- 📄 Whitepaper: https://gl1tchbased.xyz/whitepaper
 - 💬 Telegram: https://t.me/gl1tch_infected
 
 ---
@@ -53,7 +53,7 @@ This is the whole point, and the anonymous-team trust substitute:
 **Check an AI agent before it transacts** (no key, no auth):
 
 ```js
-const r = await fetch(`https://coin-three-mu.vercel.app/api/agent/check?address=${agentWallet}&chain=solana`);
+const r = await fetch(`https://gl1tchbased.xyz/api/agent/check?address=${agentWallet}&chain=solana`);
 const trust = await r.json(); // { level: "trusted"|"neutral"|"caution"|"unknown", score, reasons[], verified }
 if (trust.level === "caution") block(trust.reasons[0]);
 ```
@@ -61,7 +61,7 @@ if (trust.level === "caution") block(trust.reasons[0]);
 **Scan a token** (free per-IP; higher throughput with a $GL1TCH-gated key via `x-gl1tch-key`):
 
 ```js
-const r = await fetch(`https://coin-three-mu.vercel.app/api/scan?mint=${mint}&chain=solana`);
+const r = await fetch(`https://gl1tchbased.xyz/api/scan?mint=${mint}&chain=solana`);
 const report = await r.json(); // { verdict, score, checks[], meta, aiVerdict, ... }
 ```
 
@@ -69,21 +69,21 @@ const report = await r.json(); // { verdict, score, checks[], meta, aiVerdict, .
 
 ```js
 // 1) commit
-const req = await fetch("https://coin-three-mu.vercel.app/api/random/request", {
+const req = await fetch("https://gl1tchbased.xyz/api/random/request", {
   method: "POST",
   headers: { "content-type": "application/json", "x-gl1tch-key": "gk_…" },
   body: JSON.stringify({ labels: ["alice", "bob", "carol"], winners: 1 }), // or { spec: {...} }
 }).then((x) => x.json()); // → { id, status:"pending", targetRound, availableInMs }
 
 // 2) reveal (public — anyone can read + verify)
-const res = await fetch(`https://coin-three-mu.vercel.app/api/random/${req.id}`).then((x) => x.json());
+const res = await fetch(`https://gl1tchbased.xyz/api/random/${req.id}`).then((x) => x.json());
 // → { status:"fulfilled", winners:[…], proof:{ round, randomness, signature } }
 ```
 
 Embed a live "Provably fair by GL1TCH" badge, or a token-scan badge:
 
 ```html
-<img src="https://coin-three-mu.vercel.app/api/random/badge?id=<id>" alt="Provably fair by GL1TCH" height="42" />
+<img src="https://gl1tchbased.xyz/api/random/badge?id=<id>" alt="Provably fair by GL1TCH" height="42" />
 ```
 
 ## Repo layout
@@ -103,7 +103,7 @@ history, and sustained-holding rank tiers. A useful product doesn't automaticall
 token — so value accrual is a separate, **engineered and honestly-staged** pillar (route real
 revenue to holders via a fee→buyback / fee-share mechanism, activating only on real revenue + a
 third-party audit). We never claim "usage magically pumps the price." See
-[`/token`](https://coin-three-mu.vercel.app/token) for the radically-honest investment case.
+[`/token`](https://gl1tchbased.xyz/token) for the radically-honest investment case.
 
 ## Honest positioning
 

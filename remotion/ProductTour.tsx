@@ -233,7 +233,7 @@ const Cta: React.FC = () => {
       <div style={{ position: "absolute", top: 720, left: 0, right: 0, textAlign: "center", padding: "0 60px" }}>
         <Chroma text={"ONE SCANNER.\nEVERYTHING."} size={82} split={split} />
       </div>
-      <div style={{ position: "absolute", top: 1010, left: 0, right: 0, textAlign: "center", fontSize: 38, fontWeight: 800, color: GREEN }}>coin-three-mu.vercel.app</div>
+      <div style={{ position: "absolute", top: 1010, left: 0, right: 0, textAlign: "center", fontSize: 38, fontWeight: 800, color: GREEN }}>gl1tchbased.xyz</div>
       <div style={{ position: "absolute", top: 1070, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 28, color: PAPER }}>Telegram: <span style={{ color: GREEN }}>/scan</span> · <span style={{ color: GREEN }}>/watch</span> · <span style={{ color: GREEN }}>/proof</span></div>
       <div style={{ position: "absolute", bottom: 150, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 24, letterSpacing: 3, color: GREEN, opacity: 0.85 }}>free · non-custodial · it never touches your wallet</div>
     </AbsoluteFill>

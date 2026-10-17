@@ -117,7 +117,7 @@ export const SystemScan: React.FC = () => {
       <div style={{ position: "absolute", bottom: height * 0.1, left: 0, right: 0, textAlign: "center", opacity: footO }}>
         <div style={{ color: PAPER, fontSize: Math.round(fs * 1.5), fontWeight: 800, letterSpacing: 3 }}>$GL1TCH</div>
         <div style={{ marginTop: fs * 0.5, color: "rgba(245,247,248,0.7)", fontSize: Math.round(fs * 0.72), letterSpacing: 2 }}>
-          don&apos;t trust. verify ↗  coin-three-mu.vercel.app
+          don&apos;t trust. verify ↗  gl1tchbased.xyz
         </div>
       </div>
     </AbsoluteFill>

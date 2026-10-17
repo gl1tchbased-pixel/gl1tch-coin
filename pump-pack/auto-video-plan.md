@@ -10,7 +10,7 @@ composition) and publish to Telegram + X + YouTube + Instagram.
 - It must clearly EXPLAIN one feature/update so a newcomer gets why GL1TCH is useful.
 - Brand palette only (green #7CFF4F, purple #7A3CFF, ink #050505, paper #F5F7F8).
 - 9:16, ~20-28s. Render to pump-pack/videos/branded/. Verify ≥1 still before posting.
-- Caption/title must explain the feature + CTA (coin-three-mu.vercel.app/scan · t.me/gl1tch_infected).
+- Caption/title must explain the feature + CTA (gl1tchbased.xyz/scan · t.me/gl1tch_infected).
 
 **Pipeline per video**
 1. Build + render the new composition (register in remotion/Root.tsx).

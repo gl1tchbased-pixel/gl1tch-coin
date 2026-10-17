@@ -20,7 +20,7 @@ gönderemem) ama her alan hazır — kopyala-yapıştır.
 | Contract address | `3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump` |
 | Decimals | `6` |
 | Total supply | `1000000000` (1,000,000,000) |
-| Website | `https://coin-three-mu.vercel.app` |
+| Website | `https://gl1tchbased.xyz` |
 | Twitter / X | `https://x.com/gl1tchbased` |
 | Telegram | `https://t.me/gl1tch_infected` |
 | Pair (GL1TCH/SOL) | `9fi2sFnnySPhNwJZPzZwxZT3xQnjPa9dh3EQbVNCstRW` |
@@ -74,7 +74,7 @@ düşük hacimli tokenlar sık reddedilir. Yine de bedava; denemeye değer.
 - Contract address: `3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump`
 - Decimals: `6`
 - Logo upload: `assets/brand/listing/gl1tch-logo-200.png`
-- Project website: `https://coin-three-mu.vercel.app`
+- Project website: `https://gl1tchbased.xyz`
 - Description: **(uzun versiyon — yukarıda)**
 - Twitter: `https://x.com/gl1tchbased`
 - Telegram: `https://t.me/gl1tch_infected`

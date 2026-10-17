@@ -95,7 +95,7 @@ const CtaOutro: React.FC = () => {
       </div>
       <div style={{ position: "absolute", top: 980, left: 70, right: 70, transform: `translateY(${cardY}px)` }}>
         <div style={{ borderRadius: 28, padding: "34px 36px", background: "rgba(5,5,5,0.7)", border: `1px solid ${GREEN}55`, boxShadow: `0 0 70px ${PURPLE}44` }}>
-          <div style={{ fontSize: 40, fontWeight: 800, color: GREEN, letterSpacing: -1, textAlign: "center" }}>coin-three-mu.vercel.app/scan</div>
+          <div style={{ fontSize: 40, fontWeight: 800, color: GREEN, letterSpacing: -1, textAlign: "center" }}>gl1tchbased.xyz/scan</div>
           <div style={{ marginTop: 18, display: "flex", justifyContent: "center", gap: 26, fontFamily: "monospace", fontSize: 26, color: "rgba(245,247,248,0.85)" }}>
             <span>@gl1tchbased</span><span style={{ color: GREEN }}>·</span><span>t.me/gl1tch_infected</span>
           </div>

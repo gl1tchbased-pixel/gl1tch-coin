@@ -116,7 +116,7 @@ Reminder:
 • Admins never DM first
 • "Wallet verification" sites that ask for seed = scam
 
-If it isn't on coin-three-mu.vercel.app, it isn't us.
+If it isn't on gl1tchbased.xyz, it isn't us.
 
 $GL1TCH
 ```

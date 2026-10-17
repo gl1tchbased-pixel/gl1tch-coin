@@ -16,7 +16,7 @@ Not a buzzword — four things that work today, and one rule: every claim is hon
 
 Meet the Quantum Core 🧵
 
-coin-three-mu.vercel.app/quantum-core
+gl1tchbased.xyz/quantum-core
 ```
 
 ### Reply 2 — Vault
@@ -61,7 +61,7 @@ Non-custodial from day one: winners get a verifiable record, never a payout. GL1
 
 Hold $GL1TCH to unlock. Explore it live:
 
-coin-three-mu.vercel.app/quantum-core
+gl1tchbased.xyz/quantum-core
 ```
 
 ---
@@ -79,7 +79,7 @@ Four things that actually work — and you can verify every one yourself:
 
 Zero trust required: two verifiable sources (CURBy quantum + drand BLS), a tamper-evident hash-chained Beacon, non-custodial by design.
 
-👉 coin-three-mu.vercel.app/quantum-core
+👉 gl1tchbased.xyz/quantum-core
 
 ---
 
@@ -87,7 +87,7 @@ Zero trust required: two verifiable sources (CURBy quantum + drand BLS), a tampe
 
 **Title:** GL1TCH Quantum Core — real quantum tech you can verify yourself
 **Description:**
-Four working quantum components in one crypto product: Vault (token readiness score), Draw (provably-fair, NIST-CURBy quantum-seeded), Seal (post-quantum ML-KEM encryption), Forge (quantum-inspired optimizer). Two verifiable randomness sources (CURBy + drand), a tamper-evident Beacon, and non-custodial by design. Explore it live → coin-three-mu.vercel.app/quantum-core
+Four working quantum components in one crypto product: Vault (token readiness score), Draw (provably-fair, NIST-CURBy quantum-seeded), Seal (post-quantum ML-KEM encryption), Forge (quantum-inspired optimizer). Two verifiable randomness sources (CURBy + drand), a tamper-evident Beacon, and non-custodial by design. Explore it live → gl1tchbased.xyz/quantum-core
 #crypto #quantum #solana #GL1TCH #postquantum
 
 ---
@@ -98,5 +98,5 @@ Four working quantum components in one crypto product: Vault (token readiness sc
 
 The GL1TCH Quantum Core: Vault (token readiness) · Draw (provably-fair, quantum-seeded) · Seal (post-quantum encryption) · Forge (quantum-inspired optimizer). Two verifiable sources, tamper-evident Beacon, non-custodial.
 
-Live → link in bio · coin-three-mu.vercel.app/quantum-core
+Live → link in bio · gl1tchbased.xyz/quantum-core
 #crypto #quantum #solana #postquantum #web3

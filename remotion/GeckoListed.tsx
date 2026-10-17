@@ -128,7 +128,7 @@ const Cta: React.FC = () => {
       <div style={{ position: "absolute", top: 740, left: 0, right: 0, textAlign: "center", padding: "0 60px" }}>
         <Chroma text={"VERIFIED.\nLISTED. LIVE."} size={86} split={split} />
       </div>
-      <div style={{ position: "absolute", top: 1040, left: 0, right: 0, textAlign: "center", fontSize: 38, fontWeight: 800, color: GREEN }}>coin-three-mu.vercel.app</div>
+      <div style={{ position: "absolute", top: 1040, left: 0, right: 0, textAlign: "center", fontSize: 38, fontWeight: 800, color: GREEN }}>gl1tchbased.xyz</div>
       <div style={{ position: "absolute", top: 1100, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 27, color: PAPER }}>track $GL1TCH on GeckoTerminal ↗</div>
       <div style={{ position: "absolute", bottom: 150, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 24, letterSpacing: 3, color: GREEN, opacity: 0.85 }}>free scanner · non-custodial · it never touches your wallet</div>
     </AbsoluteFill>

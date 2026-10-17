@@ -166,7 +166,7 @@ const Cta: React.FC = () => {
         <Chroma text={"DON'T TRUST US.\nVERIFY US."} size={88} split={split} />
       </div>
       <div style={{ position: "absolute", top: 1080, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 32, color: GREEN }}>Telegram: <span style={{ color: PAPER }}>/proof</span></div>
-      <div style={{ position: "absolute", top: 1138, left: 0, right: 0, textAlign: "center", fontSize: 36, fontWeight: 800, color: GREEN }}>coin-three-mu.vercel.app/proof</div>
+      <div style={{ position: "absolute", top: 1138, left: 0, right: 0, textAlign: "center", fontSize: 36, fontWeight: 800, color: GREEN }}>gl1tchbased.xyz/proof</div>
       <div style={{ position: "absolute", bottom: 150, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 24, letterSpacing: 3, color: GREEN, opacity: 0.85 }}>free · non-custodial · the receipts are on-chain</div>
     </AbsoluteFill>
   );

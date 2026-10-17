@@ -61,7 +61,7 @@ export const ComparisonMeme: React.FC = () => {
         ))}
       </div>
       <div style={{ position: "absolute", bottom: 210, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 28, letterSpacing: 5, color: "rgba(245,247,248,0.6)" }}>
-        coin-three-mu.vercel.app · on Solana
+        gl1tchbased.xyz · on Solana
       </div>
 
       <GlitchIn len={6} />

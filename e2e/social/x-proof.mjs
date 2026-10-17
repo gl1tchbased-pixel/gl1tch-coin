@@ -6,7 +6,7 @@
 import { openX, postThread, store } from "./x-lib.mjs";
 
 const BOT = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production-3f2c.up.railway.app").replace(/\/$/, "");
-const SITE = "coin-three-mu.vercel.app";
+const SITE = "gl1tchbased.xyz";
 const MIN = Number(process.env.MIN || 3);
 const MAX = Number(process.env.MAX || 1);
 

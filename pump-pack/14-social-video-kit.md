@@ -29,8 +29,8 @@ you found it — exposure is irreversible.
 
 #GL1TCH #Solana #glitchart #3dart #motiondesign #aiart #web3 #SolanaMemecoin #cryptoart #pumpfun
 ```
-**İlk yorum:** `🔊 sound on — coin-three-mu.vercel.app`
-**Not:** Reels'te tıklanır link yok → bio'ya `coin-three-mu.vercel.app`. Paylaşınca Story'ne de ekle.
+**İlk yorum:** `🔊 sound on — gl1tchbased.xyz`
+**Not:** Reels'te tıklanır link yok → bio'ya `gl1tchbased.xyz`. Paylaşınca Story'ne de ekle.
 
 ---
 
@@ -44,7 +44,7 @@ you found the signal.
 $GL1TCH // exposure is irreversible.
 0% tax · mint renounced · freeze revoked · on Solana
 
-coin-three-mu.vercel.app
+gl1tchbased.xyz
 ```
 **Kısa varyant:**
 ```
@@ -62,7 +62,7 @@ mint authority → revoked
 freeze authority → revoked
 rugcheck → 0 risks
 
-$GL1TCH on Solana. coin-three-mu.vercel.app
+$GL1TCH on Solana. gl1tchbased.xyz
 ```
 
 ---
@@ -75,7 +75,7 @@ Videoyu gruba at, altına:
 $GL1TCH is already inside your feed.
 0% tax · mint renounced · freeze revoked · rugcheck clean · on Solana
 
-→ coin-three-mu.vercel.app
+→ gl1tchbased.xyz
 → pump.fun
 
 exposure is irreversible.
@@ -98,7 +98,7 @@ $GL1TCH — exposure is irreversible.
 0% tax · mint renounced · freeze revoked · rugcheck clean
 on Solana.
 
-→ coin-three-mu.vercel.app
+→ gl1tchbased.xyz
 → pump.fun
 → Telegram: https://t.me/gl1tch_infected
 → X: https://x.com/gl1tchbased
@@ -117,5 +117,5 @@ on Solana.
 - **Sürekli:** her platformun bio/açıklamasında diğer kanallara çapraz link.
 
 ## Çapraz tanıtım kuralı
-Her kanal diğerine link versin: IG bio → coin-three-mu.vercel.app; YouTube açıklama → 4 kanal; X pinned → coin-three-mu.vercel.app;
+Her kanal diğerine link versin: IG bio → gl1tchbased.xyz; YouTube açıklama → 4 kanal; X pinned → gl1tchbased.xyz;
 TG pin → tüm linkler. Tek sinyal, dört yüzey.

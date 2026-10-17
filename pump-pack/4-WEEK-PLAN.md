@@ -43,6 +43,6 @@
 - X: günde EN FAZLA 1 post (spam yok, kalite > miktar).
 - Her video YENİ açı — tekrar yok.
 - **MASCOT rotasyonda:** her hafta en az 1-2 **mascot-hero** video (mascot karakteri ana kahraman: lore/reveal/talking — `public/brand/gl1tch-*-9x16.mp4` + Higgsfield klipleri). Salt-metin/terminal formatlarıyla (scan, holder-types) **dönüşümlü** kullan — yüz + format çeşitliliği birlikte. Mascot, markanın yüzü; içerikte düzenli görünmeli.
-- Doğru adres: **coin-three-mu.vercel.app** (asla gl1tch.io).
+- Doğru adres: **gl1tchbased.xyz** (asla gl1tch.io).
 - Marka paleti: #7CFF4F / #7A3CFF. Marka sesi: rogue-AI, kuru espri, değer.
 - Her pazar: metrik notu + hangi format tuttu raporu.

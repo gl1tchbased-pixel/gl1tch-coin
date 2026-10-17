@@ -2,7 +2,7 @@
 
 **Hesap:** instagram.com/gl1tch_infected · display "gl1tchbased"
 **Format:** Reels, 9:16, original audio (IG müziği EKLEME — sesin üstüne biner)
-**Link:** Reels'te tıklanır link yok → **bio'ya `coin-three-mu.vercel.app`** koy, açıklamada "link in bio"
+**Link:** Reels'te tıklanır link yok → **bio'ya `gl1tchbased.xyz`** koy, açıklamada "link in bio"
 
 ## Video
 - Hızlı hook: `public/brand/gl1tch-mascot-produced.mp4` (12s) · telefon: files.catbox.moe/j6dyw2.mp4
@@ -24,7 +24,7 @@ you found it — exposure is irreversible.
 
 ## İlk yorum
 ```
-🔊 sound on — coin-three-mu.vercel.app
+🔊 sound on — gl1tchbased.xyz
 ```
 
 ## Adımlar
@@ -36,4 +36,4 @@ you found it — exposure is irreversible.
 ## İpuçları
 - Finansal vaat yazma (IG kripto throttling). Sanat etiketleri (#glitchart #3dart) geniş+güvenli erişim.
 - Akşam 19:00–22:00 paylaş, ilk 1 saat yorumlara cevap ver.
-- Bio'da: `coin-three-mu.vercel.app` + diğer kanallara link.
+- Bio'da: `gl1tchbased.xyz` + diğer kanallara link.

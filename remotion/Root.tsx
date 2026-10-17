@@ -38,9 +38,9 @@ import { voiceEnv } from "./voiceData";
 // Brand-wrapped Higgsfield AI clips (9:16). Source clips are 24fps/~4.04s → ~121
 // comp frames at 30fps; comp runs 120 so the loop never seams.
 const PROMOS = [
-  { id: "gl1tch-promo-materialize", clip: "gl1tch-materialize-9x16.mp4", eyebrow: "SYSTEM // BREACH", headline: "GLITCH IN\nTHE MACHINE", sub: "rogue AI meme · Solana", cta: "coin-three-mu.vercel.app" },
+  { id: "gl1tch-promo-materialize", clip: "gl1tch-materialize-9x16.mp4", eyebrow: "SYSTEM // BREACH", headline: "GLITCH IN\nTHE MACHINE", sub: "rogue AI meme · Solana", cta: "gl1tchbased.xyz" },
   { id: "gl1tch-promo-hook", clip: "gl1tch-glitch-hook-9x16.mp4", eyebrow: "POV // INFECTED", headline: "YOU CAN'T\nUNSEE IT", sub: "the glitch found your timeline", cta: "$GL1TCH" },
-  { id: "gl1tch-promo-coin", clip: "gl1tch-coin-promo-9x16.mp4", eyebrow: "ZERO TAX // RUG-PROOF", headline: "NOT YOUR\nAVERAGE MEME", sub: "mint & freeze revoked · hold to climb", cta: "coin-three-mu.vercel.app" },
+  { id: "gl1tch-promo-coin", clip: "gl1tch-coin-promo-9x16.mp4", eyebrow: "ZERO TAX // RUG-PROOF", headline: "NOT YOUR\nAVERAGE MEME", sub: "mint & freeze revoked · hold to climb", cta: "gl1tchbased.xyz" },
   { id: "gl1tch-promo-infected", clip: "gl1tch-infected-9x16.mp4", eyebrow: "OUTBREAK // LIVE", headline: "THE INFECTION\nIS SPREADING", sub: "join the infected", cta: "t.me/gl1tch_infected" },
 ] as const;
 

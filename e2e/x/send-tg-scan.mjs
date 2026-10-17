@@ -30,7 +30,7 @@ Every flag comes with a plain-English <i>why</i> — you keep the judgment.
 
 Don't trust us? <b>Scan us.</b> Then scan your next ape before you buy it.
 
-👉 coin-three-mu.vercel.app/scan
+👉 gl1tchbased.xyz/scan
 Or right here: <code>/scan bonk</code>
 
 Non-custodial · Read-only · Free · Not financial advice.`;

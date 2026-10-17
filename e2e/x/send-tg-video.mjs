@@ -25,7 +25,7 @@ Others run checks. GL1TCH <i>investigates</i>:
 📡 <b>Shareable</b> — every scan gets a card + an embeddable badge
 
 Free · non-custodial · any chain.
-🔍 coin-three-mu.vercel.app/scan · <code>/scan &lt;token&gt;</code>`,
+🔍 gl1tchbased.xyz/scan · <code>/scan &lt;token&gt;</code>`,
   },
   wtguide: {
     video: "gl1tch-watchtower-howto.mp4",
@@ -36,7 +36,7 @@ Free · non-custodial · any chain.
 3️⃣ catches any drop — LP unlocked, an authority returns, verdict falls
 4️⃣ pings you right here — <b>before the chart even moves</b>
 
-Try it now: <code>/watch bonk</code> · full scanner coin-three-mu.vercel.app/scan`,
+Try it now: <code>/watch bonk</code> · full scanner gl1tchbased.xyz/scan`,
   },
   multichain: {
     video: "gl1tch-multichain.mp4",
@@ -46,7 +46,7 @@ Most rug-checkers only work on one chain. GL1TCH reads them all — Solana, Ethe
 
 Same plain-English verdict everywhere: honeypot, LP lock, mint/freeze, tax, holders.
 
-Your chain is covered → <code>/scan &lt;token&gt;</code> or coin-three-mu.vercel.app/scan`,
+Your chain is covered → <code>/scan &lt;token&gt;</code> or gl1tchbased.xyz/scan`,
   },
   anatomy: {
     video: "gl1tch-anatomy.mp4",
@@ -56,7 +56,7 @@ It 100x'd in a day. Then it went to zero.
 
 The traps were there the whole time — 🔓 unlocked liquidity, 🪙 a live mint authority, 🐋 a 61% whale. GL1TCH reads all of it in <b>5 seconds</b>, before you ape.
 
-Scan anything → <code>/scan &lt;token&gt;</code> or coin-three-mu.vercel.app/scan
+Scan anything → <code>/scan &lt;token&gt;</code> or gl1tchbased.xyz/scan
 
 <i>Don't trust. Verify.</i>`,
   },

@@ -19,7 +19,7 @@ const V = {
   ca: "3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump",
   name: "GL1TCH",
   symbol: "GL1TCH",
-  website: "https://coin-three-mu.vercel.app",
+  website: "https://gl1tchbased.xyz",
   x: "https://x.com/gl1tchbased",
   tg: "https://t.me/gl1tch_infected",
   ig: "https://instagram.com/gl1tch_infected",

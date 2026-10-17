@@ -15,7 +15,7 @@
 $GL1TCH is already inside your feed.
 0% tax · mint renounced · freeze revoked · rugcheck clean · on Solana
 
-→ coin-three-mu.vercel.app
+→ gl1tchbased.xyz
 → pump.fun
 
 exposure is irreversible.

@@ -5,10 +5,10 @@ them in front of the right people. You (founder) execute the outreach; everythin
 say and link is here. Honest, no over-promising — that's the brand.
 
 **Your assets (send these, don't re-explain):**
-- Thesis (for investors): https://coin-three-mu.vercel.app/thesis
-- Product (Know Your Agent): https://coin-three-mu.vercel.app/agents
-- Developer docs (for partners): https://coin-three-mu.vercel.app/agents/docs
-- The token scanner it grew from: https://coin-three-mu.vercel.app/scan
+- Thesis (for investors): https://gl1tchbased.xyz/thesis
+- Product (Know Your Agent): https://gl1tchbased.xyz/agents
+- Developer docs (for partners): https://gl1tchbased.xyz/agents/docs
+- The token scanner it grew from: https://gl1tchbased.xyz/scan
 
 **One-liner (memorize this):**
 > GL1TCH is the trust & reputation layer for the AI-agent economy — a memecoin with a real
@@ -64,7 +64,7 @@ in one call:
 GET /api/agent/check?address=<agent> → { level, score, reasons }
 
 Free, non-custodial, and there's an /llms.txt so agents self-integrate. Docs:
-coin-three-mu.vercel.app/agents/docs
+gl1tchbased.xyz/agents/docs
 
 Happy to wire in a demo if useful. No ask — just think it makes your agents safer.
 ```
@@ -74,7 +74,7 @@ Happy to wire in a demo if useful. No ask — just think it makes your agents sa
 The agent economy has no trust layer — you can't tell if an autonomous agent is safe to let
 near funds. We built KYA (Know Your Agent): identity + on-chain provenance + reputation, free.
 
-Thesis + working product: coin-three-mu.vercel.app/thesis
+Thesis + working product: gl1tchbased.xyz/thesis
 
 Not asking for a shill — if the angle's interesting, happy to go deeper or hop on a space.
 ```
@@ -86,7 +86,7 @@ Most memecoins are a bet on attention. $GL1TCH is a bet on a product with a data
 
 Check any agent free · one call to integrate · honest revenue→buyback, no points/airdrop games.
 
-Judge the product, not the promise: coin-three-mu.vercel.app/agents
+Judge the product, not the promise: gl1tchbased.xyz/agents
 Not financial advice — DYOR.
 ```
 
@@ -94,7 +94,7 @@ Not financial advice — DYOR.
 ```
 GL1TCH — free, non-custodial trust & reputation layer for on-chain AI agents (Know Your Agent),
 plus a multi-chain token rug scanner. One-call API + embeddable badge. Solana.
-coin-three-mu.vercel.app
+gl1tchbased.xyz
 ```
 
 ---

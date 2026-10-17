@@ -97,7 +97,7 @@ export const HolderTypes: React.FC = () => {
           <AbsoluteFill style={{ alignItems: "center", justifyContent: "center", padding: "0 60px", textAlign: "center", opacity: op, transform: `scale(${interpolate(s, [0, 1], [0.9, 1])})` }}>
             <Chroma text={"which one\nare you? 👻"} size={84} />
             <div style={{ marginTop: 46, fontSize: 58, fontWeight: 800, color: GREEN, letterSpacing: 2 }}>$GL1TCH</div>
-            <div style={{ marginTop: 14, fontSize: 28, letterSpacing: 2, color: "rgba(245,247,248,0.66)" }}>your rank = your hold · coin-three-mu.vercel.app</div>
+            <div style={{ marginTop: 14, fontSize: 28, letterSpacing: 2, color: "rgba(245,247,248,0.66)" }}>your rank = your hold · gl1tchbased.xyz</div>
           </AbsoluteFill>
         );
       })()}

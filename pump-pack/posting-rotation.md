@@ -36,7 +36,7 @@
 ## Kurallar
 - X: günde 1 post. Aynı video haftada 1'den fazla değil.
 - Mascot ↔ format ↔ image dönüşümlü (yüz + çeşitlilik).
-- Doğru adres: coin-three-mu.vercel.app. Marka paleti #7CFF4F/#7A3CFF.
+- Doğru adres: gl1tchbased.xyz. Marka paleti #7CFF4F/#7A3CFF.
 - Haftada 1 yeni taze parça yeter — kalite > miktar. Tükenene kadar üretme.
 
 **Not:** Bu rotasyon "üretimi yavaşlat, dağıtımı sıklaştır" demek. Asıl iş artık günlük reply (erişim), yeni video değil.

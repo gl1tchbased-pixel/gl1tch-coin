@@ -22,7 +22,7 @@ const arg = (k, d) => { const i = process.argv.indexOf(`--${k}`); return i >= 0 
 const DURATION = arg("duration", "6");
 const TIER = arg("tier", "pro");        // pro=1080p, standard=768p
 const RES = TIER === "pro" ? "1080P" : "768P";
-const IMG = arg("img", "https://coin-three-mu.vercel.app/brand/glitchy-1024.png");
+const IMG = arg("img", "https://gl1tchbased.xyz/brand/glitchy-1024.png");
 const OUT = arg("out", `pump-pack/videos/mascot-i2v-${Date.now ? "clip" : "clip"}.mp4`);
 const PROMPT = arg("prompt",
   "The 3D chibi ghost character floats and bobs gently in the air, arms crossed with a mischievous confident smirk. Its glitched RGB eye flickers with digital static while the other cyan eye glows. The colorful pixel voxel cubes dissolving from its lower body swirl and drift like scattering data, some reforming. Subtle chromatic-aberration glitch pulses ripple across the character. Cyan and magenta neon rim light shimmers over the glossy surface. Slow smooth cinematic camera push-in. Dark moody background, premium high-detail 3D render, cohesive brand colors, no text changes."

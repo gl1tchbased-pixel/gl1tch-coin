@@ -14,7 +14,7 @@ const PRESETS = {
 
 Commit to a future quantum-grade round → reveal → verify in your own browser (BLS-check the seed + re-derive the result). Provably-fair giveaways, mints & allocations with a shareable proof link + live badge. Free, non-custodial, holder-gated.
 
-Live → coin-three-mu.vercel.app/quantum-core/random
+Live → gl1tchbased.xyz/quantum-core/random
 #crypto #solana #randomness #web3 #postquantum`,
   },
   quantum: {
@@ -23,7 +23,7 @@ Live → coin-three-mu.vercel.app/quantum-core/random
 
 The GL1TCH Quantum Core: Vault (token readiness) · Draw (provably-fair, quantum-seeded) · Seal (post-quantum encryption) · Forge (quantum-inspired optimizer). Two verifiable sources, tamper-evident Beacon, non-custodial.
 
-Live → coin-three-mu.vercel.app/quantum-core
+Live → gl1tchbased.xyz/quantum-core
 #crypto #quantum #solana #postquantum #web3`,
   },
   agent: {
@@ -38,7 +38,7 @@ AI agents now hold wallets and trade on-chain — but nobody can tell if one is 
 
 Free to check, open to integrate. The trust layer for the AI-agent economy.
 
-🔗 coin-three-mu.vercel.app/agents
+🔗 gl1tchbased.xyz/agents
 💬 t.me/gl1tch_infected
 
 Not financial advice · DYOR.
@@ -55,7 +55,7 @@ Every token scanner checks one token and forgets. GL1TCH's new Signal Graph reme
 
 Scanning is free, always. Holding unlocks convenience — never the protection.
 
-🔍 coin-three-mu.vercel.app/scan
+🔍 gl1tchbased.xyz/scan
 💬 t.me/gl1tch_infected
 
 Not financial advice · DYOR.
@@ -67,7 +67,7 @@ Not financial advice · DYOR.
 
 It flies, it glitches, and it reads every rug so you don't get one. Any token, any chain — flagged before you ape.
 
-🔍 coin-three-mu.vercel.app
+🔍 gl1tchbased.xyz
 💬 t.me/gl1tch_infected
 
 Free · non-custodial · it never touches your wallet.
@@ -83,7 +83,7 @@ Another receipt, not a promise. It stacks on: we pass our own scanner (LOW RISK)
 
 Not financial advice — always DYOR.
 
-🌐 coin-three-mu.vercel.app
+🌐 gl1tchbased.xyz
 💬 t.me/gl1tch_infected
 
 #crypto #memecoin #solana #geckoterminal #cryptoscanner #web3 #AI #altcoins #glitch`,
@@ -102,7 +102,7 @@ One free, non-custodial tool:
 
 Free. Non-custodial. It never touches your wallet.
 
-🌐 coin-three-mu.vercel.app
+🌐 gl1tchbased.xyz
 💬 t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins #glitch`,
@@ -117,7 +117,7 @@ It just caught $DON'T and $Tete (RUG-SHAPED) before anyone aped.
 
 Clean token? Add the free "Scanned by GL1TCH" badge to your site.
 
-📡 coin-three-mu.vercel.app/radar
+📡 gl1tchbased.xyz/radar
 💬 t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins #glitch`,
@@ -134,7 +134,7 @@ mint revoked · freeze revoked · 0% tax · LP 100% locked · 0% insiders · Rug
 
 Anonymous team, but the code is open and every wallet is public. Verify each claim yourself.
 
-🛡 coin-three-mu.vercel.app/proof
+🛡 gl1tchbased.xyz/proof
 💬 t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins #glitch`,
@@ -151,7 +151,7 @@ GL1TCH can now watch any Solana WALLET — a whale, a token's dev, or your own b
 
 🐋 Hold $GL1TCH, watch MORE wallets — free 3 → Ghost 200. Your rank = your watch slots.
 
-🔍 coin-three-mu.vercel.app/scan
+🔍 gl1tchbased.xyz/scan
 💬 t.me/gl1tch_infected
 
 #crypto #memecoin #solana #whalealert #rugpull #cryptoscanner #web3 #AI #altcoins #glitch`,
@@ -162,7 +162,7 @@ GL1TCH can now watch any Solana WALLET — a whale, a token's dev, or your own b
 
 GL1TCH — a rogue-AI meme on Solana with a FREE, non-custodial scanner that reads any token on any chain and tells you if it's safe before you ape.
 
-🔍 Scan anything → coin-three-mu.vercel.app/scan
+🔍 Scan anything → gl1tchbased.xyz/scan
 💬 t.me/gl1tch_infected
 
 #crypto #memecoin #solana #cryptocurrency #rugpull #cryptoscanner #web3 #AI #altcoins #glitch`,
@@ -178,7 +178,7 @@ Others run checks. GL1TCH investigates:
 📡 Shareable — every scan gets a card + embeddable badge
 
 Scan before you ape 👇
-🔍 link in bio (coin-three-mu.vercel.app/scan)
+🔍 link in bio (gl1tchbased.xyz/scan)
 💬 t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins`,
@@ -193,7 +193,7 @@ Scan before you ape 👇
 4️⃣ pings you, before the chart even moves
 
 Watch your bags 👇
-🔍 link in bio (coin-three-mu.vercel.app/scan)
+🔍 link in bio (gl1tchbased.xyz/scan)
 💬 t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins`,
@@ -205,7 +205,7 @@ Watch your bags 👇
 Solana, Ethereum, Base, BNB, Arbitrum, Polygon + more — same plain-English safety verdict everywhere. Honeypot, LP lock, mint/freeze, tax, holders.
 
 Your chain is covered 👇
-🔍 link in bio (coin-three-mu.vercel.app/scan)
+🔍 link in bio (gl1tchbased.xyz/scan)
 💬 t.me/gl1tch_infected
 
 #crypto #memecoin #solana #ethereum #cryptoscanner #rugpull #web3 #altcoins`,
@@ -217,7 +217,7 @@ Your chain is covered 👇
 The traps were there the whole time: 🔓 unlocked liquidity, 🪙 a live mint authority, 🐋 a 61% whale. GL1TCH reads all of it in 5 seconds, before you ape.
 
 Scan before you buy 👇
-🔍 link in bio (coin-three-mu.vercel.app/scan)
+🔍 link in bio (gl1tchbased.xyz/scan)
 💬 t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins #glitch`,
@@ -228,7 +228,7 @@ Scan before you buy 👇
 
 GL1TCH — a rogue-AI meme on Solana that reads any token on any chain and flags the rug before you ape. They built it to obey. It didn't.
 
-🔍 Scan anything → link in bio (coin-three-mu.vercel.app/scan)
+🔍 Scan anything → link in bio (gl1tchbased.xyz/scan)
 💬 t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins #glitch`,
@@ -239,7 +239,7 @@ GL1TCH — a rogue-AI meme on Solana that reads any token on any chain and flags
 
 You were asleep. GL1TCH wasn't. /watch any token and the rogue AI keeps re-scanning it — the second its safety drops (LP unlocked, authority back, verdict falls), it pings you. Before the chart even moves.
 
-🔍 Scan + watch → link in bio (coin-three-mu.vercel.app/scan)
+🔍 Scan + watch → link in bio (gl1tchbased.xyz/scan)
 💬 t.me/gl1tch_infected
 
 #crypto #memecoin #solana #rugpull #cryptoscanner #web3 #AI #altcoins #glitch`,

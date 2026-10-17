@@ -31,7 +31,7 @@ to spend on $GL1TCH.
 ```
 pump.fun/coin/3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump
 ```
-Confirm the CA matches the one on **coin-three-mu.vercel.app/links**.
+Confirm the CA matches the one on **gl1tchbased.xyz/links**.
 There is only one real CA. Anything else is a scam.
 
 ### 4. Buy

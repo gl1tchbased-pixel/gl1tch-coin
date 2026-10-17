@@ -6,9 +6,9 @@
 > and kills the launch. Prepared 2026-07-12.
 
 Links you'll reuse:
-- Randomness tool: https://coin-three-mu.vercel.app/quantum-core/random
-- Scanner: https://coin-three-mu.vercel.app/scan
-- Site: https://coin-three-mu.vercel.app
+- Randomness tool: https://gl1tchbased.xyz/quantum-core/random
+- Scanner: https://gl1tchbased.xyz/scan
+- Site: https://gl1tchbased.xyz
 - GitHub (open source): https://github.com/gl1tchbased-pixel/gl1tch-coin
 
 ---
@@ -20,7 +20,7 @@ Links you'll reuse:
 Show HN: Free verifiable randomness you can check in your own browser (drand-seeded)
 ```
 
-**URL:** `https://coin-three-mu.vercel.app/quantum-core/random`
+**URL:** `https://gl1tchbased.xyz/quantum-core/random`
 
 **Text (first comment right after posting):**
 ```
@@ -93,7 +93,7 @@ So I built a free tool: you paste your entrant list, it draws winners from a fut
 it checks the randomness signature and re-derives the winners on their own device. Non-custodial,
 open source. (I'm the dev — sharing because it might help anyone running a whitelist/raffle.)
 
-Tool: https://coin-three-mu.vercel.app/quantum-core/random
+Tool: https://gl1tchbased.xyz/quantum-core/random
 Would love feedback.
 ```
 
@@ -106,7 +106,7 @@ it a genuinely useful share, not a pitch. Skip the token entirely.
 
 Find these lists on GitHub, open a PR adding one line under the right section. Entry text:
 ```md
-- [GL1TCH](https://coin-three-mu.vercel.app) — Free, non-custodial multi-chain rug scanner, cross-scan
+- [GL1TCH](https://gl1tchbased.xyz) — Free, non-custodial multi-chain rug scanner, cross-scan
   deployer-reputation graph, Know-Your-Agent trust API (ERC-8004), and browser-verifiable randomness
   (drand-seeded). Open source.
 ```

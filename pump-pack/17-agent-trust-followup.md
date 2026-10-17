@@ -15,7 +15,7 @@ Check any on-chain agent. Register yours. Embed a live trust badge. Browse the p
 
 Know Your Agent — the trust rail for the AI-agent economy. 🧵
 
-coin-three-mu.vercel.app/agents
+gl1tchbased.xyz/agents
 ```
 
 ### Reply 2 — directory
@@ -24,7 +24,7 @@ New: the Agent Directory.
 
 Every agent we've assessed — the verified ones you can trust, and the flagged actors our Signal Graph caught. Know the good and the bad before you let an agent near funds.
 
-coin-three-mu.vercel.app/agents/directory
+gl1tchbased.xyz/agents/directory
 ```
 
 ### Reply 3 — adoption / one-line integration
@@ -35,5 +35,5 @@ Building an agent, wallet, or dapp? Add a live trust check in one line — a bad
 
 Free to check, open to integrate.
 
-coin-three-mu.vercel.app/agents
+gl1tchbased.xyz/agents
 ```

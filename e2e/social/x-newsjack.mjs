@@ -6,7 +6,7 @@
 import { openX, postThread, searchLatest, store } from "./x-lib.mjs";
 import { generateTake } from "./x-llm.mjs";
 
-const SITE = "coin-three-mu.vercel.app";
+const SITE = "gl1tchbased.xyz";
 const MAX = Number(process.env.MAX || 1);
 const MIN_FAVES = Number(process.env.MIN_FAVES || 150);
 

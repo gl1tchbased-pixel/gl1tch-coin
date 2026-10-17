@@ -19,7 +19,7 @@ Somut, saat-saat. Hedef: 1-2 saatlik pencerede **gerçek görünürlük + ilk ya
 
 ### A1. Livestream aç (kamera gerekmez)
 1. pump.fun → coin sayfan → **"Go Live"**.
-2. Kamera istemiyorsan **ekran paylaş**: site (`coin-three-mu.vercel.app`) + RugCheck +
+2. Kamera istemiyorsan **ekran paylaş**: site (`gl1tchbased.xyz`) + RugCheck +
    Solscan sekmeleri açık, sade bir terminal/OBS görünümü. Yüz yok, ses yok bile olabilir
    ama **ses varsa dönüşüm 3 katı** — kısık sesle bile anlat.
 3. Yayın başlığı: `GL1TCH — 0% tax · mint+freeze revoked · RugCheck 1/Low · live`.

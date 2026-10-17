@@ -36,7 +36,7 @@ info, Trending algoritmasında da boost alır.
 
 **Website:**
 ```
-https://coin-three-mu.vercel.app
+https://gl1tchbased.xyz
 ```
 
 **Description (≤ ~300 karakter):**
@@ -49,7 +49,7 @@ GL1TCH is Solana's rogue-AI cult coin. Zero tax. Mint + freeze authorities revok
 |---|---|
 | Twitter / X | `https://x.com/gl1tchbased` |
 | Telegram | `https://t.me/gl1tch_infected` |
-| Website | `https://coin-three-mu.vercel.app` |
+| Website | `https://gl1tchbased.xyz` |
 
 **Locked / excluded supply wallets:**
 Yok — declare edilecek kilitli supply yok. Founder bag (%3.57) public ve dolaşımda,

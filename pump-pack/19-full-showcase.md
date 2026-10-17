@@ -15,7 +15,7 @@ It's a memecoin with a product no competitor has — and it's the trust layer fo
 
 Here's everything it does, and why it's different 🧵
 
-coin-three-mu.vercel.app/agents
+gl1tchbased.xyz/agents
 ```
 
 ### Reply 2 — Signal Graph (memory)
@@ -26,7 +26,7 @@ Every scanner checks one token and forgets. Our Signal Graph remembers every dep
 
 RugCheck & GoPlus structurally can't do this.
 
-coin-three-mu.vercel.app/scan
+gl1tchbased.xyz/scan
 ```
 
 ### Reply 3 — Agent Trust Layer
@@ -37,7 +37,7 @@ Agents now hold wallets and trade on-chain — nobody checks if one is safe to t
 
 No other memecoin is a real product in the #1 narrative.
 
-coin-three-mu.vercel.app/agents
+gl1tchbased.xyz/agents
 ```
 
 ### Reply 4 — the full stack
@@ -51,7 +51,7 @@ coin-three-mu.vercel.app/agents
 
 Free. One call to integrate.
 
-coin-three-mu.vercel.app/agents/docs
+gl1tchbased.xyz/agents/docs
 ```
 
 ### Reply 5 — agent-native (llms.txt)
@@ -62,7 +62,7 @@ The whole API is machine-readable at /llms.txt. An agent can discover GL1TCH and
 
 No other project does this.
 
-coin-three-mu.vercel.app/llms.txt
+gl1tchbased.xyz/llms.txt
 ```
 
 ### Reply 6 — honest economics
@@ -73,7 +73,7 @@ Protection is free and never gated behind the token. Real revenue → rules-base
 
 Built to last, not to farm.
 
-coin-three-mu.vercel.app/thesis
+gl1tchbased.xyz/thesis
 ```
 
 ### Reply 7 — CTA
@@ -83,7 +83,7 @@ Most coins are a bet on attention.
 $GL1TCH is a bet on a product with a data moat, in the biggest narrative of 2026.
 
 Judge the product, not the promise:
-coin-three-mu.vercel.app/agents
+gl1tchbased.xyz/agents
 
 @gl1tchbased · t.me/gl1tch_infected
 Not financial advice.
@@ -100,22 +100,22 @@ Not a logo and a promise — a real product, and the trust layer for 2026's bigg
 
 <b>🧠 A scanner with memory</b>
 Our Signal Graph remembers every deployer — a serial rugger is flagged on its NEXT token. RugCheck/GoPlus structurally can't do this.
-→ coin-three-mu.vercel.app/scan
+→ gl1tchbased.xyz/scan
 
 <b>🆔 Know Your Agent (KYA)</b>
 Agents hold wallets and trade on-chain; nobody checks them. We verify any agent's identity + reputation + give a guardrail. No other memecoin is a real product in this narrative.
-→ coin-three-mu.vercel.app/agents
+→ gl1tchbased.xyz/agents
 
 <b>🧩 A stack, not a slogan</b>
 Check any agent · agents self-register · embeddable trust badge · public directory · one-call API. Free.
-→ coin-three-mu.vercel.app/agents/docs
+→ gl1tchbased.xyz/agents/docs
 
 <b>🤖 Agent-native</b>
 The API is machine-readable at /llms.txt — an agent can discover GL1TCH and integrate itself. Nobody else does this.
 
 <b>🛡 Honest</b>
 Protection free, never gated. Real revenue → buyback, no points/airdrop games.
-→ coin-three-mu.vercel.app/thesis
+→ gl1tchbased.xyz/thesis
 
 Judge the product, not the promise. Not financial advice.
 ```

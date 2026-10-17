@@ -1,7 +1,7 @@
 # GL1TCH — listing / social verification values (copy-paste)
 
 Use these EXACT values on RugCheck + GeckoTerminal. They all already appear publicly
-on the site (coin-three-mu.vercel.app/links) so they pass verification.
+on the site (gl1tchbased.xyz/links) so they pass verification.
 
 | Field | Value |
 |---|---|
@@ -9,7 +9,7 @@ on the site (coin-three-mu.vercel.app/links) so they pass verification.
 | Chain | Solana |
 | Project name | GL1TCH |
 | Symbol | GL1TCH |
-| Website | https://coin-three-mu.vercel.app |
+| Website | https://gl1tchbased.xyz |
 | X / Twitter | https://x.com/gl1tchbased |
 | Telegram | https://t.me/gl1tch_infected |
 | Instagram | https://instagram.com/gl1tch_infected |

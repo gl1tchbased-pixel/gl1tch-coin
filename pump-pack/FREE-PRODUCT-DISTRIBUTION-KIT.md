@@ -64,7 +64,7 @@ Submit a one-line entry to relevant curated lists (search GitHub "awesome solana
 "awesome crypto tools", "awesome ai agents", "awesome security"). Suggested entry:
 
 ```md
-- [GL1TCH](https://coin-three-mu.vercel.app) — Free, non-custodial multi-chain token rug scanner,
+- [GL1TCH](https://gl1tchbased.xyz) — Free, non-custodial multi-chain token rug scanner,
   cross-scan deployer-reputation graph, Know-Your-Agent trust API (ERC-8004), and verifiable
   randomness (drand-seeded, browser-verifiable). Open source.
 ```

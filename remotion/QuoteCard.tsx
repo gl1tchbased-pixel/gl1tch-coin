@@ -54,7 +54,7 @@ export const QuoteCard: React.FC<QuoteProps> = ({
         <Img src={staticFile("brand/glitchy-iconic.png")} style={{ width: 64, height: 64, filter: `drop-shadow(0 0 16px ${GREEN}66)` }} />
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ color: PAPER, fontSize: 40, fontWeight: 800, letterSpacing: 1 }}>$GL1TCH</div>
-          <div style={{ color: "rgba(245,247,248,0.6)", fontSize: 22, letterSpacing: 2 }}>coin-three-mu.vercel.app</div>
+          <div style={{ color: "rgba(245,247,248,0.6)", fontSize: 22, letterSpacing: 2 }}>gl1tchbased.xyz</div>
         </div>
       </div>
     </AbsoluteFill>

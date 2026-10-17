@@ -7,7 +7,7 @@
 import { openX, replyTo, searchLatest, followerCount, store } from "./x-lib.mjs";
 import { generateReply } from "./x-llm.mjs";
 
-const SITE = "coin-three-mu.vercel.app";
+const SITE = "gl1tchbased.xyz";
 const MAX = Number(process.env.MAX || 3);
 const MIN_DAYS_PER_USER = Number(process.env.MIN_DAYS_PER_USER || 7);
 const MIN_FOLLOWERS = Number(process.env.MIN_FOLLOWERS || 150); // skip pure-spam tiny accounts, keep real retail

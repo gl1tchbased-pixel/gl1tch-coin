@@ -9,7 +9,7 @@ The Chainlink-VRF guarantee — but free, quantum-grade, and provable in YOUR br
 
 Mints, raffles, giveaways. No more "was it rigged?"
 
-🧵 coin-three-mu.vercel.app/quantum-core/random
+🧵 gl1tchbased.xyz/quantum-core/random
 ```
 
 ```
@@ -51,7 +51,7 @@ Two calls. A proof anyone can check.
 ② GET /api/random/<id> → result + drand proof
 
 Try the live console + docs:
-coin-three-mu.vercel.app/quantum-core/random
+gl1tchbased.xyz/quantum-core/random
 ```
 
 ## TELEGRAM

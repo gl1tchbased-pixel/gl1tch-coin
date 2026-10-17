@@ -36,7 +36,7 @@ free 3 → Infected 10 → Bearer 25 → Core 50 → Ghost 200.
 Your rank = your watch slots → <code>/verify</code>
 
 Free · non-custodial · it never touches your wallet.
-🔍 coin-three-mu.vercel.app/scan
+🔍 gl1tchbased.xyz/scan
 
 ---
 

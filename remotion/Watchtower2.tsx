@@ -142,7 +142,7 @@ const Payoff: React.FC = () => {
           <div style={{ fontSize: 40, fontWeight: 800, color: PAPER, textAlign: "center", letterSpacing: 1 }}>
             <span style={{ color: GREEN }}>/watch</span> any token. We watch it for you.
           </div>
-          <div style={{ marginTop: 18, fontSize: 36, fontWeight: 800, color: GREEN, textAlign: "center" }}>coin-three-mu.vercel.app/scan</div>
+          <div style={{ marginTop: 18, fontSize: 36, fontWeight: 800, color: GREEN, textAlign: "center" }}>gl1tchbased.xyz/scan</div>
           <div style={{ marginTop: 14, display: "flex", justifyContent: "center", gap: 24, fontFamily: "monospace", fontSize: 25, color: "rgba(245,247,248,0.82)" }}>
             <span>@gl1tchbased</span><span style={{ color: GREEN }}>·</span><span>t.me/gl1tch_infected</span>
           </div>

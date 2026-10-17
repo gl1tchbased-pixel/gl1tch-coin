@@ -30,7 +30,7 @@ await p.waitForTimeout(4500);
 for (const d of ["button:has-text('Dismiss')", "button:has-text('Accept')"]) { try { const b = p.locator(d).first(); if (await b.isVisible({ timeout: 1000 })) await b.click(); } catch { /* */ } }
 
 await fill("#project_name", "GL1TCH");
-await fill("#website", "https://coin-three-mu.vercel.app");
+await fill("#website", "https://gl1tchbased.xyz");
 await fill("#geckoterminal_link", POOL);
 await fill("#description", DESC);
 await fill('input[name="socials.0.value"]', "gl1tch_infected");        // Telegram handle

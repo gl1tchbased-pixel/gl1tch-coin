@@ -21,7 +21,7 @@ $GL1TCH — exposure is irreversible.
 0% tax · mint renounced · freeze revoked · rugcheck clean
 on Solana.
 
-→ coin-three-mu.vercel.app
+→ gl1tchbased.xyz
 → pump.fun
 → Telegram: https://t.me/gl1tch_infected
 → X: https://x.com/gl1tchbased
@@ -38,7 +38,7 @@ gl1tch, solana, memecoin, glitch art, crypto, shorts, 3d animation, ai art, pump
 ## Adımlar
 1. YouTube app → **+** → **Create a Short** → galeriden 21s'i seç.
 2. Başlığı + açıklamayı yapıştır, #Shorts ekli olsun.
-3. Public yap → Yükle. Pinned comment olarak coin-three-mu.vercel.app koy.
+3. Public yap → Yükle. Pinned comment olarak gl1tchbased.xyz koy.
 
 ## İpuçları
 - İlk 2 saniye hook kritik — videonun glitch açılışı bunu karşılıyor.

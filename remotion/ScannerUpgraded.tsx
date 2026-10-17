@@ -74,7 +74,7 @@ const Cta: React.FC = () => {
       <div style={{ position: "absolute", top: 720, left: 0, right: 0, textAlign: "center", padding: "0 56px" }}>
         <Chroma text={"SCAN BEFORE\nYOU APE."} size={96} split={split} />
       </div>
-      <div style={{ position: "absolute", top: 1040, left: 0, right: 0, textAlign: "center", fontSize: 44, fontWeight: 800, color: GREEN }}>coin-three-mu.vercel.app/scan</div>
+      <div style={{ position: "absolute", top: 1040, left: 0, right: 0, textAlign: "center", fontSize: 44, fontWeight: 800, color: GREEN }}>gl1tchbased.xyz/scan</div>
       <div style={{ position: "absolute", top: 1120, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 27, color: "rgba(245,247,248,0.82)" }}>@gl1tchbased · t.me/gl1tch_infected</div>
       <div style={{ position: "absolute", bottom: 150, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 24, letterSpacing: 3, color: GREEN, opacity: 0.85 }}>free · non-custodial · any chain</div>
     </AbsoluteFill>

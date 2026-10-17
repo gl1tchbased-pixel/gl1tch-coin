@@ -1,9 +1,9 @@
 // Drive Google Search Console (reuses the Google-logged-in "youtube" profile):
-// add/verify the coin-three-mu.vercel.app property (HTML-file already live), then
+// add/verify the gl1tchbased.xyz property (HTML-file already live), then
 // submit sitemap.xml. Screenshots each step. STAGE env: "inspect" (default) | "run".
 import { launch, waitForLogin, shot } from "./lib/launch.mjs";
 
-const SITE = "https://coin-three-mu.vercel.app";
+const SITE = "https://gl1tchbased.xyz";
 const STAGE = process.env.STAGE || "inspect";
 const { context, page } = await launch("youtube");
 

@@ -67,7 +67,7 @@ const Intro: React.FC = () => {
 const CtaBar: React.FC = () => (
   <div style={{ position: "absolute", bottom: 120, left: 60, right: 60 }}>
     <div style={{ borderRadius: 22, padding: "22px 28px", background: "rgba(5,5,5,0.66)", border: `1px solid ${GREEN}44`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-      <div style={{ fontSize: 34, fontWeight: 800, color: GREEN, letterSpacing: -0.5 }}>coin-three-mu.vercel.app</div>
+      <div style={{ fontSize: 34, fontWeight: 800, color: GREEN, letterSpacing: -0.5 }}>gl1tchbased.xyz</div>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <div style={{ width: 12, height: 12, borderRadius: 9999, background: GREEN, boxShadow: `0 0 12px ${GREEN}` }} />
         <div style={{ fontFamily: "monospace", fontSize: 22, color: PAPER, opacity: 0.8 }}>$GL1TCH</div>
@@ -87,7 +87,7 @@ const Outro: React.FC = () => {
         <Chroma text={"MEET GLITCHY"} size={90} split={split} />
       </div>
       <div style={{ marginTop: 18, fontFamily: "monospace", fontSize: 30, color: GREEN, opacity: rise(f, 24, 40), textAlign: "center", padding: "0 70px" }}>the rogue-AI ghost that reads every rug</div>
-      <div style={{ position: "absolute", bottom: 220, left: 0, right: 0, textAlign: "center", fontSize: 36, fontWeight: 800, color: PAPER, opacity: rise(f, 34, 48) }}>coin-three-mu.vercel.app</div>
+      <div style={{ position: "absolute", bottom: 220, left: 0, right: 0, textAlign: "center", fontSize: 36, fontWeight: 800, color: PAPER, opacity: rise(f, 34, 48) }}>gl1tchbased.xyz</div>
       <div style={{ position: "absolute", bottom: 150, left: 0, right: 0, textAlign: "center", fontFamily: "monospace", fontSize: 24, letterSpacing: 3, color: GREEN, opacity: 0.85 }}>free rug scanner · non-custodial · $GL1TCH</div>
     </AbsoluteFill>
   );
