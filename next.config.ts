@@ -37,6 +37,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // next build type-checks the whole tsconfig program with the tsc CLI (Next 16.4+). Tests import
+  // bot/, which .vercelignore keeps out of the deploy, so builds use a config without tests;
+  // CI still type-checks the tests with the full tsconfig.json.
+  typescript: { tsconfigPath: "tsconfig.build.json" },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
