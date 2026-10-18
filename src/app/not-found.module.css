@@ -239,3 +239,14 @@
   .aura { animation: none; }
   .mascot { animation: none; }
 }
+
+/* Live 3D mascot (Shadow edition); a radial mask melts the canvas edges into the page, so no box shows */
+.mascot3d {
+  position: relative;
+  z-index: 2;
+  width: 112%;
+  aspect-ratio: 1;
+  margin: -6%;
+  -webkit-mask-image: radial-gradient(closest-side, #000 64%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 64%, transparent 100%);
+}

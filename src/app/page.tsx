@@ -10,6 +10,7 @@ import { Manifesto } from "@/components/sections/Manifesto";
 import { Tokenomics } from "@/components/sections/Tokenomics";
 import { HowToBuy } from "@/components/sections/HowToBuy";
 import { Roadmap } from "@/components/sections/Roadmap";
+import { MeetGlitchy } from "@/components/sections/MeetGlitchy";
 import { Community } from "@/components/sections/Community";
 import { FAQ } from "@/components/sections/FAQ";
 import { FinalCTA } from "@/components/sections/FinalCTA";
@@ -47,7 +48,8 @@ export default function Home() {
       <HowToBuy />
       <Roadmap />
 
-      {/* Community + close */}
+      {/* Community + close — the mascot introduces the community */}
+      <MeetGlitchy />
       <Community />
       <FAQ />
       <FinalCTA />

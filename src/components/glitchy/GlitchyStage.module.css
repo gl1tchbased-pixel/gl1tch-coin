@@ -1,0 +1,30 @@
+.stage {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.stage:active { cursor: grabbing; }
+
+.poster {
+  object-fit: contain;
+  object-position: center 55%;
+  padding: 6%;
+  transition: opacity var(--duration-slow) var(--ease-out-expo);
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-out-expo);
+}
+
+.ready .canvas { opacity: 1; }
+.ready .poster { opacity: 0; }

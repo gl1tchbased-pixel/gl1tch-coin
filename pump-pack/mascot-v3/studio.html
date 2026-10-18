@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Glitchy v3 Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&display=block">
+<style>
+/* Render surface for the video pipeline. --u = 1 unit per 1080px of frame width, so type scales per format. */
+:root { --green: #7cff4f; --purple: #7a3cff; --static: #f5f7f8; --void: #050505; --mono: "JetBrains Mono", Consolas, ui-monospace, monospace; }
+html, body { margin: 0; background: #000; }
+#frame { position: fixed; left: 0; top: 0; overflow: hidden; background: var(--void); font-family: var(--mono); color: var(--static); }
+#gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#ov { position: absolute; inset: 0; pointer-events: none; }
+#ov > * { position: absolute; }
+.scan { inset: 0; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.16) 0 1px, transparent 1px 3px); opacity: 0.35; mix-blend-mode: multiply; }
+.corner { width: calc(var(--u) * 56px); height: calc(var(--u) * 56px); border-color: rgba(124,255,79,0.55); border-style: solid; border-width: 0; }
+.corner.tl { left: calc(var(--u) * 40px); top: calc(var(--u) * 40px); border-left-width: calc(var(--u) * 3px); border-top-width: calc(var(--u) * 3px); }
+.corner.tr { right: calc(var(--u) * 40px); top: calc(var(--u) * 40px); border-right-width: calc(var(--u) * 3px); border-top-width: calc(var(--u) * 3px); }
+.corner.bl { left: calc(var(--u) * 40px); bottom: calc(var(--u) * 40px); border-left-width: calc(var(--u) * 3px); border-bottom-width: calc(var(--u) * 3px); }
+.corner.br { right: calc(var(--u) * 40px); bottom: calc(var(--u) * 40px); border-right-width: calc(var(--u) * 3px); border-bottom-width: calc(var(--u) * 3px); }
+.hud { top: calc(var(--u) * 58px); font-size: calc(var(--u) * 22px); letter-spacing: 0.18em; font-weight: 600; text-transform: uppercase; color: rgba(245,247,248,0.78); }
+.hud.l { left: calc(var(--u) * 116px); }
+.hud.r { right: calc(var(--u) * 116px); text-align: right; }
+.hud .dot { display: inline-block; width: 0.55em; height: 0.55em; background: var(--green); margin-right: 0.6em; box-shadow: 0 0 0.8em var(--green); vertical-align: 0.05em; }
+.title { left: 0; right: 0; text-align: center; }
+.title .eyebrow { font-size: calc(var(--u) * 34px); letter-spacing: 0.42em; font-weight: 600; color: rgba(245,247,248,0.8); padding-left: 0.42em; }
+.title .head { font-size: calc(var(--u) * var(--head, 150px)); font-weight: 800; line-height: 1; letter-spacing: -0.02em; margin-top: calc(var(--u) * 14px); }
+.title .sub { font-size: calc(var(--u) * 40px); font-weight: 800; letter-spacing: 0.32em; margin-top: calc(var(--u) * 22px); padding-left: 0.32em; }
+.title .sub.green { color: var(--green); text-shadow: 0 0 calc(var(--u) * 24px) rgba(124,255,79,0.55); }
+.title .sub.purple { color: #a77bff; text-shadow: 0 0 calc(var(--u) * 24px) rgba(122,60,255,0.8); }
+.tag { left: 0; right: 0; text-align: center; font-size: calc(var(--u) * 30px); font-weight: 800; letter-spacing: 0.3em; color: var(--green); }
+.tag span { display: inline-block; padding: 0.35em 0.9em 0.35em 1.2em; border: calc(var(--u) * 2px) solid rgba(124,255,79,0.6); background: rgba(5,5,5,0.55); box-shadow: 0 0 calc(var(--u) * 30px) rgba(124,255,79,0.18); }
+.label { font-size: calc(var(--u) * 26px); font-weight: 800; letter-spacing: 0.32em; white-space: nowrap; padding-left: 0.32em; }
+.label.green { color: var(--green); }
+.label.purple { color: #a77bff; }
+.cold { inset: 0; background: var(--void); display: flex; align-items: center; justify-content: center; }
+.cold .term { font-size: calc(var(--u) * 40px); line-height: 1.7; color: var(--green); white-space: pre; min-width: 60%; }
+.cold .term .dim { color: rgba(124,255,79,0.55); }
+.flash { inset: 0; }
+.flash i { position: absolute; left: 0; right: 0; mix-blend-mode: screen; }
+.end-shade { left: 0; right: 0; }
+.end { left: 0; right: 0; text-align: center; }
+.end .mark { font-size: calc(var(--u) * var(--mark, 190px)); font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+.end .line1 { font-size: calc(var(--u) * 40px); font-weight: 800; letter-spacing: 0.3em; margin-top: calc(var(--u) * 26px); padding-left: 0.3em; }
+.end .line2 { font-size: calc(var(--u) * 46px); font-weight: 800; color: var(--green); margin-top: calc(var(--u) * 18px); text-shadow: 0 0 calc(var(--u) * 28px) rgba(124,255,79,0.5); }
+.end .line3 { font-size: calc(var(--u) * 24px); letter-spacing: 0.24em; color: rgba(245,247,248,0.55); margin-top: calc(var(--u) * 26px); padding-left: 0.24em; }
+.clip-name { left: calc(var(--u) * 116px); bottom: calc(var(--u) * 58px); font-size: calc(var(--u) * 24px); font-weight: 800; letter-spacing: 0.24em; }
+.clip-act { right: calc(var(--u) * 116px); bottom: calc(var(--u) * 52px); font-size: calc(var(--u) * 26px); font-weight: 800; letter-spacing: 0.26em; color: var(--green); }
+.clip-act span { padding: 0.3em 0.7em 0.3em 0.95em; border: calc(var(--u) * 2px) solid rgba(124,255,79,0.6); background: rgba(5,5,5,0.5); }
+</style>
+</head>
+<body>
+<div id="frame"><canvas id="gl"></canvas><div id="ov"></div></div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GlitchyStage, smooth, easeInOut } from '/src/lib/glitchy/engine.js';
+
+const FRAME = document.getElementById('frame'), CANVAS = document.getElementById('gl'), OV = document.getElementById('ov');
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const hash = (n) => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
+
+// ---------- overlay building blocks ----------
+function el(cls, html = '', style = '') { const d = document.createElement('div'); d.className = cls; d.innerHTML = html; if (style) d.style.cssText = style; OV.appendChild(d); return d; }
+// visible between t0 and t1, glitches in and out (brand-colored split + slice jitter)
+function glitchShow(node, t, f, t0, t1, seed = 0) {
+  const vis = t >= t0 && t <= t1;
+  if (!vis) { node.style.opacity = 0; return; }
+  const pin = clamp((t - t0) / 0.38, 0, 1), pout = clamp((t1 - t) / 0.28, 0, 1);
+  const j = 1 - Math.min(pin, pout);
+  const r1 = hash(f + seed), r2 = hash(f * 1.7 + seed + 3);
+  const flicker = j > 0.15 && r2 < 0.25 * j ? 0.25 : 1;
+  node.style.opacity = Math.min(1, Math.min(pin, pout) * 2.2) * flicker;
+  const u = Math.min(W, H) / 1080;
+  node.style.transform = `${node.dataset.base || ''} translateX(${((r1 - 0.5) * 60 * j * u).toFixed(1)}px)`;
+  node.style.textShadow = j > 0.01 ? `${(-9 * j * u).toFixed(1)}px 0 rgba(122,60,255,${0.95 * j}), ${(9 * j * u).toFixed(1)}px 0 rgba(124,255,79,${0.9 * j})` : '';
+  if (j > 0.05) { const a = (r2 * 60).toFixed(0), b = (hash(f + seed + 9) * 35 * j).toFixed(0); node.style.clipPath = `inset(${(a * j).toFixed(0)}% 0 ${b}% 0)`; }
+  else node.style.clipPath = 'none';
+}
+function typed(text, t, t0, cps = 28) { const n = Math.floor(clamp((t - t0) * cps, 0, text.length)); return text.slice(0, n); }
+
+let W = 1080, H = 1920, stage = null, chars = {}, script = null, events = [], fired = [], overlay = null, clock = 0;
+// sound cues: character actions are logged as they fire, overlay beats are registered when built
+let cueLog = [], overlayCues = [], nowT = 0;
+const cue = (t, type, extra = {}) => overlayCues.push({ t, type, ...extra });
+
+function buildHud(o) {
+  el('scan');
+  ['tl', 'tr', 'bl', 'br'].forEach((c) => el('corner ' + c));
+  el('hud l', '<span class="dot"></span>GL1TCH');
+  el('hud r', o.hudRight || 'MASCOT v3.0');
+}
+function projectToScreen(v) {
+  const p = v.clone().project(stage.camera);
+  return { x: (p.x * 0.5 + 0.5) * W, y: (-p.y * 0.5 + 0.5) * H };
+}
+
+// generic overlay for promo cuts
+function promoOverlay(cfg) {
+  const nodes = {};
+  buildHud(cfg);
+  (cfg.titles || []).forEach((T) => cue(T.t0, 'title'));
+  (cfg.tags || []).forEach((x) => cue(x.t, 'tag'));
+  (cfg.flashes || []).forEach((x) => cue(x, 'flash'));
+  if (cfg.end) cue(cfg.end.t0, 'end');
+  if (cfg.cold) cfg.cold.lines.forEach((L) => cue(L.t, L.bar ? 'bar' : 'type', { n: L.text ? L.text.length : 0 }));
+  if (cfg.cold) cue(cfg.cold.out, 'reveal');
+  nodes.titles = (cfg.titles || []).map((T) => {
+    const d = el('title', `<div class="eyebrow">${T.eyebrow || ''}</div><div class="head">${T.head}</div>${T.sub ? `<div class="sub ${T.subColor || 'green'}">${T.sub}</div>` : ''}`, `top:${T.top}px;${T.headSize ? `--head:${T.headSize}px;` : ''}`);
+    return { d, T };
+  });
+  nodes.tag = el('tag', '<span></span>', `bottom:${cfg.tagBottom}px;`);
+  nodes.labels = (cfg.labels || []).map((L) => { const d = el('label ' + L.color, L.text); d.dataset.base = 'translateX(-50%)'; return { d, L }; });
+  if (cfg.end) {
+    const E = cfg.end;
+    nodes.shade = el('end-shade', '', `top:${E.shadeTop ?? 0}px;height:${E.shadeHeight}px;background:${E.radial ? 'radial-gradient(ellipse 42% 55% at 50% 52%, rgba(5,5,5,0.82), rgba(5,5,5,0))' : `linear-gradient(${E.shadeDir || '180deg'}, rgba(5,5,5,0.86), rgba(5,5,5,0))`};`);
+    nodes.end = el('end', `<div class="mark">GL1TCH</div><div class="line1">$GL1TCH · SOLANA</div><div class="line2">gl1tchbased.xyz</div>${E.line3 ? `<div class="line3">${E.line3}</div>` : ''}`, `top:${E.top}px;${E.markSize ? `--mark:${E.markSize}px;` : ''}`);
+  }
+  nodes.flash = el('flash');
+  nodes.slices = Array.from({ length: 7 }, () => { const i = document.createElement('i'); nodes.flash.appendChild(i); return i; });
+  if (cfg.cold) {
+    nodes.cold = el('cold', '<div class="term"></div>');
+    nodes.term = nodes.cold.firstChild;
+  }
+  return (t, f) => {
+    for (const { d, T } of nodes.titles) glitchShow(d, t, f, T.t0, T.t1, T.t0 * 10);
+    // action tag: the most recent action label stays up for 1.3s
+    const tg = (cfg.tags || []).filter((x) => x.t <= t && t < x.t + 1.3).pop();
+    if (tg) { nodes.tag.firstChild.textContent = tg.text; glitchShow(nodes.tag, t, f, tg.t, tg.t + 1.3, tg.t * 7); } else nodes.tag.style.opacity = 0;
+    for (const { d, L } of nodes.labels) {
+      const c = chars[L.who];
+      const p = projectToScreen(new THREE.Vector3(c.root.position.x, c.root.position.y - 2.12 * c.scale, c.root.position.z));
+      d.style.left = p.x + 'px'; d.style.top = p.y + 'px';
+      glitchShow(d, t, f, L.t0, L.t1, L.t0 * 13);
+    }
+    if (nodes.end) {
+      const E = cfg.end;
+      nodes.shade.style.opacity = smooth(E.t0 - 0.2, E.t0 + 0.4, t);
+      glitchShow(nodes.end, t, f, E.t0, 1e9, 77);
+      const mark = nodes.end.firstChild, j = 0.5 + 0.5 * Math.sin(t * 9);
+      const u = Math.min(W, H) / 1080, pulse = hash(f * 0.37) < 0.08 ? 1 : 0;
+      mark.style.textShadow = `${(-(4 + 10 * pulse) * u).toFixed(1)}px 0 rgba(122,60,255,0.95), ${((4 + 10 * pulse) * u).toFixed(1)}px 0 rgba(124,255,79,${0.75 + 0.2 * j})`;
+    }
+    // glitch flash: brand-colored horizontal slices for ~0.2s
+    const fl = (cfg.flashes || []).find((x) => t >= x && t < x + 0.2);
+    nodes.flash.style.opacity = fl !== undefined ? 1 : 0;
+    if (fl !== undefined) nodes.slices.forEach((s, i) => {
+      const r = hash(f * 3.1 + i * 17.3), r2 = hash(f * 5.7 + i * 3.9);
+      s.style.top = (r * 100).toFixed(1) + '%'; s.style.height = (0.6 + r2 * 6).toFixed(1) + '%';
+      s.style.background = i % 3 === 0 ? 'rgba(124,255,79,0.55)' : i % 3 === 1 ? 'rgba(122,60,255,0.7)' : 'rgba(245,247,248,0.35)';
+      s.style.transform = `translateX(${((r2 - 0.5) * 30).toFixed(1)}%)`;
+    });
+    if (nodes.cold) {
+      const C = cfg.cold;
+      const lines = C.lines.map((L) => (t >= L.t ? (L.bar ? '> ' + '█'.repeat(Math.round(clamp((t - L.t) / 0.4, 0, 1) * 14)).padEnd(14, '░') + ' ' + Math.round(clamp((t - L.t) / 0.4, 0, 1) * 100) + '%' : typed(L.text, t, L.t)) : ''));
+      const cursor = Math.floor(t * 3) % 2 ? '_' : ' ';
+      nodes.term.innerHTML = lines.filter((x, i) => t >= C.lines[i].t).map((x, i, arr) => (i === arr.length - 1 ? x + cursor : `<span class="dim">${x}</span>`)).join('\n');
+      const out = clamp((t - C.out) / 0.3, 0, 1);
+      if (t < C.out) nodes.cold.style.opacity = 1;
+      else nodes.cold.style.opacity = out >= 1 ? 0 : (hash(f) < 0.5 ? 1 - out : 0.15);
+      nodes.cold.style.display = out >= 1 ? 'none' : 'flex';
+    }
+  };
+}
+
+function clipOverlay(cfg) {
+  buildHud({ hudRight: cfg.hudRight });
+  cue(0.35, 'tag');
+  const name = el('clip-name', cfg.name);
+  const act = el('clip-act', `<span>${cfg.act}</span>`);
+  return (t, f) => { glitchShow(name, t, f, 0.15, cfg.dur - 0.1, 3); glitchShow(act, t, f, 0.35, cfg.dur - 0.1, 5); };
+}
+
+// ---------- the cuts ----------
+const VIDEOS = {};
+const SOLO9 = { x: 0, y: -0.25, z: 0, scale: 0.98 };
+const DUO9 = { ch: { x: -0.88, y: 0.0, z: 0, scale: 0.66, yaw: 0.25 }, sh: { x: 0.88, y: 0.0, z: 0, scale: 0.66, yaw: -0.25 } };
+
+VIDEOS['reveal-9x16'] = {
+  w: 1080, h: 1920, dur: 24, background: '#16141e',
+  camera(t) {
+    let z, x = Math.sin(t * 0.35) * 0.22;
+    if (t < 7.9) z = 11.0 - 0.8 * easeInOut(clamp((t - 2) / 5.8, 0, 1));
+    else if (t < 15.1) z = 11.0 - 0.8 * easeInOut(clamp((t - 8.1) / 6.8, 0, 1));
+    else z = 11.8 + 0.5 * easeInOut(clamp((t - 21) / 3, 0, 1));
+    return [[x, 0.1, z], [x * 0.3, -0.2, 0]];
+  },
+  setup(st) {
+    const ch = st.add('chrome', { ...SOLO9, idle: false, wander: false, seed: 11 }); ch.hideNow();
+    const sh = st.add('shadow', { ...SOLO9, idle: false, wander: false, seed: 23 }); sh.hideNow();
+    return { ch, sh };
+  },
+  events: ({ ch, sh }) => [
+    [1.9, () => ch.materialize(1.6)],
+    [2.7, () => ch.lookAt(0, 0.1, 1.0)],
+    [3.7, () => ch.lookAt(-0.9, 0.15, 0.7)],
+    [4.4, () => ch.lookAt(0.9, 0.25, 0.7)],
+    [5.1, () => { ch.lookAt(0, 0, 3); ch.play('wave'); }],
+    [7.0, () => ch.play('wink')],
+    [7.75, () => ch.play('glitch')],
+    [7.95, () => ch.dematerialize(0.45)],
+    [8.2, () => sh.materialize(1.0)],
+    [9.0, () => sh.lookAt(0, 0, 8)],
+    [9.4, () => sh.play('laugh')],
+    [11.4, () => sh.play('hop')],
+    [12.8, () => sh.play('spin')],
+    [14.3, () => sh.play('wink')],
+    [15.0, () => sh.play('glitch')],
+    [15.1, () => { sh.moveTo(DUO9.sh, 0.9); ch.hideNow(); ch.root.position.set(DUO9.ch.x, DUO9.ch.y, DUO9.ch.z); ch.root.scale.setScalar(DUO9.ch.scale); ch.baseYaw = DUO9.ch.yaw; }],
+    [15.35, () => ch.materialize(1.0)],
+    [16.4, () => { ch.lookAt(0, 0, 1.6); sh.lookAt(0, 0, 1.6); ch.play('wave'); }],
+    [16.6, () => sh.play('wave')],
+    [18.2, () => { ch.lookAt(0.95, -0.1, 1.4); sh.lookAt(-0.95, 0.1, 1.4); }],
+    [18.5, () => ch.play('wink')],
+    [19.4, () => ch.play('laugh')],
+    [19.55, () => sh.play('laugh')],
+    [21.0, () => { ch.play('glitch'); sh.play('glitch'); }],
+    [21.1, () => { ch.moveTo({ y: -0.85 }, 0.8); sh.moveTo({ y: -0.85 }, 0.8); }],
+    [21.6, () => { ch.lookAt(0, 0, 3); sh.lookAt(0, 0, 3); }],
+    [22.2, () => ch.play('hop')],
+    [22.4, () => sh.play('hop')],
+  ],
+  overlay: () => promoOverlay({
+    cold: { out: 1.85, lines: [{ t: 0.15, text: '> incoming signal' }, { t: 0.85, text: '> decoding mascot v3.0' }, { t: 1.4, bar: true }] },
+    titles: [
+      { t0: 2.5, t1: 7.7, top: 150, eyebrow: 'MEET', head: 'GLITCHY', sub: 'CHROME EDITION', subColor: 'green' },
+      { t0: 8.5, t1: 14.9, top: 150, eyebrow: 'MEET', head: 'GLITCHY', sub: 'SHADOW EDITION', subColor: 'purple' },
+      { t0: 15.6, t1: 20.9, top: 170, eyebrow: 'TWO EDITIONS', head: 'ONE SIGNAL', headSize: 128 },
+    ],
+    tagBottom: 150,
+    tags: [{ t: 3.7, text: 'LOOK AROUND' }, { t: 5.1, text: 'WAVE' }, { t: 7.0, text: 'WINK' }, { t: 9.4, text: 'LAUGH' }, { t: 11.4, text: 'HOP' }, { t: 12.8, text: 'SPIN' }, { t: 14.3, text: 'WINK' }],
+    labels: [{ who: 'ch', text: 'CHROME', color: 'green', t0: 16.2, t1: 20.9 }, { who: 'sh', text: 'SHADOW', color: 'purple', t0: 16.4, t1: 20.9 }],
+    end: { t0: 21.15, top: 190, shadeHeight: 1000, line3: 'REAL-TIME 3D · BUILT IN-HOUSE' },
+    flashes: [7.75, 15.0, 21.0],
+  }),
+};
+
+const DUO16 = { ch: { x: -1.5, y: -0.2, z: 0, scale: 1, yaw: 0.22 }, sh: { x: 1.5, y: -0.2, z: 0, scale: 1, yaw: -0.22 } };
+VIDEOS['duo-16x9'] = {
+  w: 1920, h: 1080, dur: 16, background: '#16141e',
+  camera(t) { const x = Math.sin(t * 0.3) * 0.25, z = 9.3 - 0.45 * easeInOut(clamp((t - 1.5) / 10, 0, 1)); return [[x, 0.1, z], [x * 0.3, -0.3, 0]]; },
+  setup(st) {
+    const ch = st.add('chrome', { ...DUO16.ch, idle: false, wander: false, seed: 31 }); ch.hideNow();
+    const sh = st.add('shadow', { ...DUO16.sh, idle: false, wander: false, seed: 47 }); sh.hideNow();
+    return { ch, sh };
+  },
+  events: ({ ch, sh }) => [
+    [1.3, () => ch.materialize(1.4)],
+    [1.7, () => sh.materialize(1.4)],
+    [3.0, () => { ch.lookAt(0, 0, 1.2); sh.lookAt(0, 0, 1.2); }],
+    [3.4, () => ch.play('wave')],
+    [3.8, () => sh.play('wave')],
+    [5.6, () => { ch.lookAt(1, -0.05, 1.6); sh.lookAt(-1, 0.05, 1.6); }],
+    [5.9, () => ch.play('wink')],
+    [6.6, () => sh.play('laugh')],
+    [8.4, () => { ch.lookAt(0, 0, 4); sh.lookAt(0, 0, 4); ch.play('hop'); }],
+    [8.65, () => sh.play('hop')],
+    [10.0, () => ch.play('spin')],
+    [10.2, () => sh.play('spin')],
+    [11.7, () => { ch.play('glitch'); sh.play('glitch'); }],
+    [11.85, () => { ch.moveTo({ x: -2.85, yaw: 0.35 }, 0.8); sh.moveTo({ x: 2.85, yaw: -0.35 }, 0.8); }],
+    [12.7, () => ch.play('laugh')],
+    [12.9, () => sh.play('laugh')],
+    [14.7, () => ch.play('wink')],
+  ],
+  overlay: () => promoOverlay({
+    cold: { out: 1.35, lines: [{ t: 0.12, text: '> two signals detected' }, { t: 0.8, bar: true }] },
+    titles: [{ t0: 2.3, t1: 11.6, top: 112, eyebrow: 'GL1TCH MASCOT v3.0', head: 'MEET GLITCHY', headSize: 92 }],
+    tagBottom: 70,
+    tags: [{ t: 3.4, text: 'WAVE' }, { t: 5.9, text: 'WINK' }, { t: 6.6, text: 'LAUGH' }, { t: 8.4, text: 'HOP' }, { t: 10.0, text: 'SPIN' }],
+    labels: [{ who: 'ch', text: 'CHROME EDITION', color: 'green', t0: 2.8, t1: 11.6 }, { who: 'sh', text: 'SHADOW EDITION', color: 'purple', t0: 3.0, t1: 11.6 }],
+    end: { t0: 12.0, top: 330, shadeHeight: 1080, radial: true, markSize: 132, line3: 'REAL-TIME 3D · BUILT IN-HOUSE' },
+    flashes: [11.7],
+  }),
+};
+
+const DUO1 = { ch: { x: -1.15, y: -0.35, z: 0, scale: 0.9, yaw: 0.22 }, sh: { x: 1.15, y: -0.35, z: 0, scale: 0.9, yaw: -0.22 } };
+VIDEOS['duo-1x1'] = {
+  w: 1080, h: 1080, dur: 12, background: '#16141e',
+  camera(t) { const x = Math.sin(t * 0.32) * 0.2, z = 10.6 - 0.5 * easeInOut(clamp((t - 1) / 9, 0, 1)); return [[x, 0.1, z], [x * 0.3, -0.25, 0]]; },
+  setup(st) {
+    const ch = st.add('chrome', { ...DUO1.ch, idle: false, wander: false, seed: 53 }); ch.hideNow();
+    const sh = st.add('shadow', { ...DUO1.sh, idle: false, wander: false, seed: 61 }); sh.hideNow();
+    return { ch, sh };
+  },
+  events: ({ ch, sh }) => [
+    [1.0, () => ch.materialize(1.3)],
+    [1.3, () => sh.materialize(1.3)],
+    [2.4, () => { ch.lookAt(0, 0, 1.4); sh.lookAt(0, 0, 1.4); ch.play('wave'); }],
+    [2.6, () => sh.play('wave')],
+    [4.0, () => { ch.lookAt(1, -0.05, 1.3); sh.lookAt(-1, 0.05, 1.3); }],
+    [4.2, () => ch.play('wink')],
+    [5.4, () => { ch.lookAt(0, 0, 6); sh.lookAt(0, 0, 6); ch.play('laugh'); }],
+    [5.55, () => sh.play('laugh')],
+    [7.0, () => ch.play('hop')],
+    [7.2, () => sh.play('hop')],
+    [8.4, () => ch.play('spin')],
+    [8.55, () => sh.play('spin')],
+    [9.8, () => { ch.play('glitch'); sh.play('glitch'); }],
+    [9.85, () => { ch.moveTo({ y: -0.75, scale: 0.8 }, 0.7); sh.moveTo({ y: -0.75, scale: 0.8 }, 0.7); }],
+    [10.4, () => ch.play('laugh')],
+    [10.55, () => sh.play('laugh')],
+  ],
+  overlay: () => promoOverlay({
+    cold: { out: 1.0, lines: [{ t: 0.1, text: '> signal x2' }] },
+    titles: [{ t0: 1.8, t1: 9.7, top: 118, eyebrow: '', head: 'MEET GLITCHY', headSize: 92, sub: 'CHROME + SHADOW', subColor: 'green' }],
+    tagBottom: 64,
+    tags: [{ t: 2.4, text: 'WAVE' }, { t: 4.2, text: 'WINK' }, { t: 5.4, text: 'LAUGH' }, { t: 7.0, text: 'HOP' }, { t: 8.4, text: 'SPIN' }],
+    end: { t0: 9.95, top: 112, shadeHeight: 560, markSize: 112 },
+    flashes: [9.8],
+  }),
+};
+
+// solo action clips: one per edition x action
+const CLIP_ACTS = {
+  laugh: { dur: 3.4, label: 'LAUGH', ev: (c) => [[0.5, () => c.play('laugh')]] },
+  wave: { dur: 3.4, label: 'WAVE', ev: (c) => [[0.5, () => c.play('wave')]] },
+  hop: { dur: 3.0, label: 'HOP', ev: (c) => [[0.5, () => c.play('hop')]] },
+  spin: { dur: 3.0, label: 'SPIN', ev: (c) => [[0.5, () => c.play('spin')]] },
+  wink: { dur: 2.6, label: 'WINK', ev: (c) => [[0.6, () => c.play('wink')]] },
+  lookaround: { dur: 5.0, label: 'LOOK AROUND', ev: (c) => [[0.4, () => c.lookAt(-0.95, 0.2, 0.9)], [1.4, () => c.lookAt(0.95, 0.3, 0.9)], [2.4, () => c.lookAt(0.35, -0.6, 0.9)], [3.4, () => c.lookAt(0, 0, 3)], [3.9, () => c.play('wink')]] },
+  turntable: { dur: 6.0, label: '360°', ev: () => [], turntable: true },
+};
+for (const variant of ['chrome', 'shadow']) {
+  for (const [act, A] of Object.entries(CLIP_ACTS)) {
+    VIDEOS[`${variant}-${act}`] = {
+      w: 1080, h: 1080, dur: A.dur, background: variant === 'chrome' ? '#171920' : '#14111c',
+      lights: variant === 'chrome' ? { key: 2.2, rim: 1.6 } : { key: 2.4, rim: 1.8 },
+      camera: () => [[0, 0.1, 8.4], [0, -0.3, 0]],
+      setup(st) { return { c: st.add(variant, { x: 0, y: -0.15, z: 0, scale: 1, idle: false, wander: false, seed: 101 }) }; },
+      events: ({ c }) => A.ev(c),
+      perFrame: A.turntable ? ({ c }, t) => { c.s.rotY = easeInOut(clamp(t / A.dur, 0, 1)) * Math.PI * 2; } : null,
+      overlay: () => clipOverlay({ name: `GLITCHY · ${variant.toUpperCase()}`, act: A.label, dur: A.dur }),
+    };
+  }
+}
+
+// ---------- transparent stills ----------
+const STILLS = {};
+for (const variant of ['chrome', 'shadow']) {
+  STILLS[`${variant}-hero`] = { variant, at: 1.2, look: [0.12, 0.05] };
+  STILLS[`${variant}-laugh`] = { variant, at: 0.65, act: 'laugh' };
+  STILLS[`${variant}-wave`] = { variant, at: 0.75, act: 'wave' };
+  STILLS[`${variant}-wink`] = { variant, at: 0.45, act: 'wink' };
+  STILLS[`${variant}-34`] = { variant, at: 1.2, yaw: 0.6, look: [0.2, 0.05] };
+}
+STILLS['duo-hero'] = { duo: true, at: 1.2, w: 3000, h: 2000 };
+
+// ---------- public API used by scripts/glitchy-render.mjs ----------
+function reset(w, h, opts) {
+  if (stage) stage.dispose();
+  OV.innerHTML = '';
+  W = w; H = h;
+  FRAME.style.width = w + 'px'; FRAME.style.height = h + 'px';
+  FRAME.style.setProperty('--u', String(Math.min(w, h) / 1080));
+  stage = new GlitchyStage(CANVAS, { pixelRatio: opts.pixelRatio ?? 1, preserveDrawingBuffer: true, idle: false, wander: false, ...opts });
+  stage.setSize(w, h);
+}
+
+window.studio = {
+  videos: () => Object.keys(VIDEOS),
+  stills: () => Object.keys(STILLS),
+  async load(id, quality = 1) {
+    await document.fonts.ready;
+    script = VIDEOS[id];
+    if (!script) throw new Error('unknown video ' + id);
+    reset(script.w, script.h, { background: script.background, lights: script.lights, pixelRatio: quality });
+    chars = script.setup(stage);
+    cueLog = []; overlayCues = [];
+    for (const [who, c] of Object.entries(chars)) {
+      for (const m of ['play', 'materialize', 'dematerialize']) {
+        const orig = c[m].bind(c);
+        c[m] = (...a) => { cueLog.push({ t: nowT, type: m === 'play' ? a[0] : m, who }); return orig(...a); };
+      }
+    }
+    events = script.events(chars).sort((a, b) => a[0] - b[0]);
+    fired = []; clock = 0;
+    overlay = script.overlay();
+    return { w: script.w, h: script.h, fps: 30, frames: Math.round(script.dur * 30) };
+  },
+  cues: () => cueLog.concat(overlayCues).sort((a, b) => a.t - b.t),
+  frame(i) {
+    const dt = 1 / 30, t = i * dt;
+    nowT = t;
+    // fire events up to this frame's time, then advance the simulation in two half steps for smoother springs
+    while (events.length && events[0][0] <= t + 1e-6) { const [et, fn] = events.shift(); fn(); fired.push(et); }
+    if (i > 0) { stage.step(dt / 2); stage.step(dt / 2); }
+    if (script.perFrame) script.perFrame(chars, t);
+    const [pos, target] = script.camera(t);
+    stage.setCamera(pos, target);
+    stage.render();
+    overlay(t, i);
+    return t;
+  },
+  async still(id) {
+    await document.fonts.ready;
+    const S = STILLS[id];
+    const w = S.w || 2048, h = S.h || 2048;
+    reset(w, h, { transparent: true, lights: { key: 2.3, rim: 1.7 }, exposure: 1.18 });
+    let list;
+    if (S.duo) {
+      stage.setCamera([0, 0.1, 9.4], [0, -0.25, 0]);
+      list = [stage.add('chrome', { x: -1.45, y: 0, scale: 1, yaw: 0.22, idle: false, wander: false, seed: 7 }), stage.add('shadow', { x: 1.45, y: 0, scale: 1, yaw: -0.22, idle: false, wander: false, seed: 9 })];
+      list[0].lookAt(0.5, 0, 9); list[1].lookAt(-0.5, 0, 9);
+    } else {
+      stage.setCamera([0, 0.1, 7.2], [0, -0.3, 0]);
+      const c = stage.add(S.variant, { x: 0, y: 0, scale: 1, yaw: S.yaw || 0, idle: false, wander: false, seed: 5 });
+      if (S.look) c.lookAt(S.look[0], S.look[1], 9);
+      list = [c];
+    }
+    // no natural blink in stills: push the next blink far away
+    list.forEach((c) => { c.s.nextBlink = 1e9; });
+    const steps = Math.round(S.at * 60);
+    for (let i = 0; i < steps; i++) { if (i === 6 && S.act) list.forEach((c) => c.play(S.act)); stage.step(1 / 60); }
+    stage.render();
+    return CANVAS.toDataURL('image/png');
+  },
+};
+window.__studioReady = true;
+</script>
+</body>
+</html>

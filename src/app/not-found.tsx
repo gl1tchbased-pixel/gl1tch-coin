@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { GlitchyStage } from "@/components/glitchy/GlitchyStage";
 import { GlitchText } from "@/components/effects/GlitchText";
 import { TerminalLog, type LogLine } from "@/components/effects/TerminalLog";
 import styles from "./not-found.module.css";
@@ -24,16 +24,15 @@ export default function NotFound() {
       <div className={styles.stage}>
         <div className={styles.mascotFrame}>
           <span className={styles.aura} aria-hidden="true" />
-          <div className={styles.mascot}>
-            <Image
-              src="/brand/glitchy-1024-t.png"
-              alt="Glitchy — corrupted signal carrier"
-              width={1024}
-              height={1024}
-              sizes="(min-width: 880px) 420px, 80vw"
-              priority
-            />
-          </div>
+          <GlitchyStage
+            className={styles.mascot3d}
+            characters={[{ edition: "shadow" }]}
+            camera={{ position: [0, 0.1, 7.6], target: [0, -0.3, 0] }}
+            background="#120c1f"
+            poster="/brand/glitchy-v3/glitchy-shadow-hero.png"
+            posterAlt="Glitchy, Shadow edition — corrupted signal carrier"
+            eager
+          />
           <div className={styles.code}>SIGNAL_LOST · NODE_404</div>
         </div>
 
