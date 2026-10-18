@@ -16,6 +16,7 @@ const ALLOW = new Set([
   "GHSA-jvwf-75h9-cwgg", // protobufjs
   "GHSA-685m-2w69-288q", // protobufjs
   "GHSA-wcpc-wj8m-hjx6", // protobufjs
+  "GHSA-vfj7-8cjw-p6xm", // braces — only inside react-native's metro bundler (wallet-adapter-mobile), never runs on the site
 ]);
 
 let audit;
