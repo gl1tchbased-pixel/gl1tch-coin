@@ -321,7 +321,7 @@ Beş rozet: First scan, Rug Hunter (oyunda 3 rug), Flawless (8/8), Collector (5 
 - **WebGL bellek:** Ana sayfada hero, paralar ve Glitchy bölümü üç bağlam eder. Düşük donanımda sahneler poster'a düşmeli (`WebGLRenderer` hatası yakalanır).
 - **Bot uç noktaları:** `/signal/serial` ve `/signal/deployer` herkese açık ve önbellekli. Yanıt şekli Faz 5 öncesi gerçek veriyle doğrulanır; yanıt boşsa Signal Graph yerine liste gösterilir.
 
-## 14. Ölçümler (Faz 0'da doldurulacak)
+## 14. Ölçümler
 
 Baz çizgi: 19.10.2026, Faz 0 yayınından önceki canlı site. Lighthouse 12.2.1, mobil emülasyon, performans kategorisi, tek ölçüm.
 
@@ -335,3 +335,21 @@ Notlar:
 
 - `/scan` ve `/network`, §3'teki LCP ≤ 2,5 sn bütçesini bugün de aşıyor. Faz 2–3 bunları düşürmeli; en azından kötüleştirmemeli.
 - Ana sayfanın TBT'si yüksek (1,95 sn). Muhtemel sebepler: ilk yüklemedeki JS (cüzdan adaptörleri, animasyonlar). Faz 2'de 3D eklenmeden önce, ana sayfa için yüklenen JS'in kaynağı ölçülmeli.
+
+### 14.1 Faz 0–5 sonrası (canlı, 19.10.2026)
+
+Aynı yöntem: Lighthouse 12.2.1, mobil emülasyon, performans, tek ölçüm, `gl1tchbased.xyz`.
+
+| Sayfa | LCP (mobil) | CLS | TBT | FCP | Perf skoru |
+|---|---|---|---|---|---|
+| `/` | 2,3 sn | 0 | 460 ms | 1,7 sn | 82 |
+| `/scan` | 4,2 sn | 0 | 590 ms | 1,4 sn | 68 |
+| `/network` | 3,1 sn | 0 | 720 ms | 1,4 sn | 74 |
+
+Notlar:
+
+- İlk v2 yayınında ana sayfa 46 puana düştü (TBT 9,6 sn): her 3D motor açılışı yükleme penceresinde tek bir çok saniyelik ana iş parçacığı görevi oluyordu. Çözüm `src/lib/three-gate.ts`: sahneler `load` olayından sonra (en geç 5 sn), birer birer, boşta açılır; telefonlarda ve düşük güçlü cihazlarda ziyaretçinin ilk dokunuşuna, kaydırmasına ya da tuşuna kadar poster gösterilir.
+- `/network`'te drand turunun BLS doğrulaması ~1,4 sn (yavaşlatılmış CPU) sürüyordu. Doğrulama artık Web Worker'da (`drand-verify.worker.ts`); worker yoksa boşta çalışır. "BLS-verified" etiketi yine yalnızca gerçek kontrolden sonra görünür.
+- Hero posteri artık önceden yüklenmiyor (LCP öğesi başlık metni); Martian Mono da önceden yüklenmiyor.
+- `/scan` LCP'si baz çizginin 0,4 sn üstünde (yeni yazı tipleri). `/network`'ün TBT'si 270 ms yüksek. İkisi de skoru düşürmüyor; sonraki iyileştirme adayları.
+- WebGL: hiçbir sayfada 2'den fazla bağlam yok (`scripts/site-shots.mjs` raporu).
