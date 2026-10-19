@@ -1,0 +1,59 @@
+.toasts {
+  position: fixed;
+  z-index: 120;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+  max-width: calc(100vw - 32px);
+}
+.toast {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  min-width: 260px;
+  max-width: 360px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--signal-edge);
+  background: rgba(14, 12, 24, 0.96);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.6), 0 0 calc(30px * var(--glow)) -8px var(--fun);
+  animation: toast-in 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.toast[data-leaving] { opacity: 0; transform: translateY(10px); }
+.toast b { display: block; font-family: var(--font-display); font-size: 15px; }
+.toast span span { display: block; font-size: 12.5px; color: var(--text-secondary); }
+.toast small { display: block; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fun-ink); }
+.px { width: 40px; height: 40px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; }
+.px i { background: var(--fun); border-radius: 1px; }
+.px i[data-off] { background: transparent; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(14px) scale(0.96); } }
+@media (prefers-reduced-motion: reduce) { .toast { animation: none; } }
+@media (max-width: 560px) { .toast { min-width: 0; } }
+
+.controls { display: inline-flex; align-items: center; gap: 6px; }
+.ctl {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  min-width: 32px;
+  justify-content: center;
+  padding: 0 8px;
+  border-radius: 9px;
+  border: 1px solid var(--line-2);
+  background: color-mix(in srgb, var(--ob2) 80%, transparent);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.ctl:hover { color: var(--color-static); border-color: var(--glitch-edge); }
+.ctl[aria-pressed="true"] { color: var(--signal-ink); border-color: var(--signal-edge); box-shadow: 0 0 14px -6px var(--color-signal); }
+.ctl:focus-visible { outline: 2px solid var(--signal-ink); outline-offset: 2px; }
+.count { font-family: var(--font-mono); font-size: 11px; }
+/* between the burger breakpoint and wide desktop the header is tight: star only, count in its label */
+@media (min-width: 1024px) and (max-width: 1279px) { .badges .count { display: none; } }

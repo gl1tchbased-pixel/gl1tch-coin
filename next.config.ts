@@ -41,8 +41,8 @@ const nextConfig: NextConfig = {
   // bot/, which .vercelignore keeps out of the deploy, so builds use a config without tests;
   // CI still type-checks the tests with the full tsconfig.json.
   typescript: { tsconfigPath: "tsconfig.build.json" },
-  // The scan share card picks its Risk Orb still by verdict at runtime, which the tracer can't follow.
-  outputFileTracingIncludes: { "/scan/**": ["./assets/orb/*.png"] },
+  // Share cards pick their image (Risk Orb still, Glitchy pose) at runtime, which the tracer can't follow.
+  outputFileTracingIncludes: { "/scan/**": ["./assets/orb/*.png"], "/play/**": ["./assets/play/*.png"] },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

@@ -1,0 +1,16 @@
+.wrap { max-width: 1180px; margin: 0 auto; padding: clamp(84px, 9vw, 104px) var(--container-pad, 24px) var(--space-12); }
+.header { max-width: 980px; margin-bottom: var(--space-5); }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: 0.14em; text-transform: uppercase; color: var(--glitch-ink); }
+.eyebrow i { width: 7px; height: 7px; border-radius: 50%; background: var(--color-signal); box-shadow: 0 0 10px var(--color-signal); }
+.title { font-family: var(--font-display); font-size: clamp(2.2rem, 4.6vw, 3.6rem); font-weight: 800; line-height: 1.02; margin-top: 10px; }
+.sub { margin-top: var(--space-3); max-width: 760px; font-size: clamp(15px, 1.8vw, 17px); color: var(--text-secondary); line-height: 1.55; }
+.sub b { color: var(--color-static); }
+.sub kbd { font-family: var(--font-mono); font-size: 12px; padding: 1px 6px; border-radius: 5px; border: 1px solid var(--line-2); background: var(--ob2); }
+
+.rules { margin-top: var(--space-12); max-width: 760px; }
+.h2 { font-family: var(--font-display); font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 700; margin-bottom: var(--space-4); }
+.rules ul { list-style: none; display: grid; gap: 10px; }
+.rules li { padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--ob1); color: var(--text-secondary); font-size: 15px; }
+.rules li b { color: var(--color-static); }
+.note { margin-top: var(--space-4); color: var(--text-muted); }
+.note a { color: var(--signal-ink); }

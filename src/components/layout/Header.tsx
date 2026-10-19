@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { ConnectWallet } from "@/components/web3/ConnectWallet";
+import { FunControls } from "@/components/fun/FunControls";
 import { NAV_LINKS, NAV_PRODUCTS, PROJECT_NAME, CTA_LABELS } from "@/content/site";
 import { OFFICIAL } from "@/lib/official";
 import styles from "./Header.module.css";
@@ -92,7 +93,7 @@ export function Header() {
     <header className={[styles.header, scrolled ? styles.solid : ""].join(" ")}>
       <div className={`container ${styles.inner}`}>
         <Link href="/" className={styles.brand} aria-label={`${PROJECT_NAME} home`}>
-          <span className={styles.logo}>
+          <span className={styles.logo} data-egg="logo">
             <Image
               src="/brand/gl1tch-logo-256.png"
               alt=""
@@ -157,6 +158,7 @@ export function Header() {
         </nav>
 
         <div className={styles.cta}>
+          <FunControls />
           <ConnectWallet />
           <Button id="header-cta" href={OFFICIAL.TG_URL} size="sm">
             {CTA_LABELS.primary}
@@ -207,6 +209,7 @@ export function Header() {
             ))}
           </nav>
           <div className={styles.overlayWallet}>
+            <FunControls />
             <ConnectWallet />
           </div>
           <Button href={OFFICIAL.TG_URL} size="lg" className={styles.overlayCta}>

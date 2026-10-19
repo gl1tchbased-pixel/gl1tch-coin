@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState, type ReactNode } from "react";
+import { GLITCH_EVENT } from "@/lib/fun/glitch";
 import styles from "./SceneStage.module.css";
 
 /**
@@ -207,9 +208,12 @@ function SceneStageInner<Api>(
       }
     };
     const onLeaveWindow = (e: PointerEvent) => { if (!e.relatedTarget) { pointer.active = false; chars().forEach((c) => c.untrack()); } };
+    // the secret code: every Glitchy on the page reacts
+    const onGlitch = () => chars().forEach((c, i) => setTimeout(() => c.play(i % 2 ? "glitch" : "spin"), i * 90));
     window.addEventListener("pointermove", onMove, { passive: true });
     wrap.addEventListener("click", onClick);
     document.addEventListener("pointerout", onLeaveWindow);
+    window.addEventListener(GLITCH_EVENT, onGlitch);
 
     return () => {
       disposed = true;
@@ -220,6 +224,7 @@ function SceneStageInner<Api>(
       window.removeEventListener("pointermove", onMove);
       wrap.removeEventListener("click", onClick);
       document.removeEventListener("pointerout", onLeaveWindow);
+      window.removeEventListener(GLITCH_EVENT, onGlitch);
       scene?.dispose?.();
       stage?.dispose();
       apiRef.current = null;

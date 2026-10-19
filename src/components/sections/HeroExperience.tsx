@@ -8,6 +8,8 @@ import { HeroPriceChip } from "./HeroPriceChip";
 import { CONTRACT_ADDRESS } from "@/lib/official";
 import { verdictKind } from "@/lib/verdict";
 import styles from "./Hero.module.css";
+import { unlock } from "@/lib/fun/achievements";
+import { sfx } from "@/lib/fun/sound";
 
 /** What the hero scene exposes (src/lib/scenes/signalCore.js). */
 interface CoreApi {
@@ -95,6 +97,8 @@ export function HeroExperience({ copy }: { copy: HeroCopy }) {
       const kind = verdictKind(String(r.verdict));
       setScan({ status: "done", result: { name: label(r), verdict: r.verdict, score: r.score, href: `/scan/${r.chain}-${r.mint}`, kind } });
       apiRef.current?.react(kind);
+      unlock("scan");
+      sfx(kind === "ok" ? "clean" : kind === "warn" ? "warn" : "rug");
     } catch {
       setScan({ status: "error", q: query });
       apiRef.current?.react("error");

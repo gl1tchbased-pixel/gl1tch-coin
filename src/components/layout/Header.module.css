@@ -185,7 +185,7 @@
 .productName { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-base); color: var(--color-static); }
 .productBlurb { font-size: var(--fs-sm); line-height: 1.45; color: var(--text-muted); }
 
-.cta { display: flex; align-items: center; gap: var(--space-3); }
+.cta { display: flex; align-items: center; gap: var(--space-3); white-space: nowrap; }
 
 .burger {
   display: none;
@@ -247,7 +247,7 @@
   color: var(--glitch-ink);
   margin-top: var(--space-2);
 }
-.overlayWallet { display: flex; justify-content: center; }
+.overlayWallet { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-3); }
 .overlayCta { width: 80%; max-width: 320px; }
 
 /* Show the full horizontal nav only when there's genuine room for all items;
@@ -256,4 +256,9 @@
 @media (max-width: 1023px) {
   .nav, .cta { display: none; }
   .burger { display: flex; }
+}
+
+/* 1024–1199: Whitepaper steps out of the bar (footer + menu still have it) so the CTAs fit. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .nav :global(#nav-whitepaper) { display: none; }
 }

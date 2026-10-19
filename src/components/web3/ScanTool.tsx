@@ -6,6 +6,7 @@ import type { TokenCandidate } from "@/lib/scan-multichain";
 import { CHAIN_LABEL } from "@/lib/scan-multichain";
 import { fmtPrice } from "@/lib/market";
 import { RiskOrb } from "./RiskOrb";
+import { unlock } from "@/lib/fun/achievements";
 import styles from "./ScanTool.module.css";
 
 const VERDICT_TONE: Record<string, string> = {
@@ -36,7 +37,8 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
   const [copiedEmbed, setCopiedEmbed] = useState(false);
   const didInit = useRef(false);
 
-  const scanAddress = useCallback(async (addr: string, chain?: string) => {
+  // byUser: false for permalink auto-runs, which shouldn't earn the First scan badge
+  const scanAddress = useCallback(async (addr: string, chain?: string, byUser = true) => {
     setCandidates(null); setStatus("scanning"); setError(""); setResult(null); setCopied(false);
     try {
       const url = `/api/scan?mint=${encodeURIComponent(addr)}${chain ? `&chain=${chain}` : ""}`;
@@ -44,6 +46,7 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
       const data = await res.json();
       if (!res.ok) { setError(data?.error || "scan failed"); setStatus("error"); return; }
       setResult(data as ScanResult); setStatus("done");
+      if (byUser) unlock("scan");
       // Reflect the scanned token in the URL so the result is shareable.
       if (typeof window !== "undefined" && data?.mint && data?.chain) {
         const u = new URL(window.location.href);
@@ -77,16 +80,16 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
     if (didInit.current || typeof window === "undefined") return;
     didInit.current = true;
     // A /scan/<chain-address> share link passes the token directly — scan it first.
-    if (initialAddress) { setQuery(initialAddress); scanAddress(initialAddress, initialChain); return; }
+    if (initialAddress) { setQuery(initialAddress); scanAddress(initialAddress, initialChain, false); return; }
     const sp = new URLSearchParams(window.location.search);
     const t = sp.get("t");
     if (t && t.includes(":")) {
       const i = t.indexOf(":");
       const chain = t.slice(0, i); const addr = t.slice(i + 1);
-      if (addr) { setQuery(addr); scanAddress(addr, chain); return; }
+      if (addr) { setQuery(addr); scanAddress(addr, chain, false); return; }
     }
     const mint = sp.get("mint");
-    if (mint) { setQuery(mint); scanAddress(mint, sp.get("chain") || undefined); return; }
+    if (mint) { setQuery(mint); scanAddress(mint, sp.get("chain") || undefined, false); return; }
     const qp = sp.get("q");
     if (qp) { setQuery(qp); go(qp); }
   }, [scanAddress, go, initialAddress, initialChain]);

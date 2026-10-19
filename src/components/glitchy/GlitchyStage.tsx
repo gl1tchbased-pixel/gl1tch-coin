@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import styles from "./GlitchyStage.module.css";
+import { GLITCH_EVENT } from "@/lib/fun/glitch";
 
 export type GlitchyEdition = "chrome" | "shadow";
 export type GlitchyAction = "laugh" | "wave" | "hop" | "spin" | "wink" | "glitch";
@@ -187,12 +188,15 @@ export const GlitchyStage = forwardRef<GlitchyStageHandle, Props>(function Glitc
       charsRef.current.forEach((c) => c.lookAt(0, dy > 0 ? -0.55 : 0.55, 0.6));
     };
     const onLeaveWindow = (e: PointerEvent) => { if (!e.relatedTarget) charsRef.current.forEach((c) => c.untrack()); };
+    // the secret code: every Glitchy on the page reacts
+    const onGlitch = () => charsRef.current.forEach((c, i) => setTimeout(() => c.play(i % 2 ? "glitch" : "spin"), i * 90));
 
     window.addEventListener("pointermove", onMove, { passive: true });
     window.addEventListener("touchstart", onTouch, { passive: true });
     window.addEventListener("touchmove", onTouch, { passive: true });
     window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("pointerout", onLeaveWindow);
+    window.addEventListener(GLITCH_EVENT, onGlitch);
 
     return () => {
       disposed = true;
@@ -204,6 +208,7 @@ export const GlitchyStage = forwardRef<GlitchyStageHandle, Props>(function Glitc
       window.removeEventListener("touchmove", onTouch);
       window.removeEventListener("scroll", onScroll);
       document.removeEventListener("pointerout", onLeaveWindow);
+      window.removeEventListener(GLITCH_EVENT, onGlitch);
       stage?.dispose();
       charsRef.current = [];
     };

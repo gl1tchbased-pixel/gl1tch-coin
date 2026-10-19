@@ -8,6 +8,7 @@ import { Scanlines } from "@/components/effects/Scanlines";
 import { Aurora } from "@/components/effects/Aurora";
 import { tektur, geist, martian } from "./fonts";
 import { ScrollProgress } from "@/components/effects/ScrollProgress";
+import { FunLayer } from "@/components/fun/FunLayer";
 import { Web3Providers } from "@/components/web3/Providers";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
@@ -76,6 +77,7 @@ export default function RootLayout({
           <Footer />
           <TickerBar />
         </Web3Providers>
+        <FunLayer />
         <Analytics />
       </body>
     </html>

@@ -25,6 +25,7 @@ export const NAV_PRODUCTS = [
 
 export const NAV_LINKS = [
   { id: "nav-proof", label: "Proof", href: "/proof" },
+  { id: "nav-play", label: "Play", href: "/play" },
   { id: "nav-live", label: "Live", href: "/live" },
   { id: "nav-whitepaper", label: "Whitepaper", href: "/whitepaper" },
 ] as const;
@@ -32,6 +33,7 @@ export const NAV_LINKS = [
 export const FOOTER_LINKS = [
   { id: "foot-scan", label: "Scanner", href: "/scan" },
   { id: "foot-proof", label: "Proof", href: "/proof" },
+  { id: "foot-play", label: "Rug or Not?", href: "/play" },
   { id: "foot-security", label: "Security", href: "/security" },
   { id: "foot-agents", label: "Agent Trust", href: "/agents" },
   { id: "foot-thesis", label: "Thesis", href: "/thesis" },

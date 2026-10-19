@@ -12,3 +12,33 @@
   color: var(--signal-ink);
 }
 .all:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.invite {
+  margin-top: var(--space-8);
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-4) var(--space-6) var(--space-4) var(--space-4);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--glitch-edge);
+  background:
+    radial-gradient(60% 120% at 0% 50%, rgba(122, 60, 255, calc(0.32 * var(--glow))), transparent 70%),
+    color-mix(in srgb, var(--ob1) 92%, transparent);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s;
+}
+.invite:hover { transform: translateY(-3px); border-color: var(--signal-edge); box-shadow: 0 20px 50px -24px rgba(124, 255, 79, calc(0.6 * var(--glow))); }
+.inviteArt { display: flex; width: 120px; height: 120px; }
+.inviteArt img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.35s cubic-bezier(0.2, 1.4, 0.4, 1); }
+.invite:hover .inviteArt img { transform: rotate(-6deg) scale(1.06); }
+.inviteText { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.inviteText b { font-family: var(--font-display); font-size: clamp(1.25rem, 2.4vw, 1.6rem); }
+.inviteText > span:last-child { color: var(--text-secondary); font-size: 15px; }
+.inviteKicker { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--glitch-ink); }
+.inviteGo { font-family: var(--font-display); font-weight: 800; font-size: 17px; color: #071405; padding: 12px 20px; border-radius: 12px; background: linear-gradient(180deg, #a6ff8c, var(--color-signal)); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { .invite, .inviteArt img { transition: none; } .invite:hover { transform: none; } }
+@media (max-width: 640px) {
+  .invite { grid-template-columns: 84px minmax(0, 1fr); padding: var(--space-4); gap: var(--space-4); }
+  .inviteArt { width: 84px; height: 84px; }
+  .inviteGo { grid-column: 1 / -1; text-align: center; }
+}
