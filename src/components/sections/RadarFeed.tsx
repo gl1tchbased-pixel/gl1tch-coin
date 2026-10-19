@@ -22,7 +22,7 @@ export function RadarFeed() {
           </div>
           <Link href="/radar" className={styles.all}>Open the full radar →</Link>
         </div>
-        <RugRadar />
+        <RugRadar limit={4} />
 
         <Link href="/play" className={styles.invite}>
           <span className={styles.inviteArt}>

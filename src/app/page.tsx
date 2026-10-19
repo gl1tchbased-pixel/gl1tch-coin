@@ -6,7 +6,6 @@ import { TrustWall } from "@/components/sections/TrustWall";
 import { WhyHold } from "@/components/sections/WhyHold";
 import { Tokenomics } from "@/components/sections/Tokenomics";
 import { MeetGlitchy } from "@/components/sections/MeetGlitchy";
-import { Community } from "@/components/sections/Community";
 import { FAQ } from "@/components/sections/FAQ";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { MobileCTABar } from "@/components/layout/MobileCTABar";
@@ -16,7 +15,7 @@ export const revalidate = 60;
 
 /**
  * Homepage, v2 — eight beats: use the product (hero scan + Signal Core), see the proof, pick a
- * product, watch the radar catch rugs, verify us, why hold, meet Glitchy, close.
+ * product, watch the radar catch rugs, verify us, why hold (tiers included), meet Glitchy, close.
  * Long reads live on their own pages: /roadmap, /thesis (manifesto), /token (how to buy), /live.
  */
 export default function Home() {
@@ -30,7 +29,6 @@ export default function Home() {
       <WhyHold />
       <Tokenomics />
       <MeetGlitchy />
-      <Community />
       <FAQ />
       <FinalCTA />
       <MobileCTABar />

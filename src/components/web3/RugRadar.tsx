@@ -22,7 +22,8 @@ function vtone(v: string): "good" | "ok" | "warn" | "bad" {
 }
 const short = (a: string) => `${a.slice(0, 4)}…${a.slice(-4)}`;
 
-export function RugRadar() {
+/** `limit` caps the catches shown (the homepage shows a row; /radar shows the whole sweep). */
+export function RugRadar({ limit }: { limit?: number } = {}) {
   const [data, setData] = useState<Radar | null>(null);
   const [err, setErr] = useState(false);
 
@@ -64,7 +65,7 @@ export function RugRadar() {
         <p className={styles.note}>Radar is mid-sweep — it refreshes hourly. <Link href="/scan" className={styles.link}>Scan one yourself →</Link></p>
       ) : (
         <div className={styles.grid}>
-          {data.caught.map((c) => {
+          {data.caught.slice(0, limit ?? data.caught.length).map((c) => {
             const t = vtone(c.verdict);
             return (
               <Link key={c.mint} href={`/scan/${c.chain}-${c.mint}`} className={`${styles.card} ${styles[`t_${t}`]}`}>

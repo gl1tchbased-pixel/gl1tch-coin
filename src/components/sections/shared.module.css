@@ -1,9 +1,9 @@
 .section {
-  padding-block: var(--space-12);
+  padding-block: var(--space-10);
 }
 
 @media (min-width: 1024px) {
-  .section { padding-block: calc(var(--space-section) / 2); }
+  .section { padding-block: calc(var(--space-section) * 0.4); }
 }
 
 .head {

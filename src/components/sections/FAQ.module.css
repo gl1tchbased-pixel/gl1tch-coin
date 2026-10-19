@@ -3,3 +3,23 @@
   margin-inline: auto;
   border-top: 1px solid var(--color-border);
 }
+.more summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: var(--space-4) 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--glitch-ink);
+  cursor: pointer;
+  list-style: none;
+  border-bottom: 1px solid var(--color-border);
+}
+.more summary::-webkit-details-marker { display: none; }
+.more summary::after { content: "+"; font-size: 16px; color: var(--signal-ink); }
+.more[open] summary::after { content: "−"; }
+.more summary:hover { color: var(--color-static); }
+.more summary:focus-visible { outline: 2px solid var(--signal-ink); outline-offset: 2px; }
