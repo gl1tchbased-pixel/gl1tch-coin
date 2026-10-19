@@ -1,17 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { OFFICIAL } from "@/lib/official";
+import { getStats } from "@/lib/stats";
+import { deployerStatus, deployerCopy, DEPLOYER_EVENTS } from "@/lib/deployer-status";
 import styles from "./deck.module.css";
 
 // Grant/partner deck. Linked from funding applications only: kept out of nav,
-// sitemap and search. Every number here must stay verifiable (see /proof).
+// sitemap and search. Every number here must stay verifiable (see /proof, /api/stats).
 export const metadata: Metadata = {
   title: "Grant Deck — GL1TCH",
   description:
-    "GL1TCH grant deck: a free, open-source token safety scanner for Solana. Problem, product, honest traction, roadmap and use of funds.",
+    "GL1TCH grant deck: a free, open-source (MIT) token safety scanner for Solana. Problem, product, architecture, honest traction, roadmap, itemized use of funds and token disclosure.",
   alternates: { canonical: "/deck" },
   robots: { index: false, follow: false },
 };
+
+// Live numbers (scan counter split, deployer balance) refresh hourly.
+export const revalidate = 3600;
 
 const product = [
   {
@@ -20,62 +25,96 @@ const product = [
   },
   {
     title: "Rug Radar",
-    text: "Sweeps freshly promoted tokens every hour and ranks them by risk, so the flagged ones are visible before people buy.",
+    text: "Sweeps freshly promoted tokens every 30 minutes and ranks them by risk, so the flagged ones are visible before people buy.",
   },
   {
     title: "Public API + badge",
-    text: "Free JSON API and an embeddable “Scanned by GL1TCH” badge that auto-updates, so wallets, launchpads and communities can show a live risk check.",
+    text: "Free JSON API (no key, no token) and an embeddable “Scanned by GL1TCH” badge that auto-updates, so wallets, launchpads and communities can show a live risk check.",
   },
   {
     title: "Telegram bot + Watchtower",
-    text: "Scan from chat, and get alerted when a watched token’s risk changes or a watched wallet dumps 25%+ of a position.",
+    text: "Scan from chat, and get alerted when a watched token’s risk changes or a watched wallet dumps 25%+ of a position. 25 tokens and 25 wallets per user, free for everyone.",
   },
 ];
 
 const checks = [
   "Mint and freeze authority (can supply be printed or wallets frozen?)",
   "Token-2022 extensions, including hidden transfer fees",
-  "Liquidity depth and LP lock / burn status",
-  "Top-holder concentration",
-  "Bundled, sniper and insider wallets at launch",
+  "Liquidity depth, fabricated depth, and LP lock / burn status",
+  "Top-holder concentration and bundled, sniper or insider wallets",
   "Deployer track record across every token we have scanned",
-  "RugCheck as an independent second source; GoPlus for EVM chains (honeypot, sell tax, mintable, ownership, pausable)",
+  "Deployer holdings: how much of the supply the launching wallet holds right now (dump risk, or exited)",
+  "RugCheck as an independent second source; GoPlus for 15 EVM chains (honeypot, sell tax, mintable, ownership, pausable)",
 ];
 
-const funding = [
-  {
-    track: "Core (Solana Foundation proposal)",
-    items: [
-      ["Keep the free API and Telegram bot hosted for 12 months, with a public status page", "$3,000"],
-      ["Publish the Solana check engine as a standalone open-source npm package with docs and tests", "$4,000"],
-      ["Claude-written plain-language explanations on every scan (explaining only data the scanner verified), plus API docs", "$3,000"],
-    ],
-  },
-  {
-    track: "Mobile (Solana Seeker proposal)",
-    items: [
-      ["Android MVP: scan by paste, QR or the Android share sheet (share a token link from any app → instant verdict); publish to the Solana dApp Store", "$4,000"],
-      ["Mobile Wallet Adapter: connect a wallet read-only and risk-check every token you hold in one tap; push alerts from Watchtower", "$4,000"],
-      ["Seeker polish, offline verdict cache, open-source the app, and mobile API/RPC capacity for 12 months", "$4,000"],
-    ],
-  },
-] as const;
+type Item = { what: string; amount: string; detail?: string[] };
 
-export default function DeckPage() {
+const funding: { track: string; items: Item[] }[] = [
+  {
+    track: "Core (Solana Foundation proposal) · $10,000",
+    items: [
+      {
+        what: "M1 · Keep the free API and Telegram bot hosted for 12 months, with a public status page",
+        amount: "$3,000",
+        detail: [
+          "Private Solana RPC, Helius Developer: $49/mo × 12 ≈ $590",
+          "Site + public API, Vercel Pro (Hobby is non-commercial only): $20/mo × 12 = $240",
+          "Bot with persistent volume, Railway: ≈ $15/mo × 12 ≈ $180",
+          "Domain, mail forwarding, uptime monitoring: ≈ $90",
+          "Reliability engineering, ≈ $1,900: status page and alerts, bot health checks, API abuse protection, daily backups of the bot's data, a load test at Rug Radar volume",
+        ],
+      },
+      {
+        what: "M2 · Publish the Solana check engine as a standalone open-source npm package (MIT) with docs, tests and examples",
+        amount: "$4,000",
+      },
+      {
+        what: "M3 · Claude-written plain-language explanations on every scan (explaining only data the scanner verified), plus public API docs",
+        amount: "$3,000",
+      },
+    ],
+  },
+  {
+    track: "Mobile (Solana Mobile proposal) · $12,000",
+    items: [
+      {
+        what: "M1 · Android MVP (React Native / Expo): scan by paste, QR or the Android share sheet (share a token link from any app → instant verdict); publish to the Solana dApp Store",
+        amount: "$4,000",
+      },
+      {
+        what: "M2 · Solana Mobile Stack: connect a wallet with Mobile Wallet Adapter (read-only) and risk-check every token you hold in one tap; Sign In With Solana through MWA, so on Seeker ownership is proven by a message signed with the Seed Vault-backed wallet (never a transaction); Watchtower push alerts for your own holdings",
+        amount: "$4,000",
+      },
+      {
+        what: "M3 · Seeker polish, offline verdict cache, open-source the app (MIT), and mobile API/RPC capacity for 12 months",
+        amount: "$4,000",
+      },
+    ],
+  },
+];
+
+const fmtDate = (ms: number) => new Date(ms).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+
+export default async function DeckPage() {
+  const [stats, dep] = await Promise.all([getStats(), deployerStatus()]);
+  const deployer = deployerCopy(dep);
+
   return (
     <section className={styles.wrap}>
       <article className={`${styles.slide} ${styles.cover}`}>
         <span className="t-eyebrow">Grant deck · October 2026</span>
         <h1 className="t-h2">GL1TCH: scan before you buy</h1>
         <p className={styles.lead}>
-          A free, open-source token safety scanner for Solana (plus major EVM chains). Paste
-          any token and get a risk score with plain-language reasons in seconds. Read-only:
-          it never asks for a signature to scan.
+          A free, open-source (MIT) token safety scanner for Solana, plus 15 EVM chains. Paste
+          any token and get a risk score with plain-language reasons in seconds. Read-only: it
+          never asks for a signature to scan, and no feature that protects people is ever gated
+          behind a token.
         </p>
         <div className={styles.links}>
           <a className={styles.link} href={`${OFFICIAL.SITE_URL}/scan`}>Live scanner</a>
-          <a className={styles.link} href={OFFICIAL.GITHUB_URL}>Source code</a>
+          <a className={styles.link} href={OFFICIAL.GITHUB_URL}>Source code (MIT)</a>
           <a className={styles.link} href={`${OFFICIAL.SITE_URL}/proof`}>Proof page</a>
+          <a className={styles.link} href={`${OFFICIAL.SITE_URL}/llms.txt`}>API reference</a>
         </div>
       </article>
 
@@ -90,9 +129,9 @@ export default function DeckPage() {
         <p className={styles.body}>
           Retail buyers see a ticker and a chart. The red flags (a live mint authority, a
           freeze authority, a hidden Token-2022 transfer fee, unlocked liquidity, bundled
-          sniper wallets, a deployer with a history of rugs) sit in on-chain state they
-          can&apos;t read. Many checkers show raw flags with little explanation, and some keep
-          the deeper data behind a paywall.
+          sniper wallets, a deployer with a history of rugs or a dump-sized bag) sit in on-chain
+          state they can&apos;t read. Many checkers show raw flags with little explanation, and
+          some keep the deeper data behind a paywall.
         </p>
       </article>
 
@@ -115,34 +154,89 @@ export default function DeckPage() {
             <li key={c}>{c}</li>
           ))}
         </ul>
+        <p className={styles.source}>
+          Weights and thresholds are public, and every change is logged in docs/scoring-changelog.md.
+        </p>
       </article>
 
       <article className={styles.slide}>
         <span className={styles.num}>04 · Why it&apos;s different</span>
         <ul className={styles.list}>
-          <li><strong>Free, no paywall.</strong> The full scan, API and badge cost nothing.</li>
+          <li><strong>Free, no paywall, no token gate.</strong> The full scan, API, badge, Rug Radar and Watchtower cost nothing and never require holding anything.</li>
           <li><strong>Explains, not just flags.</strong> Several sources become one verdict with a reason per check.</li>
           <li><strong>Remembers deployers.</strong> Every scan feeds a deployer history, so a serial rugger&apos;s next token is flagged.</li>
           <li><strong>Built to be reused.</strong> Public API and badge let any wallet, launchpad or community embed a risk check.</li>
-          <li><strong>Non-custodial and open source.</strong> Read-only by design; the code is public.</li>
+          <li><strong>Non-custodial and open source.</strong> Read-only by design, enforced in CI; MIT-licensed code.</li>
         </ul>
       </article>
 
       <article className={styles.slide}>
         <span className={styles.num}>05 · Traction (honest numbers)</span>
         <ul className={styles.list}>
-          <li>Scanner live since late June 2026, built and run by one person at no cost to users.</li>
-          <li>About <strong>1,950 scans by mid-July 2026</strong> with no paid marketing.</li>
+          <li>Scanner live since late June 2026, built and run by one person at no cost to users, with no paid marketing.</li>
           <li>
-            The bot&apos;s hosting lapsed in late July, which took the scan counter offline. It was
-            restored on 17 October 2026, so we have no reliable figure for August–October.
+            The public counter (live since 4 July 2026) shows{" "}
+            <strong>{stats ? stats.scanned.toLocaleString("en-US") : "—"} tokens scanned</strong> in
+            total. That total includes automated scans (Rug Radar sweeps every 30 minutes, Watchtower
+            re-scans), so it overstates people&apos;s usage by a wide margin. The ~1,950 we quoted for mid-July
+            included those sweeps too.
           </li>
+          <li>
+            From 20 October 2026 the counter records people&apos;s scans and automated scans
+            separately and publishes both at <code>/api/stats</code>
+            {stats?.splitSince ? (
+              <>
+                : since {fmtDate(stats.splitSince)}, <strong>{stats.user.toLocaleString("en-US")} user scans</strong> and{" "}
+                {stats.auto.toLocaleString("en-US")} automated.
+              </>
+            ) : (
+              "."
+            )}
+          </li>
+          <li>The bot&apos;s hosting lapsed from late July to 17 October 2026, so there is no reliable figure for that period.</li>
           <li>Solana natively, plus 15 EVM chains through GoPlus (Ethereum, Base, BNB Chain, Arbitrum, Polygon and more).</li>
         </ul>
       </article>
 
       <article className={styles.slide}>
-        <span className={styles.num}>06 · Roadmap and use of funds</span>
+        <span className={styles.num}>06 · Architecture and engineering</span>
+        <div className={styles.grid}>
+          <div className={styles.card}>
+            <span className={styles.cardTitle}>Scanner + public API</span>
+            <span className={styles.cardText}>
+              Next.js on Vercel. Each scan reads Solana RPC directly (mint, authorities, holders,
+              the deployer&apos;s live balance) and cross-checks RugCheck, DexScreener /
+              GeckoTerminal and, for EVM, GoPlus. Every source is fault-tolerant: a slow one
+              degrades to &quot;unknown&quot; and lowers the confidence score instead of failing.
+            </span>
+          </div>
+          <div className={styles.card}>
+            <span className={styles.cardTitle}>Bot + Signal Graph</span>
+            <span className={styles.cardText}>
+              TypeScript Telegram bot on Railway with a persistent volume (no database): the
+              deployer reputation graph, Watchtower sweeps and the public counters.
+            </span>
+          </div>
+          <div className={styles.card}>
+            <span className={styles.cardTitle}>Quality gates</span>
+            <span className={styles.cardText}>
+              TypeScript for the scanner, API and bot, and more than 250 unit tests across the site
+              and the bot, run in CI on every push alongside type checks.
+            </span>
+          </div>
+          <div className={styles.card}>
+            <span className={styles.cardTitle}>Security</span>
+            <span className={styles.cardText}>
+              CI runs a secret scan, a dependency audit and a check that no code requests a
+              fund-moving or approval signature. Public threat model, risk register and
+              SECURITY.md disclosure policy.
+            </span>
+          </div>
+        </div>
+      </article>
+
+      <article className={styles.slide}>
+        <span className={styles.num}>07 · Roadmap and use of funds</span>
         <p className={styles.body}>
           Each milestone is funded once. If one program funds a milestone, it is removed from
           every other request.
@@ -156,15 +250,27 @@ export default function DeckPage() {
               </tr>
             </thead>
             <tbody>
-              {f.items.map(([what, amount]) => (
-                <tr key={what}>
-                  <td>{what}</td>
-                  <td className={styles.amount}>{amount}</td>
+              {f.items.map((it) => (
+                <tr key={it.what}>
+                  <td>
+                    {it.what}
+                    {it.detail && (
+                      <ul className={styles.breakdown}>
+                        {it.detail.map((d) => (
+                          <li key={d}>{d}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </td>
+                  <td className={styles.amount}>{it.amount}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         ))}
+        <p className={styles.source}>
+          Infrastructure lines are estimates at public list prices (October 2026).
+        </p>
         <p className={styles.body}>
           Why mobile: most Solana trading starts from a link on a phone. On Seeker, the scan
           sits one share-tap away from the moment someone is about to buy, and the app never
@@ -173,19 +279,37 @@ export default function DeckPage() {
       </article>
 
       <article className={styles.slide}>
-        <span className={styles.num}>07 · Token disclosure</span>
+        <span className={styles.num}>08 · How it stays free</span>
+        <ul className={styles.list}>
+          <li>Running costs are small and itemized above: about $1,100 a year of infrastructure at list prices.</li>
+          <li>Grants cover the first 12 months and the open-source work.</li>
+          <li>
+            After that, paid B2B services on top of the free tools carry the hosting: custom risk
+            feeds with an uptime SLA for wallets and launchpads, and verifiable randomness for
+            mints and giveaways. The public scanner, API and badge stay free.
+          </li>
+        </ul>
+      </article>
+
+      <article className={styles.slide}>
+        <span className={styles.num}>09 · Token disclosure</span>
         <p className={styles.body}>
           The project also launched a community token, $GL1TCH, on Pump.fun on 29 May 2026
-          (Token-2022, mint and freeze authority revoked, 0% tax). The deployer wallet sold its
-          full position on 20 August 2026; the on-chain receipt is on the{" "}
-          <Link className={styles.link} href="/proof">proof page</Link>. The token trades very
-          thinly (a few thousand dollars of liquidity).{" "}
-          <strong>No grant funds go to the token, buybacks or liquidity.</strong>
+          (Token-2022, mint and freeze authority revoked, 0% tax, liquidity locked). The deployer
+          wallet sold its full position on{" "}
+          <a className={styles.link} href={DEPLOYER_EVENTS.exit.tx}>{DEPLOYER_EVENTS.exit.date}</a> and{" "}
+          <a className={styles.link} href={DEPLOYER_EVENTS.buyback.firstTx}>bought back on {DEPLOYER_EVENTS.buyback.dates}</a>;
+          it {deployer.now}. The token trades very thinly (a few thousand dollars of liquidity).
+        </p>
+        <p className={styles.body}>
+          Holding the token unlocks only community ranks and the verifiable-randomness API.{" "}
+          <strong>No grant funds go to the token, buybacks or liquidity.</strong> Receipts are on
+          the <Link className={styles.link} href="/proof">proof page</Link>.
         </p>
       </article>
 
       <article className={styles.slide}>
-        <span className={styles.num}>08 · Team and contact</span>
+        <span className={styles.num}>10 · Team and contact</span>
         <p className={styles.body}>
           Solo founder based in Turkey, who designed, built and operates the whole stack:
           scanner, public API, badge, Rug Radar and the Telegram bot.

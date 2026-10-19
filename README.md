@@ -5,7 +5,7 @@ and get a 0–100 risk score with a plain-language reason for every check, in se
 it never asks for a signature, never touches a wallet, and costs nothing to use.
 
 - Scanner: <https://gl1tchbased.xyz/scan>
-- Rug Radar (live feed of risky new launches): <https://gl1tchbased.xyz/radar>
+- Rug Radar (risky new launches, swept every 30 minutes): <https://gl1tchbased.xyz/radar>
 - Proof page (we run the scanner on our own token): <https://gl1tchbased.xyz/proof>
 - Telegram bot: scan from chat, plus Watchtower alerts — <https://t.me/gl1tch_infected>
 - License: [MIT](./LICENSE)
