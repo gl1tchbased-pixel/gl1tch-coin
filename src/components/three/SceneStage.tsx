@@ -3,14 +3,15 @@
 import Image from "next/image";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState, type ReactNode } from "react";
 import { GLITCH_EVENT } from "@/lib/fun/glitch";
+import { acquireBootSlot } from "@/lib/three-gate";
 import styles from "./SceneStage.module.css";
 
 /**
  * Hosts one v2 3D scene (src/lib/scenes/*.js) on the Glitchy engine's stage, so every scene gets
  * the mascot's studio light, bloom, vignette and grain. three.js + the engine + the scene load only
- * when the stage nears the viewport (and, for above-the-fold heroes, once the page is idle), so
- * they never weigh on first paint. A poster stays visible until WebGL is ready, and for good if it
- * never is. Off-screen or in a background tab nothing renders; reduced motion gets one still frame.
+ * when the stage nears the viewport and the boot gate allows (src/lib/three-gate.ts: after load,
+ * one scene at a time, and on phones after the first interaction), so they never weigh on first
+ * paint. A poster stays visible until WebGL is ready, and for good if it never is. Off-screen or in a background tab nothing renders; reduced motion gets one still frame.
  */
 
 export interface ScenePointer { x: number; y: number; active: boolean }
@@ -74,7 +75,7 @@ interface Props<Api> {
   options?: Record<string, unknown>;
   poster?: string;
   posterAlt?: string;
-  /** Above the fold: boot once the page is idle instead of waiting for scroll. */
+  /** Above the fold: the poster loads with priority (it's the LCP candidate until 3D boots). */
   hero?: boolean;
   className?: string;
   label: string;
@@ -167,15 +168,15 @@ function SceneStageInner<Api>(
       }
     }
 
-    let idleId = 0;
+    let release: (() => void) | null = null;
     const startBoot = () => {
       if (booting || disposed) return;
-      if (!hero) { void boot(); return; }
-      // Above the fold: let the page settle first so the scene never competes with first paint.
-      const go = () => void boot();
-      if (typeof window.requestIdleCallback === "function") idleId = window.requestIdleCallback(go, { timeout: 2500 });
-      else idleId = window.setTimeout(go, 1200);
       booting = true;
+      void acquireBootSlot().then((rel) => {
+        if (disposed) { rel(); return; }
+        release = rel;
+        return boot().finally(() => { rel(); release = null; });
+      });
     };
     const io = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
@@ -220,7 +221,7 @@ function SceneStageInner<Api>(
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
-      if (typeof window.cancelIdleCallback === "function") window.cancelIdleCallback(idleId); else window.clearTimeout(idleId);
+      release?.();
       io.disconnect();
       ro.disconnect();
       window.removeEventListener("pointermove", onMove);

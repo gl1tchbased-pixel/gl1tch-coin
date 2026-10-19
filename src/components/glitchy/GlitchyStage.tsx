@@ -4,6 +4,7 @@ import Image from "next/image";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import styles from "./GlitchyStage.module.css";
 import { GLITCH_EVENT } from "@/lib/fun/glitch";
+import { acquireBootSlot } from "@/lib/three-gate";
 
 export type GlitchyEdition = "chrome" | "shadow";
 export type GlitchyAction = "laugh" | "wave" | "hop" | "spin" | "wink" | "glitch";
@@ -138,9 +139,17 @@ export const GlitchyStage = forwardRef<GlitchyStageHandle, Props>(function Glitc
       }
     }
 
+    let release: (() => void) | null = null;
     const io = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting;
-      if (visible && !booting) void boot();
+      if (!visible || booting) return;
+      booting = true;
+      // same gate as every v2 scene: after load, one at a time, phones after the first interaction
+      void acquireBootSlot().then((rel) => {
+        if (disposed) { rel(); return; }
+        release = rel;
+        return boot().finally(() => { rel(); release = null; });
+      });
     }, { rootMargin: "240px" });
     io.observe(wrap);
 
@@ -209,6 +218,7 @@ export const GlitchyStage = forwardRef<GlitchyStageHandle, Props>(function Glitc
       window.removeEventListener("scroll", onScroll);
       document.removeEventListener("pointerout", onLeaveWindow);
       window.removeEventListener(GLITCH_EVENT, onGlitch);
+      release?.();
       stage?.dispose();
       charsRef.current = [];
     };
