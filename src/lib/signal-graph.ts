@@ -101,3 +101,56 @@ export function observeDeployer(obs: {
     )
   );
 }
+
+export interface GraphHub {
+  address: string;
+  chain: string;
+  level: ReputationLevel;
+  flaggedCount: number;
+  tokensSeen: number;
+  note: string;
+  tokens: TokenSighting[];
+}
+export interface GraphSnapshot {
+  deployers: number;
+  flaggedActors: number;
+  serialDeployers: number;
+  hubs: GraphHub[];
+  updatedAt: number;
+}
+
+/**
+ * What the Signal Graph 3D draws: the graph's size plus every flagged deployer with the tokens it
+ * really shipped (from /signal/directory + /signal/deployer). Null if the bot can't be reached,
+ * so the page shows its designed empty state instead of numbers it doesn't have.
+ */
+export async function signalGraphSnapshot(maxHubs = 12): Promise<GraphSnapshot | null> {
+  const get = async <T,>(path: string): Promise<T | null> => {
+    try {
+      const r = await fetch(`${BASE}${path}`, { signal: AbortSignal.timeout(4000), next: { revalidate: 600 } });
+      return r.ok ? ((await r.json()) as T) : null;
+    } catch {
+      return null;
+    }
+  };
+  const [metrics, dir] = await Promise.all([
+    get<{ ok?: boolean; signalGraph?: { deployers?: number; flaggedActors?: number; serialDeployers?: number } }>("/signal/metrics"),
+    get<{ ok?: boolean; flagged?: { address: string; chain: string }[] }>("/signal/directory"),
+  ]);
+  if (!metrics?.ok || !metrics.signalGraph) return null;
+  const flagged = (dir?.flagged ?? []).slice(0, maxHubs);
+  const reps = await Promise.all(
+    flagged.map((f) =>
+      get<{ ok?: boolean; reputation?: DeployerReputation }>(
+        `/signal/deployer?${new URLSearchParams({ address: f.address, chain: f.chain }).toString()}`
+      )
+    )
+  );
+  const hubs: GraphHub[] = reps.flatMap((r) => {
+    const rep = r?.ok ? r.reputation : null;
+    if (!rep) return [];
+    return [{ address: rep.deployer, chain: rep.chain, level: rep.level, flaggedCount: rep.flaggedCount, tokensSeen: rep.tokensSeen, note: rep.note, tokens: rep.recent ?? [] }];
+  });
+  const g = metrics.signalGraph;
+  return { deployers: g.deployers ?? 0, flaggedActors: g.flaggedActors ?? 0, serialDeployers: g.serialDeployers ?? 0, hubs, updatedAt: Date.now() };
+}

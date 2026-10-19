@@ -69,3 +69,6 @@
   .scoreRow { grid-template-columns: 32px 1fr; }
   .scoreV { grid-column: 2; }
 }
+.ringRow { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); align-items: center; border: 1px solid var(--line-2); border-radius: var(--radius-xl); padding: var(--space-5) var(--space-6); background: color-mix(in srgb, var(--ob1) 92%, transparent); }
+.ringRow a, .body a { color: var(--signal-ink); }
+@media (max-width: 720px) { .ringRow { grid-template-columns: 1fr; padding: var(--space-4); } }

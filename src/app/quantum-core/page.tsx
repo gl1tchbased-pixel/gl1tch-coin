@@ -3,6 +3,7 @@ import Link from "next/link";
 import { latestPulse } from "@/lib/quantum/curby";
 import { isPulseStale, formatPulseDate } from "@/lib/quantum/freshness";
 import { QUANTUM_COUNT_WORD } from "@/content/quantum";
+import { EntropyField } from "@/components/quantum/EntropyField";
 import styles from "./quantum.module.css";
 
 export const metadata: Metadata = {
@@ -89,6 +90,8 @@ export default async function QuantumCorePage() {
           that produces measurable value now, labelled exactly for what it is.
         </p>
       </header>
+
+      <EntropyField />
 
       <section className={styles.pulseCard} aria-label="CURBy quantum pulse">
         <div className={styles.pulseHead}>

@@ -7,7 +7,7 @@ import { C, TAU, k, pick, textures, Burst, Sparks, BAD, GOOD, bubble } from './f
 const RIGHT = ['Nice catch!', "You're a natural.", 'Signal Bearer energy.', 'Exactly. Read the flags.'];
 const WRONG = ['Oof. Look again.', 'Glitched you!', 'Check the deployer next time.', 'The flags were right there.'];
 
-/** @param {{ stage: any, host: HTMLElement, reduced: boolean, mobile: boolean, ui: { bubble?: HTMLElement } }} ctx */
+/** @param {{ stage: any, host: HTMLElement, reduced: boolean, mobile: boolean, ui: any }} ctx */
 export function mount(ctx) {
   const { stage, host, ui } = ctx;
   const { scene, camera } = stage;

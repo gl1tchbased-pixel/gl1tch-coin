@@ -12,6 +12,7 @@ import {
   type RankTier,
 } from "@/lib/ranks";
 import { ConnectWallet } from "./ConnectWallet";
+import { publishRank } from "@/lib/fun/rank-signal";
 import { RankCard } from "@/components/ui/RankCard";
 import styles from "./RankChecker.module.css";
 
@@ -53,6 +54,9 @@ export function RankChecker() {
 
   const current: RankTier = rankForBalance(balance ?? 0);
   const next = nextTier(current);
+  // light up this tier's coin in the 3D rank row, if there is one on the page
+  const tierIndex = connected && live && balance != null ? RANK_TIERS.findIndex((t) => t.id === current.id) : null;
+  useEffect(() => { publishRank(tierIndex); }, [tierIndex]);
 
   return (
     <div className={styles.wrap}>

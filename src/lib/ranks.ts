@@ -32,3 +32,11 @@ export function nextTier(current: RankTier): RankTier | null {
 export function formatAmount(n: number): string {
   return n.toLocaleString("en-US");
 }
+
+/** Short threshold label for coins and chips: 0 → "FREE", 100_000 → "100K+", 1_000_000 → "1M+". */
+export function holdLabel(min: number): string {
+  if (min <= 0) return "FREE";
+  if (min >= 1_000_000) return `${+(min / 1_000_000).toFixed(1)}M+`;
+  if (min >= 1_000) return `${+(min / 1_000).toFixed(1)}K+`;
+  return `${min}+`;
+}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { RankChecker } from "@/components/web3/RankChecker";
 import { SignalLeaderboard } from "@/components/web3/SignalLeaderboard";
+import { RankCoins } from "@/components/ranks/RankCoins";
 
 export const metadata: Metadata = {
   title: "Verify Your Rank — GL1TCH",
@@ -29,6 +30,7 @@ export default function RanksPage() {
           ever leave your control; we only read your on-chain balance.
         </p>
       </div>
+      <RankCoins />
       <RankChecker />
       <SignalLeaderboard />
     </section>

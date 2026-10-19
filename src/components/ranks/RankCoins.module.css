@@ -1,0 +1,11 @@
+.wrap { margin-block: var(--space-6) var(--space-10); }
+.stage { height: clamp(300px, 34vw, 360px); border-radius: var(--radius-xl); border: 1px solid var(--line-2); }
+.legend { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.legend li { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 6px; border-radius: 10px; border: 1px solid var(--line); background: var(--ob1); text-align: center; }
+.legend b { font-family: var(--font-display); font-size: 13px; }
+.legend span { font-family: var(--font-mono); font-size: 11px; color: var(--signal-ink); }
+.hint { margin-top: 10px; text-align: center; font-size: 13px; color: var(--text-muted); }
+@media (max-width: 720px) {
+  .stage { height: 420px; }
+  .legend { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

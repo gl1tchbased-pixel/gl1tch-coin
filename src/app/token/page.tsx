@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ApiKeyMinter } from "@/components/web3/ApiKeyMinter";
 import { HowToBuy } from "@/components/sections/HowToBuy";
+import { RankCoins } from "@/components/ranks/RankCoins";
+import { SupplyRing } from "@/components/network/SupplyRing";
 import styles from "./token.module.css";
 
 export const metadata: Metadata = {
@@ -150,6 +152,27 @@ export default function TokenPage() {
             </p>
           </div>
           <ApiKeyMinter />
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <span className={styles.kicker}>Holder tiers</span>
+        <h2 className={styles.h2}>Five tiers, minted.</h2>
+        <p className={styles.body}>
+          Your sustained balance resolves to one of five ranks; each unlocks more depth. The thresholds are the
+          same ones the bot and the API-key minter check. <Link href="/ranks">Verify your rank →</Link>
+        </p>
+        <RankCoins />
+        <div className={styles.ringRow}>
+          <div>
+            <h3 className={styles.cardT}>Who holds the supply, live</h3>
+            <p className={styles.cardD}>
+              All 1,000,000,000 tokens launched to the open market. The largest account is the liquidity pool, where
+              tokens wait to be bought; the ring is today&apos;s real split from the self-scan.{" "}
+              <Link href="/proof">See the holder list →</Link>
+            </p>
+          </div>
+          <SupplyRing />
         </div>
       </section>
 

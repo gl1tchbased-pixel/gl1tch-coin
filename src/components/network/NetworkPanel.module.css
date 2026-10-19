@@ -84,10 +84,6 @@
 .facts { list-style: none; display: grid; gap: 8px; }
 .facts li { display: flex; flex-direction: column; gap: 2px; font-size: 13px; color: var(--text-secondary); }
 .facts b { color: var(--color-static); font-weight: 600; }
-.stack { display: flex; height: 12px; border-radius: 6px; overflow: hidden; gap: 2px; margin: 14px 0 8px; }
-.pool { background: var(--glitch-mid); }
-.rest { background: var(--signal-mid); min-width: 6px; }
-.stackLegend { display: flex; justify-content: space-between; gap: 8px; font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
 
 @media (min-width: 720px) {
   .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }

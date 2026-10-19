@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { networkMetrics } from "@/lib/network";
 import { NetworkPanel } from "@/components/network/NetworkPanel";
+import { SignalGraph3D } from "@/components/network/SignalGraph3D";
+import { signalGraphSnapshot } from "@/lib/signal-graph";
 import styles from "./network.module.css";
 
 export const metadata: Metadata = {
@@ -15,7 +17,7 @@ export const revalidate = 60;
 const n = (x: number | undefined) => (typeof x === "number" ? x.toLocaleString("en-US") : "—");
 
 export default async function NetworkPage() {
-  const m = await networkMetrics();
+  const [m, graph] = await Promise.all([networkMetrics(), signalGraphSnapshot()]);
 
   const stats = [
     { v: n(m?.scans.total), l: "tokens scanned", s: "across Solana + EVM chains" },
@@ -67,6 +69,9 @@ export default async function NetworkPage() {
           (Chainalysis, TRM, Blockaid) win on exactly this class of graph intelligence, not on any
           single check.
         </p>
+        <div style={{ marginTop: "var(--space-6)" }}>
+          <SignalGraph3D data={graph} />
+        </div>
       </section>
 
       <section className={styles.section}>

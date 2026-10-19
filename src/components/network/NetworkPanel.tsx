@@ -11,6 +11,7 @@ import { CONTRACT_ADDRESS } from "@/lib/official";
 import { tokenomicsContent } from "@/content/tokenomics";
 import type { ScanResult } from "@/lib/scan";
 import { PriceChart } from "./PriceChart";
+import { SupplyRing } from "./SupplyRing";
 import styles from "./NetworkPanel.module.css";
 
 interface RadarItem { chain: string; mint: string; name: string; symbol: string; verdict: string; score: number; reason: string }
@@ -200,15 +201,7 @@ export function NetworkPanel() {
           <ul className={styles.facts}>
             {tokenomicsContent.launch.facts.slice(0, 3).map((f) => <li key={f.id}><b>{f.title}</b><span>{f.detail}</span></li>)}
           </ul>
-          {topHolder != null && (
-            <>
-              <div className={styles.stack} aria-label={`Largest account ${topHolder}%`}>
-                <i style={{ flex: topHolder }} className={styles.pool} />
-                <i style={{ flex: Math.max(0.6, 100 - topHolder) }} className={styles.rest} />
-              </div>
-              <div className={styles.stackLegend}><span>Pool {topHolder.toFixed(1)}%</span><span>Everyone else {(100 - topHolder).toFixed(1)}%</span></div>
-            </>
-          )}
+          {topHolder != null && <SupplyRing poolPct={topHolder} />}
         </div>
       </div>
     </section>

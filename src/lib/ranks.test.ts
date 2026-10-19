@@ -4,6 +4,7 @@ import {
   rankForBalance,
   nextTier,
   formatAmount,
+  holdLabel,
 } from "./ranks";
 
 describe("RANK_TIERS", () => {
@@ -62,5 +63,15 @@ describe("formatAmount", () => {
   it("groups thousands with separators", () => {
     expect(formatAmount(1_000_000)).toBe("1,000,000");
     expect(formatAmount(0)).toBe("0");
+  });
+});
+
+describe("holdLabel", () => {
+  it("labels every tier's threshold the way the coins print it", () => {
+    expect(RANK_TIERS.map((t) => holdLabel(t.min))).toEqual(["FREE", "100K+", "1M+", "5M+", "10M+"]);
+  });
+  it("handles fractional millions and small amounts", () => {
+    expect(holdLabel(2_500_000)).toBe("2.5M+");
+    expect(holdLabel(500)).toBe("500+");
   });
 });

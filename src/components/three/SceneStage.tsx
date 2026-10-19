@@ -51,6 +51,8 @@ export type SceneModule<Api = unknown> = {
     pointer: ScenePointer;
     ui: Record<string, unknown>;
     options: Record<string, unknown>;
+    /** Re-render after an interaction; only does anything under reduced motion (no loop then). */
+    redraw: () => void;
   }) => SceneInstance<Api>;
 };
 
@@ -142,7 +144,7 @@ function SceneStageInner<Api>(
         }) as EngineStage;
         stage.backdrop?.scale.setScalar(engine.backdrop ?? 1.6);
         stage.scene.environment = stage.env;
-        scene = mod.mount({ stage, host: wrap, reduced, mobile, pointer, ui: ui?.() ?? {}, options });
+        scene = mod.mount({ stage, host: wrap, reduced, mobile, pointer, ui: ui?.() ?? {}, options, redraw: () => { if (reduced) drawStill(); } });
         apiRef.current = scene.api;
         resize();
         setReady(true);

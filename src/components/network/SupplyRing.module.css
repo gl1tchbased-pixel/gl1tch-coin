@@ -1,0 +1,9 @@
+.stage { height: 240px; border-radius: 14px; border: 1px solid var(--line); margin-top: 12px; }
+.wait { display: grid; place-items: center; background: var(--ob1); }
+.centre { position: absolute; z-index: 3; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+.centre b { font-family: var(--font-display); font-size: 26px; font-weight: 800; color: var(--color-static); text-shadow: 0 0 18px rgba(0, 0, 0, 0.8); }
+.centre span { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-secondary); letter-spacing: 0.08em; text-transform: uppercase; }
+.legend { position: absolute; z-index: 3; left: 10px; right: 10px; bottom: 10px; display: flex; justify-content: space-between; gap: 8px; font-family: var(--font-mono); font-size: 10.5px; white-space: nowrap; pointer-events: none; }
+.legend [data-tone="pool"] { color: var(--glitch-ink); }
+.legend [data-tone="rest"] { color: var(--signal-ink); }
+.say { position: absolute; z-index: 3; left: 12px; right: 12px; top: 10px; margin: 0; font-size: 12px; color: var(--text-secondary); text-align: center; pointer-events: none; }
