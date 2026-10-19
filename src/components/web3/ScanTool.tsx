@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { ScanResult, ScanCheck } from "@/lib/scan";
 import type { TokenCandidate } from "@/lib/scan-multichain";
 import { CHAIN_LABEL } from "@/lib/scan-multichain";
+import { formatHoldingPct } from "@/lib/deployer-holdings";
 import { fmtPrice } from "@/lib/market";
 import { RiskOrb } from "./RiskOrb";
 import { unlock } from "@/lib/fun/achievements";
@@ -256,6 +257,10 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
                   ? <span className={result.meta.deployerDead != null && result.meta.deployerDead / result.meta.deployerCreated >= 0.5 ? styles.down : undefined}>{result.meta.deployerCreated} launched · {result.meta.deployerDead ?? 0} dead</span>
                   : <a href={(result.chain === "solana" ? "https://solscan.io/account/" : "https://etherscan.io/address/") + result.meta.deployer} target="_blank" rel="noopener noreferrer" className={styles.deployerLink}>{result.meta.deployer.slice(0, 4)}…{result.meta.deployer.slice(-4)}{result.meta.deployPlatform ? ` · ${result.meta.deployPlatform}` : ""} ↗</a>
               ) : "—"}
+            </div>
+            <div className={result.meta.deployerHoldingPct != null && result.meta.deployerHoldingPct > 15 ? styles.down : undefined}>
+              <span>Deployer holds</span>
+              {result.meta.deployerHoldingPct != null ? formatHoldingPct(result.meta.deployerHoldingPct) : "—"}
             </div>
             <div><span>24h vol</span>{fmtUsd(result.meta.volume24h)}</div>
           </div>

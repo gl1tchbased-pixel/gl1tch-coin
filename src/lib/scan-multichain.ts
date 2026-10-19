@@ -9,6 +9,7 @@
 import type { ScanResult, ScanCheck, CheckStatus, Verdict } from "@/lib/scan";
 import { scoreChecks, bandVerdict, bottomLineFor, CANONICAL } from "@/lib/scan";
 import { fetchTokenMarket } from "@/lib/market-sources";
+import { deployerHoldingCheck, holdingPct } from "@/lib/deployer-holdings";
 
 // DexScreener chainId → GoPlus chain id (EVM numeric). "solana" handled natively.
 export const GOPLUS_CHAIN: Record<string, string> = {
@@ -166,6 +167,8 @@ interface GoPlusEvm {
   holder_count?: string;
   total_supply?: string;
   creator_address?: string;
+  creator_balance?: string;
+  creator_percent?: string; // share as a 0–1 ratio
   is_proxy?: string;
   slippage_modifiable?: string;
   personal_slippage_modifiable?: string;
@@ -273,6 +276,13 @@ export async function scanEvm(chain: string, address: string, market: ChainMarke
     g.is_open_source == null ? "—" : g.is_open_source === "1" ? "YES" : "NO",
     g.is_open_source == null ? "—" : g.is_open_source === "1" ? "Source is verified — auditable." : "Unverified contract. You can't see what it does. High risk.");
 
+  // Deployer holdings — same thresholds as Solana. Prefer balance ÷ supply (unambiguous);
+  // fall back to GoPlus's own ratio.
+  const creatorPct = holdingPct(numStr(g.creator_balance), numStr(g.total_supply))
+    ?? (numStr(g.creator_percent) != null ? (numStr(g.creator_percent) as number) * 100 : null);
+  const hold = deployerHoldingCheck(creatorPct, !!g.creator_address);
+  add("dev_holdings", "Deployer holdings", hold.status, hold.value, hold.explain);
+
   // Named risks for extra context (mirrors RugCheck's risks[] on Solana).
   const risks: ScanResult["risks"] = [];
   if (g.is_proxy === "1") risks.push({ name: "Proxy contract — logic can be swapped", level: "warn" });
@@ -285,7 +295,7 @@ export async function scanEvm(chain: string, address: string, market: ChainMarke
   // score & verdict (shared logic with Solana).
   const w: Record<string, number> = {
     honeypot: 26, ownership: 14, lp_lock: 14, mintable: 10, pausable: 10,
-    modifiable_tax: 8, sell_tax: 6, liquidity: 8, blacklist: 4, open_source: 4,
+    modifiable_tax: 8, sell_tax: 6, liquidity: 8, blacklist: 4, open_source: 4, dev_holdings: 4,
   };
   const { score, possible, confidence } = scoreChecks(checks, w);
   const fatal = honeypot || dangerousOwner || g.owner_change_balance === "1" || g.selfdestruct === "1";
@@ -315,6 +325,7 @@ export async function scanEvm(chain: string, address: string, market: ChainMarke
       holderCount: numStr(g.holder_count), lpLockedPct, mutableMetadata: null,
       insiderPct: null, insiderCount: null,
       deployer: g.creator_address || null, deployPlatform: null, deployerCreated: null, deployerDead: null,
+      deployerHoldingPct: creatorPct,
     },
     scannedAt: 0,
   };
