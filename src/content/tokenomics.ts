@@ -22,7 +22,7 @@ export const tokenomicsContent: TokenomicsContent = {
       {
         id: "deployer-exit",
         title: "Deployer sold out, then bought back ~3.1%",
-        detail: "The deployer wallet sold its full position on 2026-08-20 and bought back about 3.1% of supply on 17–19 Oct 2026. Both are public on Solscan.",
+        detail: "The deployer wallet sold its full position on 2026-08-20 and bought back about 3.1% of supply on 17–19 Oct 2026. Both are public on Solscan; the live balance is on the Proof page.",
       },
       {
         id: "pool-top-holder",

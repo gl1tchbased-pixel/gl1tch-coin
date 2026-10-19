@@ -10,6 +10,7 @@ import {
   solscanAccount,
 } from "@/lib/official";
 import { givebackStatus, givebackCopy } from "@/lib/giveback";
+import { deployerStatus, deployerCopy, DEPLOYER_EVENTS } from "@/lib/deployer-status";
 import styles from "./proof.module.css";
 
 export const metadata: Metadata = {
@@ -37,10 +38,6 @@ const wallets = [
   { label: "Give-back wallet", addr: GIVEBACK_WALLET, href: officialLinks.givebackWallet, note: "" },
 ];
 
-// On-chain receipt for the deployer's full exit (39.8M GL1TCH sold, balance → 0).
-const DEPLOYER_EXIT_TX =
-  "https://solscan.io/tx/5p6HLidcvfW1stiCvRPE3qBrv4F2SfN9mxXgsmpAytXHWSqbv6NhjCMdBdwtbGM7cyu7YkcwHuqa3cLsWCY2f3PV";
-
 const thirdParty = [
   { label: "RugCheck", href: officialLinks.rugcheck, note: "score 1 · cleanest band" },
   { label: "GeckoTerminal", href: `https://www.geckoterminal.com/solana/tokens/${CONTRACT_ADDRESS}`, note: "live price & pool" },
@@ -49,11 +46,13 @@ const thirdParty = [
   { label: "Pump.fun", href: officialLinks.pumpfun, note: "origin" },
 ];
 
-// The give-back wallet's status is read from the chain; refresh it hourly.
+// The give-back and deployer wallets are read from the chain; refresh hourly.
 export const revalidate = 3600;
 
 export default async function ProofPage() {
-  const giveback = givebackCopy(await givebackStatus());
+  const [gb, dep] = await Promise.all([givebackStatus(), deployerStatus()]);
+  const giveback = givebackCopy(gb);
+  const deployer = deployerCopy(dep);
   return (
     <section className="container" style={{ paddingBlock: "var(--space-16)" }}>
       {/* Hero */}
@@ -99,7 +98,7 @@ export default async function ProofPage() {
             <a key={w.label} href={w.href} target="_blank" rel="noopener noreferrer" className={styles.wRow}>
               <div className={styles.wMeta}>
                 <span className={styles.wLabel}>{w.label}</span>
-                <span className={styles.wNote}>{w.addr === GIVEBACK_WALLET ? giveback.short : w.note}</span>
+                <span className={styles.wNote}>{w.addr === GIVEBACK_WALLET ? giveback.short : w.addr === DEPLOYER_WALLET ? deployer.short : w.note}</span>
               </div>
               <span className={styles.wAddr}>{short(w.addr)} ↗</span>
             </a>
@@ -126,7 +125,7 @@ export default async function ProofPage() {
       {/* Honest yellow flags */}
       <div className={styles.block}>
         <h2 className={styles.h2}>What we&apos;re not hiding</h2>
-        <p className={styles.sub}>A fake-perfect score is a red flag. Here are our two honest caveats.</p>
+        <p className={styles.sub}>A fake-perfect score is a red flag. Here are our honest caveats.</p>
         <div className={styles.flagGrid}>
           <div className={styles.flag}>
             <span className={styles.flagTag}>⚠ Thin liquidity</span>
@@ -138,16 +137,27 @@ export default async function ProofPage() {
             </p>
           </div>
           <div className={styles.flag}>
-            <span className={styles.flagTag}>⚠ Pool is the top holder</span>
+            <span className={styles.flagTag}>⚠ Biggest holder: the pool</span>
             <p className={styles.flagBody}>
-              That account is the <strong>liquidity pool</strong>, not a person, and it holds
-              nearly all of the supply. The deployer sold its full position on{" "}
-              <a href={DEPLOYER_EXIT_TX} target="_blank" rel="noopener noreferrer">
-                2026-08-20
+              The largest account is the <strong>liquidity pool</strong>, not a person, and it
+              holds nearly all of the supply. Open the holder list and check every other wallet yourself.
+            </p>
+          </div>
+          <div className={styles.flag}>
+            <span className={styles.flagTag}>⚠ The deployer sold, then bought back</span>
+            <p className={styles.flagBody}>
+              The deployer wallet sold its full position on{" "}
+              <a href={DEPLOYER_EVENTS.exit.tx} target="_blank" rel="noopener noreferrer">
+                {DEPLOYER_EVENTS.exit.date}
               </a>{" "}
-              and bought back about 3.1% of supply on 17–19 Oct 2026. Don&apos;t take our word — open the holder list and the{" "}
+              and{" "}
+              <a href={DEPLOYER_EVENTS.buyback.firstTx} target="_blank" rel="noopener noreferrer">
+                bought back on {DEPLOYER_EVENTS.buyback.dates}
+              </a>
+              . It {deployer.now}. That&apos;s a stake, not a lock: the wallet can sell at any
+              time, and our scanner&apos;s &quot;Deployer holdings&quot; check would show it. Read the{" "}
               <a href={solscanAccount(DEPLOYER_WALLET)} target="_blank" rel="noopener noreferrer">
-                deployer&apos;s history
+                deployer&apos;s full history
               </a>{" "}
               on Solscan.
             </p>

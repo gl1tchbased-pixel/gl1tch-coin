@@ -50,6 +50,9 @@ describe("tokenomics shows the real fair launch", () => {
     const ids = tokenomicsContent.launch.facts.map((f) => f.id);
     expect(ids).toContain("no-team-allocation");
     expect(ids).toContain("deployer-exit");
+    const dep = tokenomicsContent.launch.facts.find((f) => f.id === "deployer-exit")!;
+    expect(dep.detail).toMatch(/2026-08-20/);
+    expect(dep.detail).toMatch(/bought back/);
     expect(tokenomicsContent.launch.liveHref).toBe("/proof");
   });
 });
@@ -75,8 +78,10 @@ describe("whitepaper matches the launch that happened", () => {
     expect(text).not.toMatch(/\["Team","\d/);
     expect(text).toMatch(/100% of the 1,000,000,000 supply launched to the open market/);
   });
-  it("discloses the deployer exit and drops pre-launch wording", () => {
+  it("discloses the deployer exit and buy-back and drops pre-launch wording", () => {
     expect(text).toMatch(/2026-08-20/);
+    expect(text).toMatch(/bought back/);
+    expect(text).not.toMatch(/sold out completely/i);
     expect(text).not.toMatch(/funds operations via a small/i);
     expect(text).not.toMatch(/before launch, no (CA|contract) exists/i);
   });
