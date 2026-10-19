@@ -1,0 +1,26 @@
+.stage {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y;
+  background: radial-gradient(110% 90% at 60% 40%, #1a1233 0%, var(--ob0) 72%);
+}
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-out-expo);
+}
+.stage[data-ready="1"] .canvas { opacity: 1; }
+.poster {
+  object-fit: contain;
+  object-position: 30% 60%;
+  opacity: 0.94;
+  transition: opacity 0.5s;
+}
+.stage[data-ready="1"] .poster { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .canvas, .poster { transition: none; }
+}

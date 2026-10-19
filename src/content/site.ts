@@ -45,7 +45,7 @@ export const FOOTER_LINKS = [
   { id: "foot-lore", label: "Lore", href: "/lore" },
   { id: "foot-ranks", label: "Ranks", href: "/ranks" },
   { id: "foot-tokenomics", label: "Tokenomics", href: "/#tokenomics" },
-  { id: "foot-roadmap", label: "Roadmap", href: "/#roadmap" },
+  { id: "foot-roadmap", label: "Roadmap", href: "/roadmap" },
   { id: "foot-faq", label: "FAQ", href: "/#faq" },
   { id: "foot-live", label: "Live", href: "/live" },
   { id: "foot-news", label: "Updates", href: "/news" },

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ApiKeyMinter } from "@/components/web3/ApiKeyMinter";
+import { HowToBuy } from "@/components/sections/HowToBuy";
 import styles from "./token.module.css";
 
 export const metadata: Metadata = {
@@ -224,6 +225,10 @@ export default function TokenPage() {
           ))}
         </div>
       </section>
+
+      <div id="how-to-buy">
+        <HowToBuy />
+      </div>
 
       <div className={styles.cta}>
         <Link href="/quantum-core" className={styles.btnPrimary}>See the product →</Link>

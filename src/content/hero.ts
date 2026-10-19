@@ -3,11 +3,11 @@ import { CTA_LABELS } from "./site";
 import { OFFICIAL } from "@/lib/official";
 
 export const heroContent: HeroContent = {
-  eyebrow: "RISK INTELLIGENCE // LIVE",
+  eyebrow: "Risk intelligence · live",
   headline: "It Reads Every Rug.",
   subhead:
-    "GL1TCH is crypto risk-intelligence infrastructure with a rogue-AI face: a free multi-chain scanner, the Signal Graph that remembers every deployer, and a Know Your Agent trust layer. Flags the rug before you ape — free, non-custodial, zero tax.",
-  microcopy: "Free · non-custodial · it never touches your wallet.",
+    "A free multi-chain token scanner with a rogue-AI face. Paste any contract and get the verdict in seconds, backed by the Signal Graph that remembers every deployer. It never touches your wallet.",
+  microcopy: "Free · non-custodial · zero tax · not financial advice",
   primaryCta: {
     id: "hero-cta-primary",
     label: "Scan a token — free",

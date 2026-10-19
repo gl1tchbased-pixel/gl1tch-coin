@@ -1,0 +1,14 @@
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.all {
+  margin-bottom: var(--space-8);
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--signal-ink);
+}
+.all:hover { text-decoration: underline; text-underline-offset: 3px; }

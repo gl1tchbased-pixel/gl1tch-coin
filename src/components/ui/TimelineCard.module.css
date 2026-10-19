@@ -72,3 +72,18 @@
   animation: pulse-glow 4s var(--ease-in-out) infinite;
 }
 .active .title { color: var(--color-signal); }
+
+/* Status chip: shape + word, not colour alone */
+.phase { display: inline-flex; align-items: center; gap: 10px; }
+.status {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--line-2);
+  color: var(--text-muted);
+}
+.status[data-status="done"] { color: var(--signal-ink); border-color: var(--signal-edge); background: var(--signal-deep); }
+.status[data-status="active"] { color: var(--glitch-ink); border-color: var(--glitch-edge); background: var(--glitch-deep); }

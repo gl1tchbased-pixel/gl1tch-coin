@@ -2,6 +2,8 @@ import styles from "./TimelineCard.module.css";
 
 type Status = "done" | "active" | "upcoming";
 
+const STATUS_LABEL: Record<Status, string> = { done: "Shipped", active: "In progress", upcoming: "Planned" };
+
 interface TimelineCardProps {
   id?: string;
   phase: string | number;
@@ -29,7 +31,10 @@ export function TimelineCard({
         <span className={styles.connector} />
       </div>
       <div className={styles.body}>
-        <span className={styles.phase}>Phase {phase}</span>
+        <span className={styles.phase}>
+          Phase {phase}
+          <span className={styles.status} data-status={status}>{STATUS_LABEL[status]}</span>
+        </span>
         <h3 className={styles.title}>{title}</h3>
         <ul className={styles.items}>
           {items.map((item, i) => (
