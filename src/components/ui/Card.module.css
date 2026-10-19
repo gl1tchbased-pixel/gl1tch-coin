@@ -15,6 +15,15 @@
   box-shadow: var(--shadow-md);
 }
 
+/* Featured: a lit edge, green fading into the dark and purple rising out of it (never blended). */
+.featured {
+  background:
+    linear-gradient(var(--ob1), var(--ob1)) padding-box,
+    linear-gradient(140deg, rgba(124, 255, 79, 0.32), rgba(196, 176, 255, 0.06) 38%,
+      rgba(196, 176, 255, 0.06) 62%, rgba(122, 60, 255, 0.42)) border-box;
+  border-color: transparent;
+}
+
 .interactive {
   background: var(--color-surface-elevated);
   transition: transform var(--duration-normal) var(--ease-out-expo),

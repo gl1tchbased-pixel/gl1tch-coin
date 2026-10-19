@@ -1,0 +1,56 @@
+.aurora {
+  position: fixed;
+  inset: 0;
+  /* Behind in-flow content, above the canvas background body propagates to. */
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.aurora i {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  will-change: transform;
+}
+/* purple, top right */
+.a1 {
+  width: 62vmax;
+  height: 62vmax;
+  right: -18vmax;
+  top: -22vmax;
+  background: radial-gradient(circle, rgba(122, 60, 255, 0.36), rgba(122, 60, 255, 0) 65%);
+  animation: drift-a 26s ease-in-out infinite alternate;
+}
+/* green, left middle */
+.a2 {
+  width: 54vmax;
+  height: 54vmax;
+  left: -20vmax;
+  top: 38vh;
+  background: radial-gradient(circle, rgba(124, 255, 79, 0.15), rgba(124, 255, 79, 0) 65%);
+  animation: drift-b 32s ease-in-out infinite alternate;
+}
+/* hot purple, bottom right */
+.a3 {
+  width: 40vmax;
+  height: 40vmax;
+  right: 10vw;
+  bottom: -18vmax;
+  background: radial-gradient(circle, rgba(155, 102, 255, 0.24), rgba(155, 102, 255, 0) 65%);
+  animation: drift-a 38s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes drift-a {
+  to { transform: translate(-8vmax, 6vmax) scale(1.08); }
+}
+@keyframes drift-b {
+  to { transform: translate(9vmax, -5vmax) scale(1.12); }
+}
+
+/* Phones: smaller blur, no drift (battery). */
+@media (max-width: 768px) {
+  .aurora i { filter: blur(60px); animation: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aurora i { animation: none; }
+}

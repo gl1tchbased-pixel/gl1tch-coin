@@ -42,7 +42,7 @@
 }
 
 .headline {
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-size: var(--fs-hero);
   font-weight: 800;
   line-height: 1;

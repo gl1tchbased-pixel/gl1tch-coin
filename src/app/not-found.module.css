@@ -193,7 +193,7 @@
   text-shadow: 0 0 24px rgba(122, 60, 255, 0.2);
 }
 .title {
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-size: var(--fs-2xl);
   font-weight: 800;
   letter-spacing: -0.02em;

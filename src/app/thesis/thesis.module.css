@@ -8,7 +8,7 @@
 .hero { text-align: center; padding-block: var(--space-8) var(--space-10); }
 .eyebrow {
   font-family: var(--font-mono); font-size: var(--fs-sm); letter-spacing: 4px;
-  text-transform: uppercase; color: var(--color-signal);
+  text-transform: uppercase; color: var(--glitch-ink);
 }
 .title {
   font-size: clamp(2rem, 5.2vw, 3.4rem); font-weight: 800; line-height: 1.08;
@@ -44,7 +44,7 @@
 .section { padding-block: var(--space-10); border-top: 1px solid var(--color-border); }
 .kicker {
   font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: 3px; text-transform: uppercase;
-  color: var(--color-glitch); filter: brightness(1.4);
+  color: var(--glitch-ink);
 }
 .h2 { font-size: clamp(1.6rem, 3.6vw, 2.3rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; margin: var(--space-3) 0 var(--space-5); max-width: 22ch; }
 .body { font-size: var(--fs-lg); line-height: 1.65; color: var(--text-secondary); max-width: 68ch; margin: 0 0 var(--space-4); }

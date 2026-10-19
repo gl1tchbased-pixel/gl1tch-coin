@@ -5,6 +5,8 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { TickerBar } from "@/components/layout/TickerBar";
 import { Scanlines } from "@/components/effects/Scanlines";
+import { Aurora } from "@/components/effects/Aurora";
+import { tektur, geist, martian } from "./fonts";
 import { ScrollProgress } from "@/components/effects/ScrollProgress";
 import { Web3Providers } from "@/components/web3/Providers";
 import { Analytics } from "@vercel/analytics/next";
@@ -59,12 +61,13 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${tektur.variable} ${geist.variable} ${martian.variable}`}>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }} />
         <a href="#main" className="skip-link">
           Skip to content
         </a>
+        <Aurora />
         <Scanlines />
         <ScrollProgress />
         <Web3Providers>

@@ -56,7 +56,7 @@ export function LiveStats() {
                 c.tone === "up" ? styles.up : c.tone === "down" ? styles.down : ""
               }`}
             >
-              {snap ? c.value : "···"}
+              {snap ? c.value : <><span className="skeleton" aria-hidden="true" /><span className="sr-only">Loading</span></>}
             </span>
           </div>
         ))}

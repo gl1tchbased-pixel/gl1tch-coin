@@ -13,14 +13,17 @@ export const META_TITLE =
 export const META_DESCRIPTION =
   "GL1TCH is crypto risk-intelligence infrastructure: a free multi-chain token scanner, the Signal Graph deployer-reputation database, and a Know Your Agent (ERC-8004-compatible) trust layer. Flags the rug before you ape — free, non-custodial.";
 
-// A deliberately short primary nav — the core products + proof. Everything else
-// (Learn, Lore, Ranks, Tokenomics, Roadmap, FAQ, …) lives in the footer, keeping
-// the header uncluttered and premium.
+// Header: the products sit behind one "Products" menu, then a short row of pages.
+// Everything else (Learn, Lore, Ranks, Tokenomics, Roadmap, FAQ, …) lives in the footer.
+export const NAV_PRODUCTS = [
+  { id: "nav-scan", label: "Scanner", href: "/scan", blurb: "Any token, any chain. Safe, sus, or rug-shaped." },
+  { id: "nav-radar", label: "Rug Radar", href: "/radar", blurb: "The riskiest fresh launches, swept hourly." },
+  { id: "nav-agents", label: "Agent Trust", href: "/agents", blurb: "Know Your Agent: verify an AI agent's wallet." },
+  { id: "nav-quantum", label: "Quantum Core", href: "/quantum-core", blurb: "Verifiable randomness and post-quantum tools." },
+  { id: "nav-network", label: "Network", href: "/network", blurb: "Live engine metrics and the Signal Graph." },
+] as const;
+
 export const NAV_LINKS = [
-  { id: "nav-scan", label: "Scanner", href: "/scan" },
-  { id: "nav-quantum", label: "Quantum", href: "/quantum-core", featured: true },
-  { id: "nav-agents", label: "Agent Trust", href: "/agents" },
-  { id: "nav-radar", label: "Rug Radar", href: "/radar" },
   { id: "nav-proof", label: "Proof", href: "/proof" },
   { id: "nav-live", label: "Live", href: "/live" },
   { id: "nav-whitepaper", label: "Whitepaper", href: "/whitepaper" },

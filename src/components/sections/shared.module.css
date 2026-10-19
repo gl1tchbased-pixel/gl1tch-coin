@@ -20,20 +20,22 @@
   font-family: var(--font-mono);
   font-size: var(--fs-sm);
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--color-signal);
+  color: var(--text-muted);
 }
+/* One lit dot marks the section; the label itself stays calm (green is for action). */
 .eyebrow::before {
   content: "";
-  width: 28px;
-  height: 1px;
-  background: currentColor;
-  opacity: 0.55;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--glitch-hot);
+  box-shadow: 0 0 calc(10px * var(--glow)) var(--glitch-hot);
 }
 
 .title {
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-size: var(--fs-3xl);
   font-weight: 700;
   line-height: 1.15;
@@ -46,6 +48,8 @@
   color: var(--text-secondary);
 }
 
+/* Alternating band: a translucent veil so the aurora still glows through. */
 .alt {
-  background: var(--color-surface);
+  background: color-mix(in srgb, var(--ob1) 78%, transparent);
+  border-block: 1px solid var(--line);
 }

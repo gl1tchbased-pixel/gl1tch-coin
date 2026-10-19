@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styles from "./Button.module.css";
 
-type Variant = "primary" | "secondary" | "ghost" | "danger";
+type Variant = "primary" | "secondary" | "glitch" | "ghost" | "danger";
 type Size = "sm" | "md" | "lg";
 
 interface BaseProps {

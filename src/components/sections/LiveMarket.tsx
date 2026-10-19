@@ -108,7 +108,7 @@ export function LiveMarket() {
                       : ""
                 }`}
               >
-                {snap ? c.value : "···"}
+                {snap ? c.value : <><span className="skeleton" aria-hidden="true" /><span className="sr-only">Loading</span></>}
               </span>
             </div>
           ))}

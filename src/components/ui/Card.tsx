@@ -1,6 +1,6 @@
 import styles from "./Card.module.css";
 
-type Variant = "default" | "terminal" | "elevated" | "interactive";
+type Variant = "default" | "terminal" | "elevated" | "interactive" | "featured";
 
 interface CardProps {
   id?: string;

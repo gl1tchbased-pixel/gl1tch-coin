@@ -13,7 +13,7 @@
   border-bottom: 1px solid transparent;
 }
 .solid {
-  background: rgba(5, 5, 5, 0.72);
+  background: rgba(7, 6, 13, 0.74);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   border-bottom-color: var(--color-border);
@@ -124,34 +124,66 @@
 .navLink:hover { color: var(--color-static); }
 .navLink:hover::after { transform: scaleX(1); }
 
-/* Featured nav item (Quantum Core) — flagship, made to stand out. */
-.navFeatured {
+/* Active page: a quiet lit underline instead of colour. */
+.active { color: var(--color-static); }
+.active::after { transform: scaleX(1); background: var(--glitch-hot); }
+
+/* Products menu */
+.products { position: relative; }
+.trigger {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--color-signal);
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--color-border-signal);
-  background: color-mix(in srgb, var(--color-signal) 8%, transparent);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
 }
-.navFeatured::after { display: none; }
-.navFeatured:hover {
-  color: var(--color-signal);
-  border-color: var(--color-signal);
-  box-shadow: 0 0 14px color-mix(in srgb, var(--color-signal) 35%, transparent);
+.caret {
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform var(--duration-normal) var(--ease-out-expo);
 }
-.navBadge {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  line-height: 1;
-  padding: 3px 5px;
-  border-radius: 4px;
-  color: var(--color-void);
-  background: var(--color-signal);
+.trigger[aria-expanded="true"] { color: var(--color-static); }
+.trigger[aria-expanded="true"] .caret { transform: translateY(1px) rotate(225deg); }
+.panel {
+  position: absolute;
+  top: calc(100% + 18px);
+  left: -20px;
+  width: min(560px, 80vw);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 8px;
+  border-radius: var(--radius-xl);
+  background: rgba(14, 12, 24, 0.985);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid var(--line-2);
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.75), var(--glow-glitch);
+  animation: panel-in 0.22s var(--ease-out-expo);
 }
+/* invisible bridge so the pointer can travel from the trigger to the panel */
+.panel[hidden] { display: none; }
+.panel::before { content: ""; position: absolute; left: 0; right: 0; top: -18px; height: 18px; }
+@keyframes panel-in { from { opacity: 0; transform: translateY(-6px); } }
+@media (prefers-reduced-motion: reduce) { .panel { animation: none; } }
+.product {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid transparent;
+  transition: background var(--duration-fast), border-color var(--duration-fast);
+}
+.product:hover, .product:focus-visible { background: var(--ob3); border-color: var(--line-2); }
+.productActive { background: var(--glitch-deep); border-color: var(--glitch-edge); }
+.productName { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-base); color: var(--color-static); }
+.productBlurb { font-size: var(--fs-sm); line-height: 1.45; color: var(--text-muted); }
 
 .cta { display: flex; align-items: center; gap: var(--space-3); }
 
@@ -175,12 +207,13 @@
   position: fixed;
   inset: 0;
   z-index: 1100;
-  background: rgba(5, 5, 5, 0.97);
+  background: rgba(7, 6, 13, 0.97);
+  overflow-y: auto;
   backdrop-filter: blur(12px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: safe center;
   gap: var(--space-8);
   padding: var(--space-6);
 }
@@ -197,20 +230,22 @@
 .overlayNav {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-4);
   text-align: center;
 }
 .overlayLink {
   font-family: var(--font-body);
-  font-size: var(--fs-2xl);
+  font-size: var(--fs-xl);
   font-weight: 600;
   color: var(--color-static);
 }
-.overlayFeatured {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--color-signal);
+.overlayGroup {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--glitch-ink);
+  margin-top: var(--space-2);
 }
 .overlayWallet { display: flex; justify-content: center; }
 .overlayCta { width: 80%; max-width: 320px; }
@@ -218,7 +253,7 @@
 /* Show the full horizontal nav only when there's genuine room for all items;
    below this, collapse to the premium full-screen overlay menu instead of
    cramming. */
-@media (max-width: 1199px) {
+@media (max-width: 1023px) {
   .nav, .cta { display: none; }
   .burger { display: flex; }
 }

@@ -56,32 +56,41 @@
 .md { padding: var(--space-3) var(--space-5); font-size: var(--fs-base); min-height: 44px; }
 .lg { padding: var(--space-4) var(--space-8); font-size: var(--fs-lg); min-height: 56px; }
 
-/* Variants */
+/* Variants — one lit primary per screen; everything else stays quiet until hovered. */
 .primary {
-  background: var(--color-signal);
-  color: var(--color-void);
+  background: linear-gradient(180deg, #9dff78, var(--color-signal));
+  color: #061104;
+  box-shadow: var(--glow-signal);
 }
 .primary:hover:not(:disabled) {
-  transform: scale(1.02);
-  box-shadow: 0 0 20px var(--color-signal-dim);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(124, 255, 79, 0.7), 0 14px 42px -8px rgba(124, 255, 79, 0.85);
 }
-.primary:active:not(:disabled) { transform: scale(0.99); }
+.primary:active:not(:disabled) { transform: translateY(0); }
 
 .secondary {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.02);
   color: var(--color-static);
-  border-color: var(--color-border-signal);
+  border-color: var(--line-2);
 }
 .secondary:hover:not(:disabled) {
-  border-color: var(--color-signal);
-  box-shadow: 0 0 16px var(--color-signal-dim);
+  border-color: var(--glitch-edge);
+  background: var(--glitch-deep);
+  box-shadow: var(--glow-glitch);
 }
+
+.glitch {
+  background: linear-gradient(180deg, var(--glitch-hot), var(--color-glitch));
+  color: #fff;
+  box-shadow: 0 0 0 1px rgba(155, 102, 255, 0.5), 0 10px 34px -8px rgba(122, 60, 255, 0.7);
+}
+.glitch:hover:not(:disabled) { transform: translateY(-1px); }
 
 .ghost {
   background: transparent;
   color: var(--text-secondary);
 }
-.ghost:hover:not(:disabled) { color: var(--color-signal); }
+.ghost:hover:not(:disabled) { color: var(--signal-ink); }
 
 .danger {
   background: transparent;
