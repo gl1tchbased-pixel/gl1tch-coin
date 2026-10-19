@@ -1,6 +1,6 @@
 /**
  * GL1TCH — single source of truth for official links, launch state, and verified trust.
- * Imported by website, bot, and dashboard. Updating launch state = editing this one file.
+ * Imported by website and bot. Updating launch state = editing this one file.
  *
  * NOTE: handles below follow the `gl1tch` convention and are PLACEHOLDERS until the
  * accounts/domain are registered and confirmed owned. Never publish a link until verified.

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { EmbedTool } from "@/components/web3/EmbedTool";
 
 export const metadata: Metadata = {
@@ -40,7 +41,7 @@ export default function EmbedPage() {
       </div>
 
       <p style={{ textAlign: "center", marginTop: "var(--space-10)", color: "var(--text-muted)", fontSize: 14 }}>
-        Not a token project? <a href="/scan" style={{ color: "var(--color-signal)" }}>Just scan any token →</a>
+        Not a token project? <Link href="/scan" style={{ color: "var(--color-signal)" }}>Just scan any token →</Link>
       </p>
     </section>
   );

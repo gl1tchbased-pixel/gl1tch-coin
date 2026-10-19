@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { latestPulse } from "@/lib/quantum/curby";
+import { isPulseStale } from "@/lib/quantum/freshness";
 import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 
 /**
  * QUANTUM CORE — GET /api/quantum-core/pulse
  * Returns the latest FINALIZED CURBy quantum-randomness pulse (real NIST/CU Boulder
  * beacon). Read-only, server-side. Null-safe: if the current round isn't complete,
- * returns { ready:false } rather than a stale/fabricated value.
+ * returns { ready:false } rather than a stale/fabricated value. `stale` is true when the
+ * latest finalized round is over a day old (CURBy paused) — clients must not call it live.
  */
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,7 +21,7 @@ export async function GET(req: NextRequest) {
   const pulse = await latestPulse();
   if (!pulse) return NextResponse.json({ ready: false, source: "curby" }, { headers: { "cache-control": "public, s-maxage=20, stale-while-revalidate=40" } });
   return NextResponse.json(
-    { ready: true, ...pulse },
+    { ready: true, ...pulse, stale: isPulseStale(pulse.timestamp) },
     { headers: { "cache-control": "public, s-maxage=20, stale-while-revalidate=40" } }
   );
 }

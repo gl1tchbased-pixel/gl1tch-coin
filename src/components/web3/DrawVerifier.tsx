@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { verifyDrawIndependently, fetchCurbyRound, type DrawVerification } from "@/lib/quantum/verify";
+import { isPulseStale, formatPulseDate } from "@/lib/quantum/freshness";
 import type { Draw } from "@/lib/quantum/client";
 import styles from "./DrawVerifier.module.css";
 
@@ -32,9 +33,11 @@ export function DrawVerifier({ draw }: { draw: Draw }) {
     try {
       const r = await fetchCurbyRound(draw.pulse?.round ?? "latest");
       setProbe(
-        r
-          ? `✓ Live CURBy quantum source reached from your browser — round ${r.round}, index ${r.index}. When this draw reveals, the winner recomputes from exactly this source.`
-          : "The quantum source is momentarily unreachable — try again shortly."
+        !r
+          ? "The quantum source is momentarily unreachable — try again shortly."
+          : draw.pulse?.round === undefined && isPulseStale(r.timestamp)
+            ? `CURBy reached from your browser, but its latest round (${r.round}) is from ${formatPulseDate(r.timestamp)} — the source is paused. This draw reveals on the first fresh round, from exactly this source.`
+            : `✓ CURBy quantum source reached from your browser — round ${r.round}, index ${r.index}. When this draw reveals, the winner recomputes from exactly this source.`
       );
     } finally {
       setBusy(false);

@@ -24,6 +24,8 @@ export interface CurbyRound {
   round: number;
   stage: string;
   dataHash: string;
+  /** ISO time the round finalized; empty when CURBy omits it. */
+  timestamp: string;
 }
 
 /**
@@ -40,7 +42,7 @@ export async function fetchCurbyRound(round: number | "latest"): Promise<CurbyRo
     const p = rec?.data?.content?.payload;
     const idx = rec?.data?.content?.index;
     if (!p || p.stage !== "randomness" || typeof p.dataHash !== "string" || typeof idx !== "number") return null;
-    return { index: idx, round: p.round, stage: p.stage, dataHash: p.dataHash.toLowerCase() };
+    return { index: idx, round: p.round, stage: p.stage, dataHash: p.dataHash.toLowerCase(), timestamp: typeof p.timestamp === "string" ? p.timestamp : "" };
   } catch {
     return null;
   }

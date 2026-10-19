@@ -69,7 +69,7 @@ export default async function Image({ params }: { params: Promise<{ token: strin
           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <div style={{ display: "flex", width: 12, height: 12, borderRadius: 9999, background: GREEN, boxShadow: `0 0 14px ${GREEN}` }} />
             <div style={{ display: "flex", fontSize: 26, fontWeight: 800, letterSpacing: 3, color: PAPER }}>GL1TCH</div>
-            <div style={{ display: "flex", fontSize: 22, letterSpacing: 4, color: GREEN }}>// SCANNER</div>
+            <div style={{ display: "flex", fontSize: 22, letterSpacing: 4, color: GREEN }}>{"// SCANNER"}</div>
           </div>
           {chainName ? <div style={{ display: "flex", fontSize: 22, color: PAPER, opacity: 0.7, border: "1px solid rgba(245,247,248,0.25)", borderRadius: 9999, padding: "6px 18px" }}>{chainName}</div> : <div style={{ display: "flex" }} />}
         </div>

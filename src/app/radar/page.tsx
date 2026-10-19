@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { RugRadar } from "@/components/web3/RugRadar";
 import { LiveTrustBadge } from "@/components/web3/LiveTrustBadge";
 
@@ -37,12 +38,12 @@ export default function RadarPage() {
       </div>
 
       <div style={{ marginTop: "var(--space-12)", textAlign: "center" }}>
-        <a
+        <Link
           href="/scan"
           style={{ display: "inline-block", padding: "16px 32px", borderRadius: "var(--radius-md)", background: "var(--color-signal)", color: "#050505", fontWeight: 700 }}
         >
           Scan any token yourself →
-        </a>
+        </Link>
       </div>
     </section>
   );

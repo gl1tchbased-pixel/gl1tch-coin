@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import styles from "./RugRadar.module.css";
 
 /**
@@ -34,7 +35,7 @@ export function RugRadar() {
     return () => { alive = false; };
   }, []);
 
-  if (err) return <p className={styles.note}>Radar is recharging — try again shortly, or <a href="/scan" className={styles.link}>scan a token yourself →</a></p>;
+  if (err) return <p className={styles.note}>Radar is recharging — try again shortly, or <Link href="/scan" className={styles.link}>scan a token yourself →</Link></p>;
 
   if (!data) {
     return (
@@ -60,13 +61,13 @@ export function RugRadar() {
       </div>
 
       {data.caught.length === 0 ? (
-        <p className={styles.note}>Radar is mid-sweep — it refreshes hourly. <a href="/scan" className={styles.link}>Scan one yourself →</a></p>
+        <p className={styles.note}>Radar is mid-sweep — it refreshes hourly. <Link href="/scan" className={styles.link}>Scan one yourself →</Link></p>
       ) : (
         <div className={styles.grid}>
           {data.caught.map((c) => {
             const t = vtone(c.verdict);
             return (
-              <a key={c.mint} href={`/scan/${c.chain}-${c.mint}`} className={`${styles.card} ${styles[`t_${t}`]}`}>
+              <Link key={c.mint} href={`/scan/${c.chain}-${c.mint}`} className={`${styles.card} ${styles[`t_${t}`]}`}>
                 {c.flagged && <span className={styles.ribbon}>⚠ CAUGHT</span>}
                 <div className={styles.cardTop}>
                   <span className={styles.name}>{c.symbol ? `$${c.symbol}` : c.name}</span>
@@ -78,7 +79,7 @@ export function RugRadar() {
                 </div>
                 <div className={styles.reason}>⚠ {c.reason}</div>
                 <div className={styles.cta}>full report →</div>
-              </a>
+              </Link>
             );
           })}
         </div>

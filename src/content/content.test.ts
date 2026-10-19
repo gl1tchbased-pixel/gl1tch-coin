@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { HERO, dashboardGroups, SIGNAL_HEALTH, CONCENTRATION } from "./dashboard";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { QUANTUM_COMPONENTS, QUANTUM_COUNT_WORD } from "./quantum";
+import { tokenomicsContent } from "./tokenomics";
 import { RANK_TIERS } from "@/lib/ranks";
 import { OFFICIAL } from "@/lib/official";
 // Bot duplicates official links + the rank ladder; these must not drift.
@@ -7,38 +10,6 @@ import { OFFICIAL as BOT_OFFICIAL, ranks as botRanks } from "../../bot/src/conte
 import { RANK_TIERS as BOT_TIERS } from "../../bot/src/ranks";
 import { verificationMessage as botMessage } from "../../bot/src/verify/message";
 import { verificationMessage as siteMessage } from "@/lib/verify";
-
-describe("dashboard data", () => {
-  it("has unique hero ids", () => {
-    const ids = HERO.map((h) => h.id);
-    expect(new Set(ids).size).toBe(ids.length);
-  });
-
-  it("has well-formed metrics across all groups", () => {
-    const ids = new Set<string>();
-    for (const group of dashboardGroups) {
-      for (const m of group.metrics) {
-        expect(m.spark.length).toBeGreaterThan(1);
-        expect(["up", "down", "flat"]).toContain(m.trend);
-        expect(ids.has(m.id)).toBe(false);
-        ids.add(m.id);
-      }
-    }
-  });
-
-  it("keeps health factor percentages within 0..100", () => {
-    for (const f of SIGNAL_HEALTH.factors) {
-      expect(f.value).toBeGreaterThanOrEqual(0);
-      expect(f.value).toBeLessThanOrEqual(100);
-    }
-    expect(SIGNAL_HEALTH.score).toBeGreaterThanOrEqual(0);
-    expect(SIGNAL_HEALTH.score).toBeLessThanOrEqual(100);
-  });
-
-  it("defines a positive whale threshold", () => {
-    expect(CONCENTRATION.whaleThreshold).toBeGreaterThan(0);
-  });
-});
 
 describe("cross-surface consistency (single source of truth)", () => {
   it("bot official links match the website", () => {
@@ -59,5 +30,39 @@ describe("cross-surface consistency (single source of truth)", () => {
 
   it("the wallet-signing message is byte-identical across bot and website", () => {
     expect(botMessage("nonce-xyz")).toBe(siteMessage("nonce-xyz"));
+  });
+});
+
+describe("tokenomics shows the real fair launch", () => {
+  it("has no conceptual allocation table on the site", () => {
+    expect(tokenomicsContent).not.toHaveProperty("allocations");
+    expect(tokenomicsContent.launch.openMarketPercent).toBe(100);
+  });
+
+  it("never prints a team percentage anywhere in the section", () => {
+    const text = JSON.stringify(tokenomicsContent);
+    expect(text).not.toMatch(/team[^.]{0,24}\d+(\.\d+)?\s*%/i);
+    expect(text).not.toMatch(/"Team"/);
+  });
+
+  it("states the two facts holders ask about", () => {
+    const ids = tokenomicsContent.launch.facts.map((f) => f.id);
+    expect(ids).toContain("no-team-allocation");
+    expect(ids).toContain("deployer-exit");
+    expect(tokenomicsContent.launch.liveHref).toBe("/proof");
+  });
+});
+
+describe("quantum component count (one source of truth)", () => {
+  it("lists the five live components", () => {
+    expect(QUANTUM_COMPONENTS).toEqual(["Vault", "Draw", "Seal", "Forge", "Randomness"]);
+    expect(QUANTUM_COUNT_WORD).toBe("Five");
+  });
+
+  it("no page hard-codes an outdated count", () => {
+    const stale = /\b(four|Four)\s+(working\s+)?(quantum\s+)?(components|pillars)\b/;
+    for (const file of ["src/app/quantum-core/page.tsx", "src/components/sections/QuantumShowcase.tsx"]) {
+      expect(readFileSync(join(process.cwd(), file), "utf8")).not.toMatch(stale);
+    }
   });
 });

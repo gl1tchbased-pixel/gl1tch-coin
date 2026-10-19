@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { latestPulse } from "@/lib/quantum/curby";
+import { isPulseStale, formatPulseDate } from "@/lib/quantum/freshness";
+import { QUANTUM_COUNT_WORD } from "@/content/quantum";
 import styles from "./quantum.module.css";
 
 export const metadata: Metadata = {
   title: "GL1TCH Quantum Core — real quantum tech, holder-gated",
   description:
-    "Four working quantum components: Vault (readiness score), Draw (NIST CURBy verifiable quantum randomness), Seal (post-quantum ML-KEM encryption), Forge (quantum-inspired optimization). Honestly labelled, GL1TCH-holder-gated.",
+    `${QUANTUM_COUNT_WORD} quantum components: Vault (readiness score), Draw (NIST CURBy verifiable quantum randomness), Seal (post-quantum ML-KEM encryption), Forge (quantum-inspired optimization), Randomness (verifiable RNG-as-a-service). Honestly labelled, GL1TCH-holder-gated.`,
   alternates: { canonical: "/quantum-core" },
 };
 
@@ -69,6 +71,9 @@ const TIERS = [
 
 export default async function QuantumCorePage() {
   const pulse = await latestPulse();
+  const stale = pulse ? isPulseStale(pulse.timestamp) : false;
+  const curbyLive = !!pulse?.verified && !stale;
+  const lastRound = pulse ? formatPulseDate(pulse.timestamp) : "";
 
   return (
     <main className={styles.page}>
@@ -78,17 +83,19 @@ export default async function QuantumCorePage() {
           Real quantum tech — <span className={styles.signal}>honestly labelled</span>.
         </h1>
         <p className={styles.lede}>
-          Four components that actually work today: a readiness <strong>Vault</strong>, verifiable
-          quantum <strong>Draw</strong> (NIST CURBy), post-quantum <strong>Seal</strong> (ML-KEM), and
-          quantum-inspired <strong>Forge</strong>. No hand-waving — every claim maps to a technology
+          {QUANTUM_COUNT_WORD} components that actually work today: a readiness <strong>Vault</strong>, verifiable
+          quantum <strong>Draw</strong> (NIST CURBy), post-quantum <strong>Seal</strong> (ML-KEM),
+          quantum-inspired <strong>Forge</strong>, and verifiable <strong>Randomness</strong> (drand). No hand-waving — every claim maps to a technology
           that produces measurable value now, labelled exactly for what it is.
         </p>
       </header>
 
-      <section className={styles.pulseCard} aria-label="Live quantum pulse">
+      <section className={styles.pulseCard} aria-label="CURBy quantum pulse">
         <div className={styles.pulseHead}>
-          <span className={styles.pulseDot} data-live={pulse?.verified ? "1" : "0"} />
-          <span className={styles.pulseTitle}>Live CURBy quantum pulse</span>
+          <span className={styles.pulseDot} data-live={curbyLive ? "1" : "0"} />
+          <span className={styles.pulseTitle}>
+            {stale ? `CURBy quantum pulse · last round ${lastRound} · source paused` : "Live CURBy quantum pulse"}
+          </span>
           <a className={styles.pulseSrc} href="https://random.colorado.edu" target="_blank" rel="noreferrer">
             random.colorado.edu ↗
           </a>
@@ -100,6 +107,12 @@ export default async function QuantumCorePage() {
             <div><span className={styles.pk}>timestamp</span><code className={styles.pv}>{pulse.timestamp}</code></div>
             <div className={styles.pulseWide}><span className={styles.pk}>value (SHA-512)</span><code className={styles.pv}>{pulse.valueHex.slice(0, 64)}…</code></div>
             <div className={styles.pulseWide}><span className={styles.pk}>signed / verified</span><code className={styles.pv}>{pulse.verified ? "✓ signed, finalized round" : "pending finalization"}</code></div>
+            {stale && (
+              <p className={`${styles.pulseWide} ${styles.pulsePending}`}>
+                CURBy hasn&apos;t published a new round since {lastRound}. Reward draws wait for a fresh
+                pulse — they never fall back to another source.
+              </p>
+            )}
           </div>
         ) : (
           <p className={styles.pulsePending}>Current round is still being finalized — a draw would defer, never use a stale value.</p>
@@ -148,7 +161,10 @@ export default async function QuantumCorePage() {
         <span className={styles.kicker}>Honesty</span>
         <h2 className={styles.h2}>What is and isn&apos;t live.</h2>
         <ul className={styles.honestyList}>
-          <li><strong>Live now:</strong> all four pillars — Vault scoring, the CURBy quantum pulse, Seal (ML-KEM) in your browser, the Forge optimizer, plus the full commit-reveal <Link href="/quantum-core/draw" className={styles.inlineA}>Draw</Link> + public <Link href="/quantum-core/beacon" className={styles.inlineA}>Beacon</Link> log. All real and independently verifiable.</li>
+          <li><strong>Live now:</strong> all {QUANTUM_COUNT_WORD.toLowerCase()} components — Vault scoring, Seal (ML-KEM) in your browser, the Forge optimizer, verifiable Randomness, plus the full commit-reveal <Link href="/quantum-core/draw" className={styles.inlineA}>Draw</Link> + public <Link href="/quantum-core/beacon" className={styles.inlineA}>Beacon</Link> log. All real and independently verifiable.</li>
+          {stale && (
+            <li><strong>CURBy is paused.</strong> The quantum source behind reward draws hasn&apos;t published a round since {lastRound}. Committed draws wait and reveal on the first fresh pulse; we don&apos;t swap in a different source.</li>
+          )}
           <li>The Draw executor is scheduled server-side and cannot be triggered by any request — no user can influence timing. Every winner is recomputable from the published pulse + frozen entry list.</li>
           <li><strong>Two independent verifiable sources.</strong> CURBy (quantum) drives reward draws; drand (League-of-Entropy threshold-BLS) is a second source we fully verify in your browser — used for reward-free features only, never to downgrade a reward draw.</li>
           <li><strong>Deliberately deferred (founder-gated + audited):</strong> any SOL reward pool or on-chain NFT. GL1TCH is a reputation &amp; provenance signal — <em>never</em> key custody. Draw winners get a verifiable Beacon record, not a payout.</li>

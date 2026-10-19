@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import styles from "./ProofScan.module.css";
 
 /**
@@ -52,7 +53,7 @@ export function ProofScan() {
         </div>
         <p className={styles.aiText}>
           Scanner is busy right now — run it yourself:{" "}
-          <a className={styles.inlineLink} href={`/scan/solana-${CA}`}>open the live report →</a>
+          <Link className={styles.inlineLink} href={`/scan/solana-${CA}`}>open the live report →</Link>
         </p>
       </div>
     );
@@ -107,8 +108,8 @@ export function ProofScan() {
       )}
 
       <div className={styles.actions}>
-        <a className={styles.btnPrimary} href={`/scan/solana-${CA}`}>Open full report →</a>
-        <a className={styles.btnGhost} href="/scan">Re-scan it yourself</a>
+        <Link className={styles.btnPrimary} href={`/scan/solana-${CA}`}>Open full report →</Link>
+        <Link className={styles.btnGhost} href="/scan">Re-scan it yourself</Link>
       </div>
     </div>
   );

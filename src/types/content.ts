@@ -43,9 +43,18 @@ export interface LoreEntry {
   requiredRank?: string;
 }
 
-export interface TokenAllocation {
+export interface LaunchFact {
+  id: string;
+  title: string;
+  detail: string;
+}
+
+/** How the supply actually launched (Pump.fun fair launch) — no conceptual table. */
+export interface TokenLaunch {
+  openMarketPercent: 100;
   label: string;
-  percent: number;
+  facts: LaunchFact[];
+  liveHref: "/proof";
 }
 
 export interface TrustBadge {
@@ -58,7 +67,7 @@ export interface TrustBadge {
 export interface TokenomicsContent {
   headline: string;
   body: string;
-  allocations: TokenAllocation[];
+  launch: TokenLaunch;
   badges: TrustBadge[];
   cta: CTA;
 }

@@ -16,9 +16,13 @@ export const dynamic = "force-dynamic";
 
 const fmt = (ms: number) => new Date(ms).toUTCString().replace("GMT", "UTC");
 
+// Request-time check (the page is force-dynamic); kept outside the component body.
+const isOpen = (d: Awaited<ReturnType<typeof currentDraw>>, now = Date.now()) =>
+  d?.status === "open" && now < (d?.closesAt ?? 0);
+
 export default async function DrawPage() {
   const draw = await currentDraw();
-  const open = draw?.status === "open" && Date.now() < (draw?.closesAt ?? 0);
+  const open = isOpen(draw);
 
   return (
     <main className={styles.page}>

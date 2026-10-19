@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { latestDrand, type DrandPulse } from "@/lib/quantum/drand";
+import { formatPulseDate } from "@/lib/quantum/freshness";
+import { QUANTUM_COUNT_WORD } from "@/content/quantum";
 import styles from "./QuantumShowcase.module.css";
 
 /**
  * Homepage CROWN-JEWEL section — the premium flagship showcase for Quantum Core.
- * A live CURBy quantum pulse (fetched client-side, animated) proves the system is
- * alive; the four pillars are presented as a cinematic, honestly-labelled grid.
+ * The latest CURBy quantum pulse and drand round (fetched client-side) show the sources
+ * as they are: live when fresh, "paused · last round" when CURBy stops publishing.
  */
 
 interface Pulse {
@@ -17,6 +19,8 @@ interface Pulse {
   index?: number;
   valueHex?: string;
   verified?: boolean;
+  timestamp?: string;
+  stale?: boolean;
 }
 
 const PILLARS = [
@@ -51,7 +55,9 @@ export function QuantumShowcase() {
     };
   }, []);
 
-  const live = pulse?.ready && pulse?.verified;
+  const curbyLive = !!(pulse?.ready && pulse?.verified && !pulse?.stale);
+  const curbyPaused = !!(pulse?.ready && pulse?.stale);
+  const systemLive = curbyLive || !!drand?.verified;
 
   return (
     <div className="container">
@@ -62,27 +68,27 @@ export function QuantumShowcase() {
 
         <div className={styles.head}>
           <span className={styles.eyebrow}>
-            <span className={styles.dot} data-live={live ? "1" : "0"} />
-            GL1TCH Quantum Core · {live ? "live" : "connecting"}
+            <span className={styles.dot} data-live={systemLive ? "1" : "0"} />
+            GL1TCH Quantum Core · {systemLive ? "live" : "connecting"}
           </span>
           <h2 className={styles.title}>
             Real quantum technology.<br />
             <span className={styles.signal}>Honestly labelled.</span>
           </h2>
           <p className={styles.sub}>
-            Five components that actually work today — a readiness Vault, verifiable quantum Draw,
+            {QUANTUM_COUNT_WORD} components that actually work today — a readiness Vault, verifiable quantum Draw,
             post-quantum Seal, quantum-inspired Forge, and verifiable Randomness-as-a-service.
             Holder-gated. Non-custodial. Every claim maps to a technology that produces measurable
             value now.
           </p>
         </div>
 
-        {/* Two independent, live, verifiable randomness sources */}
+        {/* Two independent, verifiable randomness sources */}
         <div className={styles.sources}>
           <div className={styles.pulse}>
             <div className={styles.pulseLabel}>
-              <span className={styles.pulseDot} data-live={live ? "1" : "0"} />
-              CURBy · quantum (Bell-test)
+              <span className={styles.pulseDot} data-live={curbyLive ? "1" : "0"} />
+              CURBy · quantum (Bell-test){curbyPaused ? " · paused" : ""}
             </div>
             <div className={styles.pulseData}>
               {pulse?.ready ? (
@@ -90,7 +96,9 @@ export function QuantumShowcase() {
                   <span className={styles.pulseK}>round</span><b className={styles.pulseV}>{pulse.round}</b>
                   <span className={styles.pulseK}>value</span>
                   <code className={styles.pulseHash}>{(pulse.valueHex ?? "").slice(0, 32)}…</code>
-                  <span className={styles.srcTag} data-ok={live ? "1" : "0"}>{live ? "✓ signed" : "…"}</span>
+                  <span className={styles.srcTag} data-ok={curbyLive ? "1" : "0"}>
+                    {curbyLive ? "✓ signed" : curbyPaused ? `last round · ${formatPulseDate(pulse.timestamp ?? "")}` : "…"}
+                  </span>
                 </>
               ) : (
                 <span className={styles.pulseWait}>fetching finalized quantum round…</span>

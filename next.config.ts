@@ -44,6 +44,13 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
+  // The old pre-launch founder dashboard is retired; the public network page replaces it.
+  async redirects() {
+    return [
+      { source: "/dashboard", destination: "/network", permanent: true },
+      { source: "/dashboard/:path*", destination: "/network", permanent: true },
+    ];
+  },
   // Serve RFC 9116 security.txt at its well-known path (public/ dot-dirs aren't served).
   async rewrites() {
     return [{ source: "/.well-known/security.txt", destination: "/api/security-txt" }];

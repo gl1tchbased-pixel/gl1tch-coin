@@ -1,0 +1,1922 @@
+<title>GL1TCH v2 Tasarım Planı</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Martian+Mono:wght@400;500;600&family=Tektur:wght@500;700;800&display=swap">
+<style>
+/* Düzen: tek koyu "neon" dünya. Arkada yavaş akan aurora; üstte canlı 3D hero önizlemesi (Glitchy + Signal Core),
+   altında numaralı rapor bölümleri. Renk paleti üst bardan değiştirilebilir (Bugün / Neon / Neon+Altın). */
+:root{
+  color-scheme: dark;
+  --void:#07060D; --ob1:#0E0C18; --ob2:#151223; --ob3:#1D1930; --ob4:#272240;
+  --line:rgba(196,176,255,.10); --line2:rgba(196,176,255,.19);
+  --signal:#7CFF4F; --signal-ink:#B4FF96; --signal-mid:#4CAA2E; --signal-edge:#3A8A2A; --signal-deep:#13300D;
+  --glitch:#7A3CFF; --glitch-hot:#9B66FF; --glitch-ink:#B99BFF; --glitch-mid:#9C74F2; --glitch-edge:#4A2C93; --glitch-deep:#1F1340;
+  --static:#F5F7F8; --ink2:#C3C1D3; --ink3:#9592AB; --ink4:#5F5B78;
+  --warn:#E5B454; --warn-deep:#2E2410; --bad:#F2555A; --bad-deep:#35131B;
+  --fun:#7CFF4F; --fun-ink:#B4FF96; --fun-deep:#13300D; --fun-edge:#3A8A2A;
+  --glow:1; --aurora:1;
+  --hl:linear-gradient(92deg,#7CFF4F 0%,#C9FFB3 55%,#7CFF4F 100%);
+  --hl-p:linear-gradient(92deg,#9B66FF 0%,#D9C9FF 60%,#9B66FF 100%);
+  --f-display:"Tektur","Geist",system-ui,sans-serif;
+  --f-body:"Geist",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"Martian Mono","JetBrains Mono",ui-monospace,Consolas,monospace;
+  --r-s:6px; --r-m:10px; --r-l:16px;
+}
+:root[data-palette="gold"]{ --fun:#FFC23D; --fun-ink:#FFD877; --fun-deep:#2B200A; --fun-edge:#7A5C16; }
+:root[data-palette="muted"]{
+  --void:#050505; --ob1:#0A0A0F; --ob2:#111116; --ob3:#16181D; --ob4:#1D1F26;
+  --line:rgba(255,255,255,.05); --line2:rgba(255,255,255,.1);
+  --signal-ink:#7CFF4F; --glitch-ink:#8F6BFF; --ink2:rgba(245,247,248,.7); --ink3:rgba(245,247,248,.45); --ink4:rgba(245,247,248,.25);
+  --glow:0; --aurora:0; --hl:linear-gradient(#F5F7F8,#F5F7F8); --hl-p:linear-gradient(#7A3CFF,#7A3CFF);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--void);color:var(--static);font-family:var(--f-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .4s;overflow-x:clip}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--void)}
+a{color:var(--signal-ink);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+img{display:block;height:auto}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.mono{font-family:var(--f-mono)}
+.num{font-variant-numeric:tabular-nums}
+.hl{background:var(--hl);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 calc(18px * var(--glow)) rgba(124,255,79,calc(.35 * var(--glow))))}
+.hl-p{background:var(--hl-p);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 calc(18px * var(--glow)) rgba(122,60,255,calc(.45 * var(--glow))))}
+
+/* Aurora */
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;opacity:var(--aurora);transition:opacity .5s}
+.aurora i{position:absolute;border-radius:50%;filter:blur(90px)}
+.aurora .a1{width:62vmax;height:62vmax;right:-18vmax;top:-22vmax;background:radial-gradient(circle,rgba(122,60,255,.42),rgba(122,60,255,0) 65%);animation:drift1 26s ease-in-out infinite alternate}
+.aurora .a2{width:54vmax;height:54vmax;left:-20vmax;top:38vh;background:radial-gradient(circle,rgba(124,255,79,.20),rgba(124,255,79,0) 65%);animation:drift2 32s ease-in-out infinite alternate}
+.aurora .a3{width:40vmax;height:40vmax;right:10vw;bottom:-18vmax;background:radial-gradient(circle,rgba(155,102,255,.28),rgba(155,102,255,0) 65%);animation:drift1 38s ease-in-out infinite alternate-reverse}
+@keyframes drift1{to{transform:translate(-8vmax,6vmax) scale(1.08)}}
+@keyframes drift2{to{transform:translate(9vmax,-5vmax) scale(1.12)}}
+@media (prefers-reduced-motion: reduce){.aurora i{animation:none}}
+.topbar,header.wrap,main,footer{position:relative;z-index:1}
+
+/* Top bar */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:25;background:rgba(7,6,13,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;gap:14px;min-height:54px}
+.brand{font-family:var(--f-mono);font-weight:600;font-size:13px;letter-spacing:.08em;white-space:nowrap;display:flex;align-items:center;gap:8px;background:none;border:0;color:var(--static);cursor:pointer;padding:0}
+.brand i{width:7px;height:7px;border-radius:50%;background:var(--signal);box-shadow:0 0 calc(10px * var(--glow)) var(--signal)}
+.toc{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1}
+.toc::-webkit-scrollbar{display:none}
+.toc a{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);text-decoration:none;padding:6px 9px;border-radius:var(--r-s);white-space:nowrap}
+.toc a:hover{color:var(--static);background:var(--ob2)}
+.tools{display:flex;gap:8px;align-items:center;flex:0 0 auto;margin-left:auto}
+.seg{display:flex;gap:2px;background:var(--void);border:1px solid var(--line);border-radius:9px;padding:2px}
+.seg button{font-family:var(--f-mono);font-size:10.5px;color:var(--ink3);background:transparent;border:0;border-radius:7px;padding:5px 9px;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--ob3);color:var(--static);box-shadow:inset 0 0 0 1px var(--line2)}
+.tbtn{font-family:var(--f-mono);font-size:10.5px;color:var(--ink2);background:var(--ob2);border:1px solid var(--line2);border-radius:9px;padding:6px 10px;cursor:pointer;white-space:nowrap}
+.tbtn[aria-pressed="true"]{color:var(--fun-ink);border-color:var(--fun-edge);background:var(--fun-deep)}
+.tbtn b{color:var(--fun-ink);font-weight:500}
+
+/* Intro + hero preview */
+.intro{padding-block:56px 28px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:40px;align-items:end}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.eyebrow b{color:var(--signal-ink);font-weight:500}
+.eyebrow .new{color:var(--fun-ink);border:1px solid var(--fun-edge);background:var(--fun-deep);border-radius:999px;padding:2px 8px;letter-spacing:.08em}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(34px,5.4vw,62px);line-height:1.02;font-weight:800;margin-top:14px}
+.lede{color:var(--ink2);font-size:17px;max-width:62ch;margin:18px 0 0}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden}
+.stat{background:var(--ob1);padding:16px 18px}
+.stat strong{display:block;font-family:var(--f-display);font-size:30px;font-weight:700;line-height:1.1}
+.stat span{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+
+.browser{position:relative;border:1px solid var(--line2);border-radius:var(--r-l);overflow:hidden;background:var(--ob1);box-shadow:0 50px 140px -40px rgba(122,60,255,calc(.55 * var(--glow))),0 0 0 1px rgba(0,0,0,.6);transition:box-shadow .3s}
+.browser.alarm{box-shadow:0 0 0 2px rgba(242,85,90,.7),0 40px 140px -30px rgba(242,85,90,.6);animation:shake .45s steps(6) 1}
+@keyframes shake{0%{transform:translate(0,0)}20%{transform:translate(-5px,2px)}40%{transform:translate(4px,-2px)}60%{transform:translate(-3px,1px)}80%{transform:translate(2px,0)}100%{transform:translate(0,0)}}
+@media (prefers-reduced-motion: reduce){.browser.alarm{animation:none}}
+.b-top{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--ob2)}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:var(--ob4)}
+.url{font-family:var(--f-mono);font-size:11.5px;color:var(--ink3);background:var(--void);border:1px solid var(--line);border-radius:999px;padding:4px 14px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btag{margin-left:auto;font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;color:var(--glitch-ink);border:1px solid var(--glitch-edge);background:var(--glitch-deep);padding:3px 9px;border-radius:999px;white-space:nowrap}
+.b-nav{display:flex;align-items:center;gap:22px;padding:14px 26px;border-bottom:1px solid var(--line);font-size:13.5px;color:var(--ink2)}
+.b-logo{font-family:var(--f-display);font-weight:800;font-size:18px;color:var(--static);letter-spacing:.02em;display:flex;align-items:center;gap:8px}
+.b-logo i{width:6px;height:6px;border-radius:50%;background:var(--signal);box-shadow:0 0 calc(8px * var(--glow)) var(--signal)}
+.b-nav .menu{display:flex;gap:20px}
+.b-nav .menu span{white-space:nowrap}
+.b-nav .menu .dd::after{content:" ▾";color:var(--ink4)}
+.b-nav .right{margin-left:auto;display:flex;gap:10px;align-items:center}
+.btn{font-family:var(--f-body);font-weight:600;font-size:14px;border-radius:var(--r-m);padding:10px 16px;border:1px solid transparent;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:8px;text-decoration:none;transition:transform .15s ease,box-shadow .2s ease,background .2s}
+.btn-primary{background:linear-gradient(180deg,#9DFF78,#7CFF4F);color:#061104;box-shadow:0 0 0 1px rgba(124,255,79,.5),0 10px 34px -8px rgba(124,255,79,calc(.7 * var(--glow)))}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 0 0 1px rgba(124,255,79,.7),0 14px 42px -8px rgba(124,255,79,calc(.9 * var(--glow)))}
+.btn-ghost{background:rgba(255,255,255,.02);color:var(--static);border-color:var(--line2)}
+.btn-ghost:hover{border-color:var(--glitch-edge);background:var(--glitch-deep)}
+.btn-icon{padding:9px 11px}
+.b-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.12fr);min-height:540px;position:relative}
+.b-copy{padding:52px 22px 36px 34px;display:flex;flex-direction:column;justify-content:center;gap:16px;position:relative;z-index:2}
+.live-eb{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;color:var(--ink3);display:flex;align-items:center;gap:8px;text-transform:uppercase}
+.live-eb i{width:6px;height:6px;border-radius:50%;background:var(--signal);box-shadow:0 0 calc(8px * var(--glow)) var(--signal);animation:blip 1.6s ease-in-out infinite}
+@keyframes blip{50%{opacity:.35}}
+.b-h{font-family:var(--f-display);font-weight:800;font-size:clamp(40px,5.2vw,70px);line-height:.98;letter-spacing:-.015em;margin:0}
+.b-h.g{text-shadow:3px 0 0 rgba(122,60,255,.9),-3px 0 0 rgba(124,255,79,.65)}
+.b-p{color:var(--ink2);max-width:42ch;margin:0;font-size:16px}
+.scanbox{display:flex;gap:8px;background:rgba(7,6,13,.8);border:1px solid var(--line2);border-radius:12px;padding:6px;max-width:470px}
+.scanbox:focus-within{border-color:var(--signal-edge);box-shadow:0 0 0 4px rgba(124,255,79,.1),0 0 calc(30px * var(--glow)) rgba(124,255,79,calc(.18 * var(--glow)))}
+.scanbox input{flex:1;min-width:0;background:transparent;border:0;color:var(--static);font-family:var(--f-mono);font-size:13px;padding:8px 10px;outline:none}
+.scanbox input::placeholder{color:var(--ink4)}
+.tries{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-family:var(--f-mono);font-size:11px;color:var(--ink4)}
+.tries button{font-family:var(--f-mono);font-size:11px;color:var(--ink2);background:var(--ob2);border:1px solid var(--line);border-radius:999px;padding:4px 10px;cursor:pointer}
+.tries button:hover{color:var(--static);border-color:var(--line2)}
+.scan-note{font-family:var(--f-mono);font-size:12px;color:var(--ink3);min-height:1.5em}
+.scan-note b{font-weight:600}
+.proofrow{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--f-mono);font-size:11px;color:var(--ink3)}
+.proofrow span::before{content:"✓ ";color:var(--signal-mid)}
+.trail{position:absolute;inset:0;z-index:3;pointer-events:none;width:100%;height:100%}
+
+.stage{position:relative;min-height:300px;overflow:hidden;touch-action:pan-y;background:radial-gradient(110% 90% at 60% 40%,#1a1233 0%,var(--void) 72%)}
+.stage canvas.gl{position:absolute;inset:0;width:100%;height:100%;display:block}
+.stage .fallback{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--ink3);font-family:var(--f-mono);font-size:12px;padding:20px}
+.stage.live .fallback{display:none}
+.hud{position:absolute;z-index:2;pointer-events:none;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;color:var(--ink3);text-transform:uppercase}
+.hud b{color:var(--static);font-weight:500}
+.hud-tl{top:18px;left:18px}
+.hud-bl{left:18px;right:18px;bottom:16px;display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end}
+.hud-bl .k{display:flex;flex-direction:column;gap:2px}
+.hud-bl .k b{font-size:17px;letter-spacing:0}
+.hud .flag{color:var(--bad);text-transform:none;letter-spacing:.02em;margin-left:auto;max-width:100%;text-align:right}
+.bubble{position:absolute;z-index:4;pointer-events:none;transform:translate(-50%,-100%);background:var(--static);color:#0B0912;font:600 12.5px/1.3 var(--f-body);padding:8px 12px;border-radius:12px;white-space:nowrap;box-shadow:0 8px 30px rgba(0,0,0,.55),0 0 calc(24px * var(--glow)) rgba(185,155,255,calc(.35 * var(--glow)))}
+.bubble::after{content:"";position:absolute;left:50%;bottom:-6px;width:12px;height:12px;background:inherit;transform:translateX(-50%) rotate(45deg);border-radius:2px}
+.bubble[hidden]{display:none!important}
+.cap{font-family:var(--f-mono);font-size:11.5px;color:var(--ink3);margin:12px 2px 0;display:flex;gap:10px;flex-wrap:wrap}
+.cap b{color:var(--ink2);font-weight:500}
+
+/* Sections */
+section.part{padding-block:84px 8px}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px 48px;align-items:end;margin-bottom:34px}
+.sec-n{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;color:var(--glitch-ink);text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.sec-n::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--glitch-hot);box-shadow:0 0 calc(10px * var(--glow)) var(--glitch-hot)}
+h2{font-size:clamp(28px,3.6vw,44px);line-height:1.06;font-weight:700}
+.sec-head p{color:var(--ink2);margin:0;max-width:60ch}
+h3{font-size:20px;font-weight:700;line-height:1.2}
+.sub{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin:46px 0 16px;display:flex;align-items:center;gap:12px}
+.sub::after{content:"";flex:1;height:1px;background:var(--line)}
+
+.chip{font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:999px;border:1px solid;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.chip-bad{color:var(--bad);border-color:rgba(242,85,90,.45);background:var(--bad-deep)}
+.chip-warn{color:var(--warn);border-color:rgba(229,180,84,.45);background:var(--warn-deep)}
+.chip-ok{color:var(--signal-ink);border-color:var(--signal-edge);background:var(--signal-deep)}
+.chip-vio{color:var(--glitch-ink);border-color:var(--glitch-edge);background:var(--glitch-deep)}
+.chip-fun{color:var(--fun-ink);border-color:var(--fun-edge);background:var(--fun-deep)}
+.chip-n{color:var(--ink2);border-color:var(--line2);background:var(--ob2)}
+
+.card{background:linear-gradient(var(--ob1),var(--ob1)) padding-box,linear-gradient(140deg,rgba(124,255,79,calc(.32 * var(--glow))),rgba(196,176,255,.06) 38%,rgba(196,176,255,.06) 62%,rgba(122,60,255,calc(.42 * var(--glow)))) border-box;border:1px solid var(--line);border-radius:var(--r-l)}
+
+/* Findings */
+.finds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.find{background:var(--ob1);border:1px solid var(--line);border-radius:var(--r-l);padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.find.wide{grid-column:1/-1}
+.find header{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.find header h3{flex-basis:100%;margin-top:4px}
+.fid{font-family:var(--f-mono);font-size:11px;color:var(--ink3)}
+.find p{margin:0;color:var(--ink2);font-size:15px}
+.find .fix{border-top:1px solid var(--line);padding-top:12px}
+.find .fix b{color:var(--signal-ink);font-weight:600}
+.shots{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+.shots.mob{grid-template-columns:minmax(0,2.2fr) minmax(0,.62fr)}
+.shot{position:relative;margin:0;border-radius:var(--r-m);overflow:hidden;border:1px solid var(--line2);background:#000}
+.shot img{width:100%;max-width:100%}
+.pin{position:absolute;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:var(--bad);color:#1a0507;font:600 12px/24px var(--f-mono);text-align:center;box-shadow:0 0 0 3px rgba(7,6,13,.75),0 0 18px rgba(242,85,90,.6)}
+.pin.v{background:var(--glitch-ink);color:#120a24;box-shadow:0 0 0 3px rgba(7,6,13,.75),0 0 18px rgba(122,60,255,.6)}
+.pins{margin:0;padding:0;list-style:none;display:grid;gap:8px;counter-reset:p}
+.pins li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;color:var(--ink2);font-size:14.5px}
+.pins li::before{counter-increment:p;content:counter(p);width:22px;height:22px;border-radius:50%;border:1px solid rgba(242,85,90,.5);color:var(--bad);font:500 11px/21px var(--f-mono);text-align:center}
+.pins.v li::before{border-color:var(--glitch-edge);color:var(--glitch-ink)}
+.minis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.mini{background:var(--ob1);border:1px solid var(--line);border-radius:var(--r-l);padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.mini p{margin:0;color:var(--ink2);font-size:14.5px}
+.keep{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start}
+.keep ul{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+.keep li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;color:var(--ink2)}
+.keep li::before{content:"✓";color:var(--signal)}
+.keep li b{color:var(--static);font-weight:600}
+
+/* Table */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r-l)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14.5px}
+th,td{text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);font-weight:500;background:var(--ob1)}
+td{color:var(--ink2)}
+tr:last-child td{border-bottom:0}
+td:first-child{color:var(--static)}
+
+/* Color */
+.rule{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.brandsw{border-radius:var(--r-l);padding:18px;min-height:150px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;border:1px solid var(--line);position:relative;overflow:hidden}
+.brandsw strong{font-family:var(--f-display);font-size:22px}
+.brandsw span{font-family:var(--f-mono);font-size:12px}
+.sw-g{background:radial-gradient(120% 120% at 20% 0%,#C9FFB3 0%,#7CFF4F 45%,#3E9A2B 100%);color:#061104;box-shadow:0 20px 60px -20px rgba(124,255,79,calc(.6 * var(--glow)))}
+.sw-p{background:radial-gradient(120% 120% at 20% 0%,#C7AEFF 0%,#7A3CFF 50%,#3A1C8C 100%);color:#fff;box-shadow:0 20px 60px -20px rgba(122,60,255,calc(.7 * var(--glow)))}
+.sw-s{background:radial-gradient(120% 120% at 20% 0%,#FFFFFF 0%,#F5F7F8 50%,#C9CCD6 100%);color:#0B0912}
+.ramps{display:grid;gap:14px;margin-top:18px}
+.ramp{display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;align-items:center}
+.ramp-name{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.ramp-name b{display:block;color:var(--static);font-family:var(--f-body);font-size:15px;letter-spacing:0;text-transform:none;font-weight:600}
+.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.step{border-radius:var(--r-s);height:64px;padding:8px;display:flex;flex-direction:column;justify-content:flex-end;border:1px solid var(--line);font-family:var(--f-mono);font-size:10px;line-height:1.35;min-width:0;overflow:hidden}
+.step em{font-style:normal;opacity:.75;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.roles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:22px}
+.role{background:var(--ob1);border:1px solid var(--line);border-radius:var(--r-m);padding:16px;display:flex;flex-direction:column;gap:6px}
+.role .sw{width:28px;height:6px;border-radius:3px}
+.role b{font-weight:600}
+.role p{margin:0;color:var(--ink2);font-size:14px}
+.ba{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.ba-card{border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden;background:var(--ob1);min-width:0}
+.ba-label{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
+.ba-body{padding:26px 22px;display:flex;flex-direction:column;gap:14px;min-height:250px}
+.old{background:#050505}
+.old .eb{font-family:ui-monospace,Consolas,monospace;font-size:11px;letter-spacing:.2em;color:#7cff4f;font-weight:700}
+.old .pr{display:inline-flex;gap:8px;align-items:center;border:1px solid #2a2a2a;border-radius:999px;padding:5px 12px;font-family:ui-monospace,Consolas,monospace;font-size:12px;width:max-content;max-width:100%}
+.old .pr b{color:#7cff4f}
+.old h4{font-family:system-ui,"Segoe UI",sans-serif;font-weight:800;font-size:30px;line-height:1.05;margin:0;color:#f5f7f8}
+.old .ctas{display:flex;gap:10px;flex-wrap:wrap}
+.old .c1{background:#7cff4f;color:#000;padding:10px 16px;border-radius:6px;font:600 14px system-ui}
+.old .c2{color:#7cff4f;padding:10px 4px;font:600 14px system-ui}
+.old .bdg{display:flex;gap:6px;flex-wrap:wrap}
+.old .bdg span{border:1px solid #2a2a2a;border-radius:999px;padding:4px 10px;font:12px system-ui;color:#c9c9c9}
+.old .bdg span::before{content:"■ ";color:#7cff4f}
+.new{background:radial-gradient(90% 120% at 100% 0%,rgba(122,60,255,calc(.35 * var(--glow))),transparent 60%),radial-gradient(80% 100% at 0% 100%,rgba(124,255,79,calc(.14 * var(--glow))),transparent 60%),var(--void)}
+.new h4{font-family:var(--f-display);font-weight:800;font-size:34px;line-height:1.02;margin:0}
+.new .ctas{display:flex;gap:10px;flex-wrap:wrap}
+.contrast{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px}
+.cbox{border:1px solid var(--line);border-radius:var(--r-m);padding:14px;background:var(--void);display:flex;flex-direction:column;gap:6px}
+.cbox .t{font-size:15px}
+.cbox .r{font-family:var(--f-mono);font-size:11px;color:var(--ink3);display:flex;justify-content:space-between;gap:8px}
+.palnote{margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--ink2);font-size:14.5px}
+
+/* Type */
+.type-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:18px}
+.spec{border:1px solid var(--line);border-radius:var(--r-l);background:var(--ob1);padding:24px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.spec .role-l{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);display:flex;justify-content:space-between;gap:10px}
+.spec .s-old{font-family:system-ui,"Segoe UI",sans-serif;font-weight:800;font-size:42px;line-height:1.02}
+.spec .s-disp{font-family:var(--f-display);font-weight:800;font-size:clamp(40px,5vw,58px);line-height:.98}
+.spec .s-body{font-family:var(--f-body);font-size:16.5px;color:var(--ink2);max-width:52ch;margin:0}
+.spec .s-data{font-family:var(--f-mono);font-size:13px;color:var(--static);display:flex;flex-wrap:wrap;gap:6px 18px}
+.spec .s-data span{color:var(--ink3)}
+.spec hr{border:0;border-top:1px solid var(--line);margin:0}
+
+/* 3D features */
+.rules3d{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:26px}
+.r3{border:1px solid var(--line);border-radius:var(--r-m);padding:14px 16px;background:var(--ob1)}
+.r3 b{display:block;font-weight:600;margin-bottom:4px}
+.r3 span{color:var(--ink2);font-size:14px}
+.feat{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);overflow:hidden;margin-bottom:18px}
+.feat-copy{padding:26px;display:flex;flex-direction:column;gap:12px;border-right:1px solid var(--line);min-width:0}
+.feat-copy .where{display:flex;gap:6px;flex-wrap:wrap}
+.feat-copy p{margin:0;color:var(--ink2);font-size:15px}
+.feat-copy dl{margin:4px 0 0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 14px;font-size:13.5px}
+.feat-copy dt{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);padding-top:2px}
+.feat-copy dd{margin:0;color:var(--ink2)}
+.feat .stage{min-height:420px}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px}
+.ctrl label{font-family:var(--f-mono);font-size:11px;color:var(--ink3);letter-spacing:.06em}
+input[type=range]{width:100%;accent-color:var(--signal)}
+.pbtn{font-family:var(--f-mono);font-size:11px;color:var(--ink2);background:var(--ob2);border:1px solid var(--line2);border-radius:999px;padding:6px 11px;cursor:pointer}
+.pbtn:hover{color:var(--static);border-color:var(--ink3)}
+.orb-read{position:absolute;z-index:2;right:22px;top:20px;text-align:right;pointer-events:none}
+.orb-read .sc{font-family:var(--f-display);font-weight:800;font-size:56px;line-height:1}
+.orb-read .sc small{font-size:18px;color:var(--ink3);font-weight:500}
+.orb-read .vd{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;margin-top:6px}
+.tiers{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--line);border-top:1px solid var(--line)}
+.tiers div{background:var(--ob1);padding:12px 14px;font-size:13px;color:var(--ink2);min-width:0}
+.tiers b{display:block;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;color:var(--static);font-weight:500}
+.tiers span{font-family:var(--f-mono);font-size:11px;color:var(--signal-ink)}
+.gtip{position:absolute;z-index:3;pointer-events:none;background:rgba(14,12,24,.94);border:1px solid var(--line2);border-radius:8px;padding:8px 10px;font-family:var(--f-mono);font-size:11px;color:var(--static);white-space:nowrap;transform:translate(12px,-50%)}
+.gtip[hidden]{display:none!important}
+.legend{position:absolute;z-index:2;left:18px;bottom:16px;display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--f-mono);font-size:10.5px;color:var(--ink2);pointer-events:none}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:0}
+.feat-full{grid-template-columns:minmax(0,1fr)}
+.feat-full .feat-copy{border-right:0;border-bottom:1px solid var(--line)}
+
+/* Fun: game */
+.game{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);overflow:hidden}
+.game .stage{min-height:480px;border-right:1px solid var(--line)}
+.gpanel{padding:24px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.ghead{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-family:var(--f-mono);font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em}
+.ghead b{color:var(--static);font-weight:600;font-size:13px}
+.gcard{border:1px solid var(--line2);border-radius:14px;background:var(--void);padding:16px;display:flex;flex-direction:column;gap:12px;transition:border-color .3s,box-shadow .3s}
+.gcard.ok{border-color:var(--signal-edge);box-shadow:0 0 calc(40px * var(--glow)) -10px rgba(124,255,79,.5)}
+.gcard.bad{border-color:rgba(242,85,90,.6);box-shadow:0 0 calc(40px * var(--glow)) -10px rgba(242,85,90,.55)}
+.gt{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.gt b{font-family:var(--f-display);font-size:26px;font-weight:800}
+.gt .mono{font-size:11px;color:var(--ink4)}
+.grows{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.grows li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:8px 10px;border-radius:8px;font-size:14px;color:var(--ink2);background:var(--ob1);border:1px solid transparent;transition:border-color .3s,background .3s}
+.grows li b{font-family:var(--f-mono);font-size:12px;font-weight:500;color:var(--static)}
+.grows li small{display:block;font-size:11.5px;color:var(--ink3)}
+.grows li.s-ok b{color:var(--signal-ink)}
+.grows li.s-warn{border-color:rgba(229,180,84,.35)} .grows li.s-warn b{color:var(--warn)}
+.grows li.s-bad{border-color:rgba(242,85,90,.55);background:var(--bad-deep)} .grows li.s-bad b{color:var(--bad)}
+.gbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gbtns .btn{justify-content:center;font-family:var(--f-display);font-size:18px;letter-spacing:.04em;padding:14px}
+.gsafe{background:var(--signal-deep);color:var(--signal-ink);border-color:var(--signal-edge)}
+.gsafe:hover{box-shadow:0 0 calc(30px * var(--glow)) -6px rgba(124,255,79,.7);transform:translateY(-1px)}
+.grug{background:var(--bad-deep);color:var(--bad);border-color:rgba(242,85,90,.5)}
+.grug:hover{box-shadow:0 0 calc(30px * var(--glow)) -6px rgba(242,85,90,.7);transform:translateY(-1px)}
+.greveal{display:flex;flex-direction:column;gap:10px}
+.gv{font-family:var(--f-display);font-size:22px;font-weight:800}
+.greveal p{margin:0;color:var(--ink2);font-size:14.5px}
+.gend{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.gend .gs{font-family:var(--f-display);font-size:64px;font-weight:800;line-height:1}
+.gend .gs small{font-size:22px;color:var(--ink3)}
+.gend .gtitle{font-family:var(--f-mono);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--fun-ink)}
+.gend p{margin:0;color:var(--ink2);font-size:14.5px}
+.funs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:18px}
+.fun{padding:18px;display:flex;flex-direction:column;gap:8px}
+.fun p{margin:0;color:var(--ink2);font-size:14px}
+.fun .try{font-family:var(--f-mono);font-size:11px;color:var(--fun-ink)}
+.kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line2);border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--static);background:var(--ob2)}
+
+/* Toasts */
+.toasts{position:fixed;z-index:40;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:10px;pointer-events:none;max-width:calc(100vw - 32px)}
+.toast{display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px;align-items:center;background:rgba(14,12,24,.96);border:1px solid var(--fun-edge);border-radius:14px;padding:12px 14px;box-shadow:0 16px 50px rgba(0,0,0,.6),0 0 calc(30px * var(--glow)) -8px var(--fun);animation:tin .35s cubic-bezier(.2,1.4,.4,1);min-width:260px}
+.toast .px{width:40px;height:40px;display:grid;grid-template-columns:repeat(5,1fr);gap:1px}
+.toast .px i{background:var(--fun);border-radius:1px}
+.toast .px i.o{background:transparent}
+.toast b{display:block;font-family:var(--f-display);font-size:15px}
+.toast span{font-size:12.5px;color:var(--ink2)}
+.toast small{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;color:var(--fun-ink);text-transform:uppercase}
+@keyframes tin{from{transform:translateY(20px) scale(.9);opacity:0}}
+
+/* Easter egg */
+html.glitching header.wrap,html.glitching main{animation:pg .12s steps(2) 12;text-shadow:3px 0 rgba(122,60,255,.85),-3px 0 rgba(124,255,79,.6)}
+html.glitching::after{content:"";position:fixed;inset:0;z-index:60;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(124,255,79,.07) 0 2px,transparent 2px 4px)}
+@keyframes pg{0%{transform:translate(0,0)}50%{transform:translate(-4px,1px)}100%{transform:translate(3px,-1px)}}
+@media (prefers-reduced-motion: reduce){html.glitching header.wrap,html.glitching main{animation:none}}
+
+/* Dashboard mock */
+.dash-mock{border:1px solid var(--line2);border-radius:var(--r-l);background:var(--void);overflow:hidden;position:relative}
+.ribbon{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 18px;background:var(--glitch-deep);border-bottom:1px solid var(--glitch-edge);font-family:var(--f-mono);font-size:11px;color:var(--glitch-ink)}
+.dm-in{padding:26px;background:radial-gradient(70% 60% at 100% 0%,rgba(122,60,255,calc(.18 * var(--glow))),transparent 70%)}
+.dm-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.dm-head h3{font-size:30px}
+.dm-head .eb2{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;color:var(--ink3);text-transform:uppercase;margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.dm-head .eb2 i{width:6px;height:6px;border-radius:50%;background:var(--signal);box-shadow:0 0 8px var(--signal)}
+.dm-src{font-family:var(--f-mono);font-size:11px;color:var(--ink3);display:flex;gap:8px;flex-wrap:wrap}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.kpi{background:var(--ob1);border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px;min-width:0;transition:transform .25s ease,border-color .25s ease,box-shadow .25s;transform-style:preserve-3d}
+.kpi:hover{border-color:var(--glitch-edge);box-shadow:0 18px 40px -20px rgba(122,60,255,calc(.8 * var(--glow)))}
+.kpi .l{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+.kpi .v{font-family:var(--f-display);font-size:24px;font-weight:700;margin-top:6px;line-height:1.1;white-space:nowrap}
+.kpi .d{font-family:var(--f-mono);font-size:11px;margin-top:6px;color:var(--ink3);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.dn{color:var(--bad)} .up{color:var(--signal-ink)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:14px;margin-top:14px}
+.grid3{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,1fr);gap:14px;margin-top:14px}
+.panel{background:var(--ob1);border:1px solid var(--line);border-radius:14px;padding:18px;min-width:0;position:relative}
+.panel-h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.panel-h b{font-weight:600;font-size:15px}
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.ctip{position:absolute;pointer-events:none;background:var(--ob2);border:1px solid var(--line2);border-radius:8px;padding:7px 10px;font-family:var(--f-mono);font-size:11px;white-space:nowrap;transform:translate(-50%,-112%)}
+.ctip span{color:var(--ink3);display:block;font-size:10px}
+.gauge-wrap{display:flex;gap:16px;align-items:center}
+.gauge-wrap svg{flex:0 0 132px;width:132px;height:132px}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:7px;font-size:13.5px;color:var(--ink2);min-width:0}
+.checks li{display:flex;justify-content:space-between;gap:10px}
+.checks li b{font-family:var(--f-mono);font-size:11px;font-weight:500;color:var(--signal-ink)}
+.checks li b.w{color:var(--warn)}
+.rlist{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.rlist li{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.3fr) auto;gap:12px;align-items:center;padding:8px 6px;border-radius:8px;font-size:13.5px}
+.rlist li:hover{background:var(--ob2)}
+.rlist .nm{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rlist .nm small{display:block;font-family:var(--f-mono);font-size:10px;color:var(--ink4);font-weight:400}
+.bar{height:6px;border-radius:3px;background:var(--ob3);position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;border-radius:3px}
+.rlist .sc{font-family:var(--f-mono);font-size:12px;text-align:right;min-width:86px;display:flex;justify-content:flex-end;gap:8px;align-items:center}
+.beacon .row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px;color:var(--ink2);align-items:center;flex-wrap:wrap}
+.beacon .row:last-child{border-bottom:0}
+.beacon .row b{font-family:var(--f-mono);font-weight:500;color:var(--static);font-size:13px}
+.hash{font-family:var(--f-mono);font-size:10.5px;color:var(--glitch-ink);word-break:break-all;margin-top:6px;line-height:1.5}
+.stack{display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px;margin:12px 0 10px}
+.alloc{display:flex;gap:16px;align-items:center}
+.alloc svg{flex:0 0 128px;width:128px;height:128px}
+.alloc ul{list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:13px;color:var(--ink2);flex:1;min-width:0}
+.alloc li{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:8px;align-items:center}
+.alloc li i{width:10px;height:10px;border-radius:3px}
+.alloc li b{font-family:var(--f-mono);font-weight:500;color:var(--static);font-size:12px}
+.empty{border:1px dashed var(--line2);border-radius:10px;padding:16px;color:var(--ink3);font-size:13.5px;display:flex;flex-direction:column;gap:6px}
+.empty b{font-family:var(--f-display);font-size:26px;color:var(--ink4)}
+.note{font-family:var(--f-mono);font-size:10.5px;color:var(--ink3);margin-top:10px}
+
+/* Flow */
+.flow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+.flow-col{border:1px solid var(--line);border-radius:var(--r-l);background:var(--ob1);overflow:hidden;min-width:0}
+.flow-col header{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.flow-col header b{font-family:var(--f-display);font-size:20px}
+.flow-col header span{font-family:var(--f-mono);font-size:11px;color:var(--ink3)}
+.flow ol{margin:0;padding:8px;list-style:none;display:grid;gap:2px}
+.flow li{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 10px;border-radius:8px;font-size:14px;color:var(--ink2)}
+.flow li .i{font-family:var(--f-mono);font-size:11px;color:var(--ink4)}
+.flow .new li{padding:12px 10px;color:var(--static)}
+.flow .new li small{display:block;color:var(--ink3);font-size:12.5px}
+.flow .new li .i{color:var(--signal-ink)}
+.lenbar{padding:14px 18px;border-top:1px solid var(--line);display:grid;gap:8px}
+.lenbar .row{display:grid;grid-template-columns:80px minmax(0,1fr);gap:10px;align-items:center;font-family:var(--f-mono);font-size:11px;color:var(--ink3)}
+
+/* Phases */
+.phases{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ph{border:1px solid var(--line);border-radius:var(--r-l);background:var(--ob1);padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.ph .ph-n{display:flex;justify-content:space-between;align-items:center;font-family:var(--f-mono);font-size:11px;color:var(--ink3)}
+.ph h3{font-size:18px}
+.ph ul{margin:0;padding-left:16px;color:var(--ink2);font-size:13.5px;display:grid;gap:5px}
+.ph.first{border-color:var(--signal-edge);background:linear-gradient(180deg,var(--signal-deep),var(--ob1) 55%)}
+.ph.fun{border-color:var(--fun-edge);background:linear-gradient(180deg,var(--fun-deep),var(--ob1) 55%)}
+.verify{margin-top:16px;border:1px solid var(--line);border-radius:var(--r-m);padding:14px 16px;color:var(--ink2);font-size:14.5px;background:var(--ob1)}
+.verify b{color:var(--static)}
+
+/* Decisions */
+.decs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.dec{border:1px solid var(--line);border-radius:var(--r-l);padding:20px;background:var(--ob1);display:flex;flex-direction:column;gap:10px}
+.dec .q{font-family:var(--f-mono);font-size:11px;color:var(--glitch-ink);letter-spacing:.1em}
+.dec ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.dec li{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;color:var(--ink2)}
+.dec li.rec{border-color:var(--signal-edge);background:var(--signal-deep);color:var(--static)}
+.dec li.rec::after{content:"Önerim";float:right;font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;color:var(--signal-ink);text-transform:uppercase;margin-left:8px}
+.dec .done{font-family:var(--f-mono);font-size:11px;color:var(--fun-ink)}
+footer.end{padding-block:70px 90px;color:var(--ink3);font-size:14px}
+footer.end .wrap{display:grid;gap:8px}
+
+/* Responsive */
+@media (max-width:1100px){ .tools .seg button{padding:5px 7px} .toc{display:none} }
+@media (max-width:1040px){
+  .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .grid3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .grid3 .panel:first-child{grid-column:1/-1}
+  .roles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .contrast{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .phases{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:860px){
+  .intro,.sec-head,.finds,.keep,.ba,.type-grid,.flow,.decs,.grid2,.feat,.game{grid-template-columns:minmax(0,1fr)}
+  .feat-copy{border-right:0;border-bottom:1px solid var(--line)}
+  .game .stage{border-right:0;border-bottom:1px solid var(--line);min-height:380px}
+  .b-hero{grid-template-columns:minmax(0,1fr)}
+  .b-hero .stage{min-height:400px;order:-1;border-bottom:1px solid var(--line)}
+  .b-copy{padding:26px 20px 30px}
+  .b-nav .menu{display:none}
+  .minis,.rules3d,.funs{grid-template-columns:minmax(0,1fr)}
+  .tiers{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .rule{grid-template-columns:minmax(0,1fr)}
+  .brandsw{min-height:96px}
+}
+@media (max-width:560px){
+  .ramp{grid-template-columns:minmax(0,1fr);gap:8px}
+  .steps{gap:4px}
+  .step{height:58px;font-size:9px;padding:6px}
+  .phases,.roles,.contrast{grid-template-columns:minmax(0,1fr)}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid3{grid-template-columns:minmax(0,1fr)}
+  .shots.mob{grid-template-columns:minmax(0,1fr)}
+  .shots.mob .shot:last-child{max-width:260px}
+  .dm-in{padding:16px}
+  .gauge-wrap,.alloc{flex-direction:column;align-items:flex-start}
+  .b-nav{padding:12px 16px;gap:12px}
+  .b-nav .right .btn-ghost:not(.btn-icon){display:none}
+  .rlist li{grid-template-columns:minmax(0,1fr) auto}
+  .rlist .bar{display:none}
+  .feat .stage{min-height:340px}
+  .orb-read .sc{font-size:42px}
+  .pin{width:20px;height:20px;line-height:20px;font-size:10px}
+  .topbar .wrap{gap:8px}
+  .brand{font-size:11px;gap:6px}
+  .tools{gap:6px}
+  .tools .seg button{padding:4px 6px;font-size:10px}
+  .tbtn{padding:5px 8px}
+  .tools .tbtn.snd{display:none}
+  .toast{min-width:0}
+}
+</style>
+
+<div class="aurora" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
+
+<div class="topbar">
+  <div class="wrap">
+    <button class="brand" id="logoBtn" type="button" title="GL1TCH"><i></i>GL1TCH v2</button>
+    <nav class="toc" aria-label="Bölümler">
+      <a href="#bulgular">Bulgular</a><a href="#renk">Renk</a><a href="#uc-boyut">3D</a><a href="#eglence">Eğlence</a><a href="#panel">Dashboard</a><a href="#akis">Ana sayfa</a><a href="#fazlar">Fazlar</a><a href="#kararlar">Kararlar</a>
+    </nav>
+    <div class="tools">
+      <div class="seg" id="palSeg" role="group" aria-label="Renk paleti">
+        <button type="button" data-pal="muted" aria-pressed="false">Bugün</button>
+        <button type="button" data-pal="neon" aria-pressed="true">Neon</button>
+        <button type="button" data-pal="gold" aria-pressed="false">+Altın</button>
+      </div>
+      <button class="tbtn snd" id="soundBtn" type="button" aria-pressed="false">Ses: kapalı</button>
+      <button class="tbtn" id="achBtn" type="button" title="Kazanılan rozetler">Rozet <b id="achCount">0</b>/5</button>
+    </div>
+  </div>
+</div>
+
+<header class="wrap">
+  <div class="intro">
+    <div>
+      <div class="eyebrow"><b>gl1tchbased.xyz</b><span>yeniden tasarım planı</span><span class="new">v2 · daha canlı</span></div>
+      <h1>Siteyi bir <span class="hl-p">sinyal merkezine</span> çeviriyoruz.</h1>
+      <p class="lede">İsteğin üzerine her şeyi bir kademe yukarı taşıdım. Renkler artık parlıyor, 3D sahneler Glitchy'nin bloom ve stüdyo ışığıyla çalışıyor. Hero'da Glitchy taramalara tepki veriyor. Yeni Eğlence bölümünde oynanabilir bir mini oyun, rozetler, ses ve gizli bir kod var. Siteye henüz hiçbir şey uygulanmadı.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><strong class="num">6</strong><span>canlı 3D sahne</span></div>
+      <div class="stat"><strong class="num">5</strong><span>rozet · bul hepsini</span></div>
+      <div class="stat"><strong class="num">14</strong><span>bulgu · 3'ü güven riski</span></div>
+      <div class="stat"><strong class="num">6</strong><span>faz · küçükten büyüğe</span></div>
+    </div>
+  </div>
+
+  <div class="browser" id="heroFrame" aria-label="Yeni ana sayfa hero önizlemesi">
+    <div class="b-top"><span class="dots"><i></i><i></i><i></i></span><span class="url">gl1tchbased.xyz</span><span class="btag">ÖNİZLEME · CANLI 3D</span></div>
+    <div class="b-nav">
+      <span class="b-logo">GL1TCH<i></i></span>
+      <span class="menu"><span class="dd">Products</span><span>Proof</span><span>Live</span><span>Play</span><span>Docs</span></span>
+      <span class="right"><button class="btn btn-ghost btn-icon" type="button" aria-label="Connect wallet">◫</button><a class="btn btn-ghost" href="#eglence">Join the Infected</a></span>
+    </div>
+    <div class="b-hero" id="bHero">
+      <canvas class="trail" id="trail" aria-hidden="true"></canvas>
+      <div class="b-copy">
+        <div class="live-eb"><i></i>Risk intelligence · live</div>
+        <h2 class="b-h" id="heroH">It Reads <span class="hl">Every Rug.</span></h2>
+        <p class="b-p">Free multi-chain token scanner with a rogue-AI face. Paste any contract, get the verdict in seconds. It never touches your wallet.</p>
+        <form class="scanbox" id="mockScan" autocomplete="off">
+          <input id="mockScanInput" type="text" placeholder="token name or contract, any chain" aria-label="Token adı veya kontrat adresi">
+          <button class="btn btn-primary" type="submit">Scan</button>
+        </form>
+        <div class="tries">örnek:<button type="button" data-q="$GL1TCH">$GL1TCH</button><button type="button" data-q="$NEONFROG">$NEONFROG</button><button type="button" data-q="0xRUG…dead">0xRUG…dead</button></div>
+        <div class="scan-note" id="scanNote" aria-live="polite"></div>
+        <div class="proofrow"><span>Mint revoked</span><span>Freeze revoked</span><span>0% tax</span><span>RugCheck 1</span></div>
+      </div>
+      <div class="stage" id="coreStage">
+        <div class="fallback">3D sahne yükleniyor. WebGL yoksa burada statik poster görünür.</div>
+        <div class="bubble" id="heroBubble" hidden></div>
+        <div class="hud hud-tl">Signal Core · <b>v2</b></div>
+        <div class="hud hud-bl">
+          <div class="k">Taranan<b class="num" id="hudScanned">0</b></div>
+          <div class="k">İşaretlenen<b class="num" id="hudFlagged" style="color:var(--bad)">0</b></div>
+          <div class="flag" id="hudLast"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="cap"><b>Dene:</b><span>örnek bir token tara · Glitchy'ye tıkla · fareyi hızlıca salla · imleci hero'da gezdir</span><span>Token'lar örnek veridir.</span></p>
+</header>
+
+<main>
+<!-- §1 Findings -->
+<section class="part wrap" id="bulgular">
+  <div class="sec-head">
+    <div><span class="sec-n">§1 · Bulgular</span><h2>Sitede ne gördüm</h2></div>
+    <p>Önce güveni bozan üç şey var. Bir güvenlik markası için en pahalı hata yanlış bir "canlı" etiketi. Sonra görsel ve akış sorunları geliyor. Kırmızı numaralar ekran görüntülerindeki yerleri gösteriyor.</p>
+  </div>
+
+  <div class="sub">Önce düzeltilmeli · güven riski</div>
+  <div class="finds">
+    <article class="find wide">
+      <header><span class="fid">B1</span><span class="chip chip-bad">Güven riski</span><span class="chip chip-n">/dashboard</span><h3>Dashboard hâlâ lansman öncesi taslağı gösteriyor</h3></header>
+      <div class="shots mob">
+        <figure class="shot"><img src="img/dash.jpg" width="1200" height="750" alt="Canlı /dashboard sayfası: Launch Readiness yüzde 85, Phase Build the Myth">
+          <span class="pin" style="left:13%;top:37%">1</span><span class="pin" style="left:82%;top:37%">2</span><span class="pin" style="left:15%;top:91%">3</span><span class="pin" style="left:74%;top:86%">4</span>
+        </figure>
+        <figure class="shot"><img src="img/mobile-dash.jpg" width="390" height="844" alt="Mobilde dashboard, Build the Myth"><span class="pin" style="left:66%;top:78%">2</span></figure>
+      </div>
+      <ol class="pins">
+        <li>"Launch Readiness 85%" ve "Awaiting go-live" yazıyor. Token Mayıs 2026'dan beri canlı.</li>
+        <li>"Phase: Build the Myth" görünüyor. Roadmap'te bu Faz 1; site Faz 7'yi anlatıyor.</li>
+        <li>"On-chain (devnet) 80%" satırı test ağını gösteriyor.</li>
+        <li>Holder concentration 0%, altında "Activates at launch". Tarama sayfası aynı token için en büyük hesabı %97,4 gösteriyor.</li>
+      </ol>
+      <figure class="shot"><img src="img/dash-empty.jpg" width="1200" height="1492" alt="Dashboard'ın alt kısmı: boş fiyat grafiği, pre-launch kartları, kurucu notları">
+        <span class="pin v" style="left:50%;top:20%">1</span><span class="pin v" style="left:14%;top:48%">2</span><span class="pin v" style="left:25%;top:74%">3</span><span class="pin v" style="left:39%;top:96.5%">4</span>
+      </figure>
+      <ol class="pins v">
+        <li>Fiyat grafiği alanı boş: yaklaşık 560 px yüksekliğinde siyah bir kutu.</li>
+        <li>Büyüme kartlarında değer "—", alt etiket "pre-launch".</li>
+        <li>Transmission Log kurucuya ait yapılacakları gösteriyor: "awaiting BOT_TOKEN", "fund launch wallet + multisig".</li>
+        <li>Alttaki not ortam değişkeni adlarını açıkça yazıyor (CONTRACT_ADDRESS, BIRDEYE_API_KEY, ANALYTICS_LIVE).</li>
+      </ol>
+      <p class="fix"><b>Öneri:</b> Sayfayı herkese açık, canlı veriyle çalışan "Signal Network" paneline çevir (§7). Kurucu notları ya kalksın ya da cüzdanla korunan ayrı bir görünüme taşınsın.</p>
+    </article>
+
+    <article class="find">
+      <header><span class="fid">B2</span><span class="chip chip-bad">Güven riski</span><span class="chip chip-n">/quantum-core</span><h3>"Live" kuantum darbesi 14 ay önceye ait</h3></header>
+      <figure class="shot"><img src="img/curby.jpg" width="1000" height="320" alt="Live CURBy quantum pulse kartı, zaman damgası 2025-08-22"><span class="pin" style="left:24%;top:53%">1</span></figure>
+      <ol class="pins"><li>Kart "Live CURBy quantum pulse" diyor, zaman damgası 2025-08-22T19:42. drand kartı ise güncel turu (33184485) gösteriyor.</li></ol>
+      <p class="fix"><b>Öneri:</b> Önce kaynağı kontrol edeceğim; CURBy yeni tur üretmiyor olabilir. Tur 24 saatten eskiyse etiket "Son tur · tarih" olsun ve yeşil canlı noktası sönsün.</p>
+    </article>
+
+    <article class="find">
+      <header><span class="fid">B3</span><span class="chip chip-bad">Tutarsızlık</span><span class="chip chip-n">ana sayfa ↔ /quantum-core</span><h3>Bileşen sayısı iki yerde farklı</h3></header>
+      <figure class="shot"><img src="img/quantum-home.jpg" width="1100" height="993" alt="Ana sayfadaki Quantum Core vitrini, beş bileşen"><span class="pin" style="left:31%;top:25%">1</span><span class="pin v" style="left:23%;top:76%">2</span></figure>
+      <ol class="pins"><li>Ana sayfa "Five components" diyor, /quantum-core sayfası "Four components".</li></ol>
+      <p class="fix"><b>Öneri:</b> İki metin de tek bir içerik dosyasından okunsun. Mor 2 numara A2 maddesinde.</p>
+    </article>
+  </div>
+
+  <div class="sub">Görsel ve renk</div>
+  <div class="finds">
+    <article class="find wide">
+      <header><span class="fid">G1</span><span class="chip chip-warn">Görsel</span><span class="chip chip-n">ana sayfa hero</span><h3>Hero ürünün ne yaptığını göstermiyor, her şey aynı yeşil</h3></header>
+      <figure class="shot"><img src="img/hero.jpg" width="1200" height="750" alt="Canlı ana sayfa hero'su: It Reads Every Rug başlığı, sağda düz halkalı radar">
+        <span class="pin" style="left:75%;top:52%">1</span><span class="pin" style="left:86%;top:4%">2</span><span class="pin" style="left:39%;top:74%">2</span><span class="pin" style="left:17%;top:12%">3</span><span class="pin" style="left:30%;top:91%">4</span>
+      </figure>
+      <ol class="pins">
+        <li>Sağ yarıda üç halka ve tek bir nokta var. "Her rug'ı okur" fikrini görselleştirmiyor, alan boş hissettiriyor.</li>
+        <li>"Join the Infected" hem header'da hem hero'da. Aynı iş için iki buton var, ana eylem "Scan a token" bunlarla yarışıyor.</li>
+        <li>Eyebrow, fiyat çipi, butonlar, linkler ve ikonlar aynı düz #7CFF4F. Parlama ve derinlik yok, göz nereye bakacağını bilmiyor.</li>
+        <li>Beş rozet daha. Fold'un altında beşinci bir aksiyon grubu oluşuyor.</li>
+      </ol>
+      <p class="fix"><b>Öneri:</b> Hero'ya Glitchy ve canlı 3D Signal Core, içine de tarama kutusu (sayfanın başındaki önizleme). Tek parlayan yeşil buton.</p>
+    </article>
+  </div>
+  <div class="minis" style="margin-top:18px">
+    <div class="mini"><header><span class="fid">G2</span> <span class="chip chip-warn">Kontrast</span></header><h3>Soluk metin okunmuyor</h3><p>text-faint siyah zeminde yaklaşık 2,0:1, text-muted 4,2:1. İkisi de okunabilirlik sınırı olan 4,5:1'in altında. Footer, tarih ve etiketler etkileniyor.</p></div>
+    <div class="mini"><header><span class="fid">G3</span> <span class="chip chip-warn">Tipografi</span></header><h3>Marka her cihazda farklı görünüyor</h3><p>Font system-ui: Windows'ta Segoe UI, Mac'te SF Pro, Android'de Roboto. Başlıklar için bir display yazı tipi yok.</p></div>
+    <div class="mini"><header><span class="fid">G4</span> <span class="chip chip-warn">Kartlar</span></header><h3>Her kart aynı, hiçbiri parlamıyor</h3><p>Trust Wall, Why Hold, How to Buy, Community ve Quantum aynı düz gri kartı kullanıyor. Önemli kart öne çıkmıyor.</p></div>
+  </div>
+  <div class="finds" style="margin-top:18px">
+    <article class="find">
+      <header><span class="fid">G5</span><span class="chip chip-warn">Grafik</span><span class="chip chip-n">tokenomics</span><h3>Beş dilim, yeşilin beş tonu</h3></header>
+      <figure class="shot"><img src="img/tokenomics.jpg" width="1100" height="764" alt="Tokenomics çubuğu: beş dilim yeşilin tonları"><span class="pin" style="left:68%;top:69%">1</span></figure>
+      <ol class="pins"><li>Dilimleri yalnızca alttaki etiketlerden ayırt edebiliyorsun. Team (%5) ve Treasury (%10) neredeyse aynı renk.</li></ol>
+      <p class="fix"><b>Öneri:</b> Renk körlüğü testinden geçen marka içi bir palet ve doğrudan etiketler (§7'deki halka).</p>
+    </article>
+    <article class="find">
+      <header><span class="fid">A1</span><span class="chip chip-n">Arayüz</span><span class="chip chip-n">güvenlik taraması</span><h3>Terminal animasyon boyunca boş</h3></header>
+      <figure class="shot"><img src="img/terminal.jpg" width="1100" height="474" alt="Security scan terminali, tek satır ve büyük boş alan"><span class="pin" style="left:50%;top:52%">1</span></figure>
+      <ol class="pins"><li>Satırlar tek tek geliyor, kutunun yaklaşık %70'i uzun süre boş kalıyor.</li></ol>
+      <p class="fix"><b>Öneri:</b> Proof bölümüyle birleşsin. Tüm satırlar baştan görünsün, tarama ışığı üzerlerinden geçsin.</p>
+    </article>
+  </div>
+
+  <div class="sub">Arayüz ve akış</div>
+  <div class="finds">
+    <article class="find">
+      <header><span class="fid">A2</span><span class="chip chip-n">Arayüz</span><h3>Beşinci kart tek başına alt satırda</h3></header>
+      <p>Quantum vitrininde dört kart üst satırda, "Randomness" kartı altta yalnız. B3'teki görselde mor 2 numara.</p>
+      <p class="fix"><b>Öneri:</b> 5 bileşen için 3+2 bento veya tek satır 5'li düzen.</p>
+    </article>
+    <article class="find">
+      <header><span class="fid">A3</span><span class="chip chip-n">Arayüz</span><span class="chip chip-n">header</span><h3>Yedi link ve iki buton aynı ağırlıkta</h3></header>
+      <p>Scanner, Quantum, Agent Trust, Rug Radar, Proof, Live, Whitepaper ve iki buton. Ürünler ile bilgi sayfaları ayrışmıyor.</p>
+      <p class="fix"><b>Öneri:</b> "Products" açılır menüsü (dört ürün, her birinde canlı mini veri), Proof, Live, Play, Docs ve tek buton.</p>
+    </article>
+    <article class="find">
+      <header><span class="fid">A4</span><span class="chip chip-n">Akış</span><span class="chip chip-n">roadmap</span><h3>Roadmap ana sayfada düz metin duvarı</h3></header>
+      <figure class="shot"><img src="img/roadmap.jpg" width="1100" height="840" alt="Roadmap bölümü, uzun madde listesi"><span class="pin" style="left:50%;top:48%">1</span></figure>
+      <ol class="pins"><li>Yedi faz ve yaklaşık otuz madde, ana sayfanın yaklaşık 2.300 px'i.</li></ol>
+    </article>
+    <article class="find">
+      <header><span class="fid">A5</span><span class="chip chip-n">Akış</span><span class="chip chip-n">mobil</span><h3>Ana sayfa mobilde 28 ekran</h3></header>
+      <div class="shots" style="grid-template-columns:minmax(0,.7fr) minmax(0,1fr);align-items:start">
+        <figure class="shot"><img src="img/mobile-hero.jpg" width="390" height="844" alt="Mobil ana sayfa hero'su"></figure>
+        <p>16 bölüm var. Masaüstünde 15.134 px, mobilde 23.892 px uzunluğunda. Fold'da ürünün kendisi görünmüyor; tarama kutusu bir tık uzakta. Mobil hamburger menü çalışıyor, asıl sorun uzunluk.</p>
+      </div>
+      <p class="fix"><b>Öneri:</b> 16 bölümü 8'e indir (§8).</p>
+    </article>
+  </div>
+
+  <div class="sub">Korunacak güçlü yanlar</div>
+  <div class="keep">
+    <figure class="shot"><img src="img/scan-result.jpg" width="900" height="1186" alt="Tarama sonuç sayfası: GL1TCH CLEAN 90 üzerinden 100"></figure>
+    <ul>
+      <li><span><b>Tarama sonuç sayfası.</b> Her kontrol düz bir dille açıklanıyor, kaynaklar çapraz kontrol ediliyor, paylaşım kartı ve gömme rozeti var. Yeni tasarımda bunun üstüne Risk Orb gelecek.</span></li>
+      <li><span><b>Proof sayfası.</b> "Neyi saklamıyoruz" kutusu (ince likidite, %100 top holder açıklaması) markanın en güçlü kısmı. Oyundaki bir tur doğrudan bundan geliyor.</span></li>
+      <li><span><b>Glitchy 3D motoru.</b> Chrome ve Shadow canlı render ediliyor. Bu sayfadaki altı sahnenin hepsi aynı motorun ışığını ve bloom'unu kullanıyor.</span></li>
+      <li><span><b>Alt ticker şeridi.</b> Canlı fiyat ve güven verisini her sayfada taşıyor.</span></li>
+      <li><span><b>Dürüst dil.</b> "Not financial advice", "honestly labelled" gibi ifadeler tasarım değişse de aynen kalacak.</span></li>
+    </ul>
+  </div>
+
+  <div class="sub" id="eski-rapor">Önceki raporun düzeltilmiş hali</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Raporun iddiası</th><th>Gerçek durum</th><th>Bu planda</th></tr></thead>
+      <tbody>
+        <tr><td>Cüzdan bağlantısı yok</td><td>Var: ConnectWallet, Providers, /ranks sayfasında RankChecker</td><td><span class="chip chip-n">Gerek yok</span></td></tr>
+        <tr><td>/scan statik bir demo</td><td>Çok zincirli gerçek tarayıcı; /scan/[token] ve /scan/compare var</td><td><span class="chip chip-vio">Risk Orb eklenir</span></td></tr>
+        <tr><td>OG paylaşım kartı yok</td><td>Var; her tarama ve her çekiliş için dinamik kart üretiliyor</td><td><span class="chip chip-n">Gerek yok</span></td></tr>
+        <tr><td>prefers-reduced-motion yetersiz</td><td>Kodda 22 yerde kullanılıyor</td><td><span class="chip chip-n">Yeni 3D'de de uygulanır</span></td></tr>
+        <tr><td>Market alanı uzun süre ··· kalıyor</td><td>İlk veri gelene kadar ··· görünüyor; veri 30 sn'de bir yenileniyor</td><td><span class="chip chip-ok">Faz 1: iskelet yükleme</span></td></tr>
+        <tr><td>Görev 1: DexScreener ile yeni LiveMarket</td><td>Sitede zaten çok kaynaklı bir market katmanı var; DexScreener çifti listeden çıkardı</td><td><span class="chip chip-bad">Uygulanmaz</span></td></tr>
+        <tr><td>Yeşil fazla, CTA hiyerarşisi zayıf</td><td>Doğru</td><td><span class="chip chip-ok">§3</span></td></tr>
+        <tr><td>Mobil menü sıkışık</td><td>Hamburger menü çalışıyor; asıl sorun sayfa uzunluğu</td><td><span class="chip chip-ok">§8</span></td></tr>
+        <tr><td>(Raporda yok)</td><td>Dashboard eski taslak, CURBy "Live" etiketi, 4/5 tutarsızlığı, kontrast</td><td><span class="chip chip-bad">Faz 0</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- §3 Color -->
+<section class="part wrap" id="renk">
+  <div class="sec-head">
+    <div><span class="sec-n">§3 · Renk</span><h2>Aynı üç renk, <span class="hl">tam güçte</span></h2></div>
+    <p>Yeni yön Neon. Signal yeşili ve Glitch moru tam doygunlukta kullanılıyor; canlılık parlama, aurora ışığı ve degrade vurgulardan geliyor. Önceki kararın gereği magenta, camgöbeği ve pembe yine yok. İstersen ödül ve oyun anları için altın da ekleyebiliriz.</p>
+  </div>
+  <div class="rule">
+    <div class="brandsw sw-g"><strong>Signal</strong><span>#7CFF4F · eylem, canlı veri, temiz sonuç</span></div>
+    <div class="brandsw sw-p"><strong>Glitch</strong><span>#7A3CFF · derinlik, kuantum, üst rütbe, aurora</span></div>
+    <div class="brandsw sw-s"><strong>Static</strong><span>#F5F7F8 · metin ve krom ışığı</span></div>
+  </div>
+  <div class="palnote"><span class="chip chip-fun">Canlı dene</span><span>Üst bardaki <b>Bugün · Neon · +Altın</b> düğmesi tüm sayfayı ve 3D sahneleri değiştirir. Bugün, sitenin şu anki soluk hali.</span></div>
+  <div class="ramps">
+    <div class="ramp"><div class="ramp-name"><b>Gece moru</b>yüzeyler</div><div class="steps">
+      <div class="step" style="background:#07060D;color:#C3C1D3">#07060D<em>zemin</em></div>
+      <div class="step" style="background:#0E0C18;color:#C3C1D3">#0E0C18<em>kart</em></div>
+      <div class="step" style="background:#151223;color:#C3C1D3">#151223<em>yükseltilmiş</em></div>
+      <div class="step" style="background:#1D1930;color:#C3C1D3">#1D1930<em>seçili</em></div>
+      <div class="step" style="background:#272240;color:#C3C1D3">#272240<em>hover</em></div></div></div>
+    <div class="ramp"><div class="ramp-name"><b>Signal</b>yeşil tonları</div><div class="steps">
+      <div class="step" style="background:#13300D;color:#B4FF96">#13300D<em>dolgu</em></div>
+      <div class="step" style="background:#3A8A2A;color:#E9FFE0">#3A8A2A<em>kenarlık</em></div>
+      <div class="step" style="background:#4CAA2E;color:#061104">#4CAA2E<em>grafik</em></div>
+      <div class="step" style="background:#7CFF4F;color:#061104;box-shadow:0 0 22px rgba(124,255,79,.5)">#7CFF4F<em>ana buton</em></div>
+      <div class="step" style="background:#B4FF96;color:#061104">#B4FF96<em>link metni</em></div></div></div>
+    <div class="ramp"><div class="ramp-name"><b>Glitch</b>mor tonları</div><div class="steps">
+      <div class="step" style="background:#1F1340;color:#B99BFF">#1F1340<em>dolgu</em></div>
+      <div class="step" style="background:#4A2C93;color:#E8DEFF">#4A2C93<em>kenarlık</em></div>
+      <div class="step" style="background:#7A3CFF;color:#fff;box-shadow:0 0 22px rgba(122,60,255,.6)">#7A3CFF<em>ışık</em></div>
+      <div class="step" style="background:#9B66FF;color:#120A24">#9B66FF<em>sıcak vurgu</em></div>
+      <div class="step" style="background:#B99BFF;color:#120A24">#B99BFF<em>mor metin</em></div></div></div>
+    <div class="ramp"><div class="ramp-name"><b>Risk ve ödül</b>durum renkleri</div><div class="steps">
+      <div class="step" style="background:#7CFF4F;color:#061104">CLEAN<em>80–100</em></div>
+      <div class="step" style="background:#E5B454;color:#1E1606">CAUTION<em>50–79</em></div>
+      <div class="step" style="background:#F2555A;color:#1A0507">HIGH RISK<em>0–49</em></div>
+      <div class="step" style="background:#FFC23D;color:#1E1606">ALTIN<em>opsiyonel ödül</em></div>
+      <div class="step" style="background:#0E0C18;color:#9592AB">—<em>veri yok</em></div></div></div>
+  </div>
+  <div class="roles">
+    <div class="role"><span class="sw" style="background:var(--signal);box-shadow:0 0 12px var(--signal)"></span><b>Işık = önem</b><p>Sadece ana eylem ve canlı veri parlıyor. Ekran başına bir parlayan yeşil buton.</p></div>
+    <div class="role"><span class="sw" style="background:linear-gradient(90deg,#7A3CFF,#1F1340)"></span><b>Aurora = atmosfer</b><p>Arka planda yavaşça akan mor ve yeşil ışık. Sayfa düz siyah görünmüyor, derinlik kazanıyor.</p></div>
+    <div class="role"><span class="sw" style="background:linear-gradient(90deg,#7CFF4F,#C9FFB3)"></span><b>Degrade = vurgu</b><p>Başlıklarda bir veya iki kelime ışıklı degrade alıyor. Paragraf metni her zaman düz.</p></div>
+    <div class="role"><span class="sw" style="background:#FFC23D"></span><b>Altın = ödül</b><p>Opsiyonel. Rozetler, oyun skoru ve konfeti. Ürün arayüzüne girmez.</p></div>
+  </div>
+
+  <div class="sub">Aynı hero, iki hal</div>
+  <div class="ba">
+    <div class="ba-card"><div class="ba-label"><span>Bugün</span><span class="chip chip-warn">düz, parlamasız</span></div>
+      <div class="ba-body old">
+        <div class="eb">RISK INTELLIGENCE // LIVE</div>
+        <div class="pr"><b>● LIVE</b> $0.0₅2996 <span style="color:#ff4f4f">-0.64%</span></div>
+        <h4>It Reads Every Rug.</h4>
+        <div class="ctas"><span class="c1">Scan a token — free</span><span class="c2">Join The Infected →</span></div>
+        <div class="bdg"><span>Know Your Agent</span><span>Rug Radar</span><span>Watchtower</span><span>Proof</span></div>
+      </div></div>
+    <div class="ba-card"><div class="ba-label"><span>Neon</span><span class="chip chip-ok">ışık, derinlik, tek eylem</span></div>
+      <div class="ba-body new">
+        <div class="live-eb"><i></i>Risk intelligence · live</div>
+        <h4>It Reads <span class="hl">Every Rug.</span></h4>
+        <p class="b-p" style="font-size:14.5px">Paste any contract. Verdict in seconds.</p>
+        <div class="ctas"><span class="btn btn-primary">Scan a token</span><span class="btn btn-ghost">See the proof</span></div>
+        <div class="proofrow"><span>Mint revoked</span><span>0% tax</span><span>RugCheck 1</span></div>
+      </div></div>
+  </div>
+
+  <div class="sub">Metin kontrastı · gece moru zeminde</div>
+  <div class="contrast">
+    <div class="cbox"><span class="t" style="color:#F5F7F8">Ana metin</span><span class="r"><span>#F5F7F8</span><span>≈18:1 ✓</span></span></div>
+    <div class="cbox"><span class="t" style="color:#C3C1D3">İkincil metin</span><span class="r"><span>#C3C1D3</span><span>≈11,5:1 ✓</span></span></div>
+    <div class="cbox"><span class="t" style="color:#9592AB">Açıklama metni</span><span class="r"><span>#9592AB</span><span>≈6,8:1 ✓</span></span></div>
+    <div class="cbox"><span class="t" style="color:#B99BFF">Mor metin</span><span class="r"><span>#B99BFF</span><span>≈8,9:1 ✓</span></span></div>
+    <div class="cbox"><span class="t" style="color:#B4FF96">Yeşil link</span><span class="r"><span>#B4FF96</span><span>≈17:1 ✓</span></span></div>
+    <div class="cbox"><span class="t" style="color:#FFC23D">Altın</span><span class="r"><span>#FFC23D</span><span>≈12,6:1 ✓</span></span></div>
+    <div class="cbox"><span class="t" style="color:rgba(245,247,248,.45)">Bugünkü muted</span><span class="r"><span>%45 beyaz</span><span style="color:var(--warn)">≈4,2:1 ✗</span></span></div>
+    <div class="cbox"><span class="t" style="color:rgba(245,247,248,.25)">Bugünkü faint</span><span class="r"><span>%25 beyaz</span><span style="color:var(--bad)">≈2,0:1 ✗</span></span></div>
+  </div>
+</section>
+
+<!-- §4 Type -->
+<section class="part wrap" id="tip">
+  <div class="sec-head">
+    <div><span class="sec-n">§4 · Tipografi</span><h2>Her cihazda aynı ses</h2></div>
+    <p>Üç yazı tipi, üç görev. Dosyalar repoya konur ve next/font/local ile yüklenir; build sırasında ağ çağrısı yapılmaz. Bu, tokens.css'teki mevcut kuralla uyumlu. Türkçe karakterler için latin-ext alt kümesi dahil.</p>
+  </div>
+  <div class="type-grid">
+    <div class="spec">
+      <div class="role-l"><span>Bugün · system-ui</span><span class="chip chip-warn">cihaza göre değişir</span></div>
+      <div class="s-old">It Reads Every Rug.</div>
+      <p class="s-body" style="font-family:system-ui,'Segoe UI',sans-serif">Windows'ta Segoe UI, Mac'te SF Pro, Android'de Roboto. Aynı başlık üç farklı karakterde görünüyor.</p>
+    </div>
+    <div class="spec">
+      <div class="role-l"><span>Display · Tektur 800</span><span>başlık, rakam, logo</span></div>
+      <div class="s-disp">It Reads <span class="hl">Every Rug.</span></div>
+      <hr>
+      <div class="role-l"><span>Gövde · Geist 400</span><span>paragraf, arayüz</span></div>
+      <p class="s-body">GL1TCH reads the chain line by line. Honeypots, unlocked liquidity, live mint or freeze: none of them here. As clean as its read gets.</p>
+      <hr>
+      <div class="role-l"><span>Veri · Martian Mono</span><span>etiket, adres, skor</span></div>
+      <div class="s-data num"><div>RUGCHECK <span>1</span></div><div>LP <span>100%</span></div><div>PRICE <span>$0.0₅2996</span></div><div>3HQJww…n6pump</div></div>
+    </div>
+  </div>
+  <p class="note" style="font-size:12px;margin-top:14px">Glitch efekti (RGB kayması) logoda, hover'da, sayfa açılışında ve gizli kodda. Okunması gereken metin hiçbir zaman titremez; reduced-motion açıksa efekt kapalı.</p>
+</section>
+
+<!-- §5 3D -->
+<section class="part wrap" id="uc-boyut">
+  <div class="sec-head">
+    <div><span class="sec-n">§5 · 3D özellikler</span><h2>Altı sahne, <span class="hl-p">tek motor</span></h2></div>
+    <p>Bu sahnelerin hepsi Glitchy'nin motorunda çalışıyor: aynı stüdyo ışığı, bloom, vignette ve film greni. Bu yüzden maskotla aynı kalitede görünüyorlar. Fiyat, skor ve tablo gibi okunması gereken veri 2D kalıyor.</p>
+  </div>
+  <div class="rules3d">
+    <div class="r3"><b>Yeni bağımlılık yok</b><span>three@0.170.0 ve src/lib/glitchy/engine.js zaten projede. Sahneler ekrana yaklaşınca yükleniyor, o zamana kadar PNG poster duruyor.</span></div>
+    <div class="r3"><b>Performans bütçesi</b><span>Sahne başına en fazla yaklaşık 25 KB gzip kod (three hariç). Piksel oranı 1,6 ile sınırlı. Ekran dışındayken render duruyor.</span></div>
+    <div class="r3"><b>Herkes için çalışır</b><span>Reduced-motion açıksa sabit kare. Mobilde parçacık sayısı ve çözünürlük düşüyor. Sayfanın ilk boyanan öğesi her zaman metin.</span></div>
+  </div>
+
+  <div class="feat card">
+    <div class="feat-copy">
+      <div class="where"><span class="chip chip-vio">3D · 2</span><span class="chip chip-n">/scan/[token]</span><span class="chip chip-n">paylaşım kartı</span></div>
+      <h3>Risk Orb</h3>
+      <p>Tarama skoru parlayan bir küreye dönüşüyor. Temiz token pürüzsüz bir cam gibi duruyor, etrafında yeşil kıvılcımlar dönüyor. Risk arttıkça yüzey dikenleniyor, kırmızıya dönüyor ve kürenin üstünden voksel parçaları kopmaya başlıyor.</p>
+      <div class="ctrl">
+        <label for="orbSlider">Skor</label>
+        <input type="range" id="orbSlider" min="0" max="100" value="90" aria-label="Risk skoru">
+        <button class="pbtn" type="button" data-score="90">$GL1TCH · 90</button>
+        <button class="pbtn" type="button" data-score="66">Caution · 66</button>
+        <button class="pbtn" type="button" data-score="12">Rug · 12</button>
+      </div>
+      <dl><dt>Veri</dt><dd>Mevcut tarama skoru, ek API yok</dd><dt>Paylaşım</dt><dd>Aynı küre OG görseline sabit kare olarak basılır</dd></dl>
+    </div>
+    <div class="stage" id="orbStage">
+      <div class="fallback">3D sahne yükleniyor…</div>
+      <div class="orb-read"><div class="sc num" id="orbScore">90<small>/100</small></div><div class="vd" id="orbVerdict" style="color:var(--signal-ink)">CLEAN</div></div>
+    </div>
+  </div>
+
+  <div class="feat feat-full card">
+    <div class="feat-copy">
+      <div class="where"><span class="chip chip-vio">3D · 3</span><span class="chip chip-n">/ranks</span><span class="chip chip-n">Why Hold</span></div>
+      <h3>Rütbe paraları</h3>
+      <p>Beş rütbe, beş farklı malzemeden basılmış koleksiyon parası: mat grafitten krom ve iridesan mora, en üstte içi parlayan cama. Neon yazılar gerçekten ışık saçıyor. Cüzdan bağlanınca kullanıcının parası öne çıkıyor. Her paraya tıklayıp çevir; beşini de çevirirsen bir rozet kazanırsın.</p>
+    </div>
+    <div class="stage" id="coinStage" style="min-height:340px"><div class="fallback">3D sahne yükleniyor…</div></div>
+    <div class="tiers">
+      <div><b>Observer</b><span>Free</span><br>Public archive and rooms</div>
+      <div><b>Infected</b><span>100,000+</span><br>Holder badge, holder-only channel</div>
+      <div><b>Signal Bearer</b><span>1,000,000+</span><br>Creator channel, raids, early lore</div>
+      <div><b>Core Node</b><span>5,000,000+</span><br>Inner strategy room, governance signals</div>
+      <div><b>Ghost Node</b><span>10,000,000+</span><br>Top-tier room, exclusive archive</div>
+    </div>
+  </div>
+
+  <div class="feat card">
+    <div class="feat-copy">
+      <div class="where"><span class="chip chip-vio">3D · 4</span><span class="chip chip-n">/network</span><span class="chip chip-n">Deployer satırı</span></div>
+      <h3>Signal Graph 3D</h3>
+      <p>Signal Graph'ın hafızası görünür oluyor. Mor düğümler deployer cüzdanları, küçükler onların çıkardığı token'lar. Bir deployer'ın üstüne gelince onun token'ları parlıyor, diğerleri sönüyor. Kırmızıyla dolu deployer nabız gibi atıyor. Sürükleyip çevir.</p>
+      <dl><dt>Veri</dt><dd>Bot tarafındaki Signal Graph (deployer → token, fonlama bağları)</dd><dt>Bu demo</dt><dd>Örnek veri; adresler rastgele üretildi</dd></dl>
+    </div>
+    <div class="stage" id="graphStage">
+      <div class="fallback">3D sahne yükleniyor…</div>
+      <div class="gtip" id="graphTip" hidden></div>
+      <div class="legend"><span><i style="background:var(--glitch-ink)"></i>Deployer</span><span><i style="background:var(--signal)"></i>Clean</span><span><i style="background:var(--warn)"></i>Caution</span><span><i style="background:var(--bad)"></i>Rug</span></div>
+    </div>
+  </div>
+
+  <div class="feat card">
+    <div class="feat-copy">
+      <div class="where"><span class="chip chip-vio">3D · 5</span><span class="chip chip-n">/quantum-core</span></div>
+      <h3>Entropi alanı</h3>
+      <p>drand quicknet her 3 saniyede yeni bir tur yayınlıyor. Her turda alan çöküyor, ortadan bir ışık halkası yayılıyor ve alan yeni hash'ten yeniden kuruluyor. Doğrulanabilir rastgeleliğin ne olduğu bir bakışta anlaşılıyor.</p>
+      <dl><dt>Tur</dt><dd class="num mono" id="entRound">33184485</dd><dt>Değer</dt><dd><span class="hash" id="entHash"></span></dd><dt>Bu demo</dt><dd>Simülasyon: tur sayısı sitede görülen gerçek turdan başlıyor, hash üretilmiş. Gerçek sürüm canlı drand verisini kullanır.</dd></dl>
+    </div>
+    <div class="stage" id="entStage"><div class="fallback">3D sahne yükleniyor…</div></div>
+  </div>
+
+  <div class="minis">
+    <div class="mini"><span class="chip chip-vio" style="width:max-content">3D · 1</span><h3>Signal Core + Glitchy</h3><p>Ana sayfa hero'su. İçinde plazma dönen cam çekirdek, krom jiroskop halkaları, radar plakası ve tarama ışını. Glitchy yanında duruyor, rug'ları işaret ediyor.</p><a href="#heroFrame">Önizlemeye dön ↑</a></div>
+    <div class="mini"><span class="chip chip-fun" style="width:max-content">3D · 6</span><h3>Rug or Not?</h3><p>Glitchy'nin sunduğu mini oyun. Aşağıdaki Eğlence bölümünde oynanabilir.</p><a href="#eglence">Oyuna git ↓</a></div>
+    <div class="mini"><span class="chip chip-n" style="width:max-content">3D · ek</span><h3>Tokenomics halkası ve derin kartlar</h3><p>Dağılım dokununca dilimleri ayrılan bir halka. Dashboard kartları imlece göre eğiliyor; §7'deki KPI kartlarında dene.</p></div>
+  </div>
+</section>
+
+<!-- §6 Fun -->
+<section class="part wrap" id="eglence">
+  <div class="sec-head">
+    <div><span class="sec-n">§6 · Eğlence</span><h2>Güvenlik ciddi, <span class="hl">site eğlenceli</span></h2></div>
+    <p>Bir meme coin topluluğu oyun, sürpriz ve paylaşılacak an ister. Buradaki her eğlence parçası aynı zamanda bir şey öğretiyor: rug'ın nasıl göründüğünü. Hepsi bu sayfada çalışıyor.</p>
+  </div>
+
+  <div class="game card">
+    <div class="stage" id="gameStage">
+      <div class="fallback">3D sahne yükleniyor…</div>
+      <div class="bubble" id="gameBubble" hidden></div>
+    </div>
+    <div class="gpanel">
+      <div class="ghead"><span class="chip chip-fun">Rug or Not?</span><span>Tur <b class="num" id="gRound">1</b>/8</span><span>Skor <b class="num" id="gScore">0</b></span><span>Seri <b class="num" id="gStreak">0</b></span></div>
+      <div class="gcard" id="gCard">
+        <div class="gt"><b id="gTicker">$NEONFROG</b><span class="mono" id="gAddr">Nf4x…pump</span><span class="chip chip-n">kurgusal token</span></div>
+        <ul class="grows" id="gRows"></ul>
+      </div>
+      <div class="gbtns" id="gBtns"><button class="btn gsafe" id="gSafe" type="button">SAFE</button><button class="btn grug" id="gRug" type="button">RUG</button></div>
+      <div class="greveal" id="gReveal" hidden><div class="gv" id="gVerdict"></div><p id="gWhy"></p><div><button class="btn btn-primary" id="gNext" type="button">Sonraki token →</button></div></div>
+      <div class="gend" id="gEnd" hidden><div class="gs num"><span id="gEndScore">0</span><small>/8</small></div><div class="gtitle" id="gEndTitle"></div><p id="gEndText"></p><button class="btn btn-primary" id="gAgain" type="button">Tekrar oyna</button></div>
+      <p class="note">Klavye: <span class="kbd">S</span> safe · <span class="kbd">R</span> rug · <span class="kbd">Enter</span> sonraki. Sitede bu oyun gerçek Rug Radar geçmişinden haftalık bir desteyle oynanır ve skor paylaşım kartına dönüşür.</p>
+    </div>
+  </div>
+
+  <div class="funs">
+    <div class="fun card"><span class="chip chip-vio" style="width:max-content">tepki</span><h3>Tarama tepkileri</h3><p>Temiz sonuçta konfeti ve Glitchy'nin kahkahası, rug'da alarm, sarsıntı ve kırmızı plazma.</p><span class="try">Hero'da $GL1TCH ve 0xRUG…dead tara ↑</span></div>
+    <div class="fun card"><span class="chip chip-fun" style="width:max-content">rozet</span><h3>Rozetler</h3><p>İlk tarama, Rug Avcısı, Kusursuz, Koleksiyoncu ve gizli bir tane. Sitede cüzdana bağlı rozet duvarına dönüşür.</p><span class="try">Üst bardaki sayaç: 5 rozetin kaçını buldun?</span></div>
+    <div class="fun card"><span class="chip chip-vio" style="width:max-content">gizli</span><h3>Gizli kod</h3><p>Klavyeden bir kelime yazınca site bozuluyor, bütün Glitchy'ler dönüyor. Logoya beş kez tıklamak da çalışır.</p><span class="try">İpucu: markanın adı, rakamsız.</span></div>
+    <div class="fun card"><span class="chip chip-n" style="width:max-content">ses</span><h3>Ses efektleri</h3><p>Tarama bipleri, rug alarmı, para çınlaması, rozet fanfarı. Tamamı kodla üretiliyor; dosya yok. Varsayılan kapalı.</p><span class="try">Üst bardan "Ses"i aç</span></div>
+    <div class="fun card"><span class="chip chip-n" style="width:max-content">imleç</span><h3>Voksel izi</h3><p>Hero'da imlecin arkasından Glitchy'nin kuyruğundaki gibi küçük pikseller dökülüyor. Sadece masaüstünde.</p><span class="try">Fareyi hero'da gezdir ↑</span></div>
+    <div class="fun card"><span class="chip chip-n" style="width:max-content">paylaş</span><h3>Paylaşım kartları</h3><p>Oyun skoru ve "Rug Avcısı" rozeti, Glitchy'li bir OG görseline dönüşür. X ve Telegram'da her paylaşım siteye geri link taşır.</p><span class="try">Faz 4'te</span></div>
+  </div>
+</section>
+
+<!-- §7 Dashboard -->
+<section class="part wrap" id="panel">
+  <div class="sec-head">
+    <div><span class="sec-n">§7 · Dashboard</span><h2>"Signal Command Center" → <span class="hl">Signal Network</span></h2></div>
+    <p>Bugünkü sayfa kurucunun eski yapılacaklar listesi. Yenisi herkese açık bir durum paneli: önce özet, sonra ayrıntı. Her rakamın kaynağı yazıyor, eski bir değer asla "canlı" görünmüyor.</p>
+  </div>
+  <div class="dash-mock">
+    <div class="ribbon"><span class="chip chip-vio">MOCKUP</span><span>Rakamlar 18 Ekim 2026'da canlı siteden alındı. Fiyat eğrisi örnek; gerçek sürüm GeckoTerminal OHLC verisini çizer.</span></div>
+    <div class="dm-in">
+      <div class="dm-head">
+        <div><div class="eb2"><i></i>Live · 30 sn'de bir yenilenir</div><h3>Signal Network</h3></div>
+        <div class="dm-src"><span class="chip chip-n">GeckoTerminal</span><span class="chip chip-n">RugCheck</span><span class="chip chip-n">Solana RPC</span><span class="chip chip-n">drand</span></div>
+      </div>
+      <div class="kpis" id="kpis">
+        <div class="kpi"><div class="l">Price</div><div class="v num">$0.0₅2996</div><div class="d"><span class="dn">▼ 0.64%</span>24s</div></div>
+        <div class="kpi"><div class="l">Market cap</div><div class="v num">$3.0K</div><div class="d">FDV = MC</div></div>
+        <div class="kpi"><div class="l">24h volume</div><div class="v num">$49.97</div><div class="d">tek havuz</div></div>
+        <div class="kpi"><div class="l">Liquidity</div><div class="v" style="font-size:19px">Thin pool</div><div class="d"><span class="chip chip-warn">ince</span>%100 kilitli</div></div>
+        <div class="kpi"><div class="l">Holders</div><div class="v num">3</div><div class="d">havuz dahil</div></div>
+        <div class="kpi"><div class="l">Trust score</div><div class="v num" style="color:var(--signal-ink)">90<small style="font-size:13px;color:var(--ink3)">/100</small></div><div class="d"><span class="chip chip-ok">clean</span></div></div>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <div class="panel-h"><b>GL1TCH / SOL · price</b>
+            <div class="seg" role="group" aria-label="Zaman aralığı"><button type="button" aria-pressed="false">1h</button><button type="button" aria-pressed="true">24h</button><button type="button" aria-pressed="false">7d</button><button type="button" aria-pressed="false">30d</button></div></div>
+          <div class="chart" id="priceChart"></div>
+          <div class="note">Örnek eğri · 15 dakikalık 96 nokta · uç değerler canlı veriyle aynı</div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><b>Self-scan</b><span class="chip chip-ok">clean · 8/10 checks</span></div>
+          <div class="gauge-wrap">
+            <svg viewBox="0 0 132 132" role="img" aria-label="Güven skoru 90 / 100">
+              <defs><filter id="gglow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+              <circle cx="66" cy="66" r="54" fill="none" stroke="#1D1930" stroke-width="10"></circle>
+              <circle cx="66" cy="66" r="54" fill="none" stroke="#7CFF4F" stroke-width="10" stroke-linecap="round" stroke-dasharray="305.4 339.3" transform="rotate(-90 66 66)" filter="url(#gglow)"></circle>
+              <text x="66" y="70" text-anchor="middle" fill="#F5F7F8" font-family="Tektur, Geist, sans-serif" font-weight="800" font-size="34">90</text>
+              <text x="66" y="90" text-anchor="middle" fill="#9592AB" font-family="Martian Mono, monospace" font-size="9">/ 100</text>
+            </svg>
+            <ul class="checks">
+              <li>Mint authority<b>revoked</b></li>
+              <li>Freeze authority<b>revoked</b></li>
+              <li>Transfer tax<b>0.00%</b></li>
+              <li>LP locked / burned<b>100%</b></li>
+              <li>Top holder (pool)<b class="w">97.4%</b></li>
+              <li>RugCheck<b>1 · low</b></li>
+            </ul>
+          </div>
+          <div class="note">Top holder hesabı likidite havuzu, kişi değil. Proof sayfasındaki açıklama burada da duruyor.</div>
+        </div>
+      </div>
+      <div class="grid3">
+        <div class="panel">
+          <div class="panel-h"><b>Rug Radar · son tarama</b><span class="mono" style="font-size:11px;color:var(--ink3)"><span class="num">40</span> taranan · <span class="num" style="color:var(--signal-ink)">0</span> high risk</span></div>
+          <ul class="rlist" id="radarList"></ul>
+        </div>
+        <div class="panel beacon">
+          <div class="panel-h"><b>Quantum beacon</b><span class="chip chip-vio">kaynak durumu</span></div>
+          <div class="row"><span>drand quicknet</span><span class="chip chip-ok">live · 3 sn</span></div>
+          <div class="row"><span>Round</span><b class="num" id="dashRound">33184485</b></div>
+          <div class="hash" id="dashHash"></div>
+          <div class="row"><span>NIST CURBy</span><span class="chip chip-warn">son tur 22.08.2025</span></div>
+          <div class="note">Eski tur yeşil "live" noktası almaz.</div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><b>Supply</b><span class="mono" style="font-size:11px;color:var(--ink3)">1B fixed</span></div>
+          <div class="alloc">
+            <svg viewBox="0 0 128 128" id="allocRing" role="img" aria-label="Arz dağılımı halkası"></svg>
+            <ul id="allocList"></ul>
+          </div>
+          <div class="stack" aria-label="Holder dağılımı"><i style="flex:97.4;background:#9C74F2"></i><i style="flex:2.6;background:#4CAA2E;min-width:6px"></i></div>
+          <div class="mono" style="font-size:11px;color:var(--ink2);display:flex;justify-content:space-between;gap:8px"><span>Pool 97.4%</span><span>Others 2.6%</span></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <div class="panel-h"><b>Scanner activity</b><span class="chip chip-n">canlı sayaç bağlanacak</span></div>
+          <div class="empty"><b>—</b>Botun tarama sayacı (Railway volume) buraya bağlanır. Veri gelene kadar bu kart boş durumda kalır; uydurma rakam gösterilmez.</div>
+        </div>
+        <div class="panel">
+          <div class="panel-h"><b>Social</b><span class="chip chip-n">API bağlanınca</span></div>
+          <div class="empty"><b>—</b>X ve Telegram sayıları. Bugünkü sayfada "pre-launch" yazan kartların yerine geçer.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §8 Flow -->
+<section class="part wrap" id="akis">
+  <div class="sec-head">
+    <div><span class="sec-n">§8 · Ana sayfa</span><h2>16 bölümden 8 bölüme</h2></div>
+    <p>Hiçbir içerik silinmiyor. Uzun bölümler kendi sayfalarına taşınıyor, ana sayfada kısa bir özetleri kalıyor. Ürün fold'da başlıyor: tarama kutusu hero'nun içinde. Oyun kendi "Play" sayfasına ve ana sayfada küçük bir davete kavuşuyor.</p>
+  </div>
+  <div class="flow">
+    <div class="flow-col"><header><b>Bugün</b><span>16 bölüm · 15.134 px</span></header>
+      <ol>
+        <li><span class="i">01</span>Hero<span class="chip chip-ok">yenile</span></li>
+        <li><span class="i">02</span>Stats counter<span class="chip chip-n">birleştir → 2</span></li>
+        <li><span class="i">03</span>Live Market<span class="chip chip-n">birleştir → 2</span></li>
+        <li><span class="i">04</span>Quantum Showcase<span class="chip chip-n">birleştir → 3</span></li>
+        <li><span class="i">05</span>Agent Banner<span class="chip chip-n">birleştir → 3</span></li>
+        <li><span class="i">06</span>Security Scan<span class="chip chip-n">birleştir → 5</span></li>
+        <li><span class="i">07</span>Trust Wall<span class="chip chip-n">birleştir → 5</span></li>
+        <li><span class="i">08</span>Why Hold + rütbe tablosu<span class="chip chip-vio">3D paralar → 6</span></li>
+        <li><span class="i">09</span>Manifesto<span class="chip chip-warn">taşı → /thesis</span></li>
+        <li><span class="i">10</span>Tokenomics<span class="chip chip-n">birleştir → 6</span></li>
+        <li><span class="i">11</span>How to Buy<span class="chip chip-warn">taşı → /token</span></li>
+        <li><span class="i">12</span>Roadmap<span class="chip chip-warn">taşı → /roadmap</span></li>
+        <li><span class="i">13</span>Meet Glitchy<span class="chip chip-ok">tut → 7</span></li>
+        <li><span class="i">14</span>Community<span class="chip chip-n">birleştir → 7</span></li>
+        <li><span class="i">15</span>FAQ<span class="chip chip-ok">tut → 8</span></li>
+        <li><span class="i">16</span>Final CTA<span class="chip chip-ok">tut → 8</span></li>
+      </ol>
+    </div>
+    <div class="flow-col new"><header><b>Öneri</b><span>8 bölüm · yaklaşık 7.500 px (tahmin)</span></header>
+      <ol>
+        <li><span class="i">1</span><span>Hero<small>Glitchy, 3D Signal Core ve tarama kutusu</small></span><span class="chip chip-vio">3D</span></li>
+        <li><span class="i">2</span><span>Kanıt şeridi<small>Canlı fiyat, RugCheck 1, mint/freeze revoked, 0% vergi</small></span><span></span></li>
+        <li><span class="i">3</span><span>Ürünler<small>Scanner, Rug Radar, Agent Trust, Quantum Core; her kartta canlı mini veri</small></span><span></span></li>
+        <li><span class="i">4</span><span>Rug Radar akışı<small>Son altı tarama ve "Rug or Not?" daveti</small></span><span class="chip chip-fun">oyun</span></li>
+        <li><span class="i">5</span><span>Proof<small>Canlı öz-tarama, açık cüzdanlar, "neyi saklamıyoruz"</small></span><span></span></li>
+        <li><span class="i">6</span><span>Rütbeler<small>3D paralar ve tokenomics halkası</small></span><span class="chip chip-vio">3D</span></li>
+        <li><span class="i">7</span><span>Glitchy ve topluluk<small>Chrome + Shadow sahnesi, rozet duvarı</small></span><span class="chip chip-vio">3D</span></li>
+        <li><span class="i">8</span><span>SSS ve son çağrı<small>Altı soru, tek buton</small></span><span></span></li>
+      </ol>
+      <div class="lenbar">
+        <div class="row"><span>bugün</span><div class="bar" style="height:8px"><i style="width:100%;background:var(--ink4)"></i></div></div>
+        <div class="row"><span>öneri</span><div class="bar" style="height:8px"><i style="width:49.6%;background:var(--signal-mid)"></i></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- §9 Phases -->
+<section class="part wrap" id="fazlar">
+  <div class="sec-head">
+    <div><span class="sec-n">§9 · Fazlar</span><h2>Küçükten büyüğe altı adım</h2></div>
+    <p>Her faz tek başına yayınlanabilir ve geri alınabilir. Önce güveni düzelten küçük işler, sonra neon temel, ardından 3D ve eğlence.</p>
+  </div>
+  <div class="phases">
+    <div class="ph first"><div class="ph-n"><span>FAZ 0</span><span class="chip chip-ok">küçük</span></div><h3>Doğruluk</h3><ul><li>Dashboard taslağını kaldır veya çevir</li><li>CURBy etiketi: eskiyse "son tur"</li><li>4 / 5 bileşen tutarsızlığı</li><li>Soluk metin kontrastı</li></ul></div>
+    <div class="ph"><div class="ph-n"><span>FAZ 1</span><span class="chip chip-n">orta</span></div><h3>Neon temel</h3><ul><li>Gece moru yüzeyler, ton rampaları, parlama kuralları</li><li>Aurora arka plan, degrade vurgular</li><li>Tektur, Geist, Martian Mono</li><li>Buton ve kart hiyerarşisi, Products menüsü</li><li>Market iskelet yükleme</li></ul></div>
+    <div class="ph"><div class="ph-n"><span>FAZ 2</span><span class="chip chip-warn">büyük</span></div><h3>Ana sayfa + hero</h3><ul><li>Signal Core + Glitchy hero</li><li>Hero'da gerçek tarama kutusu ve tepkiler</li><li>Voksel imleç izi</li><li>16 → 8 bölüm</li></ul></div>
+    <div class="ph"><div class="ph-n"><span>FAZ 3</span><span class="chip chip-warn">büyük</span></div><h3>Panel ve tarama</h3><ul><li>Signal Network dashboard, canlı veri</li><li>Risk Orb tarama sonucunda</li><li>Risk Orb paylaşım kartında</li></ul></div>
+    <div class="ph fun"><div class="ph-n"><span>FAZ 4</span><span class="chip chip-fun">orta</span></div><h3>Eğlence</h3><ul><li>/play: Rug or Not?, haftalık gerçek deste</li><li>Rozetler (cüzdana bağlı)</li><li>Ses efektleri, gizli kod</li><li>Skor paylaşım kartı (OG)</li></ul></div>
+    <div class="ph"><div class="ph-n"><span>FAZ 5</span><span class="chip chip-n">orta</span></div><h3>3D genişleme</h3><ul><li>Rütbe paraları</li><li>Signal Graph 3D</li><li>Entropi alanı</li><li>Tokenomics halkası</li></ul></div>
+  </div>
+  <div class="verify"><b>Her fazın sonunda:</b> build, vitest testleri, 15 sayfanın masaüstü ve mobil ekran görüntüsü (bu raporla aynı yöntem) ve mobil Lighthouse ölçümü. Siteye yayın sadece senin onayınla yapılır.</div>
+</section>
+
+<!-- §10 Decisions -->
+<section class="part wrap" id="kararlar">
+  <div class="sec-head">
+    <div><span class="sec-n">§10 · Kararlar</span><h2>Senden dört karar</h2></div>
+    <p>"Daha canlı ve eğlenceli" yönünü uyguladım. Geri kalan her şeyi ben karara bağlayabilirim; bunlar ne yapılacağını değiştiren seçimler.</p>
+  </div>
+  <div class="decs">
+    <div class="dec"><span class="q">K1 · RENK</span><h3>Palet</h3><ul><li class="rec">Neon: üç marka rengi, tam güç ve parlama</li><li>Neon + Altın: ödül ve oyun için altın</li><li>Bugünkü soluk hali</li></ul><span class="done">Üst bardan üçünü de canlı karşılaştır.</span></div>
+    <div class="dec"><span class="q">K2 · HERO</span><h3>Hero'da ne olsun</h3><ul><li class="rec">Signal Core + Glitchy (önizlemedeki)</li><li>Sadece Signal Core</li><li>Sadece Glitchy</li></ul></div>
+    <div class="dec"><span class="q">K3 · EĞLENCE</span><h3>Hangi eğlence parçaları</h3><ul><li class="rec">Hepsi: oyun, rozetler, ses, gizli kod, imleç izi</li><li>Sadece oyun ve rozetler</li><li>Ses olmasın</li></ul></div>
+    <div class="dec"><span class="q">K4 · BAŞLANGIÇ</span><h3>Nereden başlayalım</h3><ul><li class="rec">Faz 0 hemen, ardından Faz 1 (neon temel)</li><li>Önce Faz 2 (Glitchy hero)</li></ul><span class="done">/dashboard için önerim: herkese açık Signal Network.</span></div>
+  </div>
+</section>
+</main>
+
+<footer class="end">
+  <div class="wrap">
+    <span class="mono" style="font-size:11px;letter-spacing:.1em">SONRAKİ ADIM</span>
+    <span>Onayından sonra bu plan, Claude Code'un adım adım uygulayacağı bir tasarım dokümanına dönüşür ve önceki .md raporun yerini alır.</span>
+  </div>
+</footer>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+(function(){
+  var REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var root = document.documentElement;
+  function rng(seed){var a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+  var SUBS='₀₁₂₃₄₅₆₇₈₉';
+  function fmtSub(v){var s=v.toFixed(14);var m=s.match(/^0\.(0+)(\d{4})/);if(!m)return '$'+v.toPrecision(4);return '$0.0'+String(m[1].length).split('').map(function(d){return SUBS[+d];}).join('')+m[2];}
+
+  /* ---------- palette ---------- */
+  var palBtns=document.querySelectorAll('#palSeg button');
+  function setPal(p){ root.dataset.palette=p; palBtns.forEach(function(b){b.setAttribute('aria-pressed', String(b.dataset.pal===p));}); try{localStorage.setItem('gl1tch-pal',p);}catch(e){} window.dispatchEvent(new CustomEvent('palettechange',{detail:p})); }
+  palBtns.forEach(function(b){ b.addEventListener('click',function(){ setPal(b.dataset.pal); }); });
+  try{ var saved=localStorage.getItem('gl1tch-pal'); if(saved) setPal(saved); else root.dataset.palette='neon'; }catch(e){ root.dataset.palette='neon'; }
+
+  /* ---------- sound (procedural, off by default) ---------- */
+  var AC=null, soundOn=false;
+  function tone(f,d,type,vol,when,slide){ var t0=AC.currentTime+(when||0); var o=AC.createOscillator(), g=AC.createGain(); o.type=type||'sine'; o.frequency.setValueAtTime(f,t0); if(slide) o.frequency.exponentialRampToValueAtTime(Math.max(30,f*slide),t0+d); g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(vol||.05,t0+.012); g.gain.exponentialRampToValueAtTime(0.0001,t0+d); o.connect(g); g.connect(AC.destination); o.start(t0); o.stop(t0+d+.03); }
+  function noise(d,vol){ var n=Math.floor(AC.sampleRate*d), b=AC.createBuffer(1,n,AC.sampleRate), ch=b.getChannelData(0); for(var i=0;i<n;i++) ch[i]=(Math.random()*2-1)*(1-i/n); var s=AC.createBufferSource(), g=AC.createGain(); g.gain.value=vol; s.buffer=b; s.connect(g); g.connect(AC.destination); s.start(); }
+  var SFX={
+    ping:function(){tone(1320,.07,'sine',.02);},
+    rug:function(){tone(240,.32,'sawtooth',.035,0,.5);tone(190,.3,'square',.02,.07,.6);},
+    clean:function(){[523,659,784,1047].forEach(function(f,i){tone(f,.2,'triangle',.05,i*.07);});},
+    warn:function(){tone(440,.14,'triangle',.05);tone(370,.2,'triangle',.05,.12);},
+    coin:function(){tone(1568,.28,'sine',.04);tone(2349,.32,'sine',.025,.05);},
+    right:function(){tone(784,.12,'triangle',.05);tone(1175,.22,'triangle',.05,.09);},
+    wrong:function(){tone(170,.4,'sawtooth',.035,0,.55);},
+    ach:function(){[784,988,1175,1568].forEach(function(f,i){tone(f,.24,'square',.025,i*.09);});},
+    glitch:function(){noise(.35,.08);tone(90,.3,'square',.03,0,2);},
+    pop:function(){tone(620,.1,'sine',.045,0,1.7);}
+  };
+  window.__sfx=function(n){ if(!soundOn||!AC) return; try{ SFX[n]&&SFX[n](); }catch(e){} };
+  var sb=document.getElementById('soundBtn');
+  sb.addEventListener('click',function(){ try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)(); AC.resume(); }catch(e){} soundOn=!soundOn; sb.setAttribute('aria-pressed',String(soundOn)); sb.textContent='Ses: '+(soundOn?'açık':'kapalı'); if(soundOn) window.__sfx('pop'); });
+
+  /* ---------- achievements ---------- */
+  var ACH={scan:['İlk tarama','Hero\'daki kutudan bir token taradın.'],hunter:['Rug Avcısı','Oyunda 3 rug yakaladın.'],perfect:['Kusursuz','8/8. Ghost Node dedektif.'],collector:['Koleksiyoncu','Beş rütbe parasının hepsini çevirdin.'],secret:['Gizli kod','Sistemi bozdun. Glitchy gurur duyuyor.']};
+  var got={}, gotN=0;
+  var PX=['.XXX.','XX.XX','X.X.X','XX.XX','.XXX.'];
+  window.__ach=function(id){ if(got[id]||!ACH[id]) return; got[id]=1; gotN++; document.getElementById('achCount').textContent=gotN;
+    var t=document.createElement('div'); t.className='toast';
+    t.innerHTML='<div class="px">'+PX.join('').split('').map(function(c){return '<i'+(c==='.'?' class="o"':'')+'></i>';}).join('')+'</div><div><small>Rozet kazandın · '+gotN+'/5</small><b>'+ACH[id][0]+'</b><span>'+ACH[id][1]+'</span></div>';
+    document.getElementById('toasts').appendChild(t); window.__sfx('ach'); setTimeout(function(){ t.style.transition='opacity .4s, transform .4s'; t.style.opacity='0'; t.style.transform='translateY(10px)'; setTimeout(function(){t.remove();},420); },4200); };
+  document.getElementById('achBtn').addEventListener('click',function(){ var left=Object.keys(ACH).filter(function(k){return !got[k];}).map(function(k){return ACH[k][0];}); var t=document.createElement('div'); t.className='toast'; t.innerHTML='<div class="px">'+PX.join('').split('').map(function(c){return '<i'+(c==='.'?' class="o"':'')+'></i>';}).join('')+'</div><div><small>Rozetler · '+gotN+'/5</small><b>'+(left.length?'Kalan: '+left.length:'Hepsini buldun!')+'</b><span>'+(left.length?left.join(' · '):'Ghost Node seviyesi.')+'</span></div>'; document.getElementById('toasts').appendChild(t); setTimeout(function(){t.remove();},3600); });
+
+  /* ---------- easter egg ---------- */
+  var buf='', logoClicks=0, logoT=0;
+  function bigGlitch(){ root.classList.add('glitching'); window.__sfx('glitch'); if(window.__glitchAll) window.__glitchAll(); window.__ach('secret'); setTimeout(function(){root.classList.remove('glitching');},1500); }
+  document.addEventListener('keydown',function(e){ if(e.target.closest&&e.target.closest('input,textarea')) return; if(e.key.length!==1) return; buf=(buf+e.key.toLowerCase()).slice(-6); if(buf==='glitch'){ buf=''; bigGlitch(); } });
+  document.getElementById('logoBtn').addEventListener('click',function(){ var n=Date.now(); logoClicks=(n-logoT<700)?logoClicks+1:1; logoT=n; if(logoClicks>=5){ logoClicks=0; bigGlitch(); } });
+
+  /* ---------- hero scan ---------- */
+  var form=document.getElementById('mockScan'), inp=document.getElementById('mockScanInput'), note=document.getElementById('scanNote');
+  function runScan(q){ q=(q||'').trim()||'$GL1TCH'; inp.value=q; note.innerHTML='Scanning '+q.replace(/</g,'&lt;')+' …';
+    setTimeout(function(){ var v=window.__heroScan?window.__heroScan(q):{score:90,kind:'clean'}; var c=v.kind==='clean'?'var(--signal-ink)':v.kind==='warn'?'var(--warn)':'var(--bad)'; var lab=v.kind==='clean'?'CLEAN':v.kind==='warn'?'CAUTION':'HIGH RISK';
+      note.innerHTML='<b style="color:'+c+'">'+lab+' '+v.score+'/100</b> · örnek sonuç; gerçek tarama Faz 2\'de bağlanır'; window.__ach('scan'); if(!window.__heroScan){ window.__sfx(v.kind==='clean'?'clean':'rug'); } },550); }
+  form.addEventListener('submit',function(e){ e.preventDefault(); runScan(inp.value); });
+  document.querySelectorAll('.tries button').forEach(function(b){ b.addEventListener('click',function(){ runScan(b.dataset.q); }); });
+
+  /* ---------- voxel cursor trail (hero, desktop) ---------- */
+  (function(){
+    if(REDUCE||!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    var cv=document.getElementById('trail'), hero=document.getElementById('bHero'), ctx=cv.getContext('2d'), ps=[], running=false, dpr=Math.min(2,window.devicePixelRatio||1);
+    function size(){ var r=hero.getBoundingClientRect(); cv.width=r.width*dpr; cv.height=r.height*dpr; }
+    new ResizeObserver(size).observe(hero); size();
+    var cols=['#7CFF4F','#9B66FF','#F5F7F8','#7CFF4F'];
+    hero.addEventListener('pointermove',function(e){ var r=hero.getBoundingClientRect(); for(var i=0;i<2;i++) ps.push({x:e.clientX-r.left+(Math.random()-.5)*8,y:e.clientY-r.top+(Math.random()-.5)*8,vx:(Math.random()-.5)*.6,vy:.4+Math.random()*1.2,s:2+Math.random()*4,l:1,c:(root.dataset.palette==='gold'&&Math.random()<.4)?'#FFC23D':cols[(Math.random()*cols.length)|0]}); if(ps.length>140) ps.splice(0,ps.length-140); if(!running){running=true; requestAnimationFrame(tick);} });
+    function tick(){ ctx.clearRect(0,0,cv.width,cv.height); for(var i=ps.length-1;i>=0;i--){ var p=ps[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=.05; p.l-=.022; if(p.l<=0){ps.splice(i,1);continue;} ctx.globalAlpha=Math.max(0,p.l); ctx.fillStyle=p.c; var s=p.s*dpr*(.5+p.l*.5); ctx.fillRect(p.x*dpr-s/2,p.y*dpr-s/2,s,s); } ctx.globalAlpha=1; if(ps.length) requestAnimationFrame(tick); else running=false; }
+  })();
+
+  /* ---------- Rug or Not? ---------- */
+  (function(){
+    var DECK=[
+      {t:'$NEONFROG',a:'Nf4x…pump',mint:1,freeze:1,lp:100,top:4.1,pool:0,tax:0,dep:0,rug:0,why:'Her şey temiz: yetkiler kapalı, likidite kilitli, dağılım sağlıklı, deployer\'ın geçmişi boş.'},
+      {t:'$VOIDCAT',a:'Vc9q…pump',mint:0,freeze:1,lp:100,top:6.2,pool:0,tax:0,dep:0,rug:1,why:'Mint yetkisi açık. Geliştirici istediği an milyarlarca yeni token basıp fiyatı sıfırlayabilir.'},
+      {t:'$PIXELAPE',a:'Px2m…pump',mint:1,freeze:1,lp:100,top:97.8,pool:1,tax:0,dep:0,rug:0,why:'%97,8\'lik en büyük hesap bonding curve havuzunun kendisi, kişi değil. $GL1TCH\'in Proof sayfasındaki durumla aynı. Tuzak soruydu.'},
+      {t:'$ROCKETDOG',a:'Rd7k…pump',mint:1,freeze:1,lp:0,top:8.4,pool:0,tax:0,dep:0,rug:1,why:'Likiditenin %0\'ı kilitli. Geliştirici havuzu tek işlemle çekip gidebilir.'},
+      {t:'$SIGMAPUP',a:'Sg3p…pump',mint:1,freeze:1,lp:100,top:3.3,pool:0,tax:0,dep:5,rug:1,why:'Kontrat kusursuz ama deployer son 30 günde 5 rug yaptı. Signal Graph bunu hatırlar; kontrat temiz olsa da kişi aynı.'},
+      {t:'$HONEYBEAR',a:'Hb5r…pump',mint:1,freeze:0,lp:100,top:5.0,pool:0,tax:0,dep:0,rug:1,why:'Freeze yetkisi açık. Cüzdanını dondurup satmanı engelleyebilir: klasik honeypot.'},
+      {t:'$GLOWWORM',a:'Gw8t…pump',mint:1,freeze:1,lp:100,top:12,pool:0,tax:1,dep:0,rug:0,why:'%1 vergi ve %12\'lik bir holder dikkat ister ama rug işareti değil. Her uyarı rug demek değil.'},
+      {t:'$MOONTAX',a:'Mt1x…pump',mint:1,freeze:1,lp:100,top:7.1,pool:0,tax:25,dep:0,rug:1,why:'%25 satış vergisi. Çıkarken paranın dörtte biri gidiyor; çoğu zaman bir sonraki adımı vergiyi %99\'a çekmek.'}
+    ];
+    var $=function(id){return document.getElementById(id);};
+    var i=0, score=0, streak=0, caught=0, answered=false, done=false, deck=DECK.slice();
+    function rows(tk,reveal){
+      var R=[
+        ['Mint authority', tk.mint?'revoked':'ACTIVE', tk.mint?'s-ok':'s-bad', ''],
+        ['Freeze authority', tk.freeze?'revoked':'ACTIVE', tk.freeze?'s-ok':'s-bad', ''],
+        ['LP locked / burned', tk.lp+'%', tk.lp>=90?'s-ok':tk.lp>=50?'s-warn':'s-bad', ''],
+        ['Top holder', tk.top+'%', tk.pool?'s-ok':tk.top>30?'s-bad':tk.top>10?'s-warn':'s-ok', tk.pool?'<small>hesap: bonding curve havuzu</small>':''],
+        ['Buy / sell tax', tk.tax+'%', tk.tax>5?'s-bad':tk.tax>0?'s-warn':'s-ok', ''],
+        ['Deployer history', tk.dep?tk.dep+' rug / 30 gün':'temiz', tk.dep>=2?'s-bad':'s-ok', '']
+      ];
+      return R.map(function(r){ return '<li class="'+(reveal?r[2]:'')+'"><span>'+r[0]+r[3]+'</span><b>'+r[1]+'</b></li>'; }).join('');
+    }
+    function show(){ var tk=deck[i]; answered=false; $('gRound').textContent=i+1; $('gTicker').textContent=tk.t; $('gAddr').textContent=tk.a; $('gRows').innerHTML=rows(tk,false); $('gCard').className='gcard'; $('gBtns').hidden=false; $('gReveal').hidden=true; $('gEnd').hidden=true; $('gCard').hidden=false; if(window.__game3d) window.__game3d.show(tk); }
+    function answer(saysRug){ if(answered||done) return; answered=true; var tk=deck[i], ok=(!!saysRug)===(!!tk.rug);
+      if(ok){ score++; streak++; if(tk.rug){ caught++; if(caught===3) window.__ach('hunter'); } } else streak=0;
+      $('gScore').textContent=score; $('gStreak').textContent=streak; $('gRows').innerHTML=rows(tk,true); $('gCard').className='gcard '+(tk.rug?'bad':'ok');
+      $('gBtns').hidden=true; $('gReveal').hidden=false;
+      $('gVerdict').innerHTML=(ok?'<span style="color:var(--signal-ink)">Doğru!</span> ':'<span style="color:var(--bad)">Yanlış.</span> ')+'Bu token <span style="color:'+(tk.rug?'var(--bad)':'var(--signal-ink)')+'">'+(tk.rug?'RUG':'SAFE')+'</span>.';
+      $('gWhy').textContent=tk.why; $('gNext').textContent=i===deck.length-1?'Sonucu gör →':'Sonraki token →';
+      window.__sfx(ok?'right':'wrong'); if(window.__game3d) window.__game3d.reveal(!!tk.rug, ok, streak); }
+    function next(){ if(!answered) return; if(i<deck.length-1){ i++; show(); } else end(); }
+    function end(){ done=true; $('gCard').hidden=true; $('gBtns').hidden=true; $('gReveal').hidden=true; $('gEnd').hidden=false; $('gEndScore').textContent=score;
+      var title=score===8?'Ghost Node dedektif':score>=6?'Core Node':score>=4?'Signal Bearer':'Observer';
+      $('gEndTitle').textContent='Rütben: '+title; $('gEndText').textContent=score===8?'Hiçbir rug seni kandıramaz. Sitede bu ekran paylaşım kartına dönüşür.':score>=5?'İyi göz. Kaçırdıklarının cevabı hep aynı yerde: yetkiler, likidite, deployer.':'Rug\'lar sinsi. Tekrar oyna; her turun açıklaması bir dersti.';
+      if(score===8) window.__ach('perfect'); window.__sfx(score>=6?'clean':'warn'); if(window.__game3d) window.__game3d.finish(score); }
+    $('gSafe').addEventListener('click',function(){answer(false);}); $('gRug').addEventListener('click',function(){answer(true);});
+    $('gNext').addEventListener('click',next); $('gAgain').addEventListener('click',function(){ i=0; score=0; streak=0; caught=0; done=false; $('gScore').textContent=0; $('gStreak').textContent=0; show(); });
+    document.addEventListener('keydown',function(e){ if(e.target.closest&&e.target.closest('input,textarea')) return; var r=$('eglence').getBoundingClientRect(); if(r.top>innerHeight*.6||r.bottom<innerHeight*.3) return; var k=e.key.toLowerCase(); if(k==='s') answer(false); else if(k==='r') answer(true); else if(k==='enter'&&answered&&!done) next(); });
+    window.__gameDeckFirst=deck[0]; show();
+  })();
+
+  /* ---------- dashboard: price chart ---------- */
+  (function(){
+    var el=document.getElementById('priceChart'); if(!el) return;
+    var r=rng(1907), n=96, end=2.996e-6, start=end/(1-0.0064), pts=[], v=start;
+    for(var i=0;i<n;i++){ v*=1+(r()-.5)*.012; pts.push(v); }
+    var d0=pts[0]-start, d1=pts[n-1]-end;
+    for(i=0;i<n;i++){ pts[i]-= d0+(d1-d0)*(i/(n-1)); }
+    var W=640,H=230,L=82,R=14,T=12,B=28;
+    var mn=Math.min.apply(null,pts), mx=Math.max.apply(null,pts), pad=(mx-mn)*.18; mn-=pad; mx+=pad;
+    var x=function(i){return L+(W-L-R)*i/(n-1);}, y=function(p){return T+(H-T-B)*(1-(p-mn)/(mx-mn));};
+    var ticks=[], step=(mx-mn)/3; for(i=0;i<4;i++) ticks.push(mn+step*i);
+    var path='';
+    pts.forEach(function(p,i){ path+=(i?'L':'M')+x(i).toFixed(1)+' '+y(p).toFixed(1); });
+    var area=path+'L'+x(n-1).toFixed(1)+' '+(H-B)+'L'+x(0).toFixed(1)+' '+(H-B)+'Z';
+    var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Örnek 24 saatlik fiyat eğrisi"><defs><linearGradient id="pg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#7CFF4F" stop-opacity=".32"/><stop offset="1" stop-color="#7CFF4F" stop-opacity="0"/></linearGradient><filter id="lglow" x="-5%" y="-20%" width="110%" height="140%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>';
+    ticks.forEach(function(t){ var yy=y(t).toFixed(1); svg+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+yy+'" y2="'+yy+'" stroke="#C4B0FF" stroke-opacity=".08"/><text x="'+(L-10)+'" y="'+(+yy+3.5)+'" text-anchor="end" fill="#9592AB" font-family="Martian Mono, monospace" font-size="9.5">'+fmtSub(t)+'</text>'; });
+    ['-24h','-18h','-12h','-6h','now'].forEach(function(lb,k){ var xx=L+(W-L-R)*k/4; svg+='<text x="'+xx.toFixed(1)+'" y="'+(H-8)+'" text-anchor="'+(k===0?'start':k===4?'end':'middle')+'" fill="#9592AB" font-family="Martian Mono, monospace" font-size="9.5">'+lb+'</text>'; });
+    svg+='<path d="'+area+'" fill="url(#pg)"/><path d="'+path+'" fill="none" stroke="#7CFF4F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" filter="url(#lglow)"/>';
+    svg+='<circle cx="'+x(n-1).toFixed(1)+'" cy="'+y(pts[n-1]).toFixed(1)+'" r="4.5" fill="#7CFF4F" stroke="#0E0C18" stroke-width="2"/>';
+    svg+='<line id="cx" x1="0" x2="0" y1="'+T+'" y2="'+(H-B)+'" stroke="#F5F7F8" stroke-opacity=".25" stroke-dasharray="3 3" visibility="hidden"/><circle id="cd" r="4" fill="#7CFF4F" stroke="#0E0C18" stroke-width="2" visibility="hidden"/>';
+    svg+='<rect x="'+L+'" y="'+T+'" width="'+(W-L-R)+'" height="'+(H-T-B)+'" fill="transparent" id="hit"/></svg><div class="ctip" id="ctip" hidden></div>';
+    el.innerHTML=svg;
+    var s=el.querySelector('svg'), hit=el.querySelector('#hit'), cx=el.querySelector('#cx'), cd=el.querySelector('#cd'), tip=el.querySelector('#ctip');
+    function move(e){ var b=s.getBoundingClientRect(); var px=(e.clientX-b.left)/b.width*W; var i=Math.round((px-L)/(W-L-R)*(n-1)); i=Math.max(0,Math.min(n-1,i));
+      var xx=x(i), yy=y(pts[i]); cx.setAttribute('x1',xx); cx.setAttribute('x2',xx); cx.setAttribute('visibility','visible'); cd.setAttribute('cx',xx); cd.setAttribute('cy',yy); cd.setAttribute('visibility','visible');
+      var mins=(n-1-i)*15; var lab= mins===0?'now':'-'+Math.floor(mins/60)+'h '+(mins%60)+'m';
+      tip.hidden=false; tip.innerHTML='<span>'+lab+'</span>'+fmtSub(pts[i]); tip.style.left=(xx/W*b.width)+'px'; tip.style.top=(yy/H*b.height)+'px'; }
+    hit.addEventListener('pointermove',move); hit.addEventListener('pointerdown',move);
+    hit.addEventListener('pointerleave',function(){ cx.setAttribute('visibility','hidden'); cd.setAttribute('visibility','hidden'); tip.hidden=true; });
+    el.parentNode.querySelectorAll('.seg button').forEach(function(btn){ btn.addEventListener('click',function(){ el.parentNode.querySelectorAll('.seg button').forEach(function(o){o.setAttribute('aria-pressed','false');}); btn.setAttribute('aria-pressed','true'); }); });
+  })();
+
+  /* ---------- dashboard: radar list ---------- */
+  (function(){
+    var rows=[['$Vanity','vANi…TycA',68,'LP locked 0%'],['$MODELS','BDex…pump',74,'Liq $3,578'],['$AVENGERS','HrXd…pump',74,'Liq $4,663'],['$ZKRPT','H8LU…pump',74,'Liq $2,384'],['—','DNuW…h8GC',83,'Liq $4,201'],['—','8Gro…pump',86,'RugCheck 66'],['—','6jij…pump',86,'RugCheck 67'],['—','J49Y…gxga',88,'RugCheck 34']];
+    var ul=document.getElementById('radarList'); if(!ul) return;
+    ul.innerHTML=rows.map(function(r){ var c=r[2]>=80?'#4CAA2E':r[2]>=50?'#E5B454':'#F2555A'; var chip=r[2]>=80?'<span class="chip chip-ok">low</span>':r[2]>=50?'<span class="chip chip-warn">caution</span>':'<span class="chip chip-bad">high</span>';
+      return '<li><span class="nm">'+(r[0]==='—'?r[1]:r[0])+'<small>'+(r[0]==='—'?r[3]:r[1]+' · '+r[3])+'</small></span><span class="bar"><i style="width:'+r[2]+'%;background:'+c+'"></i></span><span class="sc num">'+r[2]+chip+'</span></li>'; }).join('');
+  })();
+
+  /* ---------- dashboard: allocation ring (validated palette) ---------- */
+  (function(){
+    var data=[['Public',50,'#4CAA2E'],['Community',20,'#7A3CFF'],['Marketing',15,'#8E9B2A'],['Treasury',10,'#9C74F2'],['Team',5,'#3A8A2A']];
+    var svg=document.getElementById('allocRing'), ul=document.getElementById('allocList'); if(!svg) return;
+    var cx=64, cy=64, r=50, w=16, a0=-Math.PI/2, out='', gap=.035;
+    data.forEach(function(d){ var a1=a0+d[1]/100*Math.PI*2; var s=a0+gap/2, e=a1-gap/2; var large=(e-s)>Math.PI?1:0;
+      var p1=[cx+r*Math.cos(s),cy+r*Math.sin(s)], p2=[cx+r*Math.cos(e),cy+r*Math.sin(e)];
+      out+='<path d="M'+p1[0].toFixed(2)+' '+p1[1].toFixed(2)+' A'+r+' '+r+' 0 '+large+' 1 '+p2[0].toFixed(2)+' '+p2[1].toFixed(2)+'" fill="none" stroke="'+d[2]+'" stroke-width="'+w+'"><title>'+d[0]+' '+d[1]+'%</title></path>'; a0=a1; });
+    out+='<text x="64" y="62" text-anchor="middle" fill="#F5F7F8" font-family="Tektur, Geist, sans-serif" font-weight="700" font-size="18">1B</text><text x="64" y="78" text-anchor="middle" fill="#9592AB" font-family="Martian Mono, monospace" font-size="8">FIXED</text>';
+    svg.innerHTML=out;
+    ul.innerHTML=data.map(function(d){return '<li><i style="background:'+d[2]+'"></i><span>'+d[0]+'</span><b class="num">'+d[1]+'%</b></li>';}).join('');
+  })();
+
+  /* ---------- drand round ticker (simulated from the round seen live) ---------- */
+  (function(){
+    function hex(seed){ var r=rng(seed), s=''; for(var i=0;i<64;i++) s+='0123456789abcdef'[Math.floor(r()*16)]; return s; }
+    var round=33184485;
+    function paint(){ ['dashRound','entRound'].forEach(function(id){ var e=document.getElementById(id); if(e) e.textContent=String(round); });
+      var h=hex(round); var a=document.getElementById('dashHash'); if(a) a.textContent=h; var b=document.getElementById('entHash'); if(b) b.textContent=h.slice(0,32)+'…'; window.__round=round; }
+    paint(); if(!REDUCE) setInterval(function(){ round++; paint(); window.dispatchEvent(new CustomEvent('drandround',{detail:round})); },3000);
+  })();
+
+  /* ---------- card tilt ---------- */
+  if(!REDUCE && matchMedia('(hover: hover)').matches){
+    document.querySelectorAll('.kpi').forEach(function(k){
+      k.addEventListener('pointermove',function(e){ var b=k.getBoundingClientRect(); var px=(e.clientX-b.left)/b.width-.5, py=(e.clientY-b.top)/b.height-.5; k.style.transform='perspective(600px) rotateX('+(-py*9).toFixed(2)+'deg) rotateY('+(px*11).toFixed(2)+'deg) translateZ(6px)'; });
+      k.addEventListener('pointerleave',function(){ k.style.transform=''; });
+    });
+  }
+})();
+</script>
+
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { GlitchyStage } from './js/glitchy-engine.js';
+
+const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MOBILE = matchMedia('(max-width: 640px)').matches;
+const TAU = Math.PI * 2;
+const C = {
+  signal: new THREE.Color(0x7cff4f), glitch: new THREE.Color(0x7a3cff), glitchInk: new THREE.Color(0xb99bff),
+  stat: new THREE.Color(0xf5f7f8), warn: new THREE.Color(0xe5b454), bad: new THREE.Color(0xf2555a), gold: new THREE.Color(0xffc23d)
+};
+const k = (c, s) => c.clone().multiplyScalar(s);
+const pal = () => document.documentElement.dataset.palette || 'neon';
+const funC = () => pal() === 'gold' ? C.gold : C.signal;
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const rng = (seed) => { let a = seed >>> 0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; };
+const B58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+const addr = (r) => { let s = ''; for (let i = 0; i < 8; i++) s += B58[Math.floor(r() * B58.length)]; return s.slice(0, 4) + '…' + s.slice(4); };
+const pick = (a) => a[(Math.random() * a.length) | 0];
+
+function canvasTex(size, draw) { const c = document.createElement('canvas'); c.width = c.height = size; draw(c.getContext('2d'), size); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; }
+const GLOW = canvasTex(128, (g) => { const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.22, 'rgba(255,255,255,.5)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128); });
+const RING = canvasTex(128, (g) => { g.strokeStyle = '#fff'; g.lineWidth = 5; g.beginPath(); g.arc(64, 64, 56, 0, TAU); g.stroke(); });
+const STAR = canvasTex(64, (x) => { const g = x.createRadialGradient(32, 32, 0, 32, 32, 14); g.addColorStop(0, 'rgba(255,255,255,.9)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); x.fillStyle = '#fff'; x.beginPath(); x.moveTo(32, 2); x.lineTo(35, 29); x.lineTo(62, 32); x.lineTo(35, 35); x.lineTo(32, 62); x.lineTo(29, 35); x.lineTo(2, 32); x.lineTo(29, 29); x.closePath(); x.fill(); });
+const SHADOW = canvasTex(128, (g) => { const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, 'rgba(255,255,255,.85)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128); });
+
+const NOISE = `
+vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;} vec4 mod289(vec4 x){return x-floor(x*(1./289.))*289.;}
+vec4 permute(vec4 x){return mod289(((x*34.)+1.)*x);} vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-.85373472095314*r;}
+float snoise(vec3 v){const vec2 C=vec2(1./6.,1./3.);const vec4 D=vec4(0.,.5,1.,2.);vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.-g;vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;i=mod289(i);vec4 p=permute(permute(permute(i.z+vec4(0.,i1.z,i2.z,1.))+i.y+vec4(0.,i1.y,i2.y,1.))+i.x+vec4(0.,i1.x,i2.x,1.));float n_=.142857142857;vec3 ns=n_*D.wyz-D.xzx;vec4 j=p-49.*floor(p*ns.z*ns.z);vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.*x_);vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.-abs(x)-abs(y);vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);vec4 s0=floor(b0)*2.+1.;vec4 s1=floor(b1)*2.+1.;vec4 sh=-step(h,vec4(0.));vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.);m=m*m;return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));}`;
+
+/* ---------- stage built on the Glitchy engine (bloom, studio light, vignette, grain) ---------- */
+const stages = [], chars = [];
+function makeStage(host, o = {}) {
+  const canvas = document.createElement('canvas'); canvas.className = 'gl'; host.prepend(canvas);
+  const gs = new GlitchyStage(canvas, {
+    reducedMotion: REDUCE, grain: .014, background: o.bg ?? '#160f2c', floor: !!o.floor, bokeh: o.bokeh ?? true,
+    bloom: o.bloom ?? [.6, .5, 1.05], fov: o.fov ?? 30, exposure: o.exposure ?? 1,
+    pixelRatio: Math.min(window.devicePixelRatio || 1, MOBILE ? 1.35 : 1.6),
+  });
+  if (gs.backdrop) gs.backdrop.scale.setScalar(o.backdrop ?? 1.6);
+  gs.scene.environment = gs.env;
+  const st = { gs, scene: gs.scene, camera: gs.camera, env: gs.env, host, visible: true, w: 2, h: 2, chars: [], bloomBase: gs.bloom ? gs.bloom.strength : 0, pointer: { x: 0, y: 0, cx: 0, cy: 0, active: false }, update: null, onResize: null };
+  st.fit = () => { const r = host.getBoundingClientRect(); st.w = Math.max(2, r.width); st.h = Math.max(2, r.height); gs.setSize(st.w, st.h); st.onResize && st.onResize(); if (REDUCE) st.draw(); };
+  st.draw = () => { st.update && st.update(performance.now() / 1000, 0); gs.step(1 / 60); gs.render(); };
+  new ResizeObserver(() => st.fit()).observe(host);
+  new IntersectionObserver(([e]) => { st.visible = e.isIntersecting; }, { rootMargin: '160px' }).observe(host);
+  host.addEventListener('pointermove', (e) => { const r = host.getBoundingClientRect(); st.pointer.cx = e.clientX - r.left; st.pointer.cy = e.clientY - r.top; st.pointer.x = st.pointer.cx / r.width * 2 - 1; st.pointer.y = -(st.pointer.cy / r.height * 2 - 1); st.pointer.active = true; });
+  host.addEventListener('pointerleave', () => { st.pointer.active = false; });
+  host.addEventListener('click', (e) => { for (const c of st.chars) { const a = anchorOf(st, c); if (Math.hypot(e.clientX - a.x, e.clientY - a.y) < a.radius * 1.15) { c.tap(); window.__sfx?.('pop'); } } });
+  host.classList.add('live');
+  applyPal(st);
+  stages.push(st);
+  return st;
+}
+const applyPal = (st) => { if (st.gs.bloom) st.gs.bloom.strength = st.bloomBase * (pal() === 'muted' ? .3 : 1); };
+window.addEventListener('palettechange', () => { stages.forEach((st) => { applyPal(st); if (REDUCE) st.draw(); }); });
+const addChar = (st, variant, opts) => { const c = st.gs.add(variant, opts); st.chars.push(c); chars.push({ st, c }); return c; };
+
+/* page-wide attention, same as the site's GlitchyStage component */
+function anchorOf(st, c) {
+  const rect = st.host.getBoundingClientRect();
+  const toClient = (v) => ({ x: rect.left + (v.x * .5 + .5) * rect.width, y: rect.top + (-v.y * .5 + .5) * rect.height });
+  const body = c.root.position.clone(); body.y -= .15 * c.scale;
+  const head = c.root.position.clone(); head.y += 1.0 * c.scale;
+  const ce = toClient(body.project(st.camera)), tp = toClient(head.project(st.camera));
+  return { x: ce.x, y: ce.y, radius: Math.max(40, Math.abs(ce.y - tp.y)) };
+}
+let prevP = { x: 0, y: 0, t: 0 };
+window.addEventListener('pointermove', (e) => {
+  const now = performance.now();
+  for (const { st, c } of chars) {
+    if (!st.visible) continue;
+    const a = anchorOf(st, c), dx = (e.clientX - a.x) / a.radius, dy = -(e.clientY - a.y) / a.radius, dist = Math.hypot(dx, dy);
+    c.track(dx, dy, 1 - clamp((dist - 1.1) / 2.4, 0, 1));
+    const dt = now - prevP.t;
+    if (e.pointerType === 'mouse' && dt > 0 && dt < 80 && dist < 5 && Math.hypot(e.clientX - prevP.x, e.clientY - prevP.y) / dt > 2.8) c.excite();
+  }
+  prevP = { x: e.clientX, y: e.clientY, t: now };
+}, { passive: true });
+window.__glitchAll = () => chars.forEach(({ c }, i) => setTimeout(() => c.play(i % 2 ? 'spin' : 'glitch'), i * 120));
+
+function bubble(st, c, el) {
+  let until = 0;
+  return {
+    say(text, dur = 2.6) { el.textContent = text; el.hidden = false; until = performance.now() + dur * 1000; },
+    update() { if (el.hidden) return; if (performance.now() > until) { el.hidden = true; return; } const a = anchorOf(st, c), r = st.host.getBoundingClientRect(); el.style.left = clamp(a.x - r.left, 90, r.width - 90) + 'px'; el.style.top = Math.max(46, a.y - r.top - a.radius * 1.3) + 'px'; }
+  };
+}
+
+/* voxel bursts and sparkles */
+class Burst {
+  constructor(scene, n = 160, size = .06) {
+    this.mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: 0xffffff }), n);
+    this.mesh.frustumCulled = false; scene.add(this.mesh);
+    this.items = Array.from({ length: n }, () => ({ p: new THREE.Vector3(), v: new THREE.Vector3(), age: 9, life: 1, s: size, r: 0, g: 3.2 }));
+    this.size = size; this.i = 0; this.d = new THREE.Object3D(); this.live = 0;
+    const c = new THREE.Color(0, 0, 0); for (let j = 0; j < n; j++) this.mesh.setColorAt(j, c);
+    this.items.forEach((_, j) => { this.d.position.set(0, -999, 0); this.d.scale.setScalar(1e-4); this.d.updateMatrix(); this.mesh.setMatrixAt(j, this.d.matrix); });
+  }
+  emit(o, count, cols, speed = 2.4, up = .6, gravity = 3.2) {
+    for (let j = 0; j < count; j++) {
+      const idx = this.i, it = this.items[idx]; this.i = (this.i + 1) % this.items.length;
+      it.p.copy(o); it.v.set(Math.random() - .5, Math.random() - .5 + up, Math.random() - .5).normalize().multiplyScalar(speed * (.35 + Math.random() * .85));
+      it.age = 0; it.life = .8 + Math.random() * .9; it.s = this.size * (.5 + Math.random()); it.r = Math.random() * 3; it.g = gravity;
+      this.mesh.setColorAt(idx, cols[(Math.random() * cols.length) | 0]);
+    }
+    this.mesh.instanceColor.needsUpdate = true; this.live = 2;
+  }
+  update(dt) {
+    if (!this.live) return;
+    let any = false;
+    this.items.forEach((it, j) => {
+      if (it.age < it.life) {
+        any = true; it.age += dt; it.v.y -= it.g * dt; it.v.multiplyScalar(Math.exp(-dt * .7)); it.p.addScaledVector(it.v, dt);
+        const q = it.age / it.life; this.d.position.copy(it.p); this.d.rotation.set(it.r + it.age * 4, it.r * 2 + it.age * 3, 0); this.d.scale.setScalar(Math.max(1e-4, it.s * (1 - q * q)));
+      } else { this.d.position.set(0, -999, 0); this.d.scale.setScalar(1e-4); }
+      this.d.updateMatrix(); this.mesh.setMatrixAt(j, this.d.matrix);
+    });
+    this.mesh.instanceMatrix.needsUpdate = true;
+    if (!any) this.live--;
+  }
+}
+class Sparks {
+  constructor(scene, n = 36) { this.items = Array.from({ length: n }, () => { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: STAR, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })); s.visible = false; scene.add(s); return { s, age: 0, life: 1, v: new THREE.Vector3(), size: .2 }; }); this.i = 0; }
+  emit(o, n, color, radius = 1, size = .28) {
+    for (let j = 0; j < n; j++) {
+      const it = this.items[this.i++ % this.items.length], a = Math.random() * TAU;
+      it.s.position.set(o.x + Math.cos(a) * radius * (.5 + Math.random() * .6), o.y + (Math.random() - .5) * radius * 1.4, o.z + Math.sin(a) * radius * .4 + .3);
+      it.v.set(0, .25 + Math.random() * .35, 0); it.age = -Math.random() * .35; it.life = .7 + Math.random() * .5; it.size = size * (.6 + Math.random() * .8);
+      it.s.material.color.copy(color); it.s.material.rotation = Math.random(); it.s.visible = true;
+    }
+  }
+  update(dt) { for (const it of this.items) { if (!it.s.visible) continue; it.age += dt; if (it.age < 0) { it.s.scale.setScalar(1e-4); continue; } const q = it.age / it.life; if (q >= 1) { it.s.visible = false; continue; } it.s.position.addScaledVector(it.v, dt); it.s.scale.setScalar(it.size * Math.sin(q * Math.PI)); it.s.material.rotation += dt * 2; } }
+}
+const BAD = () => [k(C.bad, 2.6), k(C.warn, 2.2), k(C.bad, 1.6), k(C.stat, 1.4)];
+const GOOD = () => [k(funC(), 2.4), k(C.glitch, 3), k(C.stat, 1.7), k(funC(), 1.6)];
+
+/* ---------- 1. Hero: Signal Core + Glitchy ---------- */
+function heroScene(host) {
+  const s = makeStage(host, { bg: '#22134a', bloom: [.72, .55, 1.0], backdrop: 1.5 });
+  const { scene, camera } = s;
+  const g = addChar(s, 'chrome', { x: -2.5, y: .05, z: 1.7, scale: .6, yaw: .55, seed: 303 });
+  const bub = bubble(s, g, document.getElementById('heroBubble'));
+  const base = new THREE.Vector3(), look = new THREE.Vector3();
+  s.onResize = () => {
+    const narrow = s.w / s.h < 1.05;
+    if (narrow) { g.root.position.set(-1.7, 1.75, 1.3); g.root.scale.setScalar(.5); base.set(-.15, 2.4, 13.4); look.set(-.15, .2, 0); }
+    else { g.root.position.set(-2.05, 0, 2.0); g.root.scale.setScalar(.58); base.set(-.4, 1.85, 11.2); look.set(-.4, -.05, 0); }
+    camera.position.copy(base); camera.lookAt(look);
+  };
+
+  const root = new THREE.Group(); root.scale.setScalar(.82); scene.add(root);
+  const plasmaU = { uT: { value: 0 }, uA: { value: C.signal.clone() }, uB: { value: C.glitch.clone() }, uBad: { value: C.bad.clone() }, uHot: { value: 0 }, uAlarm: { value: 0 } };
+  const plasma = new THREE.Mesh(new THREE.IcosahedronGeometry(.66, 8), new THREE.ShaderMaterial({
+    uniforms: plasmaU,
+    vertexShader: 'varying vec3 vN; varying vec3 vP; varying vec3 vV; void main(){ vN = normalize(normalMatrix * normal); vP = position; vec4 mv = modelViewMatrix * vec4(position, 1.); vV = -mv.xyz; gl_Position = projectionMatrix * mv; }',
+    fragmentShader: `${NOISE} uniform float uT; uniform vec3 uA; uniform vec3 uB; uniform vec3 uBad; uniform float uHot; uniform float uAlarm; varying vec3 vN; varying vec3 vP; varying vec3 vV;
+      void main(){ float n1 = snoise(vP * 1.7 + vec3(0., uT * .35, uT * .2)); float n2 = snoise(vP * 3.6 - vec3(uT * .5, 0., uT * .3));
+        float sw = .5 + .5 * sin(n1 * 3.2 + n2 * 1.6 + uT * .8);
+        vec3 col = uB * 1.6 * smoothstep(.55, .15, sw) + uA * 1.5 * smoothstep(.62, .92, sw);
+        col += uA * pow(1. - abs(n2), 9.) * 2.6 * smoothstep(.45, .7, sw);
+        col = mix(col, uBad * 2.4, smoothstep(0., .3, uAlarm));
+        float fres = pow(1. - max(dot(normalize(vN), normalize(vV)), 0.), 2.);
+        col *= .6 + fres * 1.4 + uHot * 1.4;
+        gl_FragColor = vec4(col, 1.); }`
+  }));
+  root.add(plasma);
+  const glass = new THREE.Mesh(new THREE.IcosahedronGeometry(1, 14), new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness: 0, roughness: .04, transmission: 1, thickness: 1.1, ior: 1.32, envMapIntensity: 1.25, clearcoat: 1, clearcoatRoughness: .03, iridescence: .6, iridescenceIOR: 1.45, attenuationColor: new THREE.Color(0xeeeaff), attenuationDistance: 3.2 }));
+  root.add(glass);
+  const chrome = new THREE.MeshPhysicalMaterial({ color: 0xe6e9ee, metalness: 1, roughness: .12, clearcoat: 1, clearcoatRoughness: .05, envMapIntensity: 1.5 });
+  const gyro = [1.24, 1.38].map((r, i) => { const grp = new THREE.Group(); grp.add(new THREE.Mesh(new THREE.TorusGeometry(r, .026, 16, 180), chrome)); const neon = new THREE.Mesh(new THREE.TorusGeometry(r + .03, .006, 8, 220), new THREE.MeshBasicMaterial({ color: i ? k(C.glitch, 3.2) : k(C.signal, 2.4) })); grp.add(neon); grp.rotation.set(Math.PI / 2 + (i ? .62 : -.25), i ? .4 : 0, 0); root.add(grp); return { grp, neon }; });
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: C.glitch.clone(), transparent: true, opacity: .42, blending: THREE.AdditiveBlending, depthWrite: false }));
+  halo.scale.setScalar(4.6); halo.position.z = -.8; root.add(halo);
+
+  const plate = new THREE.Group(); root.add(plate);
+  [1.7, 2.3, 2.9, 3.55].forEach((r, i) => { const m = new THREE.Mesh(new THREE.RingGeometry(r - .008, r + .008, 200), new THREE.MeshBasicMaterial({ color: i === 3 ? k(C.signal, 1.6) : k(C.glitchInk, .55), transparent: true, opacity: i === 3 ? .55 : .25, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending })); m.rotation.x = -Math.PI / 2; plate.add(m); });
+  const sp = []; for (let i = 0; i < 36; i++) { const a = i / 36 * TAU, r0 = i % 3 ? 3.35 : 1.7; sp.push(new THREE.Vector3(Math.cos(a) * r0, 0, -Math.sin(a) * r0), new THREE.Vector3(Math.cos(a) * 3.55, 0, -Math.sin(a) * 3.55)); }
+  plate.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(sp), new THREE.LineBasicMaterial({ color: C.glitchInk, transparent: true, opacity: .12 })));
+  const disc = new THREE.Mesh(new THREE.CircleGeometry(3.55, 96), new THREE.MeshBasicMaterial({ map: GLOW, color: k(C.glitch, .35), transparent: true, opacity: .55, depthWrite: false, blending: THREE.AdditiveBlending }));
+  disc.rotation.x = -Math.PI / 2; disc.position.y = -.01; plate.add(disc);
+
+  const L = 1.15, sweep = new THREE.Group(); root.add(sweep);
+  const wedge = new THREE.Mesh(new THREE.RingGeometry(1.2, 3.55, 96, 1, 0, L), new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+    uniforms: { uC: { value: k(C.signal, 1.5) }, uL: { value: L } },
+    vertexShader: 'varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }',
+    fragmentShader: 'uniform vec3 uC; uniform float uL; varying vec3 vP; void main(){ float a = atan(vP.y, vP.x); if(a < 0.) a += 6.2831853; float f = clamp(a / uL, 0., 1.); float r = length(vP.xy); float rad = smoothstep(1.2, 1.7, r) * (1. - smoothstep(3.25, 3.55, r)); gl_FragColor = vec4(uC, pow(f, 2.6) * .55 * rad); }'
+  }));
+  wedge.rotation.x = -Math.PI / 2; sweep.add(wedge);
+  sweep.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(Math.cos(L) * 1.2, 0, -Math.sin(L) * 1.2), new THREE.Vector3(Math.cos(L) * 3.55, 0, -Math.sin(L) * 3.55)]), new THREE.LineBasicMaterial({ color: k(C.signal, 2.4) })));
+  const bladeGeo = new THREE.PlaneGeometry(2.35, 2.5); bladeGeo.translate(1.2 + 2.35 / 2, .25, 0);
+  const blade = new THREE.Mesh(bladeGeo, new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+    uniforms: { uC: { value: k(C.signal, 1.4) }, uT: { value: 0 } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); }',
+    fragmentShader: 'uniform vec3 uC; uniform float uT; varying vec2 vUv; void main(){ float v = 1. - smoothstep(0., .9, abs(vUv.y - .4) * 1.9); float u = smoothstep(0., .12, vUv.x) * (1. - smoothstep(.85, 1., vUv.x)); float lines = .55 + .45 * sin(vUv.y * 140. - uT * 6.); gl_FragColor = vec4(uC, v * u * lines * .16); }'
+  }));
+  blade.rotation.y = L; sweep.add(blade);
+
+  const r = rng(7), N = MOBILE ? 60 : 84, nodes = [];
+  const gems = new THREE.InstancedMesh(new THREE.OctahedronGeometry(.06, 0), new THREE.MeshBasicMaterial({ color: 0xffffff }), N);
+  const stems = [], m4 = new THREE.Matrix4(), q4 = new THREE.Quaternion(), s4 = new THREE.Vector3(1, 1, 1), col = new THREE.Color(), up = new THREE.Vector3(0, 1, 0);
+  for (let i = 0; i < N; i++) {
+    const rad = 1.8 + r() * 1.65, az = r() * TAU, y = (r() - .45) * 1.9;
+    const p = new THREE.Vector3(Math.cos(az) * rad, y, -Math.sin(az) * rad);
+    const qq = r(), verdict = qq < .13 ? 'bad' : qq < .3 ? 'warn' : 'ok';
+    const score = verdict === 'bad' ? 6 + Math.floor(r() * 34) : verdict === 'warn' ? 52 + Math.floor(r() * 26) : 80 + Math.floor(r() * 17);
+    nodes.push({ p, az, verdict, score, flash: 0, marked: false, id: addr(r), spin: r() * TAU });
+    m4.compose(p, q4, s4); gems.setMatrixAt(i, m4); gems.setColorAt(i, k(C.glitchInk, .35));
+    stems.push(p.clone(), new THREE.Vector3(p.x, 0, p.z));
+  }
+  root.add(gems);
+  root.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(stems), new THREE.LineBasicMaterial({ color: C.glitchInk, transparent: true, opacity: .1 })));
+  const pool = Array.from({ length: 24 }, () => { const o = new THREE.Sprite(new THREE.SpriteMaterial({ map: RING, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false })); o.visible = false; root.add(o); return { sp: o, age: 9 }; });
+  const shocks = Array.from({ length: 6 }, () => { const m = new THREE.Mesh(new THREE.RingGeometry(.9, 1, 64), new THREE.MeshBasicMaterial({ color: k(C.bad, 2.4), transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending })); m.rotation.x = -Math.PI / 2; m.visible = false; root.add(m); return { m, age: 9 }; });
+  const burst = new Burst(scene, MOBILE ? 120 : 200, .07), sparks = new Sparks(scene, 30);
+  let pi = 0, si = 0;
+  const ping = (n) => { const o = pool[pi++ % pool.length]; o.sp.position.copy(n.p); o.sp.material.color.copy(n.verdict === 'bad' ? k(C.bad, 2) : n.verdict === 'warn' ? k(C.warn, 1.6) : k(C.signal, 1.6)); o.age = 0; o.sp.visible = true; };
+  const shock = (n) => { const o = shocks[si++ % shocks.length]; o.m.position.set(n.p.x, .01, n.p.z); o.age = 0; o.m.visible = true; };
+
+  const elS = document.getElementById('hudScanned'), elF = document.getElementById('hudFlagged'), elL = document.getElementById('hudLast'), heroH = document.getElementById('heroH'), frame = document.getElementById('heroFrame');
+  let scanned = 0, flagged = 0, phi = 0, prevLead = null, yaw = 0, tiltX = 0, tiltY = 0, boost = 0, nextGlitch = 3.5, glitchUntil = 0, alarm = 0, hot = 0, shake = 0, lastSfx = 0, lastReact = 0, nextTalk = 6;
+  const wpos = new THREE.Vector3();
+  const lookAtNode = (n) => { root.localToWorld(wpos.copy(n.p)); const gp = g.root.position; g.lookAt(clamp((wpos.x - gp.x) / 3, -1, 1), clamp((wpos.y - gp.y - .2) / 2, -1, 1), 1.4); };
+  const LINES = {
+    clean: ['Clean. I read every line.', 'Looks legit. Still DYOR.', 'No traps here. Nice.'],
+    warn: ['Hmm. Sus, but not a rug.', 'Careful with this one.'],
+    bad: ['RUG ALERT. Hands off!', "Nope. That's rug-shaped.", "I've seen this deployer before…"],
+    idle: ['Another one flagged.', 'Got one!', 'Red dot. Not touching that.', 'Scanning… always scanning.'],
+  };
+  window.__heroScan = (qs) => {
+    const h = [...qs].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) >>> 0, 7);
+    let v;
+    if (/gl1tch|3hqj/i.test(qs)) v = { score: 90, kind: 'clean' };
+    else if (/rug|scam|dead|honey/i.test(qs)) v = { score: 9 + h % 20, kind: 'bad' };
+    else v = [{ score: 84 + h % 10, kind: 'clean' }, { score: 55 + h % 20, kind: 'warn' }, { score: 12 + h % 25, kind: 'bad' }][h % 3];
+    const o = new THREE.Vector3(0, .1, 0);
+    if (v.kind === 'clean') { hot = 1; burst.emit(o, 90, GOOD(), 3.4, 1.1); sparks.emit(new THREE.Vector3(0, .3, .6), 12, k(funC(), 2.2), 1.3); g.play('laugh'); window.__sfx?.('clean'); }
+    else if (v.kind === 'warn') { hot = .5; burst.emit(o, 36, [k(C.warn, 2.4), k(C.stat, 1.4)], 2.4, .8); g.play('wink'); window.__sfx?.('warn'); }
+    else { alarm = 1; shake = 1; burst.emit(o, 110, BAD(), 3.8, .7); nodes.forEach((n) => { n.flash = Math.max(n.flash, .7); }); g.play('glitch'); window.__sfx?.('rug'); frame.classList.add('alarm'); setTimeout(() => frame.classList.remove('alarm'), 900); }
+    bub.say(pick(LINES[v.kind])); boost = 1; lastReact = performance.now() / 1000; return v;
+  };
+
+  s.update = (t, dt) => {
+    phi += dt * (.95 + boost * 2.6); boost = Math.max(0, boost - dt * .6);
+    sweep.rotation.y = phi; blade.material.uniforms.uT.value = t;
+    const lead = L + phi;
+    if (prevLead !== null && dt > 0) {
+      const span = lead - prevLead;
+      for (const n of nodes) {
+        const d = (((n.az - prevLead) % TAU) + TAU) % TAU;
+        if (d <= span) {
+          n.flash = 1; scanned++; ping(n);
+          if (n.verdict === 'bad') {
+            if (!n.marked) { flagged++; n.marked = true; }
+            elL.textContent = '⚠ ' + n.id + ' · high risk ' + n.score + '/100';
+            root.localToWorld(wpos.copy(n.p)); burst.emit(wpos, 12, BAD(), 1.5, .9); shock(n); lookAtNode(n);
+            if (t - lastSfx > 1.2) { window.__sfx?.('ping'); lastSfx = t; }
+            if (t > nextTalk && t - lastReact > 4) { bub.say(pick(LINES.idle), 2.2); nextTalk = t + 9 + Math.random() * 6; if (Math.random() < .4) g.play(pick(['wink', 'glitch', 'hop'])); }
+          }
+        }
+      }
+      elS.textContent = scanned.toLocaleString('en-US'); elF.textContent = flagged;
+    }
+    prevLead = lead;
+    alarm = Math.max(0, alarm - dt * .65); hot = Math.max(0, hot - dt * .8); shake = Math.max(0, shake - dt * 1.8);
+    plasmaU.uT.value = t; plasmaU.uAlarm.value = alarm; plasmaU.uHot.value = hot; plasmaU.uA.value.copy(funC());
+    nodes.forEach((n, i) => {
+      n.flash *= Math.exp(-dt * 1.4);
+      const vc = n.verdict === 'bad' ? C.bad : n.verdict === 'warn' ? C.warn : funC();
+      if (n.marked) col.copy(C.bad).multiplyScalar(.9 + n.flash * 2.6);
+      else col.copy(C.glitchInk).multiplyScalar(.35).lerp(k(vc, 3), n.flash);
+      if (alarm > 0) col.lerp(k(C.bad, 1.8), alarm * .7);
+      gems.setColorAt(i, col);
+      n.spin += dt * (1 + n.flash * 6); q4.setFromAxisAngle(up, n.spin); s4.setScalar(1 + n.flash * .9); m4.compose(n.p, q4, s4); gems.setMatrixAt(i, m4);
+    });
+    gems.instanceColor.needsUpdate = true; gems.instanceMatrix.needsUpdate = true;
+    for (const o of pool) { if (!o.sp.visible) continue; o.age += dt; const q = o.age / 1.1; if (q >= 1) { o.sp.visible = false; continue; } o.sp.scale.setScalar(.08 + q * .55); o.sp.material.opacity = (1 - q) * .9; }
+    for (const o of shocks) { if (!o.m.visible) continue; o.age += dt; const q = o.age / .9; if (q >= 1) { o.m.visible = false; continue; } o.m.scale.setScalar(.1 + q * .9); o.m.material.opacity = (1 - q) * .9; }
+    burst.update(dt); sparks.update(dt);
+    if (t > nextGlitch) { glitchUntil = t + .16; nextGlitch = t + 4 + Math.random() * 3; heroH && heroH.classList.add('g'); setTimeout(() => heroH && heroH.classList.remove('g'), 170); }
+    const gl = t < glitchUntil;
+    gyro[0].grp.rotation.z += dt * .45; gyro[1].grp.rotation.z -= dt * .32; gyro[1].grp.rotation.x += dt * .08;
+    gyro[0].neon.material.color.copy(k(gl ? C.glitch : funC(), gl ? 3.4 : 2.4));
+    glass.scale.set(gl ? 1.03 : 1, gl ? .98 : 1, 1); plasma.rotation.y += dt * .2;
+    halo.material.opacity = .36 + Math.sin(t * 1.3) * .06 + hot * .3 + alarm * .2; halo.material.color.copy(alarm > .05 ? C.bad : C.glitch);
+    yaw += dt * .05;
+    const px = s.pointer.active ? s.pointer.x : Math.sin(t * .3) * .25, py = s.pointer.active ? s.pointer.y : 0;
+    tiltX += (-py * .14 - tiltX) * Math.min(1, dt * 3); tiltY += (px * .35 - tiltY) * Math.min(1, dt * 3);
+    root.rotation.set(tiltX, yaw + tiltY, 0);
+    camera.position.copy(base); if (shake > 0) camera.position.add(new THREE.Vector3((Math.random() - .5) * .25 * shake, (Math.random() - .5) * .18 * shake, 0)); camera.lookAt(look);
+    bub.update();
+  };
+  s.fit();
+  setTimeout(() => { g.play('wave'); bub.say('Hi! Paste a token, I will read it.', 3.2); }, 900);
+  if (REDUCE) { for (let j = 0; j < 40; j++) s.update(j * .1, .1); s.draw(); }
+}
+
+/* ---------- 2. Risk Orb ---------- */
+function riskOrb(host) {
+  const s = makeStage(host, { bg: '#1a1036', bloom: [.75, .5, 1.0], backdrop: 1.4 });
+  const { scene, camera } = s;
+  s.onResize = () => { camera.position.set(0, 0, s.w / s.h < 1 ? 7.4 : 6.3); camera.lookAt(0, 0, 0); };
+  const uni = { uTime: { value: 0 }, uRisk: { value: .1 }, uSafe: { value: C.signal.clone() }, uWarn: { value: C.warn }, uBad: { value: C.bad } };
+  const orb = new THREE.Mesh(new THREE.IcosahedronGeometry(1.15, MOBILE ? 40 : 56), new THREE.ShaderMaterial({
+    uniforms: uni,
+    vertexShader: `uniform float uTime; uniform float uRisk; varying vec3 vView; varying vec3 vNrm; varying float vDisp; ${NOISE}
+      float disp(vec3 nrm){ float f = mix(1.0, 3.2, uRisk); float n = snoise(nrm * f + vec3(0., uTime * mix(.1, .85, uRisk), uTime * .05));
+        float sp = pow(max(0., snoise(nrm * mix(2., 6.5, uRisk) - uTime * .45)), 3.) * uRisk * uRisk * 1.5; return n * mix(.01, .25, pow(uRisk, 1.2)) + sp; }
+      void main(){ vec3 nrm = normalize(position);
+        vec3 t1 = normalize(cross(nrm, abs(nrm.y) < .99 ? vec3(0., 1., 0.) : vec3(1., 0., 0.))); vec3 t2 = cross(nrm, t1);
+        vec3 n1 = normalize(nrm + t1 * .012), n2 = normalize(nrm + t2 * .012);
+        float d = disp(nrm); vec3 P0 = nrm * (1.15 + d), P1 = n1 * (1.15 + disp(n1)), P2 = n2 * (1.15 + disp(n2));
+        vec3 N = normalize(cross(P1 - P0, P2 - P0)); if (dot(N, nrm) < 0.) N = -N;
+        vec3 p = P0; float slice = step(.93, fract(sin(floor((p.y + uTime * .6) * 13.) * 43.17) * 917.3)) * step(.55, uRisk);
+        p.x += slice * .14 * uRisk * sin(uTime * 37.);
+        vDisp = d; vNrm = normalize(normalMatrix * N); vec4 mv = modelViewMatrix * vec4(p, 1.); vView = mv.xyz; gl_Position = projectionMatrix * mv; }`,
+    fragmentShader: `uniform float uRisk; uniform vec3 uSafe; uniform vec3 uWarn; uniform vec3 uBad; varying vec3 vView; varying vec3 vNrm; varying float vDisp;
+      void main(){ vec3 N = normalize(vNrm); vec3 V = normalize(-vView); float fres = pow(1. - max(dot(N, V), 0.), 3.);
+        vec3 Ld = normalize(vec3(.5, .8, .7)); float diff = max(dot(N, Ld), 0.);
+        vec3 tint = uRisk < .5 ? mix(uSafe, uWarn, uRisk * 2.) : mix(uWarn, uBad, (uRisk - .5) * 2.);
+        vec3 R = reflect(-V, N);
+        vec3 col = vec3(.012, .012, .02) + tint * (.03 + .07 * diff);
+        col += tint * fres * 2.1;
+        col += vec3(1.) * smoothstep(.72, .97, R.y) * .95;
+        col += vec3(.48, .24, 1.) * smoothstep(.62, .95, R.x) * 1.2 * (1. - uRisk * .85);
+        col += tint * smoothstep(.62, .95, -R.x) * .9;
+        col += tint * max(vDisp, 0.) * 2.4;
+        col += vec3(pow(max(dot(reflect(-Ld, N), V), 0.), 64.)) * .8;
+        gl_FragColor = vec4(col, 1.); }`
+  }));
+  scene.add(orb);
+  const PN = MOBILE ? 380 : 700, pos = new Float32Array(PN * 3), rr = rng(3);
+  for (let i = 0; i < PN; i++) { const v = new THREE.Vector3(rr() - .5, rr() - .5, rr() - .5).normalize().multiplyScalar(1.5 + rr() * .8); pos.set([v.x, v.y, v.z], i * 3); }
+  const pg = new THREE.BufferGeometry(); pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const pts = new THREE.Points(pg, new THREE.PointsMaterial({ size: .055, map: GLOW, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, color: k(C.signal, 1.6) }));
+  scene.add(pts);
+  const burst = new Burst(scene, MOBILE ? 90 : 160, .07), sparks = new Sparks(scene, 24);
+  const slider = document.getElementById('orbSlider'), elS = document.getElementById('orbScore'), elV = document.getElementById('orbVerdict');
+  let target = .1, lastBand = 'clean', emitAcc = 0, sparkAcc = 0;
+  const set = (score) => {
+    target = 1 - score / 100; elS.innerHTML = score + '<small>/100</small>';
+    const band = score >= 80 ? 'clean' : score >= 50 ? 'warn' : 'bad';
+    const v = band === 'clean' ? ['CLEAN', 'var(--signal-ink)'] : band === 'warn' ? ['CAUTION', 'var(--warn)'] : ['HIGH RISK', 'var(--bad)'];
+    elV.textContent = v[0]; elV.style.color = v[1];
+    if (band !== lastBand) { if (band === 'bad') { burst.emit(new THREE.Vector3(), 70, BAD(), 3.2, .3, 1.2); window.__sfx?.('rug'); } else if (band === 'clean') { sparks.emit(new THREE.Vector3(), 12, k(funC(), 2.2), 1.5); window.__sfx?.('clean'); } else window.__sfx?.('warn'); lastBand = band; }
+    if (REDUCE) { uni.uRisk.value = target; s.draw(); }
+  };
+  slider.addEventListener('input', () => set(+slider.value));
+  document.querySelectorAll('[data-score]').forEach((b) => b.addEventListener('click', () => { slider.value = b.dataset.score; set(+b.dataset.score); }));
+  const tint = new THREE.Color(), dir = new THREE.Vector3();
+  s.update = (t, dt) => {
+    uni.uTime.value = t; uni.uRisk.value += (target - uni.uRisk.value) * Math.min(1, dt * 3 || 1); uni.uSafe.value.copy(funC());
+    const rk = uni.uRisk.value;
+    tint.copy(rk < .5 ? funC().clone().lerp(C.warn, rk * 2) : C.warn.clone().lerp(C.bad, (rk - .5) * 2));
+    pts.material.color.copy(tint).multiplyScalar(1.6);
+    pts.rotation.y += dt * (.08 + rk * .9); pts.rotation.x = Math.sin(t * .3) * .2;
+    pts.scale.setScalar(1 + (rk > .5 ? Math.sin(t * 31) * .015 * rk : 0));
+    emitAcc += dt * rk * rk * 40;
+    while (emitAcc > 1) { emitAcc -= 1; dir.set(Math.random() - .5, Math.random() - .5, Math.random() - .5).normalize().multiplyScalar(1.2); burst.emit(dir, 1, BAD(), 1.4 + rk, .1, .6); }
+    sparkAcc += dt * (1 - rk) * (1 - rk) * 3;
+    if (sparkAcc > 1) { sparkAcc = 0; sparks.emit(new THREE.Vector3(), 1, k(funC(), 2), 1.45, .22); }
+    burst.update(dt); sparks.update(dt);
+    orb.rotation.y += dt * .15;
+    const px = s.pointer.active ? s.pointer.x : 0, py = s.pointer.active ? s.pointer.y : 0;
+    orb.rotation.x += (-py * .4 - orb.rotation.x) * Math.min(1, dt * 2 || 1);
+    camera.position.x += (px * .5 - camera.position.x) * Math.min(1, dt * 2 || 1); camera.lookAt(0, 0, 0);
+  };
+  s.fit();
+  if (REDUCE) { uni.uRisk.value = target; s.draw(); }
+}
+
+/* ---------- 3. Rank coins ---------- */
+function rankCoins(host) {
+  const s = makeStage(host, { bg: '#170f30', bloom: [.7, .5, 1.0], backdrop: 3.2, fov: 28 });
+  const { scene, camera } = s;
+  const TIERS = [
+    { name: 'OBSERVER', hold: 'FREE', lvl: 1, color: 0x3a3c46, metal: .75, rough: .45, glow: 0xb3b6c4, gi: 1.1 },
+    { name: 'INFECTED', hold: '100K+', lvl: 2, color: 0x3f9a2a, metal: .9, rough: .28, glow: 0x7cff4f, gi: 1.9 },
+    { name: 'SIGNAL BEARER', hold: '1M+', lvl: 3, color: 0xdadde2, metal: 1, rough: .12, glow: 0x7cff4f, gi: 2.2 },
+    { name: 'CORE NODE', hold: '5M+', lvl: 4, color: 0x5a45a0, metal: 1, rough: .2, glow: 0xb99bff, gi: 2.4, irid: true },
+    { name: 'GHOST NODE', hold: '10M+', lvl: 5, glass: true, color: 0xe2d8ff, glow: 0x9b66ff, gi: 3 }
+  ];
+  const mapTex = (seed) => canvasTex(512, (g, S) => { const r = rng(seed); g.fillStyle = '#8f9096'; g.fillRect(0, 0, S, S); for (let rr = 8; rr < 256; rr += 2) { g.strokeStyle = `rgba(${r() < .5 ? '255,255,255' : '0,0,0'},${.03 + r() * .06})`; g.lineWidth = 1; g.beginPath(); g.arc(256, 256, rr, 0, TAU); g.stroke(); } g.strokeStyle = 'rgba(0,0,0,.45)'; g.lineWidth = 8; g.beginPath(); g.arc(256, 256, 232, 0, TAU); g.stroke(); g.lineWidth = 3; g.beginPath(); g.arc(256, 256, 200, 0, TAU); g.stroke(); });
+  const emTex = (tier) => canvasTex(512, (g) => {
+    g.fillStyle = '#000'; g.fillRect(0, 0, 512, 512); g.fillStyle = '#fff'; g.strokeStyle = '#fff';
+    g.lineWidth = 5; g.beginPath(); g.arc(256, 256, 218, 0, TAU); g.stroke();
+    for (let i = 0; i < 48; i++) { const a = i / 48 * TAU, r0 = i % 4 ? 206 : 196; g.lineWidth = 2; g.beginPath(); g.moveTo(256 + Math.cos(a) * r0, 256 + Math.sin(a) * r0); g.lineTo(256 + Math.cos(a) * 212, 256 + Math.sin(a) * 212); g.stroke(); }
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.font = '600 30px "Martian Mono", ui-monospace, monospace'; g.fillText('GL1TCH', 256, 150);
+    const w = 22, gap = 12, tot = tier.lvl * w + (tier.lvl - 1) * gap; for (let i = 0; i < tier.lvl; i++) g.fillRect(256 - tot / 2 + i * (w + gap), 196, w, w);
+    g.font = `700 ${tier.name.length > 10 ? 34 : 44}px "Martian Mono", ui-monospace, monospace`; g.fillText(tier.name, 256, 282);
+    g.font = '500 30px "Martian Mono", ui-monospace, monospace'; g.globalAlpha = .75; g.fillText(tier.hold, 256, 338); g.globalAlpha = 1;
+  });
+  const coins = [], pickable = [], sparks = new Sparks(scene, 40), flipped = new Set();
+  TIERS.forEach((tier, i) => {
+    const grp = new THREE.Group(); scene.add(grp);
+    const em = emTex(tier), mp = mapTex(11 + i);
+    let face, rim;
+    if (tier.glass) {
+      face = new THREE.MeshPhysicalMaterial({ color: tier.color, metalness: 0, roughness: .06, transmission: 1, thickness: .5, ior: 1.45, emissive: tier.glow, emissiveMap: em, emissiveIntensity: tier.gi, clearcoat: 1, attenuationColor: new THREE.Color(0x7a3cff), attenuationDistance: 1.4 });
+      rim = new THREE.MeshPhysicalMaterial({ color: tier.color, metalness: 0, roughness: .05, transmission: 1, thickness: .3, ior: 1.45, clearcoat: 1, iridescence: .8 });
+      grp.add(new THREE.Mesh(new THREE.CircleGeometry(.62, 64), new THREE.MeshBasicMaterial({ color: k(C.glitch, 2.2), transparent: true, opacity: .6, side: THREE.DoubleSide })));
+    } else {
+      face = new THREE.MeshPhysicalMaterial({ color: tier.color, metalness: tier.metal, roughness: tier.rough, map: mp, emissive: tier.glow, emissiveMap: em, emissiveIntensity: tier.gi, clearcoat: .7, clearcoatRoughness: .15, iridescence: tier.irid ? .9 : 0, iridescenceIOR: 1.6 });
+      rim = new THREE.MeshPhysicalMaterial({ color: tier.color, metalness: tier.metal, roughness: Math.max(.1, tier.rough - .08), clearcoat: .6, iridescence: tier.irid ? .9 : 0 });
+    }
+    const front = new THREE.Mesh(new THREE.CircleGeometry(.985, 96), face); front.position.z = .075;
+    const back = new THREE.Mesh(new THREE.CircleGeometry(.985, 96), face); back.position.z = -.075; back.rotation.y = Math.PI;
+    const torus = new THREE.Mesh(new THREE.TorusGeometry(.99, .082, 24, 128), rim);
+    grp.add(front, back, torus);
+    [front, back, torus].forEach((m) => { m.userData.idx = i; pickable.push(m); });
+    const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: new THREE.Color(tier.glow), transparent: true, opacity: .22 + i * .05, blending: THREE.AdditiveBlending, depthWrite: false }));
+    glow.scale.setScalar(3.2); glow.position.z = -.6; grp.add(glow);
+    coins.push({ grp, rotY: 0, home: new THREE.Vector3(), hover: 0, glow });
+  });
+  s.onResize = () => {
+    const wide = s.w / s.h > 1.7;
+    coins.forEach((c, i) => { if (wide) c.home.set((i - 2) * 2.5, 0, 0); else { const row = i < 3 ? 0 : 1, cc = row ? i - 3 : i, n = row ? 2 : 3; c.home.set((cc - (n - 1) / 2) * 2.45, row ? -1.25 : 1.25, 0); } });
+    const needW = wide ? 13 : 7.8, needH = wide ? 2.9 : 5.4, tt = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+    camera.position.set(0, 0, Math.max(needH / (2 * tt), needW / (2 * tt * camera.aspect)) + .4); camera.lookAt(0, 0, 0);
+  };
+  const ray = new THREE.Raycaster(), v2 = new THREE.Vector2();
+  let hovered = -1;
+  host.addEventListener('pointermove', () => { v2.set(s.pointer.x, s.pointer.y); ray.setFromCamera(v2, camera); const h = ray.intersectObjects(pickable, false)[0]; hovered = h ? h.object.userData.idx : -1; host.style.cursor = hovered >= 0 ? 'pointer' : ''; if (REDUCE) s.draw(); });
+  host.addEventListener('pointerleave', () => { hovered = -1; });
+  host.addEventListener('click', () => {
+    if (hovered < 0) return;
+    const c = coins[hovered]; c.rotY += Math.PI; flipped.add(hovered);
+    sparks.emit(c.grp.position, 8, k(pal() === 'gold' ? C.gold : new THREE.Color(TIERS[hovered].glow), 2.2), 1.1, .3); window.__sfx?.('coin');
+    if (flipped.size === TIERS.length) window.__ach?.('collector');
+    if (REDUCE) { c.grp.rotation.y = c.rotY; s.draw(); }
+  });
+  s.update = (t, dt) => {
+    coins.forEach((c, i) => {
+      const kk = Math.min(1, dt * 6 || 1);
+      c.hover += ((hovered === i ? 1 : 0) - c.hover) * kk;
+      c.grp.position.set(c.home.x, c.home.y + Math.sin(t * 1.1 + i) * .06, c.home.z + c.hover * .45);
+      c.grp.scale.setScalar(1 + c.hover * .07);
+      const target = c.rotY + Math.sin(t * .6 + i * 1.3) * .42 * (1 - c.hover) + c.hover * Math.sin(t * 2) * .12;
+      c.grp.rotation.y += (target - c.grp.rotation.y) * Math.min(1, dt * 4 || 1);
+      c.grp.rotation.x = Math.sin(t * .5 + i) * .06;
+      c.glow.material.opacity = (.22 + i * .05) * (1 + c.hover * .9);
+    });
+    sparks.update(dt);
+  };
+  s.fit();
+  if (REDUCE) s.draw();
+}
+
+/* ---------- 4. Signal Graph ---------- */
+function signalGraph(host, tip) {
+  const s = makeStage(host, { bg: '#130d28', bloom: [.85, .55, .95], bokeh: false, backdrop: 1.6, fov: 34 });
+  const { scene, camera } = s;
+  s.onResize = () => { camera.position.set(0, 0, s.w / s.h < 1 ? 11.5 : 9); camera.lookAt(0, 0, 0); };
+  const root = new THREE.Group(); scene.add(root);
+  const r = rng(21), counts = [7, 10, 5, 12, 8, 6, 9], RUG = 3, nodes = [], edges = [];
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  counts.forEach((cnt, h) => {
+    const y = 1 - (h / (counts.length - 1)) * 2, rad = Math.sqrt(1 - y * y), th = golden * h;
+    const hp = new THREE.Vector3(Math.cos(th) * rad, y * .8, Math.sin(th) * rad).multiplyScalar(2.5);
+    const hub = { p: hp, kind: 'hub', id: addr(r), toks: cnt, rugs: 0, hub: nodes.length }; nodes.push(hub); const hi = nodes.length - 1;
+    for (let j = 0; j < cnt; j++) {
+      const d = new THREE.Vector3(r() - .5, r() - .5, r() - .5).normalize();
+      const p = hp.clone().add(d.multiplyScalar(.5 + r() * .6));
+      const qq = r(), v = h === RUG ? (qq < .83 ? 'bad' : 'warn') : (qq < .72 ? 'ok' : qq < .9 ? 'warn' : 'bad');
+      if (v === 'bad') hub.rugs++;
+      const sc = v === 'bad' ? 5 + Math.floor(r() * 35) : v === 'warn' ? 50 + Math.floor(r() * 29) : 80 + Math.floor(r() * 18);
+      nodes.push({ p, kind: 'tok', v, sc, id: addr(r), hub: hi }); edges.push([hi, nodes.length - 1]);
+    }
+  });
+  const hubIdx = nodes.map((n, i) => n.kind === 'hub' ? i : -1).filter((i) => i >= 0);
+  [[0, 3], [3, 5], [1, 2], [4, 6], [3, 6], [2, 5]].forEach(([a, b]) => edges.push([hubIdx[a], hubIdx[b], 'fund']));
+  const inst = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 2), new THREE.MeshBasicMaterial({ color: 0xffffff }), nodes.length);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3();
+  const baseScale = (n) => n.kind === 'hub' ? .13 : .055;
+  const nodeColor = (n, f = 1) => (n.kind === 'hub' ? k(C.glitchInk, 1.9) : k(n.v === 'bad' ? C.bad : n.v === 'warn' ? C.warn : funC(), 1.7)).multiplyScalar(f);
+  nodes.forEach((n, i) => { m4.compose(n.p, q, sc.setScalar(baseScale(n))); inst.setMatrixAt(i, m4); inst.setColorAt(i, nodeColor(n)); });
+  root.add(inst);
+  const lp = [], lc = [];
+  edges.forEach(([a, b, f]) => { const A = nodes[a].p, Bp = nodes[b].p; lp.push(A.x, A.y, A.z, Bp.x, Bp.y, Bp.z); const c1 = f ? C.glitch : k(nodes[b].v === 'bad' ? C.bad : nodes[b].v === 'warn' ? C.warn : C.signal, .7); lc.push(c1.r, c1.g, c1.b, c1.r, c1.g, c1.b); });
+  const lg = new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.Float32BufferAttribute(lp, 3)); lg.setAttribute('color', new THREE.Float32BufferAttribute(lc, 3));
+  root.add(new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: .4, blending: THREE.AdditiveBlending, depthWrite: false })));
+  hubIdx.forEach((hi, j) => { const o = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: (j === RUG ? C.bad : C.glitch).clone(), transparent: true, opacity: j === RUG ? .55 : .4, blending: THREE.AdditiveBlending, depthWrite: false })); o.position.copy(nodes[hi].p); o.scale.setScalar(j === RUG ? 1.7 : 1.2); o.userData.rug = j === RUG; root.add(o); nodes[hi].sprite = o; });
+  const pulses = Array.from({ length: MOBILE ? 20 : 40 }, () => { const o = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, transparent: true, opacity: .95, blending: THREE.AdditiveBlending, depthWrite: false })); o.scale.setScalar(.15); root.add(o); return { sp: o, e: Math.floor(Math.random() * edges.length), t: Math.random(), v: .25 + Math.random() * .5 }; });
+  let rotY = 0, rotX = .25, drag = null, hov = -1, focusHub = -1;
+  host.addEventListener('pointerdown', (e) => { drag = { x: e.clientX, y: e.clientY, ry: rotY, rx: rotX }; host.setPointerCapture(e.pointerId); });
+  host.addEventListener('pointerup', () => { drag = null; });
+  host.addEventListener('pointermove', (e) => { if (drag) { rotY = drag.ry + (e.clientX - drag.x) * .008; rotX = clamp(drag.rx + (e.clientY - drag.y) * .006, -1, 1); if (REDUCE) s.draw(); } });
+  const ray = new THREE.Raycaster(), v2 = new THREE.Vector2();
+  const recolor = () => { nodes.forEach((n, i) => { const lit = focusHub < 0 || n.hub === focusHub || i === focusHub; inst.setColorAt(i, nodeColor(n, lit ? (focusHub >= 0 ? 1.5 : 1) : .18)); }); inst.instanceColor.needsUpdate = true; };
+  s.update = (t, dt) => {
+    if (!drag) rotY += dt * .09;
+    root.rotation.y += (rotY - root.rotation.y) * Math.min(1, dt * 5 || 1); root.rotation.x += (rotX - root.rotation.x) * Math.min(1, dt * 5 || 1);
+    for (const p of pulses) { p.t += dt * p.v; if (p.t > 1) { p.t = 0; p.e = Math.floor(Math.random() * edges.length); } const [a, b, f] = edges[p.e]; p.sp.position.lerpVectors(nodes[a].p, nodes[b].p, p.t); p.sp.material.color.copy(k(f ? C.glitchInk : (nodes[b].v === 'bad' ? C.bad : funC()), 1.8)); }
+    hubIdx.forEach((hi) => { const o = nodes[hi].sprite; if (o.userData.rug) { o.material.opacity = .4 + Math.sin(t * 3) * .2; o.scale.setScalar(1.6 + Math.sin(t * 3) * .2); } });
+    let h = -1;
+    if (s.pointer.active && !drag) { v2.set(s.pointer.x, s.pointer.y); ray.setFromCamera(v2, camera); const hit = ray.intersectObject(inst)[0]; if (hit) h = hit.instanceId; }
+    if (h !== hov) {
+      if (hov >= 0) { m4.compose(nodes[hov].p, q, sc.setScalar(baseScale(nodes[hov]))); inst.setMatrixAt(hov, m4); }
+      if (h >= 0) { m4.compose(nodes[h].p, q, sc.setScalar(baseScale(nodes[h]) * 1.8)); inst.setMatrixAt(h, m4); }
+      inst.instanceMatrix.needsUpdate = true; hov = h;
+      const fh = h >= 0 ? (nodes[h].kind === 'hub' ? h : nodes[h].hub) : -1; if (fh !== focusHub) { focusHub = fh; recolor(); }
+    }
+    if (h >= 0) { const n = nodes[h]; tip.hidden = false; tip.textContent = n.kind === 'hub' ? `Deployer ${n.id} · ${n.toks} token · ${n.rugs} rug` : `Token ${n.id} · ${n.v === 'bad' ? 'HIGH RISK' : n.v === 'warn' ? 'CAUTION' : 'CLEAN'} ${n.sc}/100`; tip.style.left = Math.min(s.pointer.cx, s.w - 250) + 'px'; tip.style.top = s.pointer.cy + 'px'; }
+    else tip.hidden = true;
+  };
+  window.addEventListener('palettechange', recolor);
+  s.fit();
+  if (REDUCE) s.draw();
+}
+
+/* ---------- 5. Entropy field ---------- */
+function entropy(host) {
+  const s = makeStage(host, { bg: '#120c26', bloom: [.95, .6, .9], bokeh: false, backdrop: 1.8, fov: 38 });
+  const { scene, camera } = s;
+  s.onResize = () => { const n = s.w / s.h < 1; camera.position.set(0, n ? 5.2 : 3.6, n ? 8.6 : 6.6); camera.lookAt(0, -.3, 0); };
+  const G = MOBILE ? 52 : 72, SZ = 7.4, N = G * G;
+  const pos = new Float32Array(N * 3), colr = new Float32Array(N * 3);
+  for (let i = 0; i < G; i++) for (let j = 0; j < G; j++) { const kk = (i * G + j) * 3; pos[kk] = (i / (G - 1) - .5) * SZ; pos[kk + 2] = (j / (G - 1) - .5) * SZ; }
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('color', new THREE.BufferAttribute(colr, 3));
+  const field = new THREE.Points(geo, new THREE.PointsMaterial({ size: MOBILE ? .12 : .1, map: GLOW, vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+  scene.add(field);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(.985, 1, 128), new THREE.MeshBasicMaterial({ color: k(C.signal, 2.4), transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending }));
+  ring.rotation.x = -Math.PI / 2; field.add(ring);
+  const params = (round) => { const rr = rng(round); return { b: Array.from({ length: 6 }, () => ({ x: (rr() - .5) * 5.6, z: (rr() - .5) * 5.6, a: (rr() - .35) * 1.25, s: .55 + rr() * 1.1 })), kx: (rr() - .5) * 2.4, kz: (rr() - .5) * 2.4, wa: .08 + rr() * .14 }; };
+  const height = (P, x, z, t) => { let h = 0; for (const b of P.b) { const dx = x - b.x, dz = z - b.z; h += b.a * Math.exp(-(dx * dx + dz * dz) / (b.s * b.s)); } return h + P.wa * Math.sin(P.kx * x + P.kz * z + t * .9); };
+  let prev = params(window.__round || 33184485), cur = prev, t0 = -10;
+  window.addEventListener('drandround', (e) => { prev = cur; cur = params(e.detail); t0 = performance.now() / 1000; });
+  const c = new THREE.Color();
+  s.update = (t) => {
+    const lo = k(C.glitch, .7), hi = k(funC(), 1.6);
+    const age = t - t0, e = clamp(age / 1.15, 0, 1), ease = e * e * (3 - 2 * e), collapse = 1 - .82 * Math.sin(Math.PI * ease);
+    for (let kk = 0, n = 0; n < N; n++, kk += 3) {
+      const x = pos[kk], z = pos[kk + 2];
+      let h = (height(prev, x, z, t) * (1 - ease) + height(cur, x, z, t) * ease) * collapse;
+      const d = Math.sqrt(x * x + z * z); if (age < 2.2) h += .2 * Math.sin(d * 5.5 - age * 9) * Math.exp(-age * 1.7) * (d < age * 5 ? 1 : 0);
+      pos[kk + 1] = h;
+      const hn = clamp((h + .5) / 1.4, 0, 1);
+      if (hn < .45) c.copy(lo).multiplyScalar(.35 + (.45 - hn) * 2.2); else c.copy(hi).multiplyScalar(.15 + (hn - .45) * 2.4);
+      colr[kk] = c.r; colr[kk + 1] = c.g; colr[kk + 2] = c.b;
+    }
+    geo.attributes.position.needsUpdate = true; geo.attributes.color.needsUpdate = true;
+    if (age < 1.4) { ring.scale.setScalar(.2 + age * 4); ring.material.opacity = (1 - age / 1.4) * .7; ring.material.color.copy(k(funC(), 2.4)); } else ring.material.opacity = 0;
+    field.rotation.y = t * .04 + (s.pointer.active ? s.pointer.x * .3 : 0);
+  };
+  s.fit();
+  if (REDUCE) s.draw();
+}
+
+/* ---------- 6. Rug or Not? (Glitchy host + token coin) ---------- */
+function gameScene(host) {
+  const s = makeStage(host, { bg: '#1d1240', floor: true, bloom: [.7, .5, 1.05], backdrop: 1.3 });
+  const { scene, camera } = s;
+  const g = addChar(s, 'shadow', { x: -1.25, y: .05, scale: .8, yaw: .4, seed: 77 });
+  const bub = bubble(s, g, document.getElementById('gameBubble'));
+  const coin = new THREE.Group(); scene.add(coin);
+  const fc = document.createElement('canvas'); fc.width = fc.height = 512; const fctx = fc.getContext('2d');
+  const ftex = new THREE.CanvasTexture(fc); ftex.colorSpace = THREE.SRGBColorSpace;
+  const draw = (ticker, stamp) => {
+    const x = fctx; x.fillStyle = '#000'; x.fillRect(0, 0, 512, 512); x.strokeStyle = '#fff'; x.fillStyle = '#fff';
+    x.lineWidth = 6; x.beginPath(); x.arc(256, 256, 216, 0, TAU); x.stroke();
+    for (let i = 0; i < 60; i++) { const a = i / 60 * TAU; x.lineWidth = 2; x.beginPath(); x.moveTo(256 + Math.cos(a) * 198, 256 + Math.sin(a) * 198); x.lineTo(256 + Math.cos(a) * 208, 256 + Math.sin(a) * 208); x.stroke(); }
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    const tk = ticker.replace('$', ''); x.font = `800 ${tk.length > 8 ? 52 : 64}px "Tektur", "Geist", sans-serif`; x.fillText('$' + tk, 256, stamp ? 218 : 256);
+    if (stamp) { x.font = '700 58px "Martian Mono", ui-monospace, monospace'; x.fillText(stamp, 256, 318); x.lineWidth = 5; x.strokeRect(126, 280, 260, 76); }
+    else { x.font = '500 26px "Martian Mono", ui-monospace, monospace'; x.globalAlpha = .7; x.fillText('RUG OR NOT?', 256, 330); x.globalAlpha = 1; }
+    ftex.needsUpdate = true;
+  };
+  const faceMat = new THREE.MeshPhysicalMaterial({ color: 0x2c2548, metalness: .95, roughness: .22, clearcoat: 1, emissive: new THREE.Color(0xb99bff), emissiveMap: ftex, emissiveIntensity: 2.2 });
+  const rimMat = new THREE.MeshPhysicalMaterial({ color: 0xe6e9ee, metalness: 1, roughness: .12, clearcoat: 1 });
+  const front = new THREE.Mesh(new THREE.CircleGeometry(.985, 96), faceMat); front.position.z = .08;
+  const back = new THREE.Mesh(new THREE.CircleGeometry(.985, 96), faceMat); back.position.z = -.08; back.rotation.y = Math.PI;
+  coin.add(front, back, new THREE.Mesh(new THREE.TorusGeometry(.99, .09, 24, 128), rimMat));
+  const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, color: C.glitch.clone(), transparent: true, opacity: .45, blending: THREE.AdditiveBlending, depthWrite: false })); glow.scale.setScalar(3.4); glow.position.z = -.7; coin.add(glow);
+  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 2.2), new THREE.MeshBasicMaterial({ map: SHADOW, color: 0x000000, transparent: true, opacity: .55, depthWrite: false })); shadow.rotation.x = -Math.PI / 2; scene.add(shadow);
+  const burst = new Burst(scene, 140, .07), sparks = new Sparks(scene, 30);
+  const home = new THREE.Vector3(1.3, .15, 0);
+  s.onResize = () => {
+    const narrow = s.w / s.h < 1.1;
+    if (narrow) { g.root.position.set(-.95, .45, 0); g.root.scale.setScalar(.62); home.set(1.0, .45, 0); coin.scale.setScalar(.72); camera.position.set(0, .35, 9.6); camera.lookAt(0, 0, 0); }
+    else { g.root.position.set(-1.25, .05, 0); g.root.scale.setScalar(.8); home.set(1.3, .15, 0); coin.scale.setScalar(.95); camera.position.set(0, .1, 7.7); camera.lookAt(0, -.2, 0); }
+    shadow.position.set(home.x, g.root.position.y - 2.02 * g.root.scale.x + .01, .2);
+  };
+  let spin = 0, spinV = 0, ticker = '$NEONFROG', shake = 0;
+  const neutral = () => pal() === 'gold' ? C.gold : C.glitchInk;
+  const RIGHT = ['Nice catch!', "You're a natural.", 'Signal Bearer energy.', 'Exactly. Read the flags.'], WRONG = ['Oof. Look again.', 'Glitched you!', 'Check the deployer next time.', 'The flags were right there.'];
+  window.__game3d = {
+    show(tk) { ticker = tk.t; draw(ticker, null); faceMat.emissive.copy(neutral()); glow.material.color.copy(neutral()); spinV = 22; g.lookAt(.7, -.1, 2); },
+    reveal(isRug, ok, streak) {
+      draw(ticker, isRug ? 'RUG' : 'SAFE'); faceMat.emissive.copy(isRug ? C.bad : funC()); glow.material.color.copy(isRug ? C.bad : funC()); spinV = 14;
+      const o = coin.position.clone(); burst.emit(o, isRug ? 70 : 50, isRug ? BAD() : GOOD(), 2.8, .8);
+      if (ok) { g.play(streak >= 3 ? 'spin' : pick(['laugh', 'hop', 'wave'])); sparks.emit(o, 10, k(funC(), 2.2), 1.2); bub.say(streak >= 3 ? streak + ' in a row!' : pick(RIGHT)); }
+      else { g.play('glitch'); shake = 1; bub.say(pick(WRONG)); }
+    },
+    finish(score) { g.play(score >= 6 ? 'laugh' : 'wave'); sparks.emit(coin.position, 16, k(funC(), 2.2), 1.6); bub.say(score === 8 ? 'Perfect! Ghost Node detective.' : score >= 5 ? 'Solid run. Again?' : 'Rugs are sneaky. Try again!', 3.4); }
+  };
+  draw(ticker, null);
+  s.update = (t, dt) => {
+    spinV *= Math.exp(-dt * 2.2); spin += spinV * dt;
+    const settle = Math.round(spin / TAU) * TAU; if (spinV < .8) spin += (settle + Math.sin(t * .8) * .35 - spin) * Math.min(1, dt * 3);
+    coin.rotation.y = spin; coin.position.set(home.x + (shake > 0 ? (Math.random() - .5) * .12 * shake : 0), home.y + Math.sin(t * 1.3) * .08, home.z);
+    shake = Math.max(0, shake - dt * 2);
+    glow.material.opacity = .4 + Math.sin(t * 2) * .08;
+    burst.update(dt); sparks.update(dt); bub.update();
+  };
+  s.fit();
+  setTimeout(() => bub.say('Rug or not? Your call.', 3), 600);
+  if (REDUCE) s.draw();
+}
+
+/* ---------- loop + lazy boot ---------- */
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(.05, (now - last) / 1000); last = now; const t = now / 1000;
+  for (const st of stages) { if (!st.visible || document.hidden) continue; st.update && st.update(t, dt); st.gs.step(dt); st.gs.render(); }
+  requestAnimationFrame(frame);
+}
+const lazy = (id, fn, ...args) => {
+  const el = document.getElementById(id); if (!el) return;
+  const io = new IntersectionObserver(([e]) => { if (!e.isIntersecting) return; io.disconnect(); try { fn(el, ...args); } catch (err) { console.error('3D init failed: ' + id, err); } }, { rootMargin: '500px' });
+  io.observe(el);
+};
+const boot = () => {
+  try { heroScene(document.getElementById('coreStage')); } catch (err) { console.error('3D init failed: hero', err); }
+  lazy('orbStage', riskOrb);
+  lazy('coinStage', rankCoins);
+  lazy('graphStage', signalGraph, document.getElementById('graphTip'));
+  lazy('entStage', entropy);
+  lazy('gameStage', (el) => { gameScene(el); if (window.__gameDeckFirst) window.__game3d.show(window.__gameDeckFirst); });
+  if (!REDUCE) requestAnimationFrame(frame);
+};
+(document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(boot, boot);
+</script>

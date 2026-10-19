@@ -6,7 +6,7 @@ import shared from "./shared.module.css";
 import styles from "./Tokenomics.module.css";
 
 export function Tokenomics() {
-  const { headline, body, allocations, badges, cta } = tokenomicsContent;
+  const { headline, body, launch, badges, cta } = tokenomicsContent;
 
   return (
     <section className={`${shared.section} ${shared.alt}`} id="tokenomics">
@@ -42,28 +42,28 @@ export function Tokenomics() {
         </Reveal>
 
         <Reveal className={styles.chart} delay={120}>
-          <div className={styles.bar} role="img" aria-label="Token allocation">
-            {allocations.map((a) => (
-              <span
-                key={a.label}
-                className={styles.segment}
-                style={{ width: `${a.percent}%` }}
-                title={`${a.label} ${a.percent}%`}
-              />
-            ))}
+          <div
+            className={styles.bar}
+            role="img"
+            aria-label={`${launch.label}: ${launch.openMarketPercent}% of supply`}
+          >
+            <span className={styles.segment} style={{ width: `${launch.openMarketPercent}%` }} />
           </div>
-          <ul className={styles.legend}>
-            {allocations.map((a, i) => (
-              <li key={a.label} className={styles.legendItem}>
-                <span
-                  className={styles.swatch}
-                  style={{ opacity: 1 - i * 0.16 }}
-                />
-                <span className={styles.legendLabel}>{a.label}</span>
-                <span className={styles.legendPct}>{a.percent}%</span>
+          <div className={styles.barLegend}>
+            <span className={styles.legendLabel}>{launch.label}</span>
+            <span className={styles.legendPct}>{launch.openMarketPercent}%</span>
+          </div>
+          <ul className={styles.facts}>
+            {launch.facts.map((f) => (
+              <li key={f.id} className={styles.fact} id={`launch-${f.id}`}>
+                <span className={styles.factTitle}>{f.title}</span>
+                <span className={styles.factDetail}>{f.detail}</span>
               </li>
             ))}
           </ul>
+          <Link href={launch.liveHref} className={styles.cta}>
+            See the live holder list →
+          </Link>
         </Reveal>
       </div>
     </section>
