@@ -1,0 +1,27 @@
+.stage {
+  height: 260px;
+  margin-block: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+}
+.read {
+  position: absolute;
+  z-index: 2;
+  right: 20px;
+  top: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  pointer-events: none;
+}
+.score { font-family: var(--font-display); font-size: 48px; font-weight: 800; line-height: 1; }
+.score small { font-size: 16px; color: var(--text-muted); font-weight: 500; }
+.verdict { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.12em; }
+.read[data-kind="ok"] .verdict { color: var(--signal-ink); }
+.read[data-kind="warn"] .verdict { color: var(--warn); }
+.read[data-kind="bad"] .verdict { color: var(--bad); }
+@media (max-width: 560px) {
+  .stage { height: 220px; }
+  .score { font-size: 38px; }
+}

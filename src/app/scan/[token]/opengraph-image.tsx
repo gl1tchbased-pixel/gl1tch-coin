@@ -1,4 +1,7 @@
 import { ImageResponse } from "next/og";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { verdictKind } from "@/lib/verdict";
 
 /** Branded, shareable verdict card for /scan/<chain>-<address>. Fetches the live scan
  *  and renders a 1200×630 image that unfurls on X / Telegram / Discord — turning every
@@ -50,18 +53,20 @@ export default async function Image({ params }: { params: Promise<{ token: strin
   // pick the most decision-relevant checks present, in priority order
   const PRIORITY = ["honeypot", "lp_lock", "mint_authority", "freeze_authority", "mintable", "ownership", "insiders", "liquidity", "concentration"];
   const chips = d
-    ? PRIORITY.map((k) => d!.checks.find((c) => c.key === k)).filter(Boolean).slice(0, 4) as SC[]
+    ? PRIORITY.map((k) => d!.checks.find((c) => c.key === k)).filter(Boolean).slice(0, 3) as SC[]
     : [];
-  const ai = (d?.aiVerdict || d?.bottomLine || "").slice(0, 150);
+  const ai = (d?.aiVerdict || d?.bottomLine || "").slice(0, 110);
+  // the Risk Orb, pre-rendered by scripts/orb-stills.mjs (next/og can't draw WebGL)
+  const orb = await readFile(join(process.cwd(), `assets/orb/orb-${d ? verdictKind(d.verdict) : "ok"}.png`), "base64");
 
   return new ImageResponse(
     (
       <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", background: INK, position: "relative", padding: "56px 64px", fontFamily: "monospace" }}>
         {/* scanlines */}
         <div style={{ position: "absolute", inset: 0, display: "flex", opacity: 0.16, backgroundImage: "repeating-linear-gradient(0deg, rgba(255,255,255,0.10) 0px, rgba(255,255,255,0.10) 1px, transparent 1px, transparent 4px)" }} />
-        {/* verdict aura */}
-        <div style={{ position: "absolute", right: -120, top: -120, width: 560, height: 560, display: "flex", borderRadius: 9999, background: `radial-gradient(circle, ${tone}33 0%, transparent 66%)` }} />
-        {/* HUD corners */}
+        {/* risk orb */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={`data:image/png;base64,${orb}`} width={360} height={360} alt="" style={{ position: "absolute", right: 40, top: 120 }} />        {/* HUD corners */}
         {[{ top: 32, left: 32, b: { borderTop: `2px solid ${tone}`, borderLeft: `2px solid ${tone}` } }, { top: 32, right: 32, b: { borderTop: `2px solid ${tone}`, borderRight: `2px solid ${tone}` } }, { bottom: 32, left: 32, b: { borderBottom: `2px solid ${tone}`, borderLeft: `2px solid ${tone}` } }, { bottom: 32, right: 32, b: { borderBottom: `2px solid ${tone}`, borderRight: `2px solid ${tone}` } }].map((c, i) => { const { b, ...pos } = c; return <div key={i} style={{ position: "absolute", ...pos, width: 44, height: 44, display: "flex", opacity: 0.7, ...b }} />; })}
 
         {/* top row: brand + chain */}
@@ -87,7 +92,7 @@ export default async function Image({ params }: { params: Promise<{ token: strin
 
           {/* check chips */}
           {chips.length > 0 && (
-            <div style={{ display: "flex", gap: 12, marginTop: 26, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", gap: 12, marginTop: 26, flexWrap: "wrap", maxWidth: 760 }}>
               {chips.map((c) => (
                 <div key={c.key} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 22, border: `1px solid ${CHIP_COLOR[c.status] || PAPER}66`, background: "rgba(255,255,255,0.03)", borderRadius: 9999, padding: "8px 16px" }}>
                   <div style={{ display: "flex", width: 13, height: 13, borderRadius: 9999, background: CHIP_COLOR[c.status] || PAPER, boxShadow: `0 0 10px ${CHIP_COLOR[c.status] || PAPER}88` }} />
@@ -99,9 +104,9 @@ export default async function Image({ params }: { params: Promise<{ token: strin
 
           {/* AI read snippet */}
           {ai ? (
-            <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginTop: 28, maxWidth: 1060 }}>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 12, marginTop: 28, maxWidth: 760 }}>
               <div style={{ display: "flex", width: 14, height: 14, marginTop: 8, borderRadius: 9999, background: GREEN, boxShadow: `0 0 12px ${GREEN}` }} />
-              <div style={{ display: "flex", fontSize: 26, lineHeight: 1.4, color: "rgba(245,247,248,0.92)", fontStyle: "italic" }}>{ai}{ai.length >= 150 ? "…" : ""}</div>
+              <div style={{ display: "flex", fontSize: 24, lineHeight: 1.4, color: "rgba(245,247,248,0.92)", fontStyle: "italic" }}>{ai}{ai.length >= 110 ? "…" : ""}</div>
             </div>
           ) : <div style={{ display: "flex" }} />}
         </div>

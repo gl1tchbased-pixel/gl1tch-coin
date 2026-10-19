@@ -5,6 +5,7 @@ import type { ScanResult, ScanCheck } from "@/lib/scan";
 import type { TokenCandidate } from "@/lib/scan-multichain";
 import { CHAIN_LABEL } from "@/lib/scan-multichain";
 import { fmtPrice } from "@/lib/market";
+import { RiskOrb } from "./RiskOrb";
 import styles from "./ScanTool.module.css";
 
 const VERDICT_TONE: Record<string, string> = {
@@ -178,6 +179,8 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
               <span className={styles.score}>{result.score}<span className={styles.scoreMax}>/100</span></span>
             </div>
           </div>
+
+          <RiskOrb score={result.score} verdict={result.verdict} />
 
           {/* Plain-language bottom line */}
           <div className={`${styles.bottomLine} ${VERDICT_TONE[result.verdict] || styles.vUnknown}`}>
