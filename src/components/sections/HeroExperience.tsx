@@ -166,7 +166,7 @@ export function HeroExperience({ copy }: { copy: HeroCopy }) {
         <SceneStage<CoreApi>
           load={() => import("@/lib/scenes/signalCore")}
           engine={{ background: "#22134a", bloom: [0.72, 0.55, 1.0], backdrop: 1.5 }}
-          ui={() => ({ bubble: bubbleRef.current, frame: frameRef.current, onFlag: (it: RadarItem | null) => it && setFlag(`⚠ ${label(it)} · ${String(it.verdict).toLowerCase()} ${it.score}/100`) })}
+          ui={() => ({ bubble: bubbleRef.current, frame: frameRef.current, onPing: () => sfx("ping"), onFlag: (it: RadarItem | null) => it && setFlag(`⚠ ${label(it)} · ${String(it.verdict).toLowerCase()} ${it.score}/100`) })}
           poster="/brand/glitchy-v3/glitchy-chrome-hero.png"
           posterAlt=""
           hero

@@ -14,7 +14,7 @@ const LINES = {
 
 /**
  * @param {{ stage: any, host: HTMLElement, reduced: boolean, mobile: boolean, pointer: {x:number,y:number,active:boolean},
- *   ui?: { bubble?: HTMLElement, onFlag?: (item: any) => void, frame?: HTMLElement } }} ctx
+ *   ui?: { bubble?: HTMLElement, onFlag?: (item: any) => void, onPing?: (band: string) => void, frame?: HTMLElement } }} ctx
  */
 export function mount(ctx) {
   const { stage, host, reduced, mobile, pointer, ui = {} } = ctx;
@@ -153,6 +153,8 @@ export function mount(ctx) {
         const d = (((n.az - prevLead) % TAU) + TAU) % TAU;
         if (d > span) continue;
         n.flash = 1; ping(n);
+        // a sound only for nodes that are real radar tokens (the host rate-limits it)
+        if (n.band) ui.onPing?.(n.band);
         if (n.band === 'bad') {
           n.marked = true;
           root.localToWorld(wpos.copy(n.p)); burst.emit(wpos, 12, BAD(), 1.5, 0.9); shock(n); lookAtNode(n);
