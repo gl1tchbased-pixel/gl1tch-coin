@@ -22,9 +22,11 @@ export const geist = localFont({
   fallback: ["system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
 });
 
-/** Data: labels, addresses, scores. Width axis lets dense UI run it slightly condensed. */
+/** Data: labels, addresses, scores. Width axis lets dense UI run it slightly condensed.
+ *  Not preloaded: it only sets small labels, so it shouldn't share first-paint bandwidth. */
 export const martian = localFont({
   src: "./fonts/martian-latin.woff2",
+  preload: false,
   weight: "100 800",
   variable: "--font-martian",
   display: "swap",

@@ -75,7 +75,8 @@ interface Props<Api> {
   options?: Record<string, unknown>;
   poster?: string;
   posterAlt?: string;
-  /** Above the fold: the poster loads with priority (it's the LCP candidate until 3D boots). */
+  /** Above the fold: the poster loads eagerly — but not preloaded or high priority, so it never
+   *  competes with the headline (the LCP element) for bandwidth. */
   hero?: boolean;
   className?: string;
   label: string;
@@ -239,7 +240,7 @@ function SceneStageInner<Api>(
   return (
     <div ref={wrapRef} className={[styles.stage, className ?? ""].join(" ")} role="img" aria-label={label} data-ready={ready ? "1" : "0"}>
       {poster && (
-        <Image src={poster} alt={posterAlt} fill sizes="(max-width: 768px) 100vw, 50vw" className={styles.poster} priority={!!hero} />
+        <Image src={poster} alt={posterAlt} fill sizes="(max-width: 768px) 100vw, 50vw" className={styles.poster} loading={hero ? "eager" : "lazy"} />
       )}
       <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
       {children}

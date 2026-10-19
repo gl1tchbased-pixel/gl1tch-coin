@@ -16,20 +16,13 @@ import { bls12_381 } from "@noble/curves/bls12-381.js";
 import { sha256 } from "@noble/hashes/sha2.js";
 import { hexToBytes, bytesToHex } from "@noble/hashes/utils.js";
 
-// League-of-Entropy "quicknet" chain (3s period, unchained-g1) + its published G2 public key.
-const CHAIN = "52db9ba70e0cc0f6eaf7803dd07447a1f5477735fd3f661792ba94600c84e971";
+import { fetchLatestRound, type DrandPulse } from "./drand-round";
+export { fetchLatestRound, type DrandPulse };
+
+// The quicknet chain's published G2 public key (chain hash + fetching live in drand-round.ts).
 export const DRAND_PUBKEY =
   "83cf0f2896adee7eb8b5f01fcad3912212c437e0073e911fb90022d3e760183c8c4b450b6a0a6c3ac6a5776a2d1064510d1fec758c921cc22b0e17e63aaf4bcb5ed66304de9cf809bd274ca73bab4af5a6e9c76a4bc09e76eae8991ef5ece45a";
 const DST = "BLS_SIG_BLS12381G1_XMD:SHA-256_SSWU_RO_NUL_";
-const BASE = (typeof process !== "undefined" && process.env.DRAND_URL) || "https://api.drand.sh";
-
-export interface DrandPulse {
-  round: number;
-  randomness: string;
-  signature: string;
-  verified: boolean;
-  source: "drand";
-}
 
 /** The 8-byte big-endian encoding of the round number (drand's signed pre-image).
  *  drand rounds are well under 2^53, so plain-number arithmetic is exact here. */
@@ -62,20 +55,9 @@ export function verifyDrandRound(round: number, signatureHex: string, randomness
 }
 
 /** Fetch the latest drand round and verify it. Null on failure (never downgrades). */
+/** The latest round, BLS-verified on this thread. In the browser prefer drand-browser.ts, which
+ *  verifies in a worker (a pairing check is a long main-thread task on phones). */
 export async function latestDrand(): Promise<DrandPulse | null> {
-  try {
-    const r = await fetch(`${BASE}/${CHAIN}/public/latest`, { cache: "no-store", signal: AbortSignal.timeout(8000) });
-    if (!r.ok) return null;
-    const d = (await r.json()) as { round?: number; randomness?: string; signature?: string };
-    if (typeof d.round !== "number" || typeof d.randomness !== "string" || typeof d.signature !== "string") return null;
-    return {
-      round: d.round,
-      randomness: d.randomness,
-      signature: d.signature,
-      verified: verifyDrandRound(d.round, d.signature, d.randomness),
-      source: "drand",
-    };
-  } catch {
-    return null;
-  }
+  const p = await fetchLatestRound();
+  return p ? { ...p, verified: verifyDrandRound(p.round, p.signature, p.randomness) } : null;
 }

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchMarket, fmtPrice, fmtUsd, fmtPct, pctTone, marketSourceName, type MarketSnapshot } from "@/lib/market";
-import { latestDrand, type DrandPulse } from "@/lib/quantum/drand";
+import { latestDrandVerified } from "@/lib/quantum/drand-browser";
+import type { DrandPulse } from "@/lib/quantum/drand-round";
 import { formatPulseDate } from "@/lib/quantum/freshness";
 import { isStale, ageLabel } from "@/lib/staleness";
 import { verdictKind } from "@/lib/verdict";
@@ -82,7 +83,7 @@ export function NetworkPanel() {
     const ctl = new AbortController();
     const loadMarket = () => fetchMarket(ctl.signal).then((m) => { if (alive) setMarket({ data: m, at: Date.now() }); });
     const loadBeacon = () => {
-      latestDrand().then((d) => { if (alive && d) setDrand({ data: d, at: Date.now() }); }).catch(() => {});
+      latestDrandVerified().then((d) => { if (alive && d) setDrand({ data: d, at: Date.now() }); }).catch(() => {});
       fetch("/api/quantum-core/pulse").then((r) => r.json()).then((c) => { if (alive) setCurby(c); }).catch(() => {});
     };
     loadMarket();

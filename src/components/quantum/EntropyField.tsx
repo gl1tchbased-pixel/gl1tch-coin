@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { SceneStage } from "@/components/three/SceneStage";
-import { latestDrand, type DrandPulse } from "@/lib/quantum/drand";
+import { latestDrandVerified } from "@/lib/quantum/drand-browser";
+import type { DrandPulse } from "@/lib/quantum/drand-round";
 import { isStale } from "@/lib/staleness";
 import styles from "./EntropyField.module.css";
 
@@ -21,7 +22,7 @@ export function EntropyField() {
   useEffect(() => {
     let alive = true;
     const poll = async () => {
-      const p = await latestDrand().catch(() => null);
+      const p = await latestDrandVerified().catch(() => null);
       if (!alive) return;
       tick((n) => n + 1);
       if (!p || p.round === lastRound.current) return;
