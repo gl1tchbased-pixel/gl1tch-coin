@@ -14,6 +14,7 @@ import { TICKER } from "@/content/site";
 import { CopyField } from "@/components/ui/CopyField";
 import { XIcon, TelegramIcon, InstagramIcon, RedditIcon, GlobeIcon } from "@/components/icons/SocialIcons";
 import { NoMintIcon, ShieldCheckIcon, LockIcon, CoinIcon } from "@/components/icons/Glyphs";
+import { givebackStatus, givebackCopy } from "@/lib/giveback";
 import styles from "./links.module.css";
 
 export const metadata: Metadata = {
@@ -46,8 +47,12 @@ const safety = [
   "If a deal sounds urgent or too good — it's a scam.",
 ];
 
-export default function LinksPage() {
+// The give-back wallet's status is read from the chain; refresh it hourly.
+export const revalidate = 3600;
+
+export default async function LinksPage() {
   const live = CURRENT_LAUNCH_STATUS === LAUNCH_STATUS.LIVE;
+  const giveback = givebackCopy(await givebackStatus());
 
   return (
     <section className={styles.wrap}>
@@ -148,7 +153,7 @@ export default function LinksPage() {
             Give-Back Wallet
           </h2>
           <p className={styles.cardNote}>
-            Public, on-chain, verifiable. Every disbursement is a transaction you can audit.
+            {giveback.long}
           </p>
           <CopyField label="Solana wallet" value={GIVEBACK_WALLET} />
         </div>

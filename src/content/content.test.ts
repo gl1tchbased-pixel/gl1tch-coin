@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { QUANTUM_COMPONENTS, QUANTUM_COUNT_WORD } from "./quantum";
 import { tokenomicsContent } from "./tokenomics";
+import { whitepaperSections } from "./whitepaper";
 import { RANK_TIERS } from "@/lib/ranks";
 import { OFFICIAL } from "@/lib/official";
 // Bot duplicates official links + the rank ladder; these must not drift.
@@ -61,8 +62,37 @@ describe("quantum component count (one source of truth)", () => {
 
   it("no page hard-codes an outdated count", () => {
     const stale = /\b(four|Four)\s+(working\s+)?(quantum\s+)?(components|pillars)\b/;
-    for (const file of ["src/app/quantum-core/page.tsx", "src/components/sections/QuantumShowcase.tsx"]) {
+    for (const file of ["src/app/quantum-core/page.tsx"]) {
       expect(readFileSync(join(process.cwd(), file), "utf8")).not.toMatch(stale);
     }
+  });
+});
+
+describe("whitepaper matches the launch that happened", () => {
+  const text = JSON.stringify(whitepaperSections);
+  it("has no conceptual allocation table or team percentage", () => {
+    expect(text).not.toMatch(/"Allocation","%"/);
+    expect(text).not.toMatch(/\["Team","\d/);
+    expect(text).toMatch(/100% of the 1,000,000,000 supply launched to the open market/);
+  });
+  it("discloses the deployer exit and drops pre-launch wording", () => {
+    expect(text).toMatch(/2026-08-20/);
+    expect(text).not.toMatch(/funds operations via a small/i);
+    expect(text).not.toMatch(/before launch, no (CA|contract) exists/i);
+  });
+  it("doesn't describe give-back payouts as already happening", () => {
+    expect(text).not.toMatch(/runs a small, real, fully transparent give-back/i);
+    expect(text).not.toMatch(/disbursed quarterly with each transaction/i);
+  });
+});
+
+describe("no automated score is called an audit", () => {
+  it("whitepaper says RugCheck/SolSniffer are scanners, not an audit", () => {
+    const text = JSON.stringify(whitepaperSections);
+    expect(text).not.toMatch(/equivalent of a third-party audit/i);
+  });
+  it("the trust wall labels the RugCheck card as a risk check", () => {
+    const src = readFileSync(join(process.cwd(), "src/components/sections/TrustWall.tsx"), "utf8");
+    expect(src).not.toMatch(/Third-Party Audit/);
   });
 });

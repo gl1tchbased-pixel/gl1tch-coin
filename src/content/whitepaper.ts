@@ -130,23 +130,12 @@ export const whitepaperSections: WPSection[] = [
           "No presale and no private rounds — nobody buys cheaper than the public.",
           "No team allocation and no vesting cliffs — there is no future unlock schedule to overhang the price.",
           "On the default Pump.fun launch, the bonding curve distributes supply to the open market.",
-          "The team funds operations via a small, fully-disclosed dev buy on the open curve (≤3%), at the same price as everyone else, with the wallet published publicly.",
+          "At launch the deployer made a small, disclosed buy on the open curve at the same price as everyone else. That wallet sold its full position on 2026-08-20 and bought back about 3.1% of supply on 17–19 Oct 2026; both are on-chain and visible on Solscan (the wallet is listed on the Proof page).",
         ],
       },
       {
         type: "p",
-        text: "The allocation table below is a conceptual framework that applies ONLY to a potential future self-managed liquidity migration. It is documented for transparency and does not represent a pre-mine at launch.",
-      },
-      {
-        type: "table",
-        headers: ["Allocation", "%", "Purpose"],
-        rows: [
-          ["Public Liquidity", "50%", "DEX pool (LP burned/locked)"],
-          ["Community", "20%", "Rewards, quests, give-back"],
-          ["Marketing", "15%", "Growth, listings"],
-          ["Treasury", "10%", "Runway, operations (multisig)"],
-          ["Team", "5%", "Contributors (locked/vested, disclosed)"],
-        ],
+        text: "There is no allocation table to show: 100% of the 1,000,000,000 supply launched to the open market on the bonding curve. The live holder split is on the Proof page.",
       },
     ],
   },
@@ -289,14 +278,14 @@ export const whitepaperSections: WPSection[] = [
     blocks: [
       {
         type: "p",
-        text: "GL1TCH launches on Pump.fun for a fair, fast, low-friction start, with an optional future migration to a self-managed Raydium or Meteora liquidity pool once volume and community justify deeper liquidity control.",
+        text: "GL1TCH launched on Pump.fun on 29 May 2026 for a fair, fast, low-friction start. A move to a self-managed Raydium or Meteora pool stays optional, only if volume and community ever justify deeper liquidity control.",
       },
       {
         type: "list",
         items: [
           "Fair launch: no presale, no private allocation, no hidden team wallets.",
-          "Anti-snipe posture: the contract address is revealed simultaneously across X, Telegram, and the official links page to remove insider advantage.",
-          "Transparent dev buy: any team purchase is small (≤3%), disclosed, and executed on the open curve.",
+          "Anti-snipe posture: the contract address was revealed at the same moment on X, Telegram and the official links page, so no insider got it first.",
+          "Transparent dev buy: the deployer's launch buy was small, disclosed and made on the open curve. The wallet sold its full position on 2026-08-20 and bought back about 3.1% on 17–19 Oct 2026, all on-chain.",
           "Pump.fun auto-migrates liquidity to Raydium at the bonding-curve threshold; for a self-managed pool, liquidity is explicitly burned or time-locked.",
         ],
       },
@@ -316,8 +305,8 @@ export const whitepaperSections: WPSection[] = [
           "Mint authority revoked — no new tokens can ever be created.",
           "Freeze authority revoked — no wallet can ever be frozen.",
           "Liquidity burned or time-locked — recorded with the transaction signature.",
-          "External verification via RugCheck and SolSniffer scores, published at launch (our Solana equivalent of a third-party audit).",
-          "Treasury held in a multisig (e.g. Squads), not a single founder wallet; private keys never committed or exposed.",
+          "External checks: RugCheck and SolSniffer risk scores, public and re-runnable by anyone. They are automated scanners, not an audit; a third-party audit is planned.",
+          "Custody policy: any treasury the project holds goes in a multisig (e.g. Squads), not a single founder wallet; private keys are never committed or exposed.",
         ],
       },
       {
@@ -332,14 +321,14 @@ export const whitepaperSections: WPSection[] = [
     blocks: [
       {
         type: "p",
-        text: "GL1TCH operates without a transaction tax. Operations are funded by the disclosed dev buy and, where applicable, the community/treasury allocation of a future self-managed model — never by skimming holder trades.",
+        text: "GL1TCH operates without a transaction tax and without a token allocation, so operations are never funded by skimming holder trades or by selling a reserved supply — there is none.",
       },
       {
         type: "list",
         items: [
-          "Custody: treasury funds sit in a multisig (e.g. Squads, 2-of-3), removing single-point-of-failure risk.",
+          "Custody: any treasury funds go in a multisig (e.g. Squads, 2-of-3), removing single-point-of-failure risk.",
           "Spend discipline: funds are directed to growth, listings, infrastructure, and the give-back — categories disclosed to the community.",
-          "Transparency: the operational and give-back wallets are public and verifiable on Solscan.",
+          "Transparency: the give-back wallet is public on the official links page and verifiable on Solscan; any other project wallet would be published the same way before it is used.",
           "Key management: hardware-wallet signers, no plaintext seed phrases, and an incident plan for a compromised key.",
         ],
       },
@@ -351,7 +340,7 @@ export const whitepaperSections: WPSection[] = [
     blocks: [
       {
         type: "p",
-        text: "GL1TCH runs a small, real, fully transparent give-back through a dedicated public Solana wallet that anyone can inspect on Solscan. It is funded modestly from the disclosed dev buy / community allocation, directed toward digital-literacy and open-internet / open-source initiatives chosen by the community via Signal Votes, and disbursed quarterly with each transaction signature published. Every claim is backed by an on-chain transaction — verifiability over PR.",
+        text: "GL1TCH has a dedicated, public give-back wallet that anyone can inspect on Solscan (address on the official links page; the site shows its live balance and payout count). The plan: fund it modestly, direct it to digital-literacy and open-internet / open-source initiatives chosen by the community via Signal Votes, and publish every payout's transaction signature. Until it is funded, the site says so — a give-back counts only once there is an on-chain transaction to show for it.",
       },
     ],
   },
@@ -382,12 +371,12 @@ export const whitepaperSections: WPSection[] = [
       {
         type: "list",
         items: [
-          "Get the contract address (CA) only from the official links page. Before launch, no CA exists — anyone selling is a scam.",
+          "Get the contract address (CA) only from the official links page. Anyone DMing you a different CA is a scam.",
           "Open the CA on Solscan: confirm mint authority and freeze authority both show as revoked/none.",
           "Confirm total supply equals 1,000,000,000 and that no further minting is possible.",
           "Check liquidity is burned or locked (LP burn transaction signature is published).",
           "Open the CA on RugCheck and SolSniffer and read the automated risk score.",
-          "Inspect the public treasury and give-back wallets on Solscan.",
+          "Inspect the public give-back wallet on Solscan (address on the official links page).",
         ],
       },
     ],
@@ -452,7 +441,7 @@ export const whitepaperSections: WPSection[] = [
       },
       {
         type: "p",
-        text: "Impersonation & scam policy: the only official links are those published on the official links page. Admins never DM first. Before launch, no contract exists — anyone selling $GL1TCH is a scam. Report impersonators through official channels.",
+        text: "Impersonation & scam policy: the only official links are those published on the official links page. Admins never DM first. There is one $GL1TCH contract, published on the official links page — any other address, “presale” or private sale is a scam. Report impersonators through official channels.",
       },
     ],
   },

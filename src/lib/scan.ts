@@ -46,6 +46,8 @@ async function rpc<T>(method: string, params: unknown[], signal?: AbortSignal): 
   }
   throw lastErr instanceof Error ? lastErr : new Error(`rpc ${method} failed`);
 }
+/** The same fallback-chain RPC, for other server code that reads Solana (e.g. the give-back wallet). */
+export { rpc as solanaRpc };
 
 export type CheckStatus = "pass" | "warn" | "fail" | "unknown";
 export interface ScanCheck {

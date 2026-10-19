@@ -14,6 +14,7 @@ import {
   LockIcon,
   CoinIcon,
 } from "@/components/icons/Glyphs";
+import { givebackStatus, givebackCopy } from "@/lib/giveback";
 import shared from "./shared.module.css";
 import styles from "./TrustWall.module.css";
 
@@ -55,8 +56,9 @@ function riskTone(score: number | null): "good" | "warn" | "bad" | "unknown" {
   return "bad";
 }
 
-export function TrustWall() {
+export async function TrustWall() {
   const live = CURRENT_LAUNCH_STATUS === LAUNCH_STATUS.LIVE;
+  const giveback = givebackCopy(await givebackStatus());
   const tone = riskTone(TRUST_REPORT.rugcheckScore);
   return (
     <section className={shared.section} id="trust">
@@ -91,7 +93,7 @@ export function TrustWall() {
         {TRUST_REPORT.rugcheckScore != null && (
           <Reveal className={styles.auditStrip}>
             <div className={`${styles.auditCard} ${styles[`tone_${tone}`]}`}>
-              <span className={styles.auditEyebrow}>Third-Party Audit</span>
+              <span className={styles.auditEyebrow}>Independent risk check</span>
               <div className={styles.auditRow}>
                 <div className={styles.auditScore}>
                   <span className={styles.auditScoreNum}>
@@ -145,8 +147,7 @@ export function TrustWall() {
           <Reveal className={styles.giveback}>
             <span className={styles.givebackLabel}>Give-Back Wallet</span>
             <span className={styles.givebackBody}>
-              Public, on-chain, audit-anytime. Every disbursement is a Solana
-              transaction you can read.
+              {giveback.long}
             </span>
             <a
               href={officialLinks.givebackWallet}

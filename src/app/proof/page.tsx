@@ -9,6 +9,7 @@ import {
   links as officialLinks,
   solscanAccount,
 } from "@/lib/official";
+import { givebackStatus, givebackCopy } from "@/lib/giveback";
 import styles from "./proof.module.css";
 
 export const metadata: Metadata = {
@@ -33,7 +34,7 @@ const guarantees = [
 const wallets = [
   { label: "Token contract (mint)", addr: CONTRACT_ADDRESS, href: officialLinks.explorer, note: "Token-2022 · 1B fixed supply" },
   { label: "Deployer wallet", addr: DEPLOYER_WALLET, href: solscanAccount(DEPLOYER_WALLET), note: "Who created the token — inspect its history" },
-  { label: "Give-back wallet", addr: GIVEBACK_WALLET, href: officialLinks.givebackWallet, note: "Public · every payout is a readable tx" },
+  { label: "Give-back wallet", addr: GIVEBACK_WALLET, href: officialLinks.givebackWallet, note: "" },
 ];
 
 // On-chain receipt for the deployer's full exit (39.8M GL1TCH sold, balance → 0).
@@ -48,7 +49,11 @@ const thirdParty = [
   { label: "Pump.fun", href: officialLinks.pumpfun, note: "origin" },
 ];
 
-export default function ProofPage() {
+// The give-back wallet's status is read from the chain; refresh it hourly.
+export const revalidate = 3600;
+
+export default async function ProofPage() {
+  const giveback = givebackCopy(await givebackStatus());
   return (
     <section className="container" style={{ paddingBlock: "var(--space-16)" }}>
       {/* Hero */}
@@ -94,7 +99,7 @@ export default function ProofPage() {
             <a key={w.label} href={w.href} target="_blank" rel="noopener noreferrer" className={styles.wRow}>
               <div className={styles.wMeta}>
                 <span className={styles.wLabel}>{w.label}</span>
-                <span className={styles.wNote}>{w.note}</span>
+                <span className={styles.wNote}>{w.addr === GIVEBACK_WALLET ? giveback.short : w.note}</span>
               </div>
               <span className={styles.wAddr}>{short(w.addr)} ↗</span>
             </a>
