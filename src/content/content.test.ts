@@ -96,3 +96,12 @@ describe("no automated score is called an audit", () => {
     expect(src).not.toMatch(/Third-Party Audit/);
   });
 });
+
+describe("deployer disclosure is current", () => {
+  it("states the 2026-08-20 sale and the October buyback, never a full exit", () => {
+    const text = JSON.stringify(tokenomicsContent);
+    expect(text).toMatch(/2026-08-20/);
+    expect(text).toMatch(/bought back about 3\.1%/);
+    expect(text).not.toMatch(/fully exited|entire position/i);
+  });
+});

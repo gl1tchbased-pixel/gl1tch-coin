@@ -138,15 +138,14 @@ export default async function ProofPage() {
             </p>
           </div>
           <div className={styles.flag}>
-            <span className={styles.flagTag}>⚠ &quot;100% top holder&quot;</span>
+            <span className={styles.flagTag}>⚠ Pool is the top holder</span>
             <p className={styles.flagBody}>
-              That account is the <strong>liquidity pool</strong>, not a person.
-              Right now it holds the entire supply: no wallet holds any GL1TCH —
-              including the deployer, which sold its full position on{" "}
+              That account is the <strong>liquidity pool</strong>, not a person, and it holds
+              nearly all of the supply. The deployer sold its full position on{" "}
               <a href={DEPLOYER_EXIT_TX} target="_blank" rel="noopener noreferrer">
                 2026-08-20
-              </a>
-              . Don&apos;t take our word — open the holder list and the{" "}
+              </a>{" "}
+              and bought back about 3.1% of supply on 17–19 Oct 2026. Don&apos;t take our word — open the holder list and the{" "}
               <a href={solscanAccount(DEPLOYER_WALLET)} target="_blank" rel="noopener noreferrer">
                 deployer&apos;s history
               </a>{" "}
