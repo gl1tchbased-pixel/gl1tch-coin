@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import bs58 from "bs58";
 import { verificationMessage, BOT_VERIFY_URL } from "@/lib/verify";
@@ -16,6 +16,9 @@ interface Result {
   preLaunch: boolean;
 }
 
+// The URL doesn't change while this page is open, so there is nothing to subscribe to.
+const noopSubscribe = () => () => {};
+
 const ERRORS: Record<string, string> = {
   invalid_or_expired_nonce: "This verification link expired or was already used. Run /verify in Telegram again.",
   bad_signature: "Signature did not match your wallet. Please try again.",
@@ -26,15 +29,11 @@ const ERRORS: Record<string, string> = {
 
 export function VerifyClient() {
   const { publicKey, signMessage, connected } = useWallet();
-  const [nonce, setNonce] = useState<string | null>(null);
+  // the nonce comes from the link the bot sent (?n=); the URL is the store, read after hydration
+  const nonce = useSyncExternalStore(noopSubscribe, () => new URLSearchParams(window.location.search).get("n"), () => null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const n = new URLSearchParams(window.location.search).get("n");
-    setNonce(n);
-  }, []);
 
   async function verify() {
     if (!nonce || !publicKey || !signMessage) return;

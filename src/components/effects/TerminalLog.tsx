@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import styles from "./TerminalLog.module.css";
 
 export interface LogLine {
@@ -14,29 +14,22 @@ interface TerminalLogProps {
   children?: React.ReactNode;
 }
 
+const REDUCE = "(prefers-reduced-motion: reduce)";
+const subscribeReduce = (cb: () => void) => {
+  const m = window.matchMedia(REDUCE);
+  m.addEventListener("change", cb);
+  return () => m.removeEventListener("change", cb);
+};
+
 export function TerminalLog({ lines, children }: TerminalLogProps) {
   const [count, setCount] = useState(0); // chars revealed in current line
   const [line, setLine] = useState(0); // current line index
-  const [done, setDone] = useState(false);
-  const [reduced, setReduced] = useState(false);
+  // reduced motion: the whole log at once, no typing
+  const reduced = useSyncExternalStore(subscribeReduce, () => window.matchMedia(REDUCE).matches, () => false);
+  const done = reduced || line >= lines.length;
 
   useEffect(() => {
-    const prefers =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefers) {
-      setReduced(true);
-      setLine(lines.length);
-      setDone(true);
-    }
-  }, [lines.length]);
-
-  useEffect(() => {
-    if (reduced || done) return;
-    if (line >= lines.length) {
-      setDone(true);
-      return;
-    }
+    if (done) return;
     const current = lines[line].text;
     if (count < current.length) {
       const t = setTimeout(() => setCount((c) => c + 1), 18);
@@ -47,14 +40,13 @@ export function TerminalLog({ lines, children }: TerminalLogProps) {
       setCount(0);
     }, 260);
     return () => clearTimeout(t);
-  }, [count, line, done, lines, reduced]);
+  }, [count, line, done, lines]);
 
   return (
     <div className={styles.log} aria-live="polite">
       {lines.map((l, i) => {
-        if (i > line) return null;
-        const shown =
-          reduced || i < line ? l.text : l.text.slice(0, count);
+        if (!reduced && i > line) return null;
+        const shown = reduced || i < line ? l.text : l.text.slice(0, count);
         return (
           <p key={i} className={`${styles.line} ${styles[l.kind ?? "muted"]}`}>
             <span className={styles.prompt}>›</span> {shown}

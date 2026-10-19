@@ -48,14 +48,17 @@ export function RankChecker() {
   }, [publicKey, connection, live]);
 
   useEffect(() => {
+    // read the balance from the chain whenever a wallet connects
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (connected && live) fetchBalance();
-    else setBalance(null);
   }, [connected, live, fetchBalance]);
 
-  const current: RankTier = rankForBalance(balance ?? 0);
+  // a balance read for a wallet that has since disconnected is not shown
+  const shownBalance = connected && live ? balance : null;
+  const current: RankTier = rankForBalance(shownBalance ?? 0);
   const next = nextTier(current);
   // light up this tier's coin in the 3D rank row, if there is one on the page
-  const tierIndex = connected && live && balance != null ? RANK_TIERS.findIndex((t) => t.id === current.id) : null;
+  const tierIndex = shownBalance != null ? RANK_TIERS.findIndex((t) => t.id === current.id) : null;
   useEffect(() => { publishRank(tierIndex); }, [tierIndex]);
 
   return (

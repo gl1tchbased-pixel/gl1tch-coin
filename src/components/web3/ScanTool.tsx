@@ -28,7 +28,7 @@ const EXAMPLES = [
 ];
 
 export function ScanTool({ initialAddress, initialChain }: { initialAddress?: string; initialChain?: string } = {}) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialAddress ?? "");
   const [status, setStatus] = useState<"idle" | "searching" | "scanning" | "done" | "error">("idle");
   const [candidates, setCandidates] = useState<TokenCandidate[] | null>(null);
   const [result, setResult] = useState<ScanResult | null>(null);
@@ -79,8 +79,10 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
   useEffect(() => {
     if (didInit.current || typeof window === "undefined") return;
     didInit.current = true;
-    // A /scan/<chain-address> share link passes the token directly — scan it first.
-    if (initialAddress) { setQuery(initialAddress); scanAddress(initialAddress, initialChain, false); return; }
+    // A /scan/<chain-address> share link passes the token directly — scan it first. The other
+    // permalinks live in the URL, which a static page only sees after hydration.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (initialAddress) { scanAddress(initialAddress, initialChain, false); return; }
     const sp = new URLSearchParams(window.location.search);
     const t = sp.get("t");
     if (t && t.includes(":")) {

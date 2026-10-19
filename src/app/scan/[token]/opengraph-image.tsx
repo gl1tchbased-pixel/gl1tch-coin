@@ -13,7 +13,6 @@ export const contentType = "image/png";
 export const revalidate = 300;
 
 const GREEN = "#7CFF4F";
-const PURPLE = "#7A3CFF";
 const RED = "#FF5C5C";
 const INK = "#050505";
 const PAPER = "#F5F7F8";

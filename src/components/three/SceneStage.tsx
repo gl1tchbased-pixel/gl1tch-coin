@@ -101,7 +101,8 @@ function SceneStageInner<Api>(
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const apiRef = useRef<Api | null>(null);
   const [ready, setReady] = useState(false);
-  useImperativeHandle(ref, () => apiRef.current as Api, [ready]);
+  // the handle is null until the scene has booted, then the scene's api
+  useImperativeHandle(ref, () => (ready ? apiRef.current : null) as Api, [ready]);
 
   useEffect(() => {
     const wrapEl = wrapRef.current, canvasEl = canvasRef.current;

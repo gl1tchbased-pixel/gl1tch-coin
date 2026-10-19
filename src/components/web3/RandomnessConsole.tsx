@@ -61,6 +61,8 @@ export function RandomnessConsole({ initialId }: { initialId?: string } = {}) {
   // Load a saved key + (if present) a proof id (path prop or ?id= query) → read-only verify.
   useEffect(() => {
     const saved = typeof window !== "undefined" ? window.localStorage.getItem(KEY_LS) : null;
+    // restore the saved key once after hydration (localStorage doesn't exist on the server)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (saved) setApiKey(saved);
     const url = new URL(window.location.href);
     const id = initialId ?? url.searchParams.get("id");

@@ -60,13 +60,13 @@ export function CompareTool({ initialA, initialB }: { initialA?: string; initial
   const [b, setB] = useState(initialB || "");
   const [ra, setRa] = useState<ScanResult | null>(null);
   const [rb, setRb] = useState<ScanResult | null>(null);
-  const [loading, setLoading] = useState(false);
+  // a shared /scan/compare?a=&b= link starts loading straight away
+  const [loading, setLoading] = useState(!!(initialA?.trim() && initialB?.trim()));
   const [done, setDone] = useState(false);
   const didInit = useRef(false);
 
-  const run = useCallback(async (qa: string, qb: string) => {
-    if (!qa.trim() || !qb.trim()) return;
-    setLoading(true); setDone(false); setRa(null); setRb(null);
+  // fetch both and show them; every state change happens after the network, never synchronously
+  const load = useCallback(async (qa: string, qb: string) => {
     const [x, y] = await Promise.all([resolve(qa), resolve(qb)]);
     setRa(x); setRb(y); setLoading(false); setDone(true);
     if (typeof window !== "undefined") {
@@ -76,10 +76,18 @@ export function CompareTool({ initialA, initialB }: { initialA?: string; initial
     }
   }, []);
 
+  const run = useCallback((qa: string, qb: string) => {
+    if (!qa.trim() || !qb.trim()) return;
+    setLoading(true); setDone(false); setRa(null); setRb(null);
+    void load(qa, qb);
+  }, [load]);
+
   useEffect(() => {
     if (didInit.current) return; didInit.current = true;
-    if (initialA && initialB) run(initialA, initialB);
-  }, [initialA, initialB, run]);
+    // a shared compare link: start the fetch on mount (state only changes once results arrive)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (initialA?.trim() && initialB?.trim()) void load(initialA, initialB);
+  }, [initialA, initialB, load]);
 
   const winner = ra && rb ? (
     (ra.verified !== rb.verified) ? (ra.verified ? "a" : "b")

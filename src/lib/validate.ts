@@ -7,7 +7,6 @@
 const BASE58 = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/; // Solana mint / account
 const EVM = /^0x[0-9a-fA-F]{40}$/; // EVM token / wallet
 const CHAINS = new Set(["solana", "ethereum", "bsc", "base", "arbitrum", "polygon", "optimism", "avalanche"]);
-// eslint-disable-next-line no-control-regex
 const CONTROL = new RegExp("[\u0000-\u001f\u007f]", "g");
 
 export const isSolAddress = (s: string) => BASE58.test(s);

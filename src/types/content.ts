@@ -15,12 +15,6 @@ export interface HeroContent {
   secondaryCta: CTA;
 }
 
-export interface ManifestoContent {
-  headline: string;
-  body: string;
-  cta: CTA;
-}
-
 export type LoreCategory =
   | "origin"
   | "transmission"
@@ -79,21 +73,6 @@ export interface RoadmapPhase {
   title: string;
   items: string[];
   status: PhaseStatus;
-}
-
-export interface RankDefinition {
-  id: string;
-  rank: string;
-  description: string;
-  behavior: string;
-  tier: 1 | 2 | 3 | 4 | 5;
-}
-
-export interface CommunityContent {
-  headline: string;
-  body: string;
-  ranks: RankDefinition[];
-  cta: CTA;
 }
 
 export interface FAQItem {
