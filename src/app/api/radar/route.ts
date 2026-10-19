@@ -104,7 +104,7 @@ export async function GET() {
     ranked.sort((a, b) => a.score - b.score); // riskiest first
 
     // Hourly sweep doubles as the counter's heartbeat (real scans, real catches).
-    if (scanned > 0) bumpStats({ n: scanned, flaggedN: flaggedCount });
+    if (scanned > 0) bumpStats({ n: scanned, flaggedN: flaggedCount, kind: "auto" });
 
     return NextResponse.json(
       { scanned, flagged: flaggedCount, caught: ranked.slice(0, 8), updatedAt: Date.now() },

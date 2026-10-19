@@ -2,8 +2,8 @@
 
 > GL1TCH is a free, non-custodial platform on Solana: a token rug-scanner, a cross-scan
 > deployer-reputation graph, a Know-Your-Agent trust layer, and verifiable randomness. If you are
-> an AI agent or an agent framework, you can call these APIs directly. The human tools are free;
-> higher programmatic throughput ties to holding the $GL1TCH token (via an `x-gl1tch-key` header).
+> an AI agent or an agent framework, you can call these APIs directly. The scanner and its API are
+> free for every caller (no key); only the verifiable-randomness API needs a $GL1TCH holder key.
 > Nothing here takes custody of keys or funds. Not financial advice.
 
 ## API base: https://gl1tchbased.xyz
@@ -44,13 +44,13 @@ https://gl1tchbased.xyz/agents/<chain>-<wallet>
 
 ## 2. Token safety scanner — read any token for rug risk
 
-### Scan a token (free per-IP; higher throughput with a $GL1TCH key)
+### Scan a token (free, no key; 40 requests/min per IP)
 GET /api/scan?mint=<address>&chain=solana        (Solana native, or EVM via GoPlus with chain=ethereum, etc.)
 GET /api/scan?q=<name-or-symbol>                 (search candidates across chains)
 Response: { verdict, score, checks[], meta{ deployer, deployerReputation, ... }, aiVerdict, name, symbol, chain }
 Verdicts: CLEAN | LOW RISK | CAUTION | HIGH RISK | RUG-SHAPED | UNKNOWN.
-Auth for higher rate: header `x-gl1tch-key: gk_...` (mint one at /token by proving a sustained
-$GL1TCH balance). Free tier is per-IP; keyed tier scales by holding tier. Non-custodial.
+No auth. Building an integration that needs more than 40/min? Ask at founder@gl1tchbased.xyz (free).
+Non-custodial and read-only.
 
 ### Deployer reputation (Signal Graph — cross-scan memory)
 Included in a scan's meta.deployerReputation; a deployer linked to prior rugs inherits that record.
@@ -100,6 +100,6 @@ https://gl1tchbased.xyz/quantum-core/random/<id>   (human proof page; verifies i
 
 ## Notes
 - Non-custodial throughout: no endpoint holds keys or funds, or requests a fund-moving signature.
-- Free + rate-limited per IP; programmatic depth/throughput ties to holding $GL1TCH (x-gl1tch-key).
+- Scanner, Signal Graph and agent checks: free + rate-limited per IP, no key. Randomness API: $GL1TCH holder key (x-gl1tch-key).
 - $GL1TCH: Solana (Token-2022, 0% tax, mint & freeze revoked), contract 3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump.
 - Community: https://t.me/gl1tch_infected

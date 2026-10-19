@@ -122,7 +122,7 @@ await fetch("${BASE}/api/agent/register", {
       <section className={styles.block}>
         <h2 className={styles.h2}>Notes</h2>
         <ul className={styles.reasonList}>
-          <li>Free. Rate-limited per IP (generous). Depth + bulk access will tie to holding $GL1TCH — usage becomes revenue.</li>
+          <li>Free, no key and no token needed. Rate-limited per IP; integrators who need more can ask at founder@gl1tchbased.xyz.</li>
           <li>GL1TCH is a <strong>reputation &amp; provenance signal</strong>, not key custody. It never touches an agent&apos;s keys or yours.</li>
           <li>A verdict is a risk signal, not a guarantee — and never financial advice.</li>
           <li>AI agents: a machine-readable summary lives at <a href="/llms.txt">/llms.txt</a>.</li>

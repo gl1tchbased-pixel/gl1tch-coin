@@ -5,10 +5,9 @@ import { bumpStats } from "@/lib/stats";
 import { deployerReputation, observeDeployer } from "@/lib/signal-graph";
 import { parseScanInput } from "@/lib/validate";
 import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
-import { checkApiKey } from "@/lib/apikey";
 
 /**
- * GL1TCH SCANNER API — multi-chain, read-only.
+ * GL1TCH SCANNER API — multi-chain, read-only, free for everyone (no key, no token).
  *   GET /api/scan?q=<name>            → candidate tokens across chains
  *   GET /api/scan?mint=<addr>&chain=  → full safety report (Solana native / EVM via GoPlus)
  * Server-side so the browser stays CORS-clean and RPC/keys stay hidden.
@@ -18,22 +17,21 @@ export const dynamic = "force-dynamic";
 
 const isEvm = (s: string) => /^0x[0-9a-fA-F]{40}$/.test(s);
 
+/** Requests per minute per IP. The same limit for every caller; it only guards against abuse. */
+const SCAN_RATE_PER_MIN = 40;
+
 export async function GET(req: NextRequest) {
-  // Rate limit. The free human scanner stays generous (40/min per IP). A $GL1TCH-holder API key
-  // (x-gl1tch-key) unlocks far higher programmatic/bulk throughput scaled by tier — the token's
-  // required utility: depth/rate demand becomes token demand.
   sweepBuckets();
-  const apiKey = req.headers.get("x-gl1tch-key") ?? "";
-  const keyInfo = apiKey ? await checkApiKey(apiKey) : null;
-  const rl = keyInfo
-    ? rateLimit(`scan:k:${apiKey}`, keyInfo.ratePerMin, 60_000)
-    : rateLimit(`scan:${clientIp(req)}`, 40, 60_000);
+  const rl = rateLimit(`scan:${clientIp(req)}`, SCAN_RATE_PER_MIN, 60_000);
   if (!rl.ok) {
     return NextResponse.json(
-      { error: keyInfo ? "rate limited — your tier's limit; hold more $GL1TCH for higher throughput" : "rate limited — hold $GL1TCH for a higher-rate API key: gl1tchbased.xyz/token" },
+      { error: `rate limited — ${SCAN_RATE_PER_MIN} scans/min per IP. Integrating GL1TCH and need more? Ask at founder@gl1tchbased.xyz (free).` },
       { status: 429, headers: { "retry-after": String(rl.retryAfter) } }
     );
   }
+  // Automated re-scans (the bot's Watchtower sweep) tag themselves so the public counter can
+  // report people's scans separately from automation.
+  const kind = req.headers.get("x-gl1tch-source") === "watchtower" ? "auto" : "user";
 
   // Central input validation (Phase -1): reject malformed input before any RPC/fetch (SSRF guard).
   const sp = req.nextUrl.searchParams;
@@ -108,7 +106,7 @@ export async function GET(req: NextRequest) {
     result.scannedAt = Date.now();
     // Feed the global counter (only confident reads count a "rug"), fire-and-forget.
     if (typeof result.confidence !== "number" || result.confidence >= 75) {
-      bumpStats({ flagged: result.verdict === "HIGH RISK" || result.verdict === "RUG-SHAPED" });
+      bumpStats({ flagged: result.verdict === "HIGH RISK" || result.verdict === "RUG-SHAPED", kind });
     }
     // A transient source timeout drops checks to "unknown" and degrades the verdict.
     // Don't let such a low-confidence read stick in the CDN cache for a full minute —

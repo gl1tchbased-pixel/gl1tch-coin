@@ -19,7 +19,7 @@ export interface VerifyServerOptions {
   stats?: {
     token: string;
     get: () => { scanned: number; flagged: number };
-    bump: (flagged: boolean, n?: number, flaggedN?: number) => void;
+    bump: (flagged: boolean, n?: number, flaggedN?: number, kind?: "user" | "auto") => void;
   };
   /** Signal Graph endpoints: public GET /signal/deployer (deployer track record),
    *  token-guarded POST /signal/observe (record a scan). Shares the stats token. */
@@ -115,8 +115,9 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
       req.on("end", () => {
         if (sTooLarge) return;
         try {
-          const b = sRaw ? (JSON.parse(sRaw) as { flagged?: boolean; n?: number; flaggedN?: number }) : {};
-          opts.stats!.bump(!!b.flagged, typeof b.n === "number" ? b.n : 1, typeof b.flaggedN === "number" ? b.flaggedN : 0);
+          const b = sRaw ? (JSON.parse(sRaw) as { flagged?: boolean; n?: number; flaggedN?: number; kind?: string }) : {};
+          const kind = b.kind === "user" || b.kind === "auto" ? b.kind : undefined;
+          opts.stats!.bump(!!b.flagged, typeof b.n === "number" ? b.n : 1, typeof b.flaggedN === "number" ? b.flaggedN : 0, kind);
           res.writeHead(200, { "Content-Type": "application/json", ...cors });
           res.end(JSON.stringify({ ok: true }));
         } catch {

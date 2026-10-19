@@ -2,7 +2,7 @@ import { Composer, type Context } from "grammy";
 import type { Bot } from "grammy";
 import { Connection, PublicKey } from "@solana/web3.js";
 import { config } from "../config.js";
-import { capFor } from "./index.js";
+import { WATCH_CAP } from "./index.js";
 import { walletStore, type WalletBaseline, type WalletEntry } from "./wallet-store.js";
 
 /**
@@ -74,9 +74,8 @@ walletCommands.command("watchwallet", async (ctx) => {
   if (!SOL_RE.test(addr)) { await ctx.reply("⚪ That doesn't look like a Solana wallet address. Wallet watch is Solana-only for now.", HTML); return; }
 
   const already = walletStore.has(userId, addr);
-  const cap = capFor(userId);
-  if (!already && walletStore.countByUser(userId) >= cap) {
-    await ctx.reply(`🐋 You're watching ${cap} wallets — your limit. Hold $GL1TCH + <code>/verify</code> to unlock more (up to 200).`, HTML);
+  if (!already && walletStore.countByUser(userId) >= WATCH_CAP) {
+    await ctx.reply(`🐋 You're watching ${WATCH_CAP} wallets, the limit for everyone. <code>/unwatchwallet &lt;address&gt;</code> one to make room.`, HTML);
     return;
   }
   await ctx.replyWithChatAction("typing").catch(() => {});
@@ -95,7 +94,7 @@ walletCommands.command("wallets", async (ctx) => {
   const mine = walletStore.listByUser(userId);
   if (!mine.length) { await ctx.reply("🐋 You're not watching any wallets.\n\n<code>/watchwallet &lt;address&gt;</code> to track a whale, a dev, or your own bag.", HTML); return; }
   const lines = mine.map((w) => `• <b>${esc(w.label)}</b> <code>${short(w.address)}</code> · ${Object.keys(w.baseline.tokens).length} positions`);
-  await ctx.reply(`🐋 <b>Watched wallets (${mine.length}/${capFor(userId)})</b>\n\n${lines.join("\n")}\n\n<i>I alert you on any sell / move-out.</i>`, HTML);
+  await ctx.reply(`🐋 <b>Watched wallets (${mine.length}/${WATCH_CAP})</b>\n\n${lines.join("\n")}\n\n<i>I alert you on any sell / move-out.</i>`, HTML);
 });
 
 walletCommands.command("unwatchwallet", async (ctx) => {

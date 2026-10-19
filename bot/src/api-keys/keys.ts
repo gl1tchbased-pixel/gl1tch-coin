@@ -5,9 +5,9 @@ import { randomBytes } from "node:crypto";
 /**
  * API-key issuance auth. A wallet proves ownership by signing a message with its own
  * ed25519 keypair (moves no funds, grants no access). The bot then reads the wallet's
- * sustained $GL1TCH balance and mints a rate-tiered API key — making the token a
- * REQUIRED access key for programmatic / bulk / depth API use (the free human-facing
- * scanner stays free). Non-custodial: keys gate rate/depth, never funds.
+ * sustained $GL1TCH balance and mints a rate-tiered API key for the verifiable-randomness
+ * API. The scanner, its public API and Watchtower never need a key: safety is free for
+ * everyone. Non-custodial: keys gate randomness rate/access, never funds.
  */
 
 const FRESH_MS = 10 * 60_000;

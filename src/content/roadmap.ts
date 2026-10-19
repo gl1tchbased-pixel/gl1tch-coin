@@ -46,7 +46,7 @@ export const roadmapPhases: RoadmapPhase[] = [
     phase: 5,
     title: "Scale & Entrench",
     items: [
-      "Holder-gated depth: more Watchtower slots by rank — live; expanding holder perks",
+      "Watchtower for everyone: 25 watched tokens + 25 watched wallets per user, never token-gated — live",
       "Free listings: GeckoTerminal token info — verified & live; CoinGecko in review; DexScreener as volume returns",
       "Content flywheel (fresh explainer every cycle) + transparent, seeded give-back wallet",
       "Public-API adoption (“Scanned by GL1TCH” embeds), liquidity depth & partnerships as volume justifies",
@@ -66,10 +66,10 @@ export const roadmapPhases: RoadmapPhase[] = [
   },
   {
     phase: 7,
-    title: "Make the Token Required",
+    title: "Token Utility, Safety Stays Free",
     items: [
-      "Metered API keys: the free human scanner stays free; programmatic/bulk throughput is $GL1TCH-gated, rate scaled by sustained-holding tier — live",
-      "Randomness + Allocation gated by a holder key — usage demand becomes token demand (live)",
+      "The scanner, its public API and the badge are free for every caller (per-IP rate limit only) — the token never gates safety",
+      "Randomness + Allocation gated by a holder key (live)",
       "Honest, staged value-accrual: route real B2B/randomness/API revenue to holders (fee→buyback / fee-share, GMX/Chainlink/Sky model) — designed, activates only on real revenue + third-party audit + founder approval",
       "Third-party audit of the crypto + non-custodial claims (the anonymous-team trust substitute) — planned",
     ],

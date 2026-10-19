@@ -8,7 +8,7 @@ import { ConnectWallet } from "./ConnectWallet";
 import styles from "./ApiKeyMinter.module.css";
 
 const ERRORS: Record<string, string> = {
-  insufficient_balance: "You need a sustained Infected+ balance (100K+ $GL1TCH) to mint an API key.",
+  insufficient_balance: "You need a sustained Infected+ balance (100K+ $GL1TCH) to mint a randomness API key.",
   balance_read_failed: "Couldn’t read your balance just now — try again in a moment.",
   stale: "Your signature expired. Please sign again.",
   bad_signature: "Signature did not match your wallet. Try again.",
@@ -69,8 +69,8 @@ export function ApiKeyMinter() {
             </button>
           </div>
           <p className={styles.usage}>
-            Send it as <code>x-gl1tch-key</code> on <code>/api/scan</code> for {result.ratePerMin} requests/min.
-            Hold more $GL1TCH to re-mint at a higher tier.
+            Send it as <code>x-gl1tch-key</code> on <code>/api/random/request</code> (the randomness API).
+            Scanning never needs a key.
           </p>
         </div>
       ) : (

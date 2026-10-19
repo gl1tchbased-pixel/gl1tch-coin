@@ -32,7 +32,7 @@ export const whitepaperSections: WPSection[] = [
       },
       {
         type: "p",
-        text: "Crucially, the token is engineered to be REQUIRED, not decorative. The free tools are the funnel; holding $GL1TCH is the access key to depth — higher API throughput, Signal Graph history, holder-gated randomness/allocation, and sustained-holding rank tiers. A useful product does not, by itself, make a valuable token; value accrual must be engineered separately, and this document is explicit about what is live versus planned (Section 7).",
+        text: "The token is not a paywall on safety. The scanner, its public API, the badge, Rug Radar and Watchtower are free for everyone and are never token-gated. Holding $GL1TCH unlocks community features (holder rooms and ranks) and the verifiable-randomness API. A useful product does not, by itself, make a valuable token; value accrual must be engineered separately, and this document is explicit about what is live versus planned (Section 7).",
       },
       {
         type: "p",
@@ -172,7 +172,7 @@ export const whitepaperSections: WPSection[] = [
       {
         type: "list",
         items: [
-          "Required utility — LIVE: programmatic/bulk Scanner throughput, holder-gated Randomness + Allocation, Signal Graph depth, and sustained-holding rank tiers all require holding $GL1TCH. The token is the access key, not a decoration.",
+          "Token utility — LIVE: holder-gated Randomness + Allocation, Quantum Core extras and sustained-holding rank tiers require holding $GL1TCH. Safety tools are deliberately excluded: the scanner, its API, the badge and Watchtower are free for everyone, because protection that depends on buying a token is not protection.",
           "Value-accrual mechanism — DESIGNED, STAGED, NOT LIVE: the intended path is to route real revenue (B2B risk-API, verifiable-randomness-as-a-service, agent-trust API) into token demand via a fee-to-buyback or fee-share mechanism, on the proven templates of Chainlink Payment Abstraction, Sky Smart Burn, and GMX (which pays stakers a share of real fees).",
           "The condition — EXPLICIT: any such mechanism activates ONLY once real revenue exists, after a third-party audit and founder approval. Anything that could hold user funds is deliberately deferred and founder/audit-gated. We will never claim that usage magically lifts the price — that claim is false and we do not make it.",
         ],
@@ -195,9 +195,8 @@ export const whitepaperSections: WPSection[] = [
         type: "list",
         items: [
           "Holder-gated ranks — wallet-verified tiers that gate community rooms, lore, and coordination (via site or Telegram bot).",
-          "Metered API keys — the free human Scanner stays free; programmatic/bulk throughput is $GL1TCH-gated, with the requests-per-minute rate scaling by sustained-holding tier. This is the token's required utility for integrators.",
+          "Randomness API keys — minted by proving a sustained balance; the requests-per-minute ceiling scales by tier. The scanner API needs no key: it is free and rate-limited per IP, the same for every caller.",
           "Verifiable Randomness + Allocation — requesting provably-fair randomness or running a giveaway/whitelist draw requires a holder key (see Section 10).",
-          "Signal Graph & analysis depth — deeper deployer-reputation history and higher-tier scanning are reserved for holders.",
           "Governance weight — Signal Votes are weighted by verified rank (Section 9).",
         ],
       },
@@ -205,11 +204,11 @@ export const whitepaperSections: WPSection[] = [
         type: "table",
         headers: ["Rank", "Threshold", "Unlocks"],
         rows: [
-          ["Observer", "0%", "Public archive, free Scanner, public proofs"],
-          ["Infected", "0.01% (100,000)", "Holder rooms · API key (metered) · Randomness/Allocation · Draw entry"],
-          ["Signal Bearer", "0.1% (1,000,000)", "+ Higher API rate · Seal archive · Forge · Signal Graph history"],
-          ["Core Node", "0.5% (5,000,000)", "+ Higher API rate · compare/export · multi-constraint Forge"],
-          ["Ghost Node", "1% (10,000,000)", "+ Top API rate · priority pools · inner strategy room"],
+          ["Observer", "0%", "Public archive, the full Scanner + API, Watchtower, public proofs"],
+          ["Infected", "0.01% (100,000)", "Holder rooms · Randomness API key · Allocation draws · Draw entry"],
+          ["Signal Bearer", "0.1% (1,000,000)", "+ Higher randomness rate · Seal archive · Forge"],
+          ["Core Node", "0.5% (5,000,000)", "+ Higher randomness rate · multi-constraint Forge"],
+          ["Ghost Node", "1% (10,000,000)", "+ Top randomness rate · priority pools · inner strategy room"],
         ],
       },
     ],
@@ -220,13 +219,13 @@ export const whitepaperSections: WPSection[] = [
     blocks: [
       {
         type: "p",
-        text: "The free tools are the funnel that gives the token something real to gate. All are non-custodial and live today:",
+        text: "The safety tools below are free for everyone and are never token-gated. All are non-custodial and live today:",
       },
       {
         type: "list",
         items: [
           "Scanner — a free, multi-chain token-safety scanner (web + Telegram): authority/custody checks, liquidity, deployer history, an AI verdict, verified blue-chip recognition, compare, shareable cards, and an embeddable badge.",
-          "Watchtower — continuous re-scans with token AND wallet alerts (whale / developer sells), holder-gated by rank for more slots.",
+          "Watchtower — continuous re-scans with token AND wallet alerts (whale / developer sells): 25 watched tokens and 25 watched wallets per user, the same for everyone.",
           "Signal Graph — a proprietary cross-scan database of deployer reputation: every scan compounds a track record that flags serial ruggers across tokens.",
           "Know Your Agent (KYA) — a trust layer for the AI-agent economy, mapping our score into the ERC-8004 reputation shape so agent frameworks can consume it.",
           "Proof — a public self-scan: GL1TCH holds its own token to the same standard, verifiable by anyone.",
@@ -353,9 +352,9 @@ export const whitepaperSections: WPSection[] = [
         items: [
           "Phase 1–3 — Myth, Network, Launch (DONE): brand + lore, premium site, Telegram bot + ranks framework, and a fair Token-2022 zero-tax launch with authorities revoked and a live Trust Wall.",
           "Phase 4 — Ship the Scanner (DONE): free multi-chain safety scanner (web + Telegram), Watchtower alerts, AI verdict, verified blue-chips, compare, shareable cards + embeddable badge, and the public Proof self-scan.",
-          "Phase 5 — Scale & Entrench (ACTIVE): holder-gated depth, free listings (GeckoTerminal live), the content flywheel, and public-API adoption as volume justifies.",
+          "Phase 5 — Scale & Entrench (ACTIVE): free listings (GeckoTerminal live), the content flywheel, and public-API adoption by wallets, launchpads and bots.",
           "Phase 6 — Quantum Core (DONE): Vault, Draw, Seal, Forge, and verifiable Randomness-as-a-service + provably-fair Allocation, all non-custodial with a tamper-evident public Beacon and in-browser verification.",
-          "Phase 7 — Make the Token Required (ACTIVE): metered $GL1TCH-gated API keys and holder-gated randomness are live; the honest, staged value-accrual mechanism (route real revenue to holders via fee→buyback / fee-share) and a third-party audit of the crypto + non-custodial claims are planned, activating only on real revenue + audit + founder approval.",
+          "Phase 7 — Token Utility (ACTIVE): holder-gated randomness and rank tiers are live, while every safety tool stays free; the honest, staged value-accrual mechanism (route real revenue to holders via fee→buyback / fee-share) and a third-party audit of the crypto + non-custodial claims are planned, activating only on real revenue + audit + founder approval.",
         ],
       },
     ],

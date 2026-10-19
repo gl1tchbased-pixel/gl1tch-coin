@@ -142,7 +142,8 @@ export function startVerification(bot: Bot): Server | null {
   apiKeys.load();
   randomStore.load();
 
-  // Tier → programmatic API rate (requests/min). Holding more $GL1TCH = more throughput.
+  // Tier → the rate a key reports (requests/min). The scan API no longer reads it: scanning is
+  // free and the same for everyone; keys only gate the randomness API (ceiling below).
   const RATE_BY_TIER: Record<number, number> = { 2: 120, 3: 300, 4: 600, 5: 1200 };
 
   // Randomness is heavier than a scan → a tighter per-tier ceiling (requests/min per key).
@@ -238,7 +239,7 @@ export function startVerification(bot: Bot): Server | null {
     stats: {
       token: config.stats.token,
       get: () => statsStore.get(),
-      bump: (flagged, n, flaggedN) => statsStore.bump(flagged, n, flaggedN),
+      bump: (flagged, n, flaggedN, kind) => statsStore.bump(flagged, n, flaggedN, kind),
     },
     signal: {
       token: config.stats.token,

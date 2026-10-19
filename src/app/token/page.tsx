@@ -9,7 +9,7 @@ import styles from "./token.module.css";
 export const metadata: Metadata = {
   title: "Why hold $GL1TCH — the honest investment case",
   description:
-    "A useful product doesn't make a valuable token. Here's how $GL1TCH is engineered to earn its price: required in-product utility (the access key to depth) + a planned, revenue-driven value-accrual mechanism (GMX / Chainlink model) — with radical honesty about what's live vs. planned.",
+    "A useful product doesn't make a valuable token. Here's what $GL1TCH is for: community ranks and the verifiable-randomness API (every safety tool stays free for everyone) + a planned, revenue-driven value-accrual mechanism (GMX / Chainlink model) — with radical honesty about what's live vs. planned.",
   alternates: { canonical: "/token" },
 };
 
@@ -18,7 +18,7 @@ const PILLARS = [
   {
     n: "01",
     q: "Is the token REQUIRED?",
-    a: "A token that exists mainly to speculate — no required use inside the product — is a red flag. $GL1TCH is the access key: the free tools are the funnel; holding unlocks the depth serious users need.",
+    a: "A token with no use inside the product is a red flag. $GL1TCH has one, behind a clear line: protection is free for everyone, and holding unlocks the community ranks and the verifiable-randomness API.",
   },
   {
     n: "02",
@@ -28,15 +28,14 @@ const PILLARS = [
 ];
 
 const UTILITY = [
-  { t: "Signal Graph depth", d: "Early-rug alerts + full deployer reputation history — the data moat that compounds with every scan." },
-  { t: "Risk-API access", d: "Bulk + programmatic scanning depth and rate — the CertiK-SkyInsights lane, but token-gated." },
   { t: "Verifiable randomness API", d: "Provably-fair RNG-as-a-service (drand-seeded, BLS-verifiable) for mints, raffles & allocations — the Chainlink-VRF lane, holder-gated. Plus Quantum Draw entry." },
-  { t: "Know Your Agent", d: "Agent trust scoring depth + API keys for the AI-agent economy." },
+  { t: "Holder rooms + ranks", d: "Five wallet-verified ranks open the holder rooms, lore and coordination channels on the site and in Telegram." },
   { t: "Sustained-holding tiers", d: "A 7-day average balance gate (anti-gaming) — a flash-buy unlocks nothing." },
+  { t: "Never gated: safety", d: "The scanner, its public API, the badge, Rug Radar and Watchtower are free for everyone. Protection that depends on buying a token isn't protection." },
 ];
 
 const ACCRUAL = [
-  { t: "Revenue source", d: "The risk-API + verifiable-randomness (\"Draw-as-a-service\") + agent-trust API — paid B2B usage, the proven security-sector model.", tag: "designed" },
+  { t: "Revenue source", d: "Paid B2B services on top of the free tools: verifiable randomness (\"Draw-as-a-service\"), agent-trust integrations and custom risk feeds for teams that need an SLA. The scanner and its public API stay free.", tag: "designed" },
   { t: "The mechanism", d: "Route real fees into token demand — a fee-to-buyback (Chainlink Payment Abstraction / Sky Smart Burn) or staking-for-fee-share (GMX pays stakers 27% of real fees, $134M+ distributed).", tag: "planned" },
   { t: "The honesty", d: "NOT live yet. It activates only when real revenue exists, after a third-party audit and founder approval. We will never pretend usage magically lifts the price — that claim is false and we won't make it.", tag: "explicit" },
 ];
@@ -49,7 +48,7 @@ const TRUST = [
 ];
 
 const SCORECARD = [
-  { k: "Required in-product utility", v: "Live — the access key to depth", s: "✓" },
+  { k: "In-product utility", v: "Live — ranks + randomness API; safety stays free", s: "✓" },
   { k: "Engineered value accrual", v: "Designed — activates on real revenue (fee→buyback / stake)", s: "⏳", href: "/buyback" },
   { k: "Traction", v: "Early, but published live", s: "📈", href: "/network" },
   { k: "Team", v: "Anonymous — substituted by verifiability + planned audit", s: "🔒" },
@@ -59,12 +58,12 @@ const SCORECARD = [
 // The diligence questions, answered honestly. Also emitted as FAQPage JSON-LD for rich results.
 const FAQ = [
   {
-    q: "Is holding $GL1TCH actually required, or just optional?",
-    a: "Required for depth. The free human tools (scanner, quantum pulse, beacon) stay free — that's the funnel. But programmatic/bulk API throughput, verifiable randomness + allocation, Signal Graph deployer history, and the sustained-holding rank tiers all require holding $GL1TCH. The token is the access key, not a decoration.",
+    q: "Do I need $GL1TCH to use GL1TCH?",
+    a: "Not for safety. The scanner, its public API, the badge, Rug Radar and Watchtower are free for everyone and never token-gated. Holding unlocks the verifiable-randomness API, Quantum Draw entry and the sustained-holding rank tiers (holder rooms). We drew the line there on purpose: protection that depends on buying a token isn't protection.",
   },
   {
     q: "Does value actually accrue to the token?",
-    a: "Honestly: the required-utility half is live; the value-accrual half is designed and staged, not live. The plan is to route real revenue (risk-API, randomness-as-a-service, agent-trust API) into token demand via a fee-to-buyback or fee-share mechanism, on the proven Chainlink / Sky / GMX templates. It activates ONLY on real revenue, after a third-party audit and founder approval. We never claim that usage magically lifts the price — that claim is false and we don't make it.",
+    a: "Honestly: the utility half is live; the value-accrual half is designed and staged, not live. The plan is to route real revenue (risk-API, randomness-as-a-service, agent-trust API) into token demand via a fee-to-buyback or fee-share mechanism, on the proven Chainlink / Sky / GMX templates. It activates ONLY on real revenue, after a third-party audit and founder approval. We never claim that usage magically lifts the price — that claim is false and we don't make it.",
   },
   {
     q: "The team is anonymous — why should an investor trust it?",
@@ -76,7 +75,7 @@ const FAQ = [
   },
   {
     q: "What is live today versus planned?",
-    a: "Live: the multi-chain scanner, Signal Graph, Know Your Agent, the full Quantum Core (Vault, Draw, Seal, Forge), verifiable Randomness + provably-fair Allocation, metered $GL1TCH-gated API keys, and a tamper-evident public Beacon. Planned (founder + audit-gated): the fee-to-holder value-accrual mechanism and a third-party audit.",
+    a: "Live: the multi-chain scanner, Signal Graph, Know Your Agent, the full Quantum Core (Vault, Draw, Seal, Forge), verifiable Randomness + provably-fair Allocation (holder API keys), and a tamper-evident public Beacon. Planned (founder + audit-gated): the fee-to-holder value-accrual mechanism and a third-party audit.",
   },
   {
     q: "How is the randomness provably fair?",
@@ -126,10 +125,11 @@ export default function TokenPage() {
 
       <section className={styles.section}>
         <span className={styles.kicker}>Pillar 01 · live today</span>
-        <h2 className={styles.h2}>The token is the access key.</h2>
+        <h2 className={styles.h2}>What holding unlocks, and what it never will.</h2>
         <p className={styles.body}>
-          The scanner, the quantum pulse, the beacon — all free. That&apos;s the funnel. Holding
-          $GL1TCH unlocks the <strong>depth</strong> that serious users and integrators need:
+          Every safety tool (the scanner, its API, the badge, Rug Radar, Watchtower) is free for
+          everyone and <strong>never token-gated</strong>. Holding $GL1TCH unlocks community and
+          builder extras:
         </p>
         <div className={styles.grid}>
           {UTILITY.map((u) => (
@@ -143,12 +143,11 @@ export default function TokenPage() {
         <div className={styles.mintBox}>
           <div>
             <span className={styles.mintTag}>live now</span>
-            <h3 className={styles.cardT}>Mint your API key</h3>
+            <h3 className={styles.cardT}>Mint a randomness API key</h3>
             <p className={styles.cardD}>
-              The free human scanner stays free. But programmatic / bulk throughput is token-gated:
-              prove a sustained $GL1TCH balance and mint a rate-tiered key (higher tier → more
-              requests/min). This is the token&apos;s required utility, live — usage demand becomes
-              token demand.
+              Prove a sustained $GL1TCH balance and mint a rate-tiered key for the
+              verifiable-randomness API (higher tier → more requests/min). The scanner API needs no
+              key: it&apos;s free for everyone.
             </p>
           </div>
           <ApiKeyMinter />
@@ -159,7 +158,7 @@ export default function TokenPage() {
         <span className={styles.kicker}>Holder tiers</span>
         <h2 className={styles.h2}>Five tiers, minted.</h2>
         <p className={styles.body}>
-          Your sustained balance resolves to one of five ranks; each unlocks more depth. The thresholds are the
+          Your sustained balance resolves to one of five ranks; each opens more community rooms and a higher randomness rate. The thresholds are the
           same ones the bot and the API-key minter check. <Link href="/ranks">Verify your rank →</Link>
         </p>
         <RankCoins />

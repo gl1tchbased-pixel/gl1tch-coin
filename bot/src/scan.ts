@@ -68,25 +68,28 @@ function format(r: ScanData, more: number): string {
   return head + verdict + bottom + ai + checks + risks + meta + moreLine + link + foot;
 }
 
-const getJson = async <T>(url: string): Promise<T> => (await fetch(url).then((r) => r.json())) as T;
+const getJson = async <T>(url: string, headers?: Record<string, string>): Promise<T> =>
+  (await fetch(url, { headers }).then((r) => r.json())) as T;
 
 /**
  * Fetch the raw scan result for a name or address (or null if nothing usable).
- * Shared by the /scan command, the auto-scanner and the Watchtower sweep.
+ * Shared by the /scan command, the auto-scanner and the Watchtower sweep. `source` tags
+ * automated re-scans ("watchtower") so the public counter can keep them apart from people's scans.
  */
-export async function getScanData(query: string, chain?: string): Promise<(ScanData & { candidates?: Array<{ address: string; chain: string }> }) | null> {
+export async function getScanData(query: string, chain?: string, source?: "watchtower"): Promise<(ScanData & { candidates?: Array<{ address: string; chain: string }> }) | null> {
   const q = query.trim();
   if (!q) return null;
+  const headers = source ? { "x-gl1tch-source": source } : undefined;
   let data: ScanData & { candidates?: Array<{ address: string; chain: string }> };
   if (isAddr(q)) {
     const chainQ = chain ? `&chain=${encodeURIComponent(chain)}` : "";
-    data = await getJson(`${API}?mint=${encodeURIComponent(q)}${chainQ}`);
+    data = await getJson(`${API}?mint=${encodeURIComponent(q)}${chainQ}`, headers);
   } else {
-    const s = await getJson<{ candidates?: Array<{ address: string; chain: string }> }>(`${API}?q=${encodeURIComponent(q)}`);
+    const s = await getJson<{ candidates?: Array<{ address: string; chain: string }> }>(`${API}?q=${encodeURIComponent(q)}`, headers);
     const list = s.candidates || [];
     if (!list.length) return null;
     const top = list[0];
-    data = await getJson(`${API}?mint=${top.address}&chain=${top.chain}`);
+    data = await getJson(`${API}?mint=${top.address}&chain=${top.chain}`, headers);
     data = { ...data, candidates: list };
   }
   if (!data || data.error || !data.verdict) return null;
