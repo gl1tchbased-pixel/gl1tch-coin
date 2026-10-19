@@ -12,13 +12,14 @@
 
 ## 0. Why this document exists
 
-Verified deep-research (see `pump-pack/INVESTOR-WHY-BUY-RESEARCH.json`) established two hard truths:
+Verified deep-research (internal research notes, not in this repo) established two hard truths:
 
 1. **A useful product ≠ a valuable token.** Value accrual must be *engineered* separately.
 2. **"Usage raises the price via fees" is false** unless the fee→holder link is explicitly built.
 
-GL1TCH has now shipped the **required-utility** half (metered API keys, holder-gated
-randomness/allocation, Signal Graph depth, sustained-holding tiers — all live). What remains is
+GL1TCH has shipped the **utility** half (holder-gated randomness/allocation and
+sustained-holding rank tiers — live). Safety is deliberately outside it: since 2026-10-20 the
+scanner, its API, the badge and Watchtower are free for everyone and never token-gated. What remains is
 the **value-accrual** half and the **anonymous-team trust substitute** (a real audit). Both are
 custody-adjacent or high-consequence, so they are gated. This package makes them decision-ready.
 
@@ -48,8 +49,9 @@ The lesson: pick ONE honest mechanism, drive it from **real** revenue, and make 
 
 Value accrual cannot precede revenue. The candidate revenue lines, in order of realism:
 
-1. **Risk-API / Scanner API** — paid B2B tiers above the free + holder-gated tiers (the CertiK
-   SkyInsights model). Highest-realism; the product already exists.
+1. **Risk feeds / SLA tier** — paid B2B service (custom feeds, uptime SLA) on top of the free
+   public scanner API, which stays free (the CertiK SkyInsights model). Highest-realism; the
+   product already exists.
 2. **Randomness-as-a-service** — paid throughput above the holder-gated free tier (Chainlink-VRF
    charges per request). Real but small market (~$4–10M/yr sector-wide).
 3. **Agent-trust (KYA) API** — reputation lookups for the agent economy. Emerging.
@@ -188,7 +190,7 @@ non-custodial claims**, plus any Part-A contract if V2 proceeds.
 ### B.5 Pre-audit checklist (make the engagement cheap + fast)
 
 - [ ] Freeze a commit hash for the audited surface (tag it).
-- [ ] Provide this document + `gl1tch-quantum-core-spec.md` as the spec of record.
+- [ ] Provide this document + `docs/quantum-core-spec.md` as the spec of record.
 - [ ] Point to the locked parity/verification test vectors (bot + site suites) as the executable
       spec of correctness.
 - [ ] Enumerate every wallet-signature call-site and show each is ownership-proof only (I1).

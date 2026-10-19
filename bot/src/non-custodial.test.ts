@@ -8,7 +8,7 @@ import { agentRegMessage } from "./agent-trust/register.js";
  * GL1TCH ever asks a wallet to SIGN must (a) state plainly that it moves no funds and grants
  * no access, and (b) never contain a fund-moving verb. If a future change asks users to sign
  * a transfer/approval, this suite fails — which is exactly the guardrail the audit-readiness
- * package (§B.3, I1) requires. (See gl1tch-value-accrual-and-audit-readiness.md.)
+ * package (§B.3, I1) requires. (See docs/value-accrual-and-audit-readiness.md.)
  */
 
 const MESSAGES: Array<{ name: string; text: string }> = [

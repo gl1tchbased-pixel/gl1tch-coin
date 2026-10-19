@@ -1,114 +1,135 @@
-# GL1TCH — crypto risk intelligence you can verify yourself
+# GL1TCH — scan before you buy
 
-**A free, non-custodial risk-intelligence platform on Solana — with a required-utility token.**
-GL1TCH reads every rug, remembers every deployer, scores every AI agent, and runs
-provably-fair randomness anyone can verify. The human-facing tools are free; holding **$GL1TCH**
-unlocks programmatic depth. Nothing here ever takes custody of your funds or your keys.
+**A free, open-source token safety scanner for Solana (plus 15 EVM chains).** Paste any token
+and get a 0–100 risk score with a plain-language reason for every check, in seconds. Read-only:
+it never asks for a signature, never touches a wallet, and costs nothing to use.
 
-The team is anonymous — so we don't ask you to trust us. **Everything is verifiable:** the code is
-open, every wallet is public, and every draw, random result, and risk verdict is recomputable on
-your own device.
+- Scanner: <https://gl1tchbased.xyz/scan>
+- Rug Radar (live feed of risky new launches): <https://gl1tchbased.xyz/radar>
+- Proof page (we run the scanner on our own token): <https://gl1tchbased.xyz/proof>
+- Telegram bot: scan from chat, plus Watchtower alerts — <https://t.me/gl1tch_infected>
+- License: [MIT](./LICENSE)
 
-- 🌐 Site: https://gl1tchbased.xyz
-- 🛡 Free token scanner: https://gl1tchbased.xyz/scan
-- ⚛️ Quantum Core: https://gl1tchbased.xyz/quantum-core
-- 🎲 Verifiable randomness: https://gl1tchbased.xyz/quantum-core/random
-- 🪪 Know Your Agent: https://gl1tchbased.xyz/agents
-- 💹 Why hold $GL1TCH (honest investment case): https://gl1tchbased.xyz/token
-- 📄 Whitepaper: https://gl1tchbased.xyz/whitepaper
-- 💬 Telegram: https://t.me/gl1tch_infected
+## Why it exists
 
----
+Most tokens launched on Pump.fun collapse shortly after launch (Solidus Labs counted 98.6% of
+7M+ tokens from Jan 2024 to Mar 2025 as pump-and-dumps). The warning signs sit in on-chain
+state that buyers can't read: a live mint authority, a freeze authority, a hidden Token-2022
+transfer fee, unlocked liquidity, bundled sniper wallets, a deployer with a history of rugs.
+GL1TCH reads that state, explains it in plain words, and gives it away for free.
 
-## What GL1TCH ships (all live, all non-custodial)
+## What every Solana scan checks
 
-| Product | What it does |
+| Check | What it catches |
 | --- | --- |
-| **Scanner** | Free multi-chain token-safety scanner (web + Telegram): authority/custody checks, liquidity, deployer history, an AI verdict, verified blue-chips, compare, shareable cards + embeddable badge. |
-| **Signal Graph** | Proprietary cross-scan deployer-reputation memory — every scan compounds a track record that flags serial ruggers across tokens. |
-| **Know Your Agent (KYA)** | Trust layer for the AI-agent economy: identity + on-chain provenance & reputation for any agent wallet, mapped to the ERC-8004 shape. |
-| **Quantum Core** | Five working, honestly-labelled components: **Vault** (readiness score), **Draw** (NIST-CURBy verifiable quantum randomness), **Seal** (X25519 + ML-KEM-768 hybrid post-quantum encryption), **Forge** (quantum-inspired optimizer), **Randomness** (below). |
-| **Verifiable Randomness + Allocation** | Provably-fair RNG-as-a-service seeded by the drand beacon — commit to a future round, reveal on maturity, verify in your browser. Run provably-fair giveaways/whitelists with a shareable proof. |
+| Mint authority | Can someone still print new supply? |
+| Freeze authority | Can your wallet be frozen so you can't sell? |
+| Transfer tax | Hidden Token-2022 transfer-fee extensions |
+| Liquidity | Depth, and fabricated depth (huge pool, no trades) |
+| LP locked / burned | Can the dev pull the pool? |
+| Top holder / insiders | Concentration and bundled or insider wallets |
+| Deployer | The launching wallet's track record across tokens |
+| Deployer holdings | How much of the supply the deployer holds right now (dump risk, or exited) |
+| Metadata | Can the name and image still be swapped? |
+| RugCheck | An independent second opinion |
 
-## Verify, don't trust
+EVM chains use GoPlus for honeypot, sell tax, mintable, ownership, pausable and blacklist checks.
+Every scan also feeds the **Signal Graph**, a cross-scan memory of deployers, so a serial
+rugger's next token is flagged. Scoring changes are logged in
+[`docs/scoring-changelog.md`](./docs/scoring-changelog.md).
 
-This is the whole point, and the anonymous-team trust substitute:
-
-- **Provably-fair draws.** A winner is a pure function of a *pre-committed* frozen entry list and a
-  *future* beacon value nobody can know at commit time: `winner = sha256(pulse ‖ merkleRoot) mod n`.
-  Recompute it yourself from public data.
-- **Verifiable randomness.** Every result ships with its drand round + BLS signature. The site
-  BLS-verifies the seed **and** re-derives the output in *your* browser — zero trust in GL1TCH.
-- **Two independent randomness sources.** NIST CURBy (quantum) for reward draws; drand
-  (threshold-BLS) for the reward-free Randomness API — fully verified client-side.
-- **Tamper-evident Beacon.** Every event is hash-chained; any edit or deletion breaks the chain,
-  and the chain is recomputed in your browser.
-- **Executable spec of correctness.** The two independent implementations (site + bot) are held
-  byte-identical by locked test vectors, and the security invariants (non-custodial, unbiased
-  fairness, tamper-evidence) are enforced as tests. See
-  [`gl1tch-value-accrual-and-audit-readiness.md`](./gl1tch-value-accrual-and-audit-readiness.md).
-
-## Integrate it — free, one call each
-
-**Check an AI agent before it transacts** (no key, no auth):
+## Use it from your own app (free, no key)
 
 ```js
-const r = await fetch(`https://gl1tchbased.xyz/api/agent/check?address=${agentWallet}&chain=solana`);
-const trust = await r.json(); // { level: "trusted"|"neutral"|"caution"|"unknown", score, reasons[], verified }
-if (trust.level === "caution") block(trust.reasons[0]);
+// Full safety report for one token
+const r = await fetch("https://gl1tchbased.xyz/api/scan?mint=<address>&chain=solana");
+const report = await r.json(); // { verdict, score, confidence, checks[], meta, bottomLine, ... }
+
+// Search by name or symbol across chains
+const s = await fetch("https://gl1tchbased.xyz/api/scan?q=bonk").then((x) => x.json()); // { candidates }
 ```
 
-**Scan a token** (free per-IP; higher throughput with a $GL1TCH-gated key via `x-gl1tch-key`):
+Verdicts: `CLEAN`, `LOW RISK`, `CAUTION`, `HIGH RISK`, `RUG-SHAPED`, `UNKNOWN`. The API is rate
+limited per IP (40 requests/min), the same for every caller. If you are building an integration
+that needs more, ask at [founder@gl1tchbased.xyz](mailto:founder@gl1tchbased.xyz); it stays free.
 
-```js
-const r = await fetch(`https://gl1tchbased.xyz/api/scan?mint=${mint}&chain=solana`);
-const report = await r.json(); // { verdict, score, checks[], meta, aiVerdict, ... }
-```
-
-**Run provably-fair randomness / a giveaway** (holder-gated — mint a key at `/token`):
-
-```js
-// 1) commit
-const req = await fetch("https://gl1tchbased.xyz/api/random/request", {
-  method: "POST",
-  headers: { "content-type": "application/json", "x-gl1tch-key": "gk_…" },
-  body: JSON.stringify({ labels: ["alice", "bob", "carol"], winners: 1 }), // or { spec: {...} }
-}).then((x) => x.json()); // → { id, status:"pending", targetRound, availableInMs }
-
-// 2) reveal (public — anyone can read + verify)
-const res = await fetch(`https://gl1tchbased.xyz/api/random/${req.id}`).then((x) => x.json());
-// → { status:"fulfilled", winners:[…], proof:{ round, randomness, signature } }
-```
-
-Embed a live "Provably fair by GL1TCH" badge, or a token-scan badge:
+Embed a live badge that links to the full report:
 
 ```html
-<img src="https://gl1tchbased.xyz/api/random/badge?id=<id>" alt="Provably fair by GL1TCH" height="42" />
+<a href="https://gl1tchbased.xyz/scan/solana-<address>">
+  <img src="https://gl1tchbased.xyz/api/badge?t=solana-<address>" alt="Scanned by GL1TCH" />
+</a>
 ```
 
-## Repo layout
+Machine-readable docs for agents: <https://gl1tchbased.xyz/llms.txt>.
 
-- `src/` — Next.js (App Router) site: scanner, Rug Radar, Signal Graph, Agent Trust, Quantum Core,
-  Verifiable Randomness + Allocation, the investment case (`/token`), whitepaper, learn center.
-- `bot/` — grammY Telegram bot + durable stores (Signal Graph, Proof-of-Signal, agent registry,
-  Quantum Core Draw executor, Randomness service, metered API keys) on a Railway volume — no DB.
-- `remotion/` — brand video pipeline.
-- `gl1tch-quantum-core-spec.md`, `gl1tch-value-accrual-and-audit-readiness.md` — specs of record.
+## How it's built
 
-## The token — required utility, honest value accrual
+```mermaid
+flowchart LR
+  U[Browser · Telegram · API caller] --> S["/api/scan (Next.js on Vercel)"]
+  S --> RPC[Solana RPC: mint, authorities, holders, deployer balance]
+  S --> RC[RugCheck: LP lock, insiders, deployer]
+  S --> MK[DexScreener / GeckoTerminal: market]
+  S --> GP[GoPlus: EVM checks]
+  S --> BOT[(Bot on Railway: Signal Graph, counters, Watchtower)]
+  BOT --> TG[Telegram alerts]
+```
 
-$GL1TCH is engineered to be *required*, not decorative: the free human tools are the funnel;
-holding unlocks programmatic/bulk API throughput, verifiable randomness + allocation, Signal Graph
-history, and sustained-holding rank tiers. A useful product doesn't automatically make a valuable
-token — so value accrual is a separate, **engineered and honestly-staged** pillar (route real
-revenue to holders via a fee→buyback / fee-share mechanism, activating only on real revenue + a
-third-party audit). We never claim "usage magically pumps the price." See
-[`/token`](https://gl1tchbased.xyz/token) for the radically-honest investment case.
+| Path | What lives there |
+| --- | --- |
+| `src/lib/scan.ts`, `src/lib/scan-multichain.ts` | The scan engine: checks, weights, verdicts |
+| `src/app/api/` | Public API routes (scan, badge, radar, stats, agent check) |
+| `src/app/` | The website (Next.js App Router) |
+| `bot/` | Telegram bot, Watchtower sweeps, Signal Graph and counters, stored on a Railway volume (no database) |
+| `docs/` | Threat model, risk register, scoring changelog, Signal Graph schema, specs |
+| `remotion/`, `e2e/` | Video pipeline and browser automation (not needed to run the scanner) |
 
-## Honest positioning
+## Run it locally
 
-GL1TCH is a **reputation, provenance & verifiability layer** — never key custody, never a
-fund-moving signature, never invented metrics. Verdicts and scores are risk signals, not
-guarantees. Nothing here is financial advice, and $GL1TCH is a high-risk, internet-native asset.
+Requires Node.js 22.
 
-$GL1TCH — Solana · `3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump` · Token-2022, 0% tax · mint & freeze revoked · fixed 1B supply.
+```bash
+npm install
+cp .env.example .env.local   # optional: a private Solana RPC in SCAN_RPC; public RPCs work for light use
+npm run dev                  # http://localhost:3000/scan
+npm test                     # unit tests (vitest)
+
+cd bot && npm install && npm test   # the Telegram bot has its own package and tests
+```
+
+CI type-checks and tests the site and the bot on every push, and a security workflow runs a
+secret scan, a dependency audit and a check that no code ever requests a fund-moving or
+approval signature.
+
+## Security and honesty
+
+- Read-only by design. The scanner and bot never request a transaction signature. See
+  [`SECURITY.md`](./SECURITY.md) to report a vulnerability, and
+  [`docs/threat-model.md`](./docs/threat-model.md).
+- A verdict is a risk signal, not a guarantee, and never financial advice.
+- Public numbers come with their caveats: the scan counter's all-time total includes automated
+  Rug Radar sweeps; since 20 Oct 2026 people's scans and automated ones are counted separately
+  (`/api/stats` returns `user`, `auto` and `splitSince`).
+
+## The $GL1TCH token (disclosure)
+
+The project also has a community token, `$GL1TCH`
+(`3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump`), launched on Pump.fun on 29 May 2026:
+Token-2022, mint and freeze authority revoked, 0% tax, fixed 1B supply, liquidity locked.
+
+- **Safety is never token-gated.** The scanner, its API, the badge, Rug Radar and Watchtower
+  are free for everyone. Holding the token only unlocks community ranks and the
+  verifiable-randomness API.
+- **Deployer wallet:** sold its full position on 2026-08-20, then bought back about 3.1% of
+  supply on 17–19 Oct 2026. The live balance and both receipts are on the
+  [Proof page](https://gl1tchbased.xyz/proof).
+- The market is very thin. Grant funding is never used for the token, buybacks or liquidity.
+
+More: [whitepaper](https://gl1tchbased.xyz/whitepaper) ·
+[token page](https://gl1tchbased.xyz/token) ·
+[Quantum Core and verifiable randomness](https://gl1tchbased.xyz/quantum-core).
+
+## Contributing
+
+Issues and pull requests are welcome. See [`CONTRIBUTING.md`](./CONTRIBUTING.md).

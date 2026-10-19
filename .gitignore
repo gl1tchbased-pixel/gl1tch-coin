@@ -75,3 +75,23 @@ e2e/railway/out/rw-token.txt
 e2e/verify/.profile*
 e2e/verify/out/
 audit.json
+
+# Kept out of the public repo: local Claude Code settings (held live API tokens until
+# 2026-10-20 — rotate anything that was ever in it), marketing kits, founder playbooks
+# and old drafts. They stay on the founder's machine.
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+/pump-pack/
+/archive/
+/test-results/
+/GL1TCH_Founder_OS_v3.md
+/GL1TCH_Claude_Code_Prompt_Pack_v2.md
+/GL1TCH_Website_Wireframe_v2.md
+/LAUNCH_GUIDE.md
+/gl1tch-audit-outreach-kit.md
+/gl1tch-buyback-runbook.md
+/Claude_Code_AI_Video_Studio_GTX1060.md
+
+# example env files carry no secrets and document setup
+!.env.example
+!bot/.env.example

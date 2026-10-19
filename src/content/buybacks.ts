@@ -1,6 +1,6 @@
 /**
  * Public buyback→burn ledger data. Each entry is a RECORD OF A REAL, ALREADY-EXECUTED
- * on-chain event (see gl1tch-buyback-runbook.md) — never a promise or a projection.
+ * on-chain event (per the buyback runbook, which activates only on real revenue) — never a promise or a projection.
  *
  * CURRENT STATE: empty. Value accrual is designed and staged, NOT live — it activates only
  * once real revenue exists (≥3 months) + a third-party audit + founder approval. The page

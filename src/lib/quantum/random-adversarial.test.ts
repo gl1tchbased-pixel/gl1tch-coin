@@ -3,7 +3,7 @@ import { deriveResult, verifyRandomResult, requestIdOf, canonicalCommitment, lis
 
 /**
  * Adversarial / invariant suite — codifies the security properties the audit-readiness
- * package (gl1tch-value-accrual-and-audit-readiness.md, §B.3) says must hold, so they are
+ * package (docs/value-accrual-and-audit-readiness.md, §B.3) says must hold, so they are
  * test-enforced rather than merely claimed. Deterministic (fixed seeds/ids, no Math.random).
  */
 

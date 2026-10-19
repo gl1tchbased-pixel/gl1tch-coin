@@ -1,7 +1,7 @@
 name: CI
 
-# Lean, reliable type-check gate. The real production build/deploy runs on Vercel
-# (site) and the Deploy-bot workflow (Railway), so CI just keeps types honest.
+# Type-check and unit-test gate. The real production build/deploy runs on Vercel
+# (site) and the Deploy-bot workflow (Railway), so CI keeps types and logic honest.
 on:
   push:
     branches: [main]
@@ -19,5 +19,11 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Type-check site
         run: npx tsc --noEmit
+      - name: Test site
+        run: npm test
+      - name: Install (bot)
+        run: cd bot && npm install --no-audit --no-fund
       - name: Type-check bot
-        run: cd bot && npm install --no-audit --no-fund && npx tsc --noEmit
+        run: cd bot && npx tsc --noEmit
+      - name: Test bot
+        run: cd bot && npm test
