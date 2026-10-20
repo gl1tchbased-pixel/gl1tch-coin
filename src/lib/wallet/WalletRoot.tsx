@@ -62,13 +62,13 @@ export function WalletRoot({ children }: { children: React.ReactNode }) {
     let remembered = false;
     try { remembered = !!window.localStorage.getItem(REMEMBERED); } catch { /* storage blocked */ }
     if (!remembered) return;
-    // returning wallet user: reconnect quietly once the page has settled
+    // returning wallet user: reconnect quietly, in the first idle moment (at most 1.5 s in)
     const go = () => setWanted(true);
     if (typeof window.requestIdleCallback === "function") {
-      const id = window.requestIdleCallback(go, { timeout: 4000 });
+      const id = window.requestIdleCallback(go, { timeout: 1500 });
       return () => window.cancelIdleCallback(id);
     }
-    const t = setTimeout(go, 2000);
+    const t = setTimeout(go, 800);
     return () => clearTimeout(t);
   }, []);
 
