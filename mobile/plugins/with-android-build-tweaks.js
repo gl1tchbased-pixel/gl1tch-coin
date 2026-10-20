@@ -7,6 +7,9 @@ const { withGradleProperties, withDangerousMod } = require("expo/config-plugins"
 
 const PROPS = {
   "kotlin.compiler.execution.strategy": "in-process",
+  // In-process Kotlin needs far more class metadata room than the template's 512 MB, and fewer parallel workers.
+  "org.gradle.jvmargs": "-Xmx4096m -XX:MaxMetaspaceSize=2048m",
+  "org.gradle.workers.max": "3",
   "systemProp.org.gradle.internal.http.connectionTimeout": "120000",
   "systemProp.org.gradle.internal.http.socketTimeout": "300000",
 };
