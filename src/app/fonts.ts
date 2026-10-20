@@ -13,12 +13,14 @@ export const tektur = localFont({
   fallback: ["Segoe UI", "system-ui", "sans-serif"],
 });
 
-/** Body: paragraphs and UI. */
+/** Body: paragraphs and UI. `optional` (preloaded): a late swap re-wrapped paragraphs by a line
+ *  and pushed the content below it (CLS 0.118 on /network); now it's used from the first frame
+ *  when it arrives in time and never swapped in afterwards. */
 export const geist = localFont({
   src: "./fonts/geist-latin.woff2",
   weight: "100 900",
   variable: "--font-geist",
-  display: "swap",
+  display: "optional",
   fallback: ["system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
 });
 
