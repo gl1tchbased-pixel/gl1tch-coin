@@ -23,13 +23,14 @@ export const geist = localFont({
 });
 
 /** Data: labels, addresses, scores. Width axis lets dense UI run it slightly condensed.
- *  Not preloaded: it only sets small labels, so it shouldn't share first-paint bandwidth. */
+ *  Preloaded but `optional`: it's used only if it arrives within the first ~100 ms, and never
+ *  swaps in later — a late swap re-wrapped mono labels and shifted the page (CLS). On a slow
+ *  first visit the labels stay in the system mono; the font is cached for the next page. */
 export const martian = localFont({
   src: "./fonts/martian-latin.woff2",
-  preload: false,
   weight: "100 800",
   variable: "--font-martian",
-  display: "swap",
+  display: "optional",
   fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "Consolas", "monospace"],
   declarations: [{ prop: "font-stretch", value: "75% 112.5%" }],
 });
