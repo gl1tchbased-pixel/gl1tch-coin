@@ -99,10 +99,10 @@ export function NetworkPanel() {
   const s = self?.data;
   const tone = pctTone(m?.priceChange24h ?? null);
   const pick = (label: string) => s?.checks.find((c) => c.label.toLowerCase().includes(label));
-  const topHolder = s?.meta.topHolderPct ?? null;
-  const checks = ["mint", "freeze", "tax", "lp locked", "insiders", "rugcheck"].map(pick).filter(Boolean) as ScanResult["checks"];
-  // the scanner can't score concentration when the largest account is the pool, so the row says so
-  const rows = topHolder != null ? [...checks.slice(0, -1), { label: "Top holder", value: `pool · ${topHolder.toFixed(1)}%`, status: "pass" }, ...checks.slice(-1)] : checks;
+  // the pool's share of supply (falls back to the largest account when the pool isn't labelled)
+  const topHolder = s?.meta.poolPct ?? s?.meta.topHolderPct ?? null;
+  // the scanner scores the largest REAL holder (pool excluded), so its own row is shown as-is
+  const rows = ["mint", "freeze", "tax", "lp locked", "top holder", "insiders", "rugcheck"].map(pick).filter(Boolean) as ScanResult["checks"];
 
   return (
     <section className={styles.wrap} aria-labelledby="signal-network-title">

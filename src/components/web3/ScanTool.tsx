@@ -245,7 +245,9 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
             <div><span>Market cap</span>{fmtUsd(result.meta.marketCap)}</div>
             <div><span>Liquidity</span>{fmtUsd(result.meta.liquidityUsd)}</div>
             <div><span>LP locked</span>{result.meta.lpLockedPct != null ? `${result.meta.lpLockedPct}%` : "—"}</div>
-            <div><span>Top holder</span>{result.meta.topHolderPct != null ? `${result.meta.topHolderPct.toFixed(1)}%` : "—"}</div>
+            <div><span>Top holder</span>{result.meta.topRealHolderPct != null
+              ? `${result.meta.topRealHolderPct.toFixed(1)}%${result.meta.poolPct ? ` · pool ${result.meta.poolPct.toFixed(1)}% not counted` : ""}`
+              : result.meta.topHolderPct != null ? `${result.meta.topHolderPct.toFixed(1)}%` : "—"}</div>
             <div className={result.meta.insiderPct != null && result.meta.insiderPct > 15 ? styles.down : undefined}>
               <span>Insiders / bundled</span>{result.meta.insiderPct != null ? `${result.meta.insiderPct.toFixed(1)}%${result.meta.insiderCount ? ` · ${result.meta.insiderCount}` : ""}` : "—"}
             </div>

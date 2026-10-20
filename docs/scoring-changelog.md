@@ -9,6 +9,13 @@
 `YYYY-MM-DD — <what changed> — <why> — <PR/commit>`
 
 ## Log
+- 2026-10-21 — **Top holder no longer counts the liquidity pool** (Solana). The check scored the largest token
+  account, which on Pump.fun / AMM tokens is the pool vault (tokens waiting to be bought), so tokens failed at ~97%.
+  It now takes RugCheck’s holder list, drops accounts owned by RugCheck-labelled AMM accounts or by a market’s pool
+  address, and scores the largest real holder (shown as “· pool excluded”); without RugCheck data it falls back to
+  the raw largest account as before. Thresholds unchanged (≤15% pass, ≤40% warn, else fail). The scan result also
+  reports `poolPct` and `topRealHolderPct`. Why: our own self-scan read “Top holder 96.9% FAIL” for an account that
+  is the pool. Logic + tests in `src/lib/holders.ts`.
 - 2026-10-21 — **New check: Token age** (`token_age`, Solana weight 4, EVM weight 3) and a **verdict cap**: a
   token whose pair is under 24 hours old warns ("no track record yet") and can be LOW RISK at best, never CLEAN;
   the same cap applies when no trading history can be read at all (no DEX pair). Verified blue-chips are unaffected.

@@ -99,6 +99,8 @@ export interface ScanLike {
   checks?: { key: string; status: string }[];
   meta?: {
     topHolderPct?: number | null;
+    /** Largest holder that isn't the liquidity pool (preferred when present). */
+    topRealHolderPct?: number | null;
     lpLockedPct?: number | null;
     mutableMetadata?: boolean | null;
     liquidityUsd?: number | null;
@@ -126,7 +128,9 @@ export function vaultSignalsFromScan(scan: ScanLike): VaultSignals {
   const liqStatus = checkStatus(checks, "liquidity");
   const liquiditySecured = liqStatus === "pass" || (typeof meta.lpLockedPct === "number" && meta.lpLockedPct >= 50);
 
-  const topHolderConcentration = typeof meta.topHolderPct === "number" ? Math.max(0, Math.min(1, meta.topHolderPct / 100)) : undefined;
+  // the pool isn't a holder who can dump: score the largest real holder when the scan knows it
+  const topPct = typeof meta.topRealHolderPct === "number" ? meta.topRealHolderPct : meta.topHolderPct;
+  const topHolderConcentration = typeof topPct === "number" ? Math.max(0, Math.min(1, topPct / 100)) : undefined;
 
   const repLevel = (meta.deployerReputation?.level ?? "").toLowerCase();
   const flagged = meta.deployerReputation?.flaggedCount ?? 0;

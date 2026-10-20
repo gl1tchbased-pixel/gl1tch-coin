@@ -19,7 +19,7 @@ export function SupplyRing({ poolPct: given, className = "" }: { poolPct?: numbe
     let alive = true;
     fetch(`/api/scan?mint=${CONTRACT_ADDRESS}&chain=solana`)
       .then((r) => r.json())
-      .then((s) => { if (alive && typeof s?.meta?.topHolderPct === "number") setFetched(s.meta.topHolderPct); })
+      .then((s) => { const pool = s?.meta?.poolPct ?? s?.meta?.topHolderPct; if (alive && typeof pool === "number") setFetched(pool); })
       .catch(() => {});
     return () => { alive = false; };
   }, [given]);

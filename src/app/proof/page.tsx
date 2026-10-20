@@ -16,7 +16,7 @@ import styles from "./proof.module.css";
 export const metadata: Metadata = {
   title: "Proof — Don't Trust Us, Verify Us | GL1TCH",
   description:
-    "GL1TCH hands you the receipts: mint revoked, freeze revoked, zero tax, liquidity locked, code open. We built the rug-scanner — and we pass it live. Verify every claim yourself on Solscan, RugCheck & GeckoTerminal.",
+    "GL1TCH hands you the receipts: mint revoked, freeze revoked, zero tax, liquidity locked, code open. We built the rug-scanner — and we run it on ourselves, live, flags included. Verify every claim yourself on Solscan, RugCheck & GeckoTerminal.",
   alternates: { canonical: "/proof" },
 };
 

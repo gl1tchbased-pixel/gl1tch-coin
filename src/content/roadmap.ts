@@ -38,7 +38,7 @@ export const roadmapPhases: RoadmapPhase[] = [
       "Free, non-custodial, multi-chain token safety scanner — live (web + Telegram)",
       "Watchtower: continuous re-scans + token AND wallet alerts (whale / dev sells) — live",
       "AI verdict · degen intel · deployer history · verified blue-chips · compare · shareable cards & embeddable badge — live",
-      "Proof page + live self-scan trust layer (we pass our own scanner) — live",
+      "Proof page + live self-scan trust layer (our own scanner, run on us, flags and all) — live",
     ],
     status: "done",
   },

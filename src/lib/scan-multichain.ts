@@ -325,7 +325,7 @@ export async function scanEvm(chain: string, address: string, market: ChainMarke
       marketCap: market.marketCap ?? (market.priceUsd != null && numStr(g.total_supply) ? market.priceUsd * (numStr(g.total_supply) as number) : null),
       liquidityUsd: market.liquidityUsd,
       volume24h: market.volume24h, ageDays: market.ageDays, supply: null,
-      topHolderPct: null, top10Pct: null, rugcheckScore: null,
+      topHolderPct: null, top10Pct: null, poolPct: null, topRealHolderPct: null, rugcheckScore: null,
       holderCount: numStr(g.holder_count), lpLockedPct, mutableMetadata: null,
       insiderPct: null, insiderCount: null,
       deployer: g.creator_address || null, deployPlatform: null, deployerCreated: null, deployerDead: null,

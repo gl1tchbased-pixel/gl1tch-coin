@@ -11,6 +11,7 @@ import { fetchTokenMarket } from "@/lib/market-sources";
 import { deployerHoldingCheck, holdingPct } from "@/lib/deployer-holdings";
 import { capVerdictForAge, tokenAgeCheck } from "@/lib/token-age";
 import type { DeployerReputation } from "@/lib/signal-graph";
+import { poolOwnersFrom, realHolders } from "@/lib/holders";
 
 const TOKEN_2022 = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
 
@@ -88,8 +89,13 @@ export interface ScanResult {
     volume24h: number | null;
     ageDays: number | null;
     supply: number | null;
+    /** Largest single account, pool included (the supply ring reads it as the pool's share). */
     topHolderPct: number | null;
     top10Pct: number | null;
+    /** Share of supply in liquidity-pool accounts, when RugCheck labels them. */
+    poolPct: number | null;
+    /** Largest holder that is not a pool — what the Top holder check scores. */
+    topRealHolderPct: number | null;
     rugcheckScore: number | null;
     holderCount: number | null;
     lpLockedPct: number | null;
@@ -258,7 +264,10 @@ interface RugReport {
   risks: ScanRisk[];
   lpLockedPct: number | null; // max across markets
   mutable: boolean | null; // metadata mutable (dev can change name/image)
-  topHolderPct: number | null; // RugCheck's own top-holder read (excludes LP/known)
+  topHolderPct: number | null; // RugCheck's largest listed holder (pool INCLUDED)
+  realTopPct: number | null; // largest holder that isn't a pool (see src/lib/holders.ts)
+  realTop10Pct: number | null;
+  poolPct: number | null; // share of supply in pool accounts
   // ---- Degen intelligence (the stuff that actually rugs people) ----
   top10Pct: number | null; // combined % held by the top 10 non-LP wallets
   insiderPct: number | null; // % supply in flagged insider/bundled wallets
@@ -275,7 +284,7 @@ interface RugReport {
 // mutable-metadata flag, holder spread + insider/bundle intelligence. All optional-
 // chained so a shape change downgrades to unknown instead of throwing.
 async function getRugcheck(mint: string, signal?: AbortSignal): Promise<RugReport> {
-  const empty: RugReport = { score: null, risks: [], lpLockedPct: null, mutable: null, topHolderPct: null, top10Pct: null, insiderPct: null, insiderCount: null, holderCount: null, creator: null, deployPlatform: null, deployerCreated: null, deployerDead: null };
+  const empty: RugReport = { score: null, risks: [], lpLockedPct: null, mutable: null, topHolderPct: null, realTopPct: null, realTop10Pct: null, poolPct: null, top10Pct: null, insiderPct: null, insiderCount: null, holderCount: null, creator: null, deployPlatform: null, deployerCreated: null, deployerDead: null };
   try {
     // RugCheck can be slow/flaky; one retry with a per-attempt timeout so a single
     // sluggish response doesn't drop all of its checks to "unknown" and tank the score.
@@ -292,7 +301,8 @@ async function getRugcheck(mint: string, signal?: AbortSignal): Promise<RugRepor
     const j = (await res.json()) as {
       score_normalised?: number; score?: number;
       risks?: Array<{ name?: string; level?: string }>;
-      markets?: Array<{ lp?: { lpLockedPct?: number } }>;
+      markets?: Array<{ lp?: { lpLockedPct?: number }; pubkey?: string; liquidityAAccount?: { owner?: string } | null; liquidityBAccount?: { owner?: string } | null }>;
+      knownAccounts?: Record<string, { name?: string; type?: string }>;
       tokenMeta?: { mutable?: boolean };
       mutable?: boolean;
       totalHolders?: number;
@@ -317,6 +327,7 @@ async function getRugcheck(mint: string, signal?: AbortSignal): Promise<RugRepor
     const holders = (j.topHolders ?? []).filter((h) => typeof h?.pct === "number");
     const topHolderPct = typeof holders[0]?.pct === "number" ? (holders[0].pct as number) : null;
     const top10Pct = holders.length ? Math.min(100, holders.slice(0, 10).reduce((s, h) => s + (h.pct ?? 0), 0)) : null;
+    const real = realHolders(holders.map((h) => ({ owner: h.owner ?? null, pct: h.pct as number })), poolOwnersFrom(j.knownAccounts, j.markets));
     const insiderHolders = holders.filter((h) => h.insider);
     const insiderPct = holders.length ? Math.min(100, insiderHolders.reduce((s, h) => s + (h.pct ?? 0), 0)) : null;
     const insiderCount = typeof j.graphInsidersDetected === "number" ? j.graphInsidersDetected : (insiderHolders.length || null);
@@ -326,7 +337,7 @@ async function getRugcheck(mint: string, signal?: AbortSignal): Promise<RugRepor
     const ctoks = Array.isArray(j.creatorTokens) ? j.creatorTokens : null;
     const deployerCreated = ctoks ? ctoks.length : null;
     const deployerDead = ctoks ? ctoks.filter((t) => (t?.marketCap ?? 0) < 1000).length : null;
-    return { score, risks, lpLockedPct, mutable, topHolderPct, top10Pct, insiderPct, insiderCount, holderCount, creator, deployPlatform, deployerCreated, deployerDead };
+    return { score, risks, lpLockedPct, mutable, topHolderPct, realTopPct: real.topPct, realTop10Pct: real.top10Pct, poolPct: holders.length ? real.poolPct : null, top10Pct, insiderPct, insiderCount, holderCount, creator, deployPlatform, deployerCreated, deployerDead };
   } catch {
     return empty;
   }
@@ -343,7 +354,7 @@ function withTimeout<T>(p: Promise<T>, ms: number, fallback: T): Promise<T> {
 export async function scanToken(mint: string, signal?: AbortSignal): Promise<ScanResult> {
   if (!isBase58Mint(mint)) throw new Error("invalid Solana mint address");
 
-  const EMPTY_RUG: RugReport = { score: null, risks: [], lpLockedPct: null, mutable: null, topHolderPct: null, top10Pct: null, insiderPct: null, insiderCount: null, holderCount: null, creator: null, deployPlatform: null, deployerCreated: null, deployerDead: null };
+  const EMPTY_RUG: RugReport = { score: null, risks: [], lpLockedPct: null, mutable: null, topHolderPct: null, realTopPct: null, realTop10Pct: null, poolPct: null, top10Pct: null, insiderPct: null, insiderCount: null, holderCount: null, creator: null, deployPlatform: null, deployerCreated: null, deployerDead: null };
   const [mintInfo, market, rug] = await Promise.all([
     getMint(mint, signal), // must succeed (throws "mint not found" if invalid)
     withTimeout(getMarket(mint, signal), 9000, { name: null, symbol: null, priceUsd: null, marketCap: null, liquidityUsd: null, volume24h: null, ageDays: null, priceChange24h: null }),
@@ -422,16 +433,20 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
             : "Healthy enough liquidity to enter and exit at size."
   );
 
-  // 5) top-holder concentration
-  const top1 = conc.topHolderPct;
+  // 5) top-holder concentration — the liquidity pool is not a holder who can dump, so when RugCheck
+  // labels the pool we score the largest REAL holder; otherwise the raw largest account.
+  const poolSeen = rug.realTopPct != null && (rug.poolPct ?? 0) > 0;
+  const top1 = rug.realTopPct ?? conc.topHolderPct;
   add(
     "concentration",
     "Top holder",
     top1 == null ? "unknown" : top1 <= 15 ? "pass" : top1 <= 40 ? "warn" : "fail",
-    top1 == null ? "—" : `${top1.toFixed(1)}%`,
+    top1 == null ? "—" : poolSeen ? `${top1.toFixed(1)}% · pool excluded` : `${top1.toFixed(1)}%`,
     top1 == null
       ? "Top holders couldn't be indexed — usually means a very large, established token (millions of accounts). Less of a concern for those."
-      : top1 > 40
+      : poolSeen && top1 <= 40
+        ? `The largest account (${(rug.poolPct ?? 0).toFixed(1)}% of supply) is the liquidity pool, which isn't counted. The biggest real holder has ${top1.toFixed(1)}%.`
+        : top1 > 40
         ? "One account holds a huge share. If it dumps, you're exit liquidity. (Note: on new pump.fun tokens the top account is often the bonding curve/LP.)"
         : top1 > 15
           ? "Moderate concentration — watch the top wallet."
@@ -585,6 +600,8 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
       ageDays,
       supply: mintInfo.supply,
       topHolderPct: conc.topHolderPct ?? rug.topHolderPct,
+      poolPct: rug.poolPct,
+      topRealHolderPct: rug.realTopPct,
       top10Pct: conc.top10Pct ?? rug.top10Pct,
       rugcheckScore: rug.score,
       holderCount: rug.holderCount,
