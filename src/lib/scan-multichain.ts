@@ -10,6 +10,7 @@ import type { ScanResult, ScanCheck, CheckStatus, Verdict } from "@/lib/scan";
 import { scoreChecks, bandVerdict, bottomLineFor, CANONICAL } from "@/lib/scan";
 import { fetchTokenMarket } from "@/lib/market-sources";
 import { deployerHoldingCheck, holdingPct } from "@/lib/deployer-holdings";
+import { capVerdictForAge, tokenAgeCheck } from "@/lib/token-age";
 
 // DexScreener chainId → GoPlus chain id (EVM numeric). "solana" handled natively.
 export const GOPLUS_CHAIN: Record<string, string> = {
@@ -282,6 +283,8 @@ export async function scanEvm(chain: string, address: string, market: ChainMarke
     ?? (numStr(g.creator_percent) != null ? (numStr(g.creator_percent) as number) * 100 : null);
   const hold = deployerHoldingCheck(creatorPct, !!g.creator_address);
   add("dev_holdings", "Deployer holdings", hold.status, hold.value, hold.explain);
+  const age = tokenAgeCheck(market.ageDays);
+  add("token_age", "Token age", age.status, age.value, age.explain);
 
   // Named risks for extra context (mirrors RugCheck's risks[] on Solana).
   const risks: ScanResult["risks"] = [];
@@ -295,7 +298,7 @@ export async function scanEvm(chain: string, address: string, market: ChainMarke
   // score & verdict (shared logic with Solana).
   const w: Record<string, number> = {
     honeypot: 26, ownership: 14, lp_lock: 14, mintable: 10, pausable: 10,
-    modifiable_tax: 8, sell_tax: 6, liquidity: 8, blacklist: 4, open_source: 4, dev_holdings: 4,
+    modifiable_tax: 8, sell_tax: 6, liquidity: 8, blacklist: 4, open_source: 4, dev_holdings: 4, token_age: 3,
   };
   const { score, possible, confidence } = scoreChecks(checks, w);
   const fatal = honeypot || dangerousOwner || g.owner_change_balance === "1" || g.selfdestruct === "1";
@@ -305,6 +308,7 @@ export async function scanEvm(chain: string, address: string, market: ChainMarke
   else if (fatal) verdict = "RUG-SHAPED";
   else if (lpUnlocked && taxModifiable) verdict = "RUG-SHAPED";
   else verdict = bandVerdict(score, possible);
+  verdict = capVerdictForAge(verdict, market.ageDays); // a token under 24 hours old is never CLEAN
 
   const gOk = Object.keys(g).length > 0;
   return {

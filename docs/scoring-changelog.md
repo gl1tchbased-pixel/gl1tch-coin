@@ -9,6 +9,11 @@
 `YYYY-MM-DD — <what changed> — <why> — <PR/commit>`
 
 ## Log
+- 2026-10-21 — **New check: Token age** (`token_age`, Solana weight 4, EVM weight 3) and a **verdict cap**: a
+  token whose pair is under 24 hours old warns ("no track record yet") and can be LOW RISK at best, never CLEAN;
+  the same cap applies when no trading history can be read at all (no DEX pair). Verified blue-chips are unaffected.
+  Why: fresh Pump.fun tokens still on the bonding curve passed every structural check and read CLEAN 92–97 minutes
+  after launch, while most rugs happen in the first hours. Logic + tests in `src/lib/token-age.ts`.
 - 2026-10-20 — **New check: Deployer holdings** (`dev_holdings`, Solana weight 5, EVM weight 4).
   Reads the share of supply the launching wallet holds right now (Solana: live RPC balance of
   the RugCheck-reported creator; EVM: GoPlus `creator_balance / total_supply`). >15% fail

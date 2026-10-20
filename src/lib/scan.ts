@@ -9,6 +9,7 @@
 
 import { fetchTokenMarket } from "@/lib/market-sources";
 import { deployerHoldingCheck, holdingPct } from "@/lib/deployer-holdings";
+import { capVerdictForAge, tokenAgeCheck } from "@/lib/token-age";
 import type { DeployerReputation } from "@/lib/signal-graph";
 
 const TOKEN_2022 = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
@@ -513,7 +514,11 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
   const hold = deployerHoldingCheck(deployerHolding, rug.creator != null);
   add("dev_holdings", "Deployer holdings", hold.status, hold.value, hold.explain);
 
-  // 11) rugcheck score (context, lightly weighted — risks[] carry the detail).
+  // 11) token age — under 24 hours there's no track record, so the read is provisional.
+  const age = tokenAgeCheck(ageDays);
+  add("token_age", "Token age", age.status, age.value, age.explain);
+
+  // 12) rugcheck score (context, lightly weighted — risks[] carry the detail).
   const rugScore = rug.score;
   add(
     "rugcheck",
@@ -530,7 +535,7 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
   // ---- score & verdict ----
   const weights: Record<string, number> = {
     mint_authority: 19, freeze_authority: 17, lp_lock: 15, liquidity: 12,
-    concentration: 8, insiders: 9, deployer: 8, dev_holdings: 5, transfer_tax: 5, metadata_mutable: 3, rugcheck: 4,
+    concentration: 8, insiders: 9, deployer: 8, dev_holdings: 5, transfer_tax: 5, token_age: 4, metadata_mutable: 3, rugcheck: 4,
   };
   const { score, possible, confidence } = scoreChecks(checks, weights);
   const has = (key: string, status: CheckStatus) => checks.some((c) => c.key === key && c.status === status);
@@ -548,6 +553,7 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
   else if (authActive && otherSerious) verdict = "RUG-SHAPED"; // honeypot-shaped
   else if (authActive) verdict = "HIGH RISK"; // owner can mint/freeze — capped here
   else verdict = bandVerdict(score, possible);
+  verdict = capVerdictForAge(verdict, ageDays); // a token under 24 hours old is never CLEAN
 
   return {
     mint,
