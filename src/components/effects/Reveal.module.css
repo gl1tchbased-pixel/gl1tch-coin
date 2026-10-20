@@ -1,0 +1,13 @@
+/* Only blocks that were below the fold at hydration ever get "pending"; opacity and transform only
+   (no blur filter), so the slide-in stays on the compositor. */
+.reveal[data-reveal="pending"] {
+  opacity: 0;
+  transform: translateY(24px);
+}
+.reveal[data-reveal="shown"] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
+}
