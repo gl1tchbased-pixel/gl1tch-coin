@@ -1,0 +1,25 @@
+diff --git a/node_modules/@solana-mobile/mobile-wallet-adapter-protocol/android/build.gradle b/node_modules/@solana-mobile/mobile-wallet-adapter-protocol/android/build.gradle
+index eee71b4..b29da35 100644
+--- a/node_modules/@solana-mobile/mobile-wallet-adapter-protocol/android/build.gradle
++++ b/node_modules/@solana-mobile/mobile-wallet-adapter-protocol/android/build.gradle
+@@ -1,18 +1,5 @@
+-buildscript {
+-  // Buildscript is evaluated before everything else so we can't use getExtOrDefault
+-  def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['SolanaMobileWalletAdapterModule_kotlinVersion']
+-
+-  repositories {
+-      google()
+-      mavenCentral()
+-  }
+-
+-  dependencies {
+-    classpath 'com.android.tools.build:gradle:9.2.1'
+-    // noinspection DifferentKotlinGradleVersion
+-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+-  }
+-}
++// GL1TCH patch: the upstream buildscript pinned AGP 9.2.1 + Kotlin 1.9.0, which clashes with the AGP/Kotlin
++// that React Native 0.86 puts on the root classpath. The root project already provides both plugins.
+ 
+ def isNewArchitectureEnabled() {
+   return rootProject.hasProperty("newArchEnabled") &&  rootProject.getProperty("newArchEnabled") == "true"

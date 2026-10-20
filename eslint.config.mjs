@@ -19,6 +19,8 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    // The Android app has its own Expo toolchain (mobile/package.json).
+    "mobile/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
