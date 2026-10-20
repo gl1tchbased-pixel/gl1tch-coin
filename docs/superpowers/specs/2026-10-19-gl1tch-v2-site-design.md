@@ -353,3 +353,26 @@ Notlar:
 - Hero posteri artık önceden yüklenmiyor (LCP öğesi başlık metni); Martian Mono da önceden yüklenmiyor.
 - `/scan` LCP'si baz çizginin 0,4 sn üstünde (yeni yazı tipleri). `/network`'ün TBT'si 270 ms yüksek. İkisi de skoru düşürmüyor; sonraki iyileştirme adayları.
 - WebGL: hiçbir sayfada 2'den fazla bağlam yok (`scripts/site-shots.mjs` raporu).
+
+### 14.2 Son durum (canlı, 20.10.2026)
+
+Bulunan iki kök neden, ikisi de ilk günden beri vardı:
+
+- **Sayfalar görünmez başlıyordu.** `src/app/template.tsx` framer-motion ile her sayfayı `opacity: 0` olarak sunucudan gönderiyordu; `Reveal` de bölümleri `opacity: 0` + `blur(8px)` ile gönderiyordu. İçerik, JavaScript yüklenmeden görünmüyordu. İkisi de artık CSS ile ve içeriği hiç gizlemeden çalışıyor.
+- **İlk boyama stil dosyasını bekliyordu.** 24 KB'lık CSS, ~450 KB script ile bant genişliğini paylaşıyor ve belgeden ~2 sn sonra geliyordu. `experimental.inlineCss` ile CSS artık HTML'in içinde (ana sayfa HTML'i 18 → 34 KB brotli; ayrı CSS isteği yok).
+
+İlk boyama yazı tiplerinden önce geldiği için yazı tipi değişimi düzen kayması yaptı (/network CLS 0,118). Geist ve Martian Mono artık önceden yükleniyor ve `font-display: optional`: zamanında gelirse kullanılıyor, sonradan değiştirilmiyor. Tektur (başlık) `swap` olarak kaldı.
+
+Gerçek kısıtlama (`--throttling-method=devtools`, mobil), canlı, sıcak önbellek, en az iki ölçüm:
+
+| Sayfa | Önce (LCP) | Sonra (LCP) | Skor önce → sonra |
+|---|---|---|---|
+| `/` | 5,9–6,3 sn | 4,5–4,8 sn | 37 → 42–45 |
+| `/scan` | 4,6–4,7 sn | 3,2–3,3 sn | 50 → 61–62 |
+| `/network` | 5,0–5,2 sn | 3,7–3,8 sn | 41 → 52–53 |
+
+Simüle (varsayılan Lighthouse), üç ölçüm: `/` 56–61, `/scan` 67–68, `/network` 58–70; CLS her sayfada ≤ 0,002.
+
+Not: bu makinede simüle ölçüm çok oynak (IDE ve başka oturumlar CPU kullanırken ±0,5–2 sn). Karşılaştırmalar aynı ortamda, devtools kısıtlamasıyla ve tekrarlı yapılmalı. 18 sayfalık tarama (1440/390): hata yok, taşma yok, en fazla 2 WebGL bağlamı. /live'daki tek konsol hatası GeckoTerminal iframe'inden geliyor, bizden değil.
+
+Kalan: mobil LCP hâlâ 2,5 sn hedefinin üstünde. Kalan süre script yükü (~450 KB, cüzdan kütüphaneleri dahil) ve sayfaya yayılmış ilk yerleşim işi. Bir sonraki büyük adım cüzdan sağlayıcısını yalnızca gereken sayfalara taşımak.
