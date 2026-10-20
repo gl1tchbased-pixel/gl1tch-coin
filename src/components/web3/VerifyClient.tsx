@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWalletEager } from "@/lib/wallet/WalletRoot";
 import bs58 from "bs58";
 import { verificationMessage, BOT_VERIFY_URL } from "@/lib/verify";
 import { ConnectWallet } from "./ConnectWallet";
@@ -28,7 +28,7 @@ const ERRORS: Record<string, string> = {
 };
 
 export function VerifyClient() {
-  const { publicKey, signMessage, connected } = useWallet();
+  const { address, signMessage, connected } = useWalletEager();
   // the nonce comes from the link the bot sent (?n=); the URL is the store, read after hydration
   const nonce = useSyncExternalStore(noopSubscribe, () => new URLSearchParams(window.location.search).get("n"), () => null);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -36,7 +36,7 @@ export function VerifyClient() {
   const [error, setError] = useState<string | null>(null);
 
   async function verify() {
-    if (!nonce || !publicKey || !signMessage) return;
+    if (!nonce || !address || !signMessage) return;
     setError(null);
     setPhase("signing");
     try {
@@ -48,7 +48,7 @@ export function VerifyClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nonce,
-          publicKey: publicKey.toBase58(),
+          publicKey: address,
           signature: bs58.encode(sig),
         }),
       });

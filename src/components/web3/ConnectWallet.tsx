@@ -1,37 +1,23 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { WalletReadyState } from "@solana/wallet-adapter-base";
 import { WalletIcon } from "@/components/icons/Glyphs";
+import { useWalletApi } from "@/lib/wallet/WalletRoot";
 import styles from "./ConnectWallet.module.css";
 
+// Shown when no Wallet Standard wallet is detected in this browser.
+const INSTALL = [
+  { name: "Phantom", url: "https://phantom.app/download" },
+  { name: "Solflare", url: "https://solflare.com/download" },
+  { name: "Backpack", url: "https://backpack.app/downloads" },
+];
+
 export function ConnectWallet() {
-  const {
-    wallets,
-    select,
-    connect,
-    disconnect,
-    connected,
-    connecting,
-    publicKey,
-    wallet,
-  } = useWallet();
+  const { load, ready, options, select, disconnect, connected, connecting, address, walletIcon } = useWalletApi();
   const [modalOpen, setModalOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const pending = useRef(false);
   const rootRef = useRef<HTMLDivElement>(null);
-
-  // Connect once a wallet has been selected.
-  useEffect(() => {
-    if (wallet && pending.current && !connected && !connecting) {
-      pending.current = false;
-      connect().catch(() => {
-        /* user rejected or wallet unavailable */
-      });
-    }
-  }, [wallet, connected, connecting, connect]);
 
   // Close the connected dropdown on outside click.
   useEffect(() => {
@@ -57,24 +43,17 @@ export function ConnectWallet() {
     };
   }, [modalOpen]);
 
-  const detected = wallets.filter(
-    (w) =>
-      w.readyState === WalletReadyState.Installed ||
-      w.readyState === WalletReadyState.Loadable
-  );
-  const notDetected = wallets.filter(
-    (w) => w.readyState === WalletReadyState.NotDetected
-  );
+  const detected = options.filter((w) => w.detected);
+  const notDetected = options.filter((w) => !w.detected);
 
-  const choose = (name: Parameters<typeof select>[0]) => {
-    pending.current = true;
+  const choose = (name: string) => {
     select(name);
     setModalOpen(false);
   };
 
   // --- Connected state: address pill + dropdown ---
-  if (connected && publicKey) {
-    const addr = publicKey.toBase58();
+  if (connected && address) {
+    const addr = address;
     const short = `${addr.slice(0, 4)}…${addr.slice(-4)}`;
     return (
       <div className={styles.root} ref={rootRef}>
@@ -83,9 +62,9 @@ export function ConnectWallet() {
           onClick={() => setMenuOpen((v) => !v)}
           aria-expanded={menuOpen}
         >
-          {wallet?.adapter.icon && (
+          {walletIcon && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={wallet.adapter.icon} alt="" width={16} height={16} />
+            <img src={walletIcon} alt="" width={16} height={16} />
           )}
           <span className={styles.dot} aria-hidden="true" />
           {short}
@@ -130,7 +109,10 @@ export function ConnectWallet() {
     <>
       <button
         className={styles.btn}
-        onClick={() => setModalOpen(true)}
+        // the wallet stack loads on this first click, not with the page
+        onPointerEnter={load}
+        onFocus={load}
+        onClick={() => { load(); setModalOpen(true); }}
         disabled={connecting}
       >
         <WalletIcon size={16} />
@@ -165,41 +147,55 @@ export function ConnectWallet() {
             </p>
 
             <div className={styles.list}>
-              {detected.length === 0 && notDetected.length === 0 && (
+              {!ready && <span className={styles.empty}>Looking for wallets…</span>}
+              {ready && detected.length === 0 && (
                 <span className={styles.empty}>
-                  No Solana wallet found. Install one below.
+                  No Solana wallet found in this browser. Install one below.
                 </span>
               )}
               {detected.map((w) => (
                 <button
-                  key={w.adapter.name}
+                  key={w.name}
                   className={styles.option}
-                  onClick={() => choose(w.adapter.name)}
+                  onClick={() => choose(w.name)}
                 >
-                  {w.adapter.icon && (
+                  {w.icon && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={w.adapter.icon} alt="" width={28} height={28} />
+                    <img src={w.icon} alt="" width={28} height={28} />
                   )}
-                  <span className={styles.optionName}>{w.adapter.name}</span>
+                  <span className={styles.optionName}>{w.name}</span>
                   <span className={styles.badge}>Detected</span>
                 </button>
               ))}
               {notDetected.map((w) => (
                 <a
-                  key={w.adapter.name}
+                  key={w.name}
                   className={`${styles.option} ${styles.optionInstall}`}
-                  href={w.adapter.url}
+                  href={w.url}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {w.adapter.icon && (
+                  {w.icon && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={w.adapter.icon} alt="" width={28} height={28} />
+                    <img src={w.icon} alt="" width={28} height={28} />
                   )}
-                  <span className={styles.optionName}>{w.adapter.name}</span>
+                  <span className={styles.optionName}>{w.name}</span>
                   <span className={styles.install}>Install ↗</span>
                 </a>
               ))}
+              {ready && detected.length === 0 &&
+                INSTALL.filter((i) => !notDetected.some((w) => w.name === i.name)).map((i) => (
+                  <a
+                    key={i.name}
+                    className={`${styles.option} ${styles.optionInstall}`}
+                    href={i.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className={styles.optionName}>{i.name}</span>
+                    <span className={styles.install}>Install ↗</span>
+                  </a>
+                ))}
             </div>
           </div>
         </div>

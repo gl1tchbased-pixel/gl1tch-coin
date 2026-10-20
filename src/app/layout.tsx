@@ -9,7 +9,7 @@ import { Aurora } from "@/components/effects/Aurora";
 import { tektur, geist, martian } from "./fonts";
 import { ScrollProgress } from "@/components/effects/ScrollProgress";
 import { FunLayer } from "@/components/fun/FunLayer";
-import { Web3Providers } from "@/components/web3/Providers";
+import { WalletRoot } from "@/lib/wallet/WalletRoot";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
@@ -71,12 +71,12 @@ export default function RootLayout({
         <Aurora />
         <Scanlines />
         <ScrollProgress />
-        <Web3Providers>
+        <WalletRoot>
           <Header />
           <main id="main">{children}</main>
           <Footer />
           <TickerBar />
-        </Web3Providers>
+        </WalletRoot>
         <FunLayer />
         <Analytics />
       </body>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWalletApi } from "@/lib/wallet/WalletRoot";
 import bs58 from "bs58";
 import { drawEntryMessage } from "@/lib/quantum/client";
 import { ConnectWallet } from "./ConnectWallet";
@@ -22,18 +22,18 @@ const ERRORS: Record<string, string> = {
 };
 
 export function DrawEntry({ drawId, open }: { drawId: string; open: boolean }) {
-  const { publicKey, signMessage } = useWallet();
+  const { address: walletAddress, signMessage } = useWalletApi();
   const [phase, setPhase] = useState<Phase>("idle");
   const [error, setError] = useState<string | null>(null);
   const [count, setCount] = useState<number | null>(null);
 
   async function enter() {
-    if (!publicKey || !signMessage) return;
+    if (!walletAddress || !signMessage) return;
     setError(null);
     setPhase("signing");
     try {
       const issued = Date.now();
-      const address = publicKey.toBase58();
+      const address = walletAddress;
       const message = new TextEncoder().encode(drawEntryMessage(address, drawId, issued));
       const sig = await signMessage(message);
       setPhase("posting");
@@ -62,7 +62,7 @@ export function DrawEntry({ drawId, open }: { drawId: string; open: boolean }) {
 
   return (
     <div className={styles.wrap}>
-      {!publicKey ? (
+      {!walletAddress ? (
         <ConnectWallet />
       ) : phase === "done" ? (
         <p className={styles.ok}>

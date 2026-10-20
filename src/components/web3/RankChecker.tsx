@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey } from "@solana/web3.js";
 import { CONTRACT_ADDRESS } from "@/lib/official";
+import { useWalletEager } from "@/lib/wallet/WalletRoot";
+import { tokenBalance } from "@/lib/wallet/rpc";
 import {
   RANK_TIERS,
   rankForBalance,
@@ -17,8 +17,7 @@ import { RankCard } from "@/components/ui/RankCard";
 import styles from "./RankChecker.module.css";
 
 export function RankChecker() {
-  const { connection } = useConnection();
-  const { publicKey, connected } = useWallet();
+  const { address, connected } = useWalletEager();
   const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,26 +25,17 @@ export function RankChecker() {
   const live = Boolean(CONTRACT_ADDRESS);
 
   const fetchBalance = useCallback(async () => {
-    if (!publicKey || !live) return;
+    if (!address || !live) return;
     setLoading(true);
     setError(null);
     try {
-      const mint = new PublicKey(CONTRACT_ADDRESS);
-      const res = await connection.getParsedTokenAccountsByOwner(publicKey, {
-        mint,
-      });
-      let total = 0;
-      for (const { account } of res.value) {
-        const amt = account.data.parsed?.info?.tokenAmount?.uiAmount;
-        if (typeof amt === "number") total += amt;
-      }
-      setBalance(total);
+      setBalance(await tokenBalance(address, CONTRACT_ADDRESS));
     } catch {
       setError("Could not read balance. Try again.");
     } finally {
       setLoading(false);
     }
-  }, [publicKey, connection, live]);
+  }, [address, live]);
 
   useEffect(() => {
     // read the balance from the chain whenever a wallet connects

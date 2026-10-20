@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWalletApi } from "@/lib/wallet/WalletRoot";
 import bs58 from "bs58";
 import { apiKeyMessage, type IssuedKey } from "@/lib/apikey";
 import { ConnectWallet } from "./ConnectWallet";
@@ -16,19 +16,19 @@ const ERRORS: Record<string, string> = {
 };
 
 export function ApiKeyMinter() {
-  const { publicKey, signMessage } = useWallet();
+  const { address: walletAddress, signMessage } = useWalletApi();
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [result, setResult] = useState<IssuedKey | null>(null);
   const [copied, setCopied] = useState(false);
 
   async function mint() {
-    if (!publicKey || !signMessage) return;
+    if (!walletAddress || !signMessage) return;
     setBusy(true);
     setErr(null);
     try {
       const issued = Date.now();
-      const address = publicKey.toBase58();
+      const address = walletAddress;
       const sig = await signMessage(new TextEncoder().encode(apiKeyMessage(address, issued)));
       const res = await fetch("/api/keys/issue", {
         method: "POST",
@@ -50,7 +50,7 @@ export function ApiKeyMinter() {
 
   return (
     <div className={styles.box}>
-      {!publicKey ? (
+      {!walletAddress ? (
         <ConnectWallet />
       ) : result?.ok ? (
         <div className={styles.out}>
