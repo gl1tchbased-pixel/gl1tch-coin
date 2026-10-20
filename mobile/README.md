@@ -32,6 +32,10 @@ npx expo prebuild --platform android
 cd android && ./gradlew assembleRelease     # APK in android/app/build/outputs/apk/release/
 ```
 
+`plugins/with-android-build-tweaks.js` keeps two settings across prebuilds: Kotlin compiles inside the Gradle
+daemon, and network timeouts are long (helps behind HTTPS-scanning proxies or antivirus). `patches/` removes the
+Mobile Wallet Adapter library's own `buildscript`, whose AGP/Kotlin versions clash with React Native 0.86's.
+
 `npx tsc --noEmit` type-checks the app. The share sheet and Mobile Wallet Adapter use native modules, so the app
 needs a development or release build; Expo Go can't run them.
 
