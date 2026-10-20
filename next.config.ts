@@ -41,6 +41,9 @@ const nextConfig: NextConfig = {
   // bot/, which .vercelignore keeps out of the deploy, so builds use a config without tests;
   // CI still type-checks the tests with the full tsconfig.json.
   typescript: { tsconfigPath: "tsconfig.build.json" },
+  // Ship CSS inside the HTML: as a separate file the stylesheet competed with ~450 KB of scripts and
+  // arrived ~2 s late on a phone connection, holding the first paint. Most visitors are first-time.
+  experimental: { inlineCss: true },
   // Share cards pick their image (Risk Orb still, Glitchy pose) at runtime, which the tracer can't follow.
   outputFileTracingIncludes: { "/scan/**": ["./assets/orb/*.png"], "/play/**": ["./assets/play/*.png"] },
   async headers() {
