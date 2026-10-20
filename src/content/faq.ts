@@ -57,6 +57,6 @@ export const faqItems: FAQItem[] = [
     id: "faq-different",
     question: "What makes GL1TCH different?",
     answer:
-      "Solana speed, zero tax, a single focused utility, premium design, and on-chain-verifiable trust plus a transparent give-back.",
+      "Solana speed, zero tax, a single focused utility, premium design, and on-chain-verifiable trust, plus a public give-back wallet whose balance and every payout anyone can check on Solscan.",
   },
 ];

@@ -48,7 +48,7 @@ export const roadmapPhases: RoadmapPhase[] = [
     items: [
       "Watchtower for everyone: 25 watched tokens + 25 watched wallets per user, never token-gated — live",
       "Free listings: GeckoTerminal token info — verified & live; CoinGecko in review; DexScreener as volume returns",
-      "Content flywheel (fresh explainer every cycle) + transparent, seeded give-back wallet",
+      "Content flywheel (fresh explainer every cycle) + give-back wallet: public — seeding it is next",
       "Public-API adoption (“Scanned by GL1TCH” embeds), liquidity depth & partnerships as volume justifies",
     ],
     status: "active",

@@ -110,3 +110,12 @@ describe("deployer disclosure is current", () => {
     expect(text).not.toMatch(/fully exited|entire position/i);
   });
 });
+
+describe("give-back copy never implies payouts that haven't happened", () => {
+  it("FAQ and roadmap describe the wallet, not a running give-back", () => {
+    const faq = readFileSync(join(process.cwd(), "src/content/faq.ts"), "utf8");
+    const roadmap = readFileSync(join(process.cwd(), "src/content/roadmap.ts"), "utf8");
+    expect(faq).not.toMatch(/plus a transparent give-back\./);
+    expect(roadmap).not.toMatch(/seeded give-back wallet"/);
+  });
+});
