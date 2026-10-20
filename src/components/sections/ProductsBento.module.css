@@ -23,13 +23,13 @@
   width: 70%;
   aspect-ratio: 1;
   border-radius: 50%;
-  filter: blur(40px);
   opacity: calc(0.5 * var(--glow));
   pointer-events: none;
 }
-.card[data-tone="signal"]::before { background: radial-gradient(circle, rgba(124, 255, 79, 0.28), transparent 65%); }
-.card[data-tone="glitch"]::before { background: radial-gradient(circle, rgba(122, 60, 255, 0.45), transparent 65%); }
-.card[data-tone="bad"]::before { background: radial-gradient(circle, rgba(242, 85, 90, 0.22), transparent 65%); }
+/* soft glow from the gradient itself (no blur filter, which is costly to paint) */
+.card[data-tone="signal"]::before { background: radial-gradient(circle, rgba(124, 255, 79, 0.22) 0%, rgba(124, 255, 79, 0.12) 30%, rgba(124, 255, 79, 0.03) 55%, transparent 70%); }
+.card[data-tone="glitch"]::before { background: radial-gradient(circle, rgba(122, 60, 255, 0.36) 0%, rgba(122, 60, 255, 0.2) 30%, rgba(122, 60, 255, 0.05) 55%, transparent 70%); }
+.card[data-tone="bad"]::before { background: radial-gradient(circle, rgba(242, 85, 90, 0.18) 0%, rgba(242, 85, 90, 0.1) 30%, rgba(242, 85, 90, 0.025) 55%, transparent 70%); }
 .card[data-tone="neutral"]::before { background: radial-gradient(circle, rgba(185, 155, 255, 0.2), transparent 65%); }
 
 /* the scanner is the flagship: lit edge */

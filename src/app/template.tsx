@@ -1,15 +1,10 @@
-"use client";
+import styles from "./template.module.css";
 
-import { motion } from "framer-motion";
-
+/**
+ * Remounts on every route change, so each page slides in. CSS only and never transparent: the
+ * old framer-motion fade started at opacity 0, which kept every page invisible (and its LCP
+ * waiting) until all the JavaScript had loaded and hydrated.
+ */
 export default function Template({ children }: { children: React.ReactNode }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={styles.page}>{children}</div>;
 }

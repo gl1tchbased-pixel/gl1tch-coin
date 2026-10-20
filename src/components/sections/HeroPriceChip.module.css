@@ -55,3 +55,7 @@
 @media (prefers-reduced-motion: reduce) {
   .dot { animation: none; }
 }
+/* Phones: solid instead of a backdrop blur (paint cost on the first frame). */
+@media (max-width: 768px) {
+  .chip { backdrop-filter: none; background: rgba(10, 10, 15, 0.9); }
+}

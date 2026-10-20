@@ -1,0 +1,4 @@
+/* Movement only, no opacity: the page is fully visible from its first frame. */
+.page { animation: page-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes page-in { from { transform: translateY(8px); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .page { animation: none; } }

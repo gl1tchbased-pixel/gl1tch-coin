@@ -6,10 +6,11 @@
   pointer-events: none;
   overflow: hidden;
 }
+/* No blur filter: blurring layers this big is one of the most expensive paints a browser does
+   (it held back the first frame on phones). A many-stop radial gradient gives the same soft glow. */
 .aurora i {
   position: absolute;
   border-radius: 50%;
-  filter: blur(90px);
   will-change: transform;
 }
 /* purple, top right */
@@ -18,7 +19,7 @@
   height: 62vmax;
   right: -18vmax;
   top: -22vmax;
-  background: radial-gradient(circle, rgba(122, 60, 255, 0.36), rgba(122, 60, 255, 0) 65%);
+  background: radial-gradient(circle, rgba(122, 60, 255, 0.3) 0%, rgba(122, 60, 255, 0.2) 22%, rgba(122, 60, 255, 0.09) 44%, rgba(122, 60, 255, 0.025) 60%, rgba(122, 60, 255, 0) 71%);
   animation: drift-a 26s ease-in-out infinite alternate;
 }
 /* green, left middle */
@@ -27,7 +28,7 @@
   height: 54vmax;
   left: -20vmax;
   top: 38vh;
-  background: radial-gradient(circle, rgba(124, 255, 79, 0.15), rgba(124, 255, 79, 0) 65%);
+  background: radial-gradient(circle, rgba(124, 255, 79, 0.12) 0%, rgba(124, 255, 79, 0.08) 22%, rgba(124, 255, 79, 0.035) 44%, rgba(124, 255, 79, 0.01) 60%, rgba(124, 255, 79, 0) 71%);
   animation: drift-b 32s ease-in-out infinite alternate;
 }
 /* hot purple, bottom right */
@@ -36,7 +37,7 @@
   height: 40vmax;
   right: 10vw;
   bottom: -18vmax;
-  background: radial-gradient(circle, rgba(155, 102, 255, 0.24), rgba(155, 102, 255, 0) 65%);
+  background: radial-gradient(circle, rgba(155, 102, 255, 0.2) 0%, rgba(155, 102, 255, 0.13) 22%, rgba(155, 102, 255, 0.06) 44%, rgba(155, 102, 255, 0.015) 60%, rgba(155, 102, 255, 0) 71%);
   animation: drift-a 38s ease-in-out infinite alternate-reverse;
 }
 
@@ -47,9 +48,9 @@
   to { transform: translate(9vmax, -5vmax) scale(1.12); }
 }
 
-/* Phones: smaller blur, no drift (battery). */
+/* Phones: no drift (battery). */
 @media (max-width: 768px) {
-  .aurora i { filter: blur(60px); animation: none; }
+  .aurora i { animation: none; will-change: auto; }
 }
 @media (prefers-reduced-motion: reduce) {
   .aurora i { animation: none; }

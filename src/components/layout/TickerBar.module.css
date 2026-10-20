@@ -7,8 +7,8 @@
   display: none;
   align-items: center;
   height: 38px;
-  background: rgba(5, 5, 5, 0.92);
-  backdrop-filter: blur(12px);
+  /* near-opaque, so a backdrop blur would be invisible and only cost paint */
+  background: rgba(5, 5, 5, 0.95);
   border-top: 1px solid var(--color-border-signal);
   overflow: hidden;
   font-family: var(--font-mono);
