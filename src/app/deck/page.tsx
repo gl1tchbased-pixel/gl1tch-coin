@@ -277,10 +277,11 @@ export default async function DeckPage() {
           requests a transaction signature.
         </p>
         <p className={styles.body}>
-          <strong>Already built:</strong> a working Android prototype (Expo / React Native, MIT). Share a
-          Pump.fun link from any app and it scans on arrival; tested on a real Android phone. Read-only
-          Mobile Wallet Adapter connect is wired in (it opens Phantom on the device). The mobile
-          milestones above turn it into a polished dApp Store release.{" "}
+          <strong>Already built:</strong> a working Android prototype (Expo / React Native, MIT), tested end
+          to end on a real Android phone with Phantom. Share a Pump.fun link from any app and it scans on
+          arrival; connect a wallet over Mobile Wallet Adapter (read-only) and it risk-checks every token
+          you hold; Sign in with Solana proves ownership with a signed message, never a transaction. The
+          mobile milestones above turn it into a polished dApp Store release with Watchtower alerts.{" "}
           <a className={styles.link} href={`${OFFICIAL.GITHUB_URL}/tree/main/mobile`}>Source</a>
         </p>
       </article>
