@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 
 /**
  * Embeddable AGENT TRUST badge (SVG) — the Guardrail widget (Agent Trust Layer v2).
@@ -44,6 +45,11 @@ export async function GET(req: NextRequest) {
   const chain = (req.nextUrl.searchParams.get("chain") || "solana").trim();
 
   let body = svg({ addr: "Check an agent", level: "unknown", score: "KYA", tone: "#7CFF4F", verified: false });
+  // Each new address triggers an agent check, so cap requests per IP; embeds show the generic badge when limited.
+  sweepBuckets();
+  if (!rateLimit(`agent-badge:${clientIp(req)}`, 60, 60_000).ok) {
+    return new Response(body, { status: 429, headers: { "content-type": "image/svg+xml; charset=utf-8", "cache-control": "no-store", "retry-after": "60" } });
+  }
   try {
     if (address) {
       const r = await fetch(`${SITE}/api/agent/check?address=${encodeURIComponent(address)}&chain=${encodeURIComponent(chain)}`, { signal: AbortSignal.timeout(9000) });

@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 
 /**
  * Embeddable verdict BADGE (SVG). Any project can drop this on their site / README /
@@ -49,6 +50,11 @@ export async function GET(req: NextRequest) {
   const address = i > 0 ? dec.slice(i + 1) : dec;
 
   let body = svg({ sym: "Scan a token", verdict: "GL1TCH", score: "scanner", tone: "#7CFF4F", verified: false });
+  // Each new address triggers a scan, so cap requests per IP; embeds just show the generic badge when limited.
+  sweepBuckets();
+  if (!rateLimit(`badge:${clientIp(req)}`, 60, 60_000).ok) {
+    return new Response(body, { status: 429, headers: { "content-type": "image/svg+xml; charset=utf-8", "cache-control": "no-store", "retry-after": "60" } });
+  }
   try {
     if (address) {
       const r = await fetch(`${SITE}/api/scan?mint=${encodeURIComponent(address)}${chain ? `&chain=${chain}` : ""}`, { signal: AbortSignal.timeout(12000) });

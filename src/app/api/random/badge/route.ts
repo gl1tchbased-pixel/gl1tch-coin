@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 
 /**
  * Embeddable "Provably Fair by GL1TCH" BADGE (SVG). A project running a giveaway/allocation
@@ -55,6 +56,10 @@ export async function GET(req: NextRequest) {
 
   // Generic badge when no (valid) id is supplied.
   let body = svg({ tone: GREEN, status: "FAIR RNG", detail: "verify ↗" });
+  sweepBuckets();
+  if (!rateLimit(`random-badge:${clientIp(req)}`, 60, 60_000).ok) {
+    return new Response(body, { status: 429, headers: { "content-type": "image/svg+xml; charset=utf-8", "cache-control": "no-store", "retry-after": "60" } });
+  }
 
   try {
     if (/^[0-9a-f]{64}$/.test(id)) {

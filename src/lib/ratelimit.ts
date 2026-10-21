@@ -32,9 +32,26 @@ export function rateLimit(key: string, limit = 30, windowMs = 60_000): { ok: boo
   return { ok: true, remaining: limit - b.count, retryAfter: 0 };
 }
 
-/** Occasionally evict expired buckets so the map can't grow unbounded. */
-export function sweepBuckets(): void {
-  const now = Date.now();
-  if (buckets.size < 5000) return;
+const SWEEP_AT = 5000;
+const MAX_BUCKETS = 50_000;
+const SWEEP_GAP_MS = 5_000;
+let lastSweep = 0;
+
+/**
+ * Occasionally evict expired buckets so the map can't grow unbounded. Throttled, so a flood of distinct
+ * active IPs can't turn every request into a full scan of the map; past MAX_BUCKETS the oldest go first.
+ */
+export function sweepBuckets(now = Date.now()): void {
+  if (buckets.size < SWEEP_AT || now - lastSweep < SWEEP_GAP_MS) return;
+  lastSweep = now;
   for (const [k, v] of buckets) if (v.reset <= now) buckets.delete(k);
+  for (const k of buckets.keys()) {
+    if (buckets.size <= MAX_BUCKETS) break;
+    buckets.delete(k);
+  }
+}
+
+/** For tests. */
+export function bucketCount(): number {
+  return buckets.size;
 }

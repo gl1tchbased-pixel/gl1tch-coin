@@ -1,4 +1,5 @@
-import { createServer, type Server } from "node:http";
+import { createServer, type IncomingMessage, type Server } from "node:http";
+import { clientIp, createLimiter, safeEqual } from "./limits.js";
 
 export interface VerifyServerOptions {
   /** Allowed browser origin (the website). Used for CORS. */
@@ -59,19 +60,23 @@ export interface VerifyServerOptions {
 }
 
 const RATE_WINDOW_MS = 60_000;
+/** Per-IP budget for public reads (GET). Writes use `opts.rateLimit` (default 20/min). */
+const READ_LIMIT = 240;
 
 /** Minimal HTTP server (no framework) for the wallet-signature verification endpoint.
  *  Exposes POST /verify and GET /health. CORS-locked to the website origin. */
 export function createVerifyServer(opts: VerifyServerOptions): Server {
-  const limit = opts.rateLimit ?? 20;
-  const hits = new Map<string, number[]>();
+  const writeLimit = opts.rateLimit ?? 20;
+  const limiter = createLimiter(RATE_WINDOW_MS);
 
-  function rateLimited(ip: string): boolean {
-    const now = Date.now();
-    const recent = (hits.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
-    recent.push(now);
-    hits.set(ip, recent);
-    return recent.length > limit;
+  // The website's own server-to-bot calls carry one of the shared tokens; they are exempt from the per-IP
+  // limits (many site visitors share a few Vercel egress IPs).
+  function isInternal(req: IncomingMessage): boolean {
+    const s = req.headers["x-stats-token"];
+    const st = Array.isArray(s) ? s[0] : s;
+    const b = req.headers["x-bridge-token"];
+    const bt = Array.isArray(b) ? b[0] : b;
+    return safeEqual(st, opts.stats?.token) || safeEqual(st, opts.signal?.token) || safeEqual(bt, opts.xBridge?.token);
   }
 
   return createServer((req, res) => {
@@ -94,6 +99,17 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
       return;
     }
 
+    // Every public request is rate-limited per client IP: the bot is reachable directly on Railway, so the
+    // website's own limits don't protect it.
+    if (!isInternal(req)) {
+      const write = req.method !== "GET";
+      if (limiter.check(`${clientIp(req)}:${write ? "w" : "r"}`, write ? writeLimit : READ_LIMIT)) {
+        res.writeHead(429, { "Content-Type": "application/json", "Retry-After": "60", ...cors });
+        res.end(JSON.stringify({ ok: false, error: "rate_limited" }));
+        return;
+      }
+    }
+
     // ---- global scan counter ----
     const sPath = (req.url ?? "").split("?")[0];
     if (opts.stats && sPath === "/stats" && req.method === "GET") {
@@ -104,7 +120,7 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
     if (opts.stats && sPath === "/stats/scan" && req.method === "POST") {
       const hdr = req.headers["x-stats-token"];
       const token = (Array.isArray(hdr) ? hdr[0] : hdr) ?? "";
-      if (!opts.stats.token || token !== opts.stats.token) {
+      if (!safeEqual(token, opts.stats.token)) {
         res.writeHead(401, { "Content-Type": "application/json", ...cors });
         res.end(JSON.stringify({ ok: false, error: "unauthorized" }));
         return;
@@ -148,7 +164,7 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
     if (opts.signal && sPath === "/signal/agent/attest" && req.method === "POST") {
       const hdr = req.headers["x-stats-token"];
       const token = (Array.isArray(hdr) ? hdr[0] : hdr) ?? "";
-      if (!opts.signal.token || token !== opts.signal.token) {
+      if (!safeEqual(token, opts.signal.token)) {
         res.writeHead(401, { "Content-Type": "application/json", ...cors });
         res.end(JSON.stringify({ ok: false, error: "unauthorized" }));
         return;
@@ -224,7 +240,7 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
     if (opts.signal && sPath === "/signal/observe" && req.method === "POST") {
       const hdr = req.headers["x-stats-token"];
       const token = (Array.isArray(hdr) ? hdr[0] : hdr) ?? "";
-      if (!opts.signal.token || token !== opts.signal.token) {
+      if (!safeEqual(token, opts.signal.token)) {
         res.writeHead(401, { "Content-Type": "application/json", ...cors });
         res.end(JSON.stringify({ ok: false, error: "unauthorized" }));
         return;
@@ -359,7 +375,7 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
       const hdr = req.headers["x-bridge-token"];
       const qToken = new URLSearchParams((req.url ?? "").split("?")[1] ?? "").get("token");
       const token = (Array.isArray(hdr) ? hdr[0] : hdr) ?? qToken ?? "";
-      if (!bridge.token || token !== bridge.token) {
+      if (!safeEqual(token, bridge.token)) {
         res.writeHead(401, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ ok: false, error: "unauthorized" }));
         return;
@@ -397,13 +413,6 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
     if (req.method !== "POST" || req.url !== "/verify") {
       res.writeHead(404, { "Content-Type": "application/json", ...cors });
       res.end(JSON.stringify({ ok: false, error: "not_found" }));
-      return;
-    }
-
-    const ip = req.socket.remoteAddress ?? "unknown";
-    if (rateLimited(ip)) {
-      res.writeHead(429, { "Content-Type": "application/json", ...cors });
-      res.end(JSON.stringify({ ok: false, error: "rate_limited" }));
       return;
     }
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 import { PRIMARY_PAIR } from "@/lib/market";
 import { parseGeckoOhlcv, stepSeries } from "@/lib/ohlcv";
 
@@ -18,6 +19,10 @@ const RANGES = {
 } as const;
 
 export async function GET(req: NextRequest) {
+  sweepBuckets();
+  if (!rateLimit(`market-history:${clientIp(req)}`, 30, 60_000).ok) {
+    return NextResponse.json({ error: "rate limited" }, { status: 429, headers: { "retry-after": "60" } });
+  }
   const key = (req.nextUrl.searchParams.get("range") ?? "30d") as keyof typeof RANGES;
   const range = RANGES[key] ? key : "30d";
   const cfg = RANGES[range];

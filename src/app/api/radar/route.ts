@@ -1,5 +1,6 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { scanToken, applyVerified, isVerified } from "@/lib/scan";
+import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 import { bumpStats } from "@/lib/stats";
 import { observeDeployer } from "@/lib/signal-graph";
 
@@ -47,70 +48,100 @@ async function dexList(url: string): Promise<{ chainId: string; tokenAddress: st
 const BATCH = Math.max(1, Math.min(80, Number(process.env.RADAR_BATCH) || 40));
 const CONCURRENCY = Math.max(1, Math.min(20, Number(process.env.RADAR_CONCURRENCY) || 10));
 
-export async function GET() {
+type RadarResult = { scanned: number; flagged: number; caught: Caught[]; updatedAt: number };
+
+// One sweep scans up to BATCH tokens, so it must never be triggerable on demand: an instance reuses its last
+// result for MIN_SWEEP_GAP_MS and concurrent requests share the sweep already running.
+const MIN_SWEEP_GAP_MS = 10 * 60_000;
+let last: RadarResult | null = null;
+let running: Promise<RadarResult> | null = null;
+
+function sweepOnce(): Promise<RadarResult> {
+  if (last && Date.now() - last.updatedAt < MIN_SWEEP_GAP_MS) return Promise.resolve(last);
+  running ??= sweep()
+    .then((r) => (last = r))
+    .finally(() => {
+      running = null;
+    });
+  return running;
+}
+
+const CACHE = { "cache-control": "public, s-maxage=1800, stale-while-revalidate=3600" };
+
+export async function GET(req: NextRequest) {
+  // A query string would bypass the CDN cache and force a fresh sweep per request (cost / DoS
+  // amplification), so every variant is sent to the one cacheable URL.
+  if (req.nextUrl.search) return NextResponse.redirect(new URL("/api/radar", req.url), 308);
+  sweepBuckets();
+  if (!rateLimit(`radar:${clientIp(req)}`, 6, 60_000).ok) {
+    return last
+      ? NextResponse.json(last, { headers: CACHE })
+      : NextResponse.json({ error: "rate limited", scanned: 0, flagged: 0, caught: [] }, { status: 429, headers: { "retry-after": "60" } });
+  }
   try {
-    // Hunt where rugs actually live: freshly-added token profiles (mostly new pump.fun mints,
-    // high rug rate) PLUS boosted tokens (latest + top). Boosts alone are paid-for and skew
-    // legit — the graph needs flagged deployers, so fresh profiles come first.
-    const [profiles, boostsLatest, boostsTop] = await Promise.all([
-      dexList("https://api.dexscreener.com/token-profiles/latest/v1"),
-      dexList("https://api.dexscreener.com/token-boosts/latest/v1"),
-      dexList("https://api.dexscreener.com/token-boosts/top/v1"),
-    ]);
-    // Solana only for v1 (native deep scan), de-dupe, cap the batch. Fresh profiles first.
-    const seen = new Set<string>();
-    const candidates = [...profiles, ...boostsLatest, ...boostsTop]
-      .filter((b) => b.chainId === "solana" && b.tokenAddress && !seen.has(b.tokenAddress) && seen.add(b.tokenAddress))
-      .slice(0, BATCH);
-
-    // Scan in bounded-concurrency chunks (avoid a 40-wide RPC burst → rate-limit → dropped reads).
-    const scans: (Awaited<ReturnType<typeof scanToken>> | null)[] = [];
-    for (let i = 0; i < candidates.length; i += CONCURRENCY) {
-      const chunk = candidates.slice(i, i + CONCURRENCY);
-      const part = await Promise.all(
-        chunk.map(async (c) => {
-          const res = await withTimeout(scanToken(c.tokenAddress).catch(() => null), 14000);
-          if (!res) return null;
-          return isVerified(res.chain, res.mint) ? applyVerified(res) : res;
-        })
-      );
-      scans.push(...part);
-    }
-
-    let scanned = 0;
-    let flaggedCount = 0;
-    const ranked: Caught[] = [];
-    for (const s of scans) {
-      if (!s) continue;
-      scanned++;
-      const flagged = FLAGGED.has(s.verdict);
-      if (flagged) flaggedCount++;
-      // Feed the Signal Graph: the hourly sweep of fresh boosted tokens is exactly where
-      // serial ruggers surface. Fire-and-forget; confident, unverified reads only.
-      if (s.meta?.deployer && !s.verified && (typeof s.confidence !== "number" || s.confidence >= 60)) {
-        observeDeployer({
-          deployer: s.meta.deployer, chain: s.chain, mint: s.mint,
-          verdict: s.verdict, score: s.score, name: s.name, symbol: s.symbol,
-        });
-      }
-      ranked.push({
-        chain: s.chain, mint: s.mint,
-        name: s.name || s.symbol || s.mint.slice(0, 6),
-        symbol: s.symbol || "",
-        verdict: s.verdict, score: s.score,
-        reason: topReason(s.checks), flagged,
-      });
-    }
-    ranked.sort((a, b) => a.score - b.score); // riskiest first
-
-    // Hourly sweep doubles as the counter's heartbeat (real scans, real catches).
-    if (scanned > 0) bumpStats({ n: scanned, flaggedN: flaggedCount, kind: "auto" });
-
-    return NextResponse.json(
-      { scanned, flagged: flaggedCount, caught: ranked.slice(0, 8), updatedAt: Date.now() },
-      { headers: { "cache-control": "public, s-maxage=1800, stale-while-revalidate=3600" } }
-    );
+    return NextResponse.json(await sweepOnce(), { headers: CACHE });
   } catch (e) {
     return NextResponse.json({ error: e instanceof Error ? e.message : "radar failed", scanned: 0, flagged: 0, caught: [] }, { status: 200 });
   }
+}
+
+async function sweep(): Promise<RadarResult> {
+  // Hunt where rugs actually live: freshly-added token profiles (mostly new pump.fun mints,
+  // high rug rate) PLUS boosted tokens (latest + top). Boosts alone are paid-for and skew
+  // legit — the graph needs flagged deployers, so fresh profiles come first.
+  const [profiles, boostsLatest, boostsTop] = await Promise.all([
+    dexList("https://api.dexscreener.com/token-profiles/latest/v1"),
+    dexList("https://api.dexscreener.com/token-boosts/latest/v1"),
+    dexList("https://api.dexscreener.com/token-boosts/top/v1"),
+  ]);
+  // Solana only for v1 (native deep scan), de-dupe, cap the batch. Fresh profiles first.
+  const seen = new Set<string>();
+  const candidates = [...profiles, ...boostsLatest, ...boostsTop]
+    .filter((b) => b.chainId === "solana" && b.tokenAddress && !seen.has(b.tokenAddress) && seen.add(b.tokenAddress))
+    .slice(0, BATCH);
+
+  // Scan in bounded-concurrency chunks (avoid a 40-wide RPC burst → rate-limit → dropped reads).
+  const scans: (Awaited<ReturnType<typeof scanToken>> | null)[] = [];
+  for (let i = 0; i < candidates.length; i += CONCURRENCY) {
+    const chunk = candidates.slice(i, i + CONCURRENCY);
+    const part = await Promise.all(
+      chunk.map(async (c) => {
+        const res = await withTimeout(scanToken(c.tokenAddress).catch(() => null), 14000);
+        if (!res) return null;
+        return isVerified(res.chain, res.mint) ? applyVerified(res) : res;
+      })
+    );
+    scans.push(...part);
+  }
+
+  let scanned = 0;
+  let flaggedCount = 0;
+  const ranked: Caught[] = [];
+  for (const s of scans) {
+    if (!s) continue;
+    scanned++;
+    const flagged = FLAGGED.has(s.verdict);
+    if (flagged) flaggedCount++;
+    // Feed the Signal Graph: the hourly sweep of fresh boosted tokens is exactly where
+    // serial ruggers surface. Fire-and-forget; confident, unverified reads only.
+    if (s.meta?.deployer && !s.verified && (typeof s.confidence !== "number" || s.confidence >= 60)) {
+      observeDeployer({
+        deployer: s.meta.deployer, chain: s.chain, mint: s.mint,
+        verdict: s.verdict, score: s.score, name: s.name, symbol: s.symbol,
+      });
+    }
+    ranked.push({
+      chain: s.chain, mint: s.mint,
+      name: s.name || s.symbol || s.mint.slice(0, 6),
+      symbol: s.symbol || "",
+      verdict: s.verdict, score: s.score,
+      reason: topReason(s.checks), flagged,
+    });
+  }
+  ranked.sort((a, b) => a.score - b.score); // riskiest first
+
+  // Hourly sweep doubles as the counter's heartbeat (real scans, real catches).
+  if (scanned > 0) bumpStats({ n: scanned, flaggedN: flaggedCount, kind: "auto" });
+
+  return { scanned, flagged: flaggedCount, caught: ranked.slice(0, 8), updatedAt: Date.now() };
 }
