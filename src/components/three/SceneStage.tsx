@@ -75,8 +75,9 @@ interface Props<Api> {
   options?: Record<string, unknown>;
   poster?: string;
   posterAlt?: string;
-  /** Above the fold: the poster loads eagerly — but not preloaded or high priority, so it never
-   *  competes with the headline (the LCP element) for bandwidth. */
+  /** Above the fold: the poster loads eagerly — but not preloaded, and with an explicit low fetch
+   *  priority (Chrome would otherwise boost it once it's in the viewport), so it never competes with
+   *  the headline (the LCP element) for bandwidth. */
   hero?: boolean;
   className?: string;
   label: string;
@@ -241,7 +242,7 @@ function SceneStageInner<Api>(
   return (
     <div ref={wrapRef} className={[styles.stage, className ?? ""].join(" ")} role="img" aria-label={label} data-ready={ready ? "1" : "0"}>
       {poster && (
-        <Image src={poster} alt={posterAlt} fill sizes="(max-width: 768px) 100vw, 50vw" className={styles.poster} loading={hero ? "eager" : "lazy"} />
+        <Image src={poster} alt={posterAlt} fill sizes="(max-width: 768px) 100vw, 50vw" className={styles.poster} loading={hero ? "eager" : "lazy"} fetchPriority={hero ? "low" : undefined} />
       )}
       <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
       {children}
