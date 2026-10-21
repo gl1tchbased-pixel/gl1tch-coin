@@ -32,7 +32,7 @@ jobs:
           for p in "" scan network; do for i in 1 2 3; do curl -s -o /dev/null "https://gl1tchbased.xyz/$p"; done; done
       - name: Lighthouse, 3 runs per page
         run: |
-          npm install -g lighthouse@12.2.1
+          npm install -g lighthouse@13.5.0
           mkdir -p reports
           for p in "" scan network; do
             name=${p:-home}
