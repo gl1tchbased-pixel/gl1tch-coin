@@ -276,6 +276,13 @@ export default async function DeckPage() {
           sits one share-tap away from the moment someone is about to buy, and the app never
           requests a transaction signature.
         </p>
+        <p className={styles.body}>
+          <strong>Already built:</strong> a working Android prototype (Expo / React Native, MIT). Share a
+          Pump.fun link from any app and it scans on arrival; tested on a real Android phone. Read-only
+          Mobile Wallet Adapter connect is wired in (it opens Phantom on the device). The mobile
+          milestones above turn it into a polished dApp Store release.{" "}
+          <a className={styles.link} href={`${OFFICIAL.GITHUB_URL}/tree/main/mobile`}>Source</a>
+        </p>
       </article>
 
       <article className={styles.slide}>
