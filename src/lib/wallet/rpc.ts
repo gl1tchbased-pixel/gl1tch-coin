@@ -5,18 +5,12 @@
 export const SOLANA_RPC = "https://solana-rpc.publicnode.com";
 
 /**
- * UI-amount balance of `mint` held by `owner`, summed over all its token accounts (works for
- * Token-2022 too). One JSON-RPC call; no @solana/web3.js needed.
+ * $GL1TCH balance held by `owner`, summed over all its token accounts (Token-2022 included). Read
+ * through our own /api/balance: key-less public RPCs refuse getTokenAccountsByOwner from browsers.
  */
-export async function tokenBalance(owner: string, mint: string, signal?: AbortSignal): Promise<number> {
-  const res = await fetch(SOLANA_RPC, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "getTokenAccountsByOwner", params: [owner, { mint }, { encoding: "jsonParsed" }] }),
-    signal,
-  });
-  if (!res.ok) throw new Error(`rpc ${res.status}`);
-  const j = (await res.json()) as { result?: { value?: { account?: { data?: { parsed?: { info?: { tokenAmount?: { uiAmount?: number | null } } } } } }[] }; error?: { message?: string } };
-  if (j.error) throw new Error(j.error.message || "rpc error");
-  return (j.result?.value ?? []).reduce((sum, a) => sum + (a.account?.data?.parsed?.info?.tokenAmount?.uiAmount ?? 0), 0);
+export async function gl1tchBalance(owner: string, signal?: AbortSignal): Promise<number> {
+  const res = await fetch(`/api/balance?owner=${encodeURIComponent(owner)}`, { signal });
+  const j = (await res.json().catch(() => ({}))) as { balance?: number; error?: string };
+  if (!res.ok || typeof j.balance !== "number") throw new Error(j.error || `balance ${res.status}`);
+  return j.balance;
 }

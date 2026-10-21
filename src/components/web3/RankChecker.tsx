@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { CONTRACT_ADDRESS } from "@/lib/official";
 import { useWalletEager } from "@/lib/wallet/WalletRoot";
-import { tokenBalance } from "@/lib/wallet/rpc";
+import { gl1tchBalance } from "@/lib/wallet/rpc";
 import {
   RANK_TIERS,
   rankForBalance,
@@ -29,7 +29,7 @@ export function RankChecker() {
     setLoading(true);
     setError(null);
     try {
-      setBalance(await tokenBalance(address, CONTRACT_ADDRESS));
+      setBalance(await gl1tchBalance(address));
     } catch {
       setError("Could not read balance. Try again.");
     } finally {
