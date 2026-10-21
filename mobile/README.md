@@ -17,6 +17,14 @@ token safety scanner as a mobile-first Android app. MIT-licensed, like the rest 
 
 GL1TCH never requests a transaction signature, never holds keys and never moves funds.
 
+## Status (21 Oct 2026)
+
+- A release APK builds from this folder (see below).
+- **Tested on a real Android 16 phone:** a Pump.fun link shared from another app opened GL1TCH, the address was
+  extracted and the scan returned the full verdict with a reason per check.
+- **Mobile Wallet Adapter:** "Connect wallet" opens Phantom on the same phone. The full connect → holdings → scan
+  flow and Sign in with Solana still need an end-to-end run with the wallet owner approving.
+
 ## Not in this prototype yet
 
 Planned in the grant milestones: Watchtower push alerts, QR scanning, an offline verdict cache, Seeker polish and
