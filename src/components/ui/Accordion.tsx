@@ -1,7 +1,6 @@
 "use client";
 
 import { useId, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import styles from "./Accordion.module.css";
 
 interface AccordionProps {
@@ -38,22 +37,13 @@ export function Accordion({
           {open ? "−" : "+"}
         </span>
       </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            id={panelId}
-            role="region"
-            aria-labelledby={btnId}
-            className={styles.panel}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className={styles.panelInner}>{children}</div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Always in the HTML (answers stay crawlable); CSS grid rows animate the height, and the
+          closed panel is visibility:hidden so it's out of the tab order and the accessibility tree. */}
+      <div id={panelId} role="region" aria-labelledby={btnId} className={styles.panel}>
+        <div className={styles.panelClip}>
+          <div className={styles.panelInner}>{children}</div>
+        </div>
+      </div>
     </div>
   );
 }

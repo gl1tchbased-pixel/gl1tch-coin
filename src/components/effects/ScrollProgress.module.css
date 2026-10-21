@@ -11,5 +11,12 @@
     var(--color-glitch)
   );
   transform-origin: 0%;
+  transform: scaleX(0);
+  transition: transform 0.15s ease-out;
   box-shadow: 0 0 12px var(--color-signal-dim);
+}
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    transition: none;
+  }
 }

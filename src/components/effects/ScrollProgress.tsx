@@ -1,21 +1,33 @@
 "use client";
 
-import { motion, useScroll, useSpring } from "framer-motion";
+import { useEffect, useRef } from "react";
 import styles from "./ScrollProgress.module.css";
 
+// One rAF-throttled scroll listener writing a transform; the CSS transition does the smoothing.
 export function ScrollProgress() {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 30,
-    mass: 0.3,
-  });
+  const bar = useRef<HTMLDivElement>(null);
 
-  return (
-    <motion.div
-      className={`${styles.bar} no-print`}
-      style={{ scaleX }}
-      aria-hidden="true"
-    />
-  );
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const el = document.documentElement;
+      const max = el.scrollHeight - el.clientHeight;
+      const p = max > 0 ? Math.min(1, Math.max(0, el.scrollTop / max)) : 0;
+      if (bar.current) bar.current.style.transform = `scaleX(${p})`;
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    addEventListener("scroll", onScroll, { passive: true });
+    addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      removeEventListener("scroll", onScroll);
+      removeEventListener("resize", onScroll);
+    };
+  }, []);
+
+  return <div ref={bar} className={`${styles.bar} no-print`} aria-hidden="true" />;
 }
