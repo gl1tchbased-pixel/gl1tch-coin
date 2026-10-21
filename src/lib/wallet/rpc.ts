@@ -1,9 +1,8 @@
-// Browser Solana RPC, shared by the wallet engine and the light balance read below.
-// The canonical api.mainnet-beta.solana.com blocks cross-origin browser requests (CORS), so the
-// fallback is publicnode: free, key-less and CORS-enabled.
-const FALLBACK_RPC = "https://solana-rpc.publicnode.com";
-const env = process.env.NEXT_PUBLIC_SOLANA_RPC?.trim();
-export const SOLANA_RPC = env && /^https?:\/\//.test(env) ? env : FALLBACK_RPC;
+// Browser Solana RPC, shared by the wallet engine and the light balance read below. Always key-less:
+// a NEXT_PUBLIC_ value ships in the page's JavaScript, so a keyed RPC (Helius etc.) set there was
+// readable by every visitor. Keyed RPCs stay server-side (SCAN_RPC). publicnode is free and
+// CORS-enabled; the canonical api.mainnet-beta.solana.com blocks cross-origin browser requests.
+export const SOLANA_RPC = "https://solana-rpc.publicnode.com";
 
 /**
  * UI-amount balance of `mint` held by `owner`, summed over all its token accounts (works for

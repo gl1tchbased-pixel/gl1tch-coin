@@ -16,7 +16,7 @@ import { poolOwnersFrom, realHolders } from "@/lib/holders";
 const TOKEN_2022 = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
 
 function rpcEndpoints(): string[] {
-  const env = process.env.SCAN_RPC || process.env.NEXT_PUBLIC_SOLANA_RPC || "";
+  const env = process.env.SCAN_RPC || "";
   const list = [
     /^https?:\/\//.test(env) ? env : "",
     "https://solana-rpc.publicnode.com",
