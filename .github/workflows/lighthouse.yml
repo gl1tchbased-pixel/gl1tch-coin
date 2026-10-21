@@ -1,0 +1,52 @@
+name: Lighthouse (mobile, production)
+
+# Measures the LIVE site on a clean Linux runner: three mobile Lighthouse runs per page, median in the
+# job summary, full reports as an artifact. A dev machine with an IDE and other jobs running gives
+# numbers that swing by seconds; this is the reference. The site deploys from a local `vercel --prod`,
+# not from pushes, so run it by hand after a deploy (Actions → Run workflow, or
+# `gh workflow run lighthouse.yml`); it also runs daily to catch regressions.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"
+  push:
+    branches: [main]
+    paths: [".github/workflows/lighthouse.yml", ".github/scripts/lighthouse-summary.mjs"]
+
+permissions:
+  contents: read
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Warm the CDN cache
+        run: |
+          for p in "" scan network; do for i in 1 2 3; do curl -s -o /dev/null "https://gl1tchbased.xyz/$p"; done; done
+      - name: Lighthouse, 3 runs per page
+        run: |
+          npm install -g lighthouse@12.2.1
+          mkdir -p reports
+          for p in "" scan network; do
+            name=${p:-home}
+            for i in 1 2 3; do
+              lighthouse "https://gl1tchbased.xyz/$p" \
+                --only-categories=performance --form-factor=mobile \
+                --output=json --output=html --output-path="reports/$name-$i" \
+                --chrome-flags="--headless=new --no-sandbox" --quiet || echo "run $name-$i failed"
+            done
+          done
+      - name: Summary (median of 3)
+        run: node .github/scripts/lighthouse-summary.mjs reports >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: reports
+          retention-days: 30
