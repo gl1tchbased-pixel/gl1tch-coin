@@ -110,7 +110,8 @@ approval signature.
 - A verdict is a risk signal, not a guarantee, and never financial advice.
 - Public numbers come with their caveats: the scan counter's all-time total includes automated
   Rug Radar sweeps; since 20 Oct 2026 people's scans and automated ones are counted separately
-  (`/api/stats` returns `user`, `auto` and `splitSince`).
+  (`/api/stats` returns `user`, `auto` and `splitSince`, or a 503 while the counter is unreachable,
+  never a made-up 0).
 
 ## The $GL1TCH token (disclosure)
 
