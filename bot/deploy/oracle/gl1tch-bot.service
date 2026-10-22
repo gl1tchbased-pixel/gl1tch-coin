@@ -1,0 +1,43 @@
+[Unit]
+Description=GL1TCH Telegram bot + public API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=gl1tch
+Group=gl1tch
+WorkingDirectory=/opt/gl1tch/app/bot
+EnvironmentFile=/etc/gl1tch-bot/settings.env
+EnvironmentFile=/etc/gl1tch-bot/secrets.env
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+Environment=HOME=/opt/gl1tch
+Environment=NODE_ENV=production
+# The stores read their data folder from RAILWAY_VOLUME_MOUNT_PATH (the name is historical); the
+# rest take explicit file paths. Everything durable lives in /var/lib/gl1tch-bot.
+Environment=RAILWAY_VOLUME_MOUNT_PATH=/var/lib/gl1tch-bot
+Environment=WATCHTOWER_FILE=/var/lib/gl1tch-bot/watchtower.json
+Environment=WALLET_WATCH_FILE=/var/lib/gl1tch-bot/wallet-watch.json
+Environment=STATS_FILE=/var/lib/gl1tch-bot/stats.json
+Environment=REFERRALS_FILE=/var/lib/gl1tch-bot/referrals.json
+Environment=HOLDERS_FILE=/var/lib/gl1tch-bot/holders.json
+Environment=PERF_FILE=/var/lib/gl1tch-bot/perf.json
+Environment=XQUEUE_FILE=/var/lib/gl1tch-bot/xqueue.json
+ExecStart=/opt/gl1tch/app/bot/node_modules/.bin/tsx src/index.ts
+Restart=always
+RestartSec=10
+
+# Hardening: the bot only needs its data folder and /tmp (tsx cache).
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+ReadWritePaths=/var/lib/gl1tch-bot
+
+[Install]
+WantedBy=multi-user.target

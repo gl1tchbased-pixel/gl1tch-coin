@@ -1,0 +1,6 @@
+[Unit]
+Description=Snapshot the GL1TCH bot data folder
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/gl1tch-bot-backup

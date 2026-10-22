@@ -1,0 +1,9 @@
+[Unit]
+Description=Daily GL1TCH bot data snapshot
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

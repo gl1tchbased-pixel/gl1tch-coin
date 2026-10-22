@@ -1,0 +1,8 @@
+[Unit]
+Description=Deploy the GL1TCH bot from main when bot/ changes
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/gl1tch-bot-update

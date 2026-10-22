@@ -1,0 +1,8 @@
+# Public HTTPS for the bot's API (certificate from Let's Encrypt, renewed automatically).
+bot.gl1tchbased.xyz {
+	encode gzip
+	reverse_proxy 127.0.0.1:8787 {
+		# The bot's per-IP limits read X-Real-IP; set it from the real peer so clients can't spoof it.
+		header_up X-Real-IP {remote_host}
+	}
+}
