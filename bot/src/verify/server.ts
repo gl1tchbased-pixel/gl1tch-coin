@@ -57,6 +57,16 @@ export interface VerifyServerOptions {
     get: (id: string) => Promise<{ status: number; body: Record<string, unknown> }>;
     log: (limit: number) => unknown[];
   };
+  /** Verdict anchoring (A3): token-guarded POST /attest/batch (the site posts each Rug Radar sweep); public
+   *  GET /attest/info, /attest/pending (what the attester runner seals), /attest/batch?root=, /attest/proof?chain=&mint=. */
+  attest?: {
+    token: string;
+    add: (body: unknown) => { ok: boolean; error?: string; root?: string; count?: number; duplicate?: boolean };
+    info: () => Record<string, unknown>;
+    pending: (limit: number) => unknown[];
+    batch: (root: string) => unknown | null;
+    proof: (chain: string, mint: string) => unknown[];
+  };
 }
 
 const RATE_WINDOW_MS = 60_000;
@@ -142,6 +152,54 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
         }
       });
       return;
+    }
+
+    // ---- Verdict anchoring (A3) ----
+    if (opts.attest && sPath === "/attest/batch" && req.method === "POST") {
+      const hdr = req.headers["x-stats-token"];
+      const token = (Array.isArray(hdr) ? hdr[0] : hdr) ?? "";
+      if (!safeEqual(token, opts.attest.token)) {
+        res.writeHead(401, { "Content-Type": "application/json", ...cors });
+        res.end(JSON.stringify({ ok: false, error: "unauthorized" }));
+        return;
+      }
+      let bRaw = ""; let bTooLarge = false;
+      req.on("data", (c) => { bRaw += c; if (bRaw.length > 64 * 1024) { bTooLarge = true; req.destroy(); } });
+      req.on("end", () => {
+        if (bTooLarge) return;
+        try {
+          const out = opts.attest!.add(bRaw ? JSON.parse(bRaw) : {});
+          res.writeHead(out.ok ? 200 : 400, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify(out));
+        } catch {
+          res.writeHead(400, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify({ ok: false, error: "bad_json" }));
+        }
+      });
+      return;
+    }
+    if (opts.attest && req.method === "GET" && sPath.startsWith("/attest/")) {
+      const qs = new URLSearchParams((req.url ?? "").split("?")[1] ?? "");
+      const send = (status: number, body: Record<string, unknown>, maxAge = 30) => {
+        res.writeHead(status, { "Content-Type": "application/json", "cache-control": `public, max-age=${maxAge}`, ...cors });
+        res.end(JSON.stringify(body));
+      };
+      if (sPath === "/attest/info") return send(200, { ok: true, ...opts.attest.info() }, 60);
+      if (sPath === "/attest/pending") {
+        const limit = Math.max(1, Math.min(20, parseInt(qs.get("limit") ?? "6", 10) || 6));
+        return send(200, { ok: true, batches: opts.attest.pending(limit) }, 0);
+      }
+      if (sPath === "/attest/batch") {
+        const root = qs.get("root") ?? "";
+        const b = /^[0-9a-f]{64}$/.test(root) ? opts.attest.batch(root) : null;
+        return b ? send(200, { ok: true, batch: b }, 300) : send(404, { ok: false, error: "unknown root" });
+      }
+      if (sPath === "/attest/proof") {
+        const chain = qs.get("chain") ?? "solana";
+        const mint = qs.get("mint") ?? "";
+        if (!mint || mint.length > 64 || chain.length > 16) return send(400, { ok: false, error: "chain+mint required" });
+        return send(200, { ok: true, proofs: opts.attest.proof(chain, mint) });
+      }
     }
 
     // ---- Agent Trust: self-registration (signature-authed) + attest/dispute ----

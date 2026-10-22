@@ -9,7 +9,9 @@
     "dev": "tsx watch src/index.ts",
     "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "attest": "tsx src/attest/run.ts",
+    "attest:e2e": "tsx e2e/attest-devnet.ts"
   },
   "dependencies": {
     "@solana/web3.js": "^1.98.4",

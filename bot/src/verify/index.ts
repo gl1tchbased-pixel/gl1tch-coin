@@ -26,6 +26,11 @@ import { apiKeys } from "../api-keys/store.js";
 import { verifyApiKeyReq, newApiKey } from "../api-keys/keys.js";
 import { randomStore } from "../random/store.js";
 import { requestRandom, getRandom } from "../random/service.js";
+import { attestStore } from "../attest/store.js";
+import { validateBatch } from "../attest/records.js";
+import { ENGINE } from "../attest/merkle.js";
+import { DEFAULT_POLICY } from "../attest/guard.js";
+import { startAttestLinker } from "../attest/linker.js";
 
 /** Shared store — the bot issues nonces here and the HTTP endpoint consumes them. */
 export const store = new VerifyStore();
@@ -134,6 +139,7 @@ export function startVerification(bot: Bot): Server | null {
   };
 
   statsStore.load();
+  attestStore.load();
   balanceHistory.load();
   signalGraph.load();
   proofOfSignal.load();
@@ -342,6 +348,26 @@ export function startVerification(bot: Bot): Server | null {
       get: (id) => getRandom(id),
       log: (limit) => randomStore.events(limit),
     },
+    attest: {
+      token: config.stats.token,
+      // The site posts each Rug Radar sweep; only fresh, fully valid sweeps are kept for sealing.
+      add: (body) => {
+        const v = validateBatch(body, { maxAgeMs: 6 * 3_600_000 });
+        if ("error" in v) return { ok: false, error: v.error };
+        return { ok: true, ...attestStore.add(v.records, v.sweepMs) };
+      },
+      info: () => ({
+        attester: config.attest.attester || null,
+        cluster: config.attest.cluster,
+        memo: "gl1tch:radar:v1:<root>:<count>:<sweepMs>",
+        engine: ENGINE,
+        policy: { maxFeeLamports: DEFAULT_POLICY.maxFeeLamports, maxPerDay: DEFAULT_POLICY.maxPerDay, maxWalletLamports: DEFAULT_POLICY.maxWalletLamports },
+        ...attestStore.summary(),
+      }),
+      pending: (limit) => attestStore.pending(limit),
+      batch: (root) => attestStore.batch(root) ?? null,
+      proof: (chain, mint) => attestStore.proofs(chain, mint),
+    },
     ...(config.xBridge.token
       ? {
           xBridge: {
@@ -366,5 +392,7 @@ export function startVerification(bot: Bot): Server | null {
     console.log(`[verify] listening on :${config.verify.port} (origin ${config.verify.siteOrigin})`);
   });
   startQuantumCore(); // scheduled commit-reveal Draw executor (externally untriggerable)
+  // Anchoring: the bot only reads the attester's public history; the key lives with the runner, not here.
+  if (config.attest.attester) startAttestLinker(attestStore, { rpc: config.attest.rpc, attester: config.attest.attester });
   return server;
 }

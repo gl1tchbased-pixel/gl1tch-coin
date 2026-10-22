@@ -3,6 +3,8 @@ import { scanToken, applyVerified, isVerified } from "@/lib/scan";
 import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 import { bumpStats } from "@/lib/stats";
 import { observeDeployer } from "@/lib/signal-graph";
+import { submitSweep } from "@/lib/attest/submit";
+import type { VerdictRecord } from "@/lib/attest/merkle";
 
 /**
  * RUG RADAR API — auto Hall of Shame. Pulls freshly-promoted ("boosted") tokens from
@@ -86,6 +88,7 @@ export async function GET(req: NextRequest) {
 }
 
 async function sweep(): Promise<RadarResult> {
+  const sweepMs = Date.now();
   // Hunt where rugs actually live: freshly-added token profiles (mostly new pump.fun mints,
   // high rug rate) PLUS boosted tokens (latest + top). Boosts alone are paid-for and skew
   // legit — the graph needs flagged deployers, so fresh profiles come first.
@@ -108,7 +111,8 @@ async function sweep(): Promise<RadarResult> {
       chunk.map(async (c) => {
         const res = await withTimeout(scanToken(c.tokenAddress).catch(() => null), 14000);
         if (!res) return null;
-        return isVerified(res.chain, res.mint) ? applyVerified(res) : res;
+        const done = { ...res, scannedAt: Date.now() };
+        return isVerified(done.chain, done.mint) ? applyVerified(done) : done;
       })
     );
     scans.push(...part);
@@ -117,9 +121,11 @@ async function sweep(): Promise<RadarResult> {
   let scanned = 0;
   let flaggedCount = 0;
   const ranked: Caught[] = [];
+  const sealed: VerdictRecord[] = [];
   for (const s of scans) {
     if (!s) continue;
     scanned++;
+    sealed.push({ chain: s.chain, mint: s.mint, verdict: s.verdict, score: s.score, scannedAt: s.scannedAt || sweepMs });
     const flagged = FLAGGED.has(s.verdict);
     if (flagged) flaggedCount++;
     // Feed the Signal Graph: the hourly sweep of fresh boosted tokens is exactly where
@@ -142,6 +148,8 @@ async function sweep(): Promise<RadarResult> {
 
   // Hourly sweep doubles as the counter's heartbeat (real scans, real catches).
   if (scanned > 0) bumpStats({ n: scanned, flaggedN: flaggedCount, kind: "auto" });
+  // Every verdict of this sweep (not just the top 8 shown) goes to the bot to be sealed on Solana.
+  submitSweep(sealed, sweepMs);
 
   return { scanned, flagged: flaggedCount, caught: ranked.slice(0, 8), updatedAt: Date.now() };
 }

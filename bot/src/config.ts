@@ -45,6 +45,14 @@ export const config = {
   stats: {
     token: process.env.STATS_TOKEN ?? "",
   },
+  /** Verdict anchoring (A3). Public values only: the attester's secret key never lives on the bot's host. */
+  attest: {
+    attester: process.env.ATTESTER_PUBKEY ?? "",
+    cluster: process.env.ATTEST_CLUSTER === "devnet" ? "devnet" : "mainnet-beta",
+    rpc:
+      process.env.ATTEST_RPC ??
+      (process.env.ATTEST_CLUSTER === "devnet" ? "https://api.devnet.solana.com" : (process.env.SOLANA_RPC ?? "https://api.mainnet-beta.solana.com")),
+  },
   agent: {
     // X (OAuth 1.0a user context) — write-only daily posting.
     x: {

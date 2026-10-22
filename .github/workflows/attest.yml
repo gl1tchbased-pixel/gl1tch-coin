@@ -1,0 +1,43 @@
+name: Attest
+
+# A3 verdict anchoring: seals pending Rug Radar sweeps on Solana, one SPL Memo each, then exits.
+# The attester key lives only in the "attester" environment's secrets (never on Railway) and reaches only the
+# run step; installs run with scripts disabled before the key is in the environment. The runner enforces its own
+# caps (bot/src/attest/guard.ts). Off until the repository variable ATTEST_ENABLED is "true".
+on:
+  schedule:
+    - cron: "7,37 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: attest
+  cancel-in-progress: false
+
+jobs:
+  seal:
+    if: ${{ vars.ATTEST_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    environment: attester
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+      - name: Install (no install scripts)
+        working-directory: bot
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Seal pending sweeps
+        working-directory: bot
+        env:
+          ATTESTER_SECRET_KEY: ${{ secrets.ATTESTER_SECRET_KEY }}
+          ATTEST_RPC: ${{ secrets.ATTEST_RPC }}
+          ATTESTER_PUBKEY: ${{ vars.ATTESTER_PUBKEY }}
+          ATTEST_CLUSTER: ${{ vars.ATTEST_CLUSTER }}
+          ATTEST_SOURCE: ${{ vars.ATTEST_SOURCE }}
+        run: npx tsx src/attest/run.ts

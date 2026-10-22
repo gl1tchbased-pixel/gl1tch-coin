@@ -56,3 +56,33 @@ jobs:
             exit 1
           fi
           echo "OK — no fund-transfer/approval calls."
+
+  attester:
+    name: Signing confined to the memo-only attester
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # A3 verdict anchoring: bot/src/attest/ is the only code allowed to sign a transaction, and it may only build
+      # SPL Memo transactions. Signing anywhere else, or a transfer/approval builder inside the attester, fails the
+      # build. Test tools under bot/e2e/ run on devnet only and are outside both src trees. See docs/threat-model.md.
+      - name: Signing lives only in bot/src/attest
+        run: |
+          set -e
+          PATTERN='sendRawTransaction|sendAndConfirm|Keypair\.fromSecretKey|signTransaction|signAllTransactions|\.sign\(\['
+          # grep exits 2 on a bad pattern; fail loudly instead of reading that as "no matches".
+          grep -rEn --include=*.ts --include=*.tsx "$PATTERN" src bot/src > hits.txt || [ $? -eq 1 ]
+          if grep -v '^bot/src/attest/' hits.txt; then
+            echo "::error::Transaction signing outside bot/src/attest/ (the attester)."
+            exit 1
+          fi
+          echo "OK — signing lives only in the attester."
+      - name: Attester builds memo instructions only
+        run: |
+          set -e
+          PATTERN='SystemProgram|createTransfer|createApprove|createSetAuthority|createCloseAccount|createBurn|createMintTo|ComputeBudgetProgram'
+          grep -rEn --include=*.ts "$PATTERN" bot/src/attest > hits.txt || [ $? -eq 1 ]
+          if grep -v '\.test\.ts:' hits.txt; then
+            echo "::error::The attester may only build SPL Memo instructions."
+            exit 1
+          fi
+          echo "OK — the attester builds memo instructions only."

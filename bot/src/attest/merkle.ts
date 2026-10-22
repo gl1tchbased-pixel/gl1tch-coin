@@ -97,3 +97,10 @@ export function parseMemo(memo: string): { root: string; count: number; sweepMs:
   const m = /^gl1tch:radar:v1:([0-9a-f]{64}):(\d+):(\d+)$/.exec(memo.trim());
   return m ? { root: m[1], count: Number(m[2]), sweepMs: Number(m[3]) } : null;
 }
+
+/** Finds a v1 memo inside the RPC's memo field, which wraps the text (e.g. a "[97] " length prefix). Only a hint:
+ *  anyone can attach this text to a transaction that mentions the attester, so the signer must be checked too. */
+export function findMemo(text: string | null | undefined): { root: string; count: number; sweepMs: number } | null {
+  const m = /gl1tch:radar:v1:[0-9a-f]{64}:\d+:\d+/.exec(text ?? "");
+  return m ? parseMemo(m[0]) : null;
+}

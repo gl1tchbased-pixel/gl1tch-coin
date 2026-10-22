@@ -21,7 +21,8 @@
 
 ## Entry points (current)
 - `/api/scan`, `/api/radar`, `/api/stats`, `/api/badge`, `/api/agent/badge`, `/api/random/badge`, `/api/market`, `/api/market/history` — public, unauthenticated.
-- Telegram bot (grammY) + its HTTP server on Railway (`/verify`, `/stats`, `/signal/*`, …) — reachable directly, not only through the site.
+- Telegram bot (grammY) + its HTTP server on Railway (`/verify`, `/stats`, `/signal/*`, `/attest/*`, …) — reachable directly, not only through the site.
+- The attester runner (GitHub Actions, `attester` environment) — the only holder of a signing key.
 - The site itself (XSS via any user-reflected value → CSP is the mitigation).
 
 ## Core invariants (never violated)
@@ -39,12 +40,17 @@
 
 ## Attester key (A3 verdict anchoring)
 The one place we sign a transaction. It signs **our own** SPL Memo transactions, never a user's, and never moves anyone's funds. Rules:
-- Dedicated wallet holding only fee money (≤ 0.05 SOL); never the deployer, treasury, or any wallet holding tokens.
-- Key from env only, never logged; not stored on Railway until its 2026-10-21 incident is declared resolved.
-- Every transaction is built from an allowlist (Memo program only, memo matches `gl1tch:radar:v1:<root>:<count>:<sweepMs>`), simulated before sending, and refused if the simulated balance change exceeds the fee cap.
-- Hard caps per transaction and per day; a circuit breaker halts sending after repeated failures; every attempt (sent or refused) is audit-logged.
-- The public verifier checks the signer against the published attester address and accepts only finalized transactions, so a stolen key can be revoked by publishing a new address and the old roots stay checkable.
+- Dedicated wallet holding only fee money (~0.05 SOL). The runner refuses a wallet holding any token account or more than 0.25 SOL.
+- Key from env only, never logged, and never on the bot's host: the runner is a scheduled GitHub Actions job whose secret lives in the protected `attester` environment and reaches only the run step (installs run with scripts disabled, actions pinned by SHA).
+- The RPC must prove its cluster by genesis hash, so a devnet setup can't sign on mainnet.
+- Every transaction is checked against an allowlist on the compiled message (one Memo instruction, attester-paid, no other accounts, memo = `gl1tch:radar:v1:<root>:<count>:<sweepMs>`). The fee is capped, and the exact signed bytes are simulated with a balance-change cap before those same bytes are sent.
+- The runner re-validates every record and recomputes the root, trusting nothing the bot sends.
+- Caps: 6 per run, 60 per rolling 24 h (env can only tighten them). A circuit breaker halts after 3 consecutive failures. Every decision, sent or refused, is audit-logged.
+- A memo's text proves nothing (anyone can copy it into a transaction that mentions the attester), so anchors count only after the transaction's signer is checked. That holds for the bot's linker, the runner's skip-if-sealed check and its daily count at the cap.
+- CI fails if code outside `bot/src/attest/` can sign, or if the attester builds anything but a memo.
+- The public verifier checks the signer against the published attester address and accepts only finalized transactions, so a stolen key can be revoked by publishing a new address and the old roots stay checkable. Spec: `docs/verdict-anchoring.md`.
 
 ## Reviewed
 - 2026-07-05 — initial model (Phase -1 kickoff). Next review before Phase 2 (wallet-connect).
 - 2026-10-22 — per-IP limits on every public route and the bot server, constant-time token checks, radar sweep made non-triggerable; attester-key rules written before A3 step 2.
+- 2026-10-22 — A3 step 2 built to those rules (runner, linker, proof endpoints, CI confinement); the review added the genesis-hash check and signer verification on every memo hint.
