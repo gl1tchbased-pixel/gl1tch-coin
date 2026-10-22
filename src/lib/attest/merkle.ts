@@ -79,6 +79,10 @@ export function merkleRoot(records: VerdictRecord[]): string {
   return bytesToHex(level[0]);
 }
 
+export function memoText(rootHex: string, count: number, sweepMs: number): string {
+  return `gl1tch:radar:v1:${rootHex}:${count}:${Math.trunc(sweepMs)}`;
+}
+
 /** Parses a v1 memo; null if it isn't one. */
 export function parseMemo(memo: string): { root: string; count: number; sweepMs: number } | null {
   const m = /^gl1tch:radar:v1:([0-9a-f]{64}):(\d+):(\d+)$/.exec(memo.trim());

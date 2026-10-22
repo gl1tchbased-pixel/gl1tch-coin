@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { RugRadar } from "@/components/web3/RugRadar";
 import { LiveTrustBadge } from "@/components/web3/LiveTrustBadge";
+import { ATTESTER_WALLET } from "@/lib/official";
 
 export const metadata: Metadata = {
   title: "Rug Radar — live risk scan of fresh launches | GL1TCH",
@@ -27,6 +28,15 @@ export default function RadarPage() {
       </div>
 
       <RugRadar />
+
+      <p style={{ textAlign: "center", marginTop: "var(--space-6)", color: "var(--text-secondary)" }}>
+        {ATTESTER_WALLET
+          ? "Every verdict in each sweep is sealed on Solana, so nobody can quietly change it later. "
+          : "Every verdict in each sweep is recorded with a Merkle proof; sealing on Solana goes live soon. "}
+        <Link href="/verify-scan" style={{ color: "var(--color-signal)" }}>
+          Verify one yourself →
+        </Link>
+      </p>
 
       <div style={{ marginTop: "var(--space-12)", textAlign: "center" }}>
         <p style={{ color: "var(--text-secondary)", marginBottom: "var(--space-4)" }}>

@@ -110,8 +110,8 @@ approval signature.
 - A verdict is a risk signal, not a guarantee, and never financial advice.
 - Verdict anchoring (built, not live on mainnet yet): each Rug Radar sweep's verdicts are sealed on Solana as
   a Merkle root in one SPL Memo, so anyone can prove a verdict existed at that time, unedited. The memos are
-  signed by a dedicated fee-only attester wallet, never a user's. See
-  [`docs/verdict-anchoring.md`](./docs/verdict-anchoring.md).
+  signed by a dedicated fee-only attester wallet, never a user's. Check one in your browser at
+  <https://gl1tchbased.xyz/verify-scan>; the spec is [`docs/verdict-anchoring.md`](./docs/verdict-anchoring.md).
 - Public numbers come with their caveats: the scan counter's all-time total includes automated
   Rug Radar sweeps; since 20 Oct 2026 people's scans and automated ones are counted separately
   (`/api/stats` returns `user`, `auto` and `splitSince`, or a 503 while the counter is unreachable,

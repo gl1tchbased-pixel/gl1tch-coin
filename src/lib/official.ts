@@ -36,6 +36,10 @@ export const GIVEBACK_WALLET = "CSxey8FbMS5dDG7Z5usH9gmXgLQqXTN6m25NRdqAC6g4";
 /** Token deployer wallet (verified on-chain via RugCheck/Solscan). */
 export const DEPLOYER_WALLET = "H5qbtquJzLVrwYj5opedoQCy9edQQZAtiyPMTMFFaFb4";
 
+/** Verdict-anchoring attester (A3): the only key that signs GL1TCH's on-chain seals. Pinned here, in the public
+ *  repo, so changing it shows in git history. Empty until the attester wallet exists (sealing not live yet). */
+export const ATTESTER_WALLET = "";
+
 /** Solscan account link helper. */
 export const solscanAccount = (addr: string) =>
   addr ? `https://solscan.io/account/${addr}` : "";

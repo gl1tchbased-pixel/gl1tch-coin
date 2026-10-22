@@ -27,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/quantum-core/beacon",
     "/buyback",
     "/radar",
+    "/verify-scan",
     "/embed",
     "/learn",
     "/learn/how-to-spot-a-rug-pull",

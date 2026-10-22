@@ -34,6 +34,10 @@ Two independent implementations, `bot/src/attest/merkle.ts` (node:crypto) and `s
 
 ## How to verify a verdict yourself
 
+The easy way: [gl1tchbased.xyz/verify-scan](https://gl1tchbased.xyz/verify-scan). Your browser does every step
+below on your own device, reading the seal from a Solana RPC you can choose. It can also check a downloaded proof
+file, so a proof stays checkable even if GL1TCH goes offline. By hand:
+
 1. Get its proof: `GET https://gl1tch-bot-production.up.railway.app/attest/proof?chain=solana&mint=<address>`.
    Each entry has the `record`, its Merkle `proof`, the `root`, `count`, `sweepMs` and, once sealed, the `anchor`
    transaction.
@@ -77,4 +81,7 @@ before the rotation stay checkable against the old address.
   proofs, and links finalized anchors by reading the attester's public history. It holds no key.
 - **Runner** (`bot/src/attest/run.ts`, `.github/workflows/attest.yml`): fetches pending sweeps, applies the controls
   above, and seals them.
+- **Verifier page** (`src/app/verify-scan`, `src/lib/attest/verify.ts`): runs the checks above in the browser.
+  The attester address it trusts is pinned in `src/lib/official.ts` (`ATTESTER_WALLET`), so any change shows up
+  in git history.
 - **Devnet check** (`bot/e2e/attest-devnet.ts`, `npm run attest:e2e` in `bot/`): the whole loop against devnet.
