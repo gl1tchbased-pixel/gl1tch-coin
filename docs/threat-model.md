@@ -21,7 +21,7 @@
 
 ## Entry points (current)
 - `/api/scan`, `/api/radar`, `/api/stats`, `/api/badge`, `/api/agent/badge`, `/api/random/badge`, `/api/market`, `/api/market/history` — public, unauthenticated.
-- Telegram bot (grammY) + its HTTP server on Railway (`/verify`, `/stats`, `/signal/*`, `/attest/*`, …) — reachable directly, not only through the site.
+- Telegram bot (grammY) + its HTTP server on an Oracle Cloud VM behind Caddy (`/verify`, `/stats`, `/signal/*`, `/attest/*`, …) — reachable directly, not only through the site.
 - The attester runner (GitHub Actions, `attester` environment) — the only holder of a signing key.
 - The site itself (XSS via any user-reflected value → CSP is the mitigation).
 

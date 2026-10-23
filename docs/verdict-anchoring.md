@@ -38,7 +38,7 @@ The easy way: [gl1tchbased.xyz/verify-scan](https://gl1tchbased.xyz/verify-scan)
 below on your own device, reading the seal from a Solana RPC you can choose. It can also check a downloaded proof
 file, so a proof stays checkable even if GL1TCH goes offline. By hand:
 
-1. Get its proof: `GET https://gl1tch-bot-production.up.railway.app/attest/proof?chain=solana&mint=<address>`.
+1. Get its proof: `GET https://bot.gl1tchbased.xyz/attest/proof?chain=solana&mint=<address>`.
    Each entry has the `record`, its Merkle `proof`, the `root`, `count`, `sweepMs` and, once sealed, the `anchor`
    transaction.
 2. Recompute the leaf from the record and fold the proof up to the root. It must equal `root`. (Or fetch the

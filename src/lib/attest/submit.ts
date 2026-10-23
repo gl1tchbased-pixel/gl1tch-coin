@@ -1,7 +1,7 @@
 import { after } from "next/server";
 import type { VerdictRecord } from "./merkle";
 
-const BASE = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production.up.railway.app").replace(/\/$/, "");
+const BASE = (process.env.SCAN_STATS_URL || "https://bot.gl1tchbased.xyz").replace(/\/$/, "");
 const TOKEN = process.env.STATS_TOKEN || "";
 
 /** Hands a Rug Radar sweep's verdicts to the bot, which keeps them for the attester to seal on Solana (A3).

@@ -7,7 +7,7 @@
 
 import { after } from "next/server";
 
-const BASE = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production.up.railway.app").replace(/\/$/, "");
+const BASE = (process.env.SCAN_STATS_URL || "https://bot.gl1tchbased.xyz").replace(/\/$/, "");
 const TOKEN = process.env.STATS_TOKEN || "";
 
 export type ReputationLevel = "unknown" | "clean" | "watch" | "serial";
