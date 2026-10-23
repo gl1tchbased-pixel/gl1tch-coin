@@ -2,14 +2,14 @@ import { timingSafeEqual } from "node:crypto";
 import type { IncomingMessage } from "node:http";
 
 /**
- * Request guards for the bot's public HTTP server (it is reachable directly, not only through the website, so it
- * can't rely on the website's rate limits).
+ * Request guards for the bot's public HTTP server (it is reachable directly on Railway, so it can't rely on
+ * the website's rate limits).
  */
 
 /**
- * The caller's IP behind the reverse proxy (Caddy on the VM; it overwrites X-Real-IP with the real peer). The socket
- * address is the proxy itself (every user shares it), so prefer the proxy-set X-Real-IP, then the LAST
- * X-Forwarded-For hop (the one the proxy appended; earlier entries can be forged by the client), then the socket.
+ * The caller's IP behind Railway's proxy. The socket address is the proxy itself (every user shares it), so
+ * prefer the proxy-set X-Real-IP, then the LAST X-Forwarded-For hop (the one the proxy appended; earlier
+ * entries can be forged by the client), then the socket.
  */
 export function clientIp(req: Pick<IncomingMessage, "headers" | "socket">): string {
   const real = req.headers["x-real-ip"];

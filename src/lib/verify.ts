@@ -5,10 +5,10 @@ export function verificationMessage(nonce: string): string {
   return `GL1TCH // verify rank\n\nSign this message to link your wallet. This is free, off-chain, and grants no spending access.\n\nNonce: ${nonce}`;
 }
 
-/** The live bot's public verification endpoint (Oracle Cloud VM). Used as a fallback so
+/** The live bot's public verification endpoint (Railway). Used as a fallback so
  *  /verify keeps working even if NEXT_PUBLIC_BOT_VERIFY_URL is unset or empty. */
 const FALLBACK_BOT_VERIFY_URL =
-  "https://bot.gl1tchbased.xyz/verify";
+  "https://gl1tch-bot-production.up.railway.app/verify";
 
 /** Endpoint the bot exposes for signed verification payloads. */
 export const BOT_VERIFY_URL = (() => {

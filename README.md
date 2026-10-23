@@ -72,7 +72,7 @@ flowchart LR
   S --> RC[RugCheck: LP lock, insiders, deployer]
   S --> MK[DexScreener / GeckoTerminal: market]
   S --> GP[GoPlus: EVM checks]
-  S --> BOT[(Bot on an Oracle Cloud VM: Signal Graph, counters, Watchtower)]
+  S --> BOT[(Bot on Railway: Signal Graph, counters, Watchtower)]
   BOT --> TG[Telegram alerts]
 ```
 
@@ -81,7 +81,7 @@ flowchart LR
 | `src/lib/scan.ts`, `src/lib/scan-multichain.ts` | The scan engine: checks, weights, verdicts |
 | `src/app/api/` | Public API routes (scan, badge, radar, stats, agent check) |
 | `src/app/` | The website (Next.js App Router) |
-| `bot/` | Telegram bot, Watchtower sweeps, Signal Graph and counters, stored as files on its VM (no database); hosting in `bot/deploy/oracle` |
+| `bot/` | Telegram bot, Watchtower sweeps, Signal Graph and counters, stored on a Railway volume (no database) |
 | `docs/` | Threat model, risk register, scoring changelog, Signal Graph schema, specs |
 | `remotion/`, `e2e/` | Video pipeline and browser automation (not needed to run the scanner) |
 

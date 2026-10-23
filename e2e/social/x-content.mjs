@@ -300,7 +300,7 @@ export function postForDay(date = new Date()) {
 }
 
 // --- Data-driven posts: inject LIVE metrics to prove robustness (credible = investor-ready) ---
-const BOT = (process.env.SCAN_STATS_URL || "https://bot.gl1tchbased.xyz").replace(/\/$/, "");
+const BOT = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production-3f2c.up.railway.app").replace(/\/$/, "");
 const n = (x) => (typeof x === "number" ? x.toLocaleString("en-US") : x);
 
 /** Fetch live engine metrics (null on failure). */

@@ -61,7 +61,7 @@ export async function runOnce(env: Record<string, string | undefined> = process.
   }
   const policy = policyFromEnv(env);
   const rpc = env.ATTEST_RPC || (cluster === "devnet" ? "https://api.devnet.solana.com" : "https://api.mainnet-beta.solana.com");
-  const source = (env.ATTEST_SOURCE || "https://bot.gl1tchbased.xyz").replace(/\/$/, "");
+  const source = (env.ATTEST_SOURCE || "https://gl1tch-bot-production.up.railway.app").replace(/\/$/, "");
   const conn = new Connection(rpc, "confirmed");
   audit({ step: "start", ok: true, detail: `${cluster} · attester ${attester.toBase58()}` });
 

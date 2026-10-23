@@ -5,7 +5,7 @@
 // Env: MIN (flagged tokens required, default 3) · DRY=1 (preview) · MAX (posts/run, default 1).
 import { openX, postThread, store } from "./x-lib.mjs";
 
-const BOT = (process.env.SCAN_STATS_URL || "https://bot.gl1tchbased.xyz").replace(/\/$/, "");
+const BOT = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production-3f2c.up.railway.app").replace(/\/$/, "");
 const SITE = "gl1tchbased.xyz";
 const MIN = Number(process.env.MIN || 3);
 const MAX = Number(process.env.MAX || 1);
