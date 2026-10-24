@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(DIR, "..", "..");
-const BOT = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production-3f2c.up.railway.app").replace(/\/$/, "");
+const BOT = (process.env.SCAN_STATS_URL || "https://bot.gl1tchbased.xyz").replace(/\/$/, "");
 const SNAP = path.resolve(DIR, "out", "metrics-snapshot.json");
 const SCHED_LOG = path.resolve(DIR, "out", "scheduler.log");
 

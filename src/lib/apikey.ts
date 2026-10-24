@@ -5,7 +5,7 @@
  * token's REQUIRED utility: depth/rate demand becomes token demand. Non-custodial.
  */
 
-const BASE = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production.up.railway.app").replace(/\/$/, "");
+const BASE = (process.env.SCAN_STATS_URL || "https://bot.gl1tchbased.xyz").replace(/\/$/, "");
 
 /** The exact message a wallet signs to mint a key — MUST match bot/src/api-keys/keys.ts. */
 export function apiKeyMessage(address: string, issuedMs: number): string {

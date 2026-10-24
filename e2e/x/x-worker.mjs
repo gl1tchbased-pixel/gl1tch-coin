@@ -3,7 +3,7 @@
 //
 //   # Remote mode (Telegram bridge): pulls from the Railway bot's /xqueue
 //   $env:NODE_OPTIONS='--use-system-ca'; $env:X_PROFILE='main';
-//   $env:X_BRIDGE_URL='https://gl1tch-bot-production.up.railway.app';
+//   $env:X_BRIDGE_URL='https://bot.gl1tchbased.xyz';
 //   $env:X_BRIDGE_TOKEN='<same token as on Railway>'; npm run x:worker
 //
 //   # Local mode (no bridge): pulls from e2e/x/out/post-queue.json (x-enqueue.mjs)

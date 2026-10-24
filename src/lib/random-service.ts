@@ -5,7 +5,7 @@
  * CORS-clean and lets the site rate-limit by the key's tier (same model as /api/scan).
  */
 
-const BASE = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production.up.railway.app").replace(/\/$/, "");
+const BASE = (process.env.SCAN_STATS_URL || "https://bot.gl1tchbased.xyz").replace(/\/$/, "");
 
 /** Forward a randomness request (the caller's API key gates it on the bot too).
  *  `payload` is either { spec, salt } or an allocation { labels, winners, salt }. */

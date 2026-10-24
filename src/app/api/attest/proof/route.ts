@@ -7,7 +7,7 @@ import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
  */
 export const runtime = "nodejs";
 
-const BOT = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production.up.railway.app").replace(/\/$/, "");
+const BOT = (process.env.SCAN_STATS_URL || "https://bot.gl1tchbased.xyz").replace(/\/$/, "");
 const TOKEN = process.env.STATS_TOKEN || "";
 const SOLANA_MINT = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 const EVM_ADDRESS = /^0x[0-9a-fA-F]{40}$/;

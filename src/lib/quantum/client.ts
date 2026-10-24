@@ -4,7 +4,7 @@
  * the Signal Graph client pattern: timeouts + graceful degradation to null/[].
  */
 
-const BASE = (process.env.SCAN_STATS_URL || "https://gl1tch-bot-production.up.railway.app").replace(/\/$/, "");
+const BASE = (process.env.SCAN_STATS_URL || "https://bot.gl1tchbased.xyz").replace(/\/$/, "");
 
 export type DrawStatus = "open" | "committed" | "revealed" | "void";
 
