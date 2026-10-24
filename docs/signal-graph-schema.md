@@ -28,7 +28,7 @@
 deployer field already produces. Everything else is built on top, additively.
 
 ## v0 as-built (Phase 0, shipped 2026-07-05)
-The graph is **bot-hosted** (durable Railway volume, auto-detected mount) and exposed over
+The graph is **bot-hosted** (a JSON file in the bot's data folder; since 2026-10-24 on the Oracle VM, /var/lib/gl1tch-bot) and exposed over
 the bot's HTTP bridge — the same pattern as the scan counter. A dedicated graph DB is
 deliberately deferred until the plan's measured thresholds (>500K nodes / >500ms queries).
 
