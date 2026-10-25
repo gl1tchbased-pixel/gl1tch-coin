@@ -92,15 +92,14 @@ export function startAgent(bot: Bot): void {
     timezone: config.agent.timezone,
   });
 
-  // X Agent — human-in-the-loop sweeps. Anchored to the configured agent
-  // timezone (Europe/Istanbul by default) so "every 2 hours" lines up with
-  // local even hours (00, 02, 04, ... 22 local). Each sweep DMs admins fresh
-  // content variants + scored reply opportunities; nothing posts automatically
-  // — admin taps "Tweet via X" to open composer.
+  // X Agent — human-in-the-loop sweeps, every 3 hours in the active window of the configured agent timezone
+  // (Europe/Istanbul by default; see config.xAgent.sweepCron). Each sweep DMs admins one summary and 3 post
+  // drafts built from live data; nothing posts automatically — admin taps "Tweet via X" to open the composer.
+  // Discovery (token listings) runs only on demand (/xdiscover, /xfull).
   if (config.xAgent.enabled) {
     cron.schedule(
       config.xAgent.sweepCron,
-      () => void runFullSweep(bot.api, { variants: 2, opportunities: 4 }),
+      () => void runFullSweep(bot.api, { variants: 3, opportunities: 0 }),
       { timezone: config.agent.timezone },
     );
     console.log(

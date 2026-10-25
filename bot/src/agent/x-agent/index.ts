@@ -12,7 +12,11 @@
 
 import type { Api } from "grammy";
 import { config } from "../../config.js";
-import { generateBatch, buildReply } from "./content.js";
+import { buildReplyFor } from "./content.js";
+import { composeBatch } from "./compose.js";
+import { draftMemory } from "./drafts.js";
+import { readSignals, type Signals } from "./signals.js";
+import { weightOf } from "./perf.js";
 import { sweep } from "./discovery/index.js";
 import { dmAdminOpportunity, dmAdminVariant } from "./queue.js";
 import { dmPendingRatings } from "./ratings.js";
@@ -27,24 +31,37 @@ async function dmAdmins(api: Api, text: string): Promise<void> {
   }
 }
 
-/** Push a fresh batch of content variants to admins (no discovery). */
+function deskHeader(sig: Signals, n: number): string {
+  const lines = ["<b>📡 SIGNAL DESK</b>"];
+  lines.push(
+    sig.radar
+      ? `Rug Radar, latest sweep: ${sig.radar.scanned} scanned · ${sig.radar.flagged} flagged`
+      : "Rug Radar: unreachable this round (the drafts below don't depend on it)",
+  );
+  if (sig.userScans !== null && sig.splitSince) {
+    const since = new Date(sig.splitSince).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "Europe/Istanbul" });
+    lines.push(`People-run scans since ${since}: ${sig.userScans.toLocaleString("en-US")}`);
+  }
+  lines.push("", `${n} post draft${n === 1 ? "" : "s"} below, each built from live data. 🐦 opens X with the text ready; ✅ once posted.`);
+  return lines.join("\n");
+}
+
+/** Draft posts from live data (latest radar sweep, scan counter, shipped features) and DM them under one summary. */
 export async function runContentBatch(api: Api, opts: { count?: number } = {}): Promise<void> {
-  const count = opts.count ?? 3;
-  const seed = Math.floor(Date.now() / 1000);
-  const variants = generateBatch(seed, count);
-  if (variants.length === 0) {
-    await dmAdmins(api, "<b>X AGENT</b>\n\nNo variants generated.");
+  const sig = await readSignals();
+  const drafts = composeBatch(
+    { sig, seed: Math.floor(Date.now() / 1000), now: Date.now(), lastUsed: (k) => draftMemory.lastUsed(k), weight: weightOf },
+    opts.count ?? 3,
+  );
+  if (drafts.length === 0) {
+    await dmAdmins(api, "<b>📡 SIGNAL DESK</b>\n\nNothing new worth posting this round; every subject was used recently.");
     return;
   }
-  await dmAdmins(
-    api,
-    `<b>X AGENT — CONTENT BATCH</b>\n\nSending ${variants.length} ready-to-paste variant${variants.length === 1 ? "" : "s"}.\n\n<i>Each opens X composer pre-filled on tap.</i>`,
-  );
+  await dmAdmins(api, deskHeader(sig, drafts.length));
   for (const id of config.adminIds) {
-    for (const v of variants) {
-      await dmAdminVariant(api, id, v);
-    }
+    for (const d of drafts) await dmAdminVariant(api, id, d.variant);
   }
+  draftMemory.commit(drafts);
 }
 
 /** Sweep external sources, surface scored reply opportunities, push to admins. */
@@ -78,7 +95,7 @@ export async function runDiscoverySweep(
   let seed = Math.floor(Date.now() / 1000);
   for (const id of config.adminIds) {
     for (const o of result.opportunities) {
-      const reply = buildReply(seed++);
+      const reply = buildReplyFor(o, seed++);
       await dmAdminOpportunity(api, id, o, reply);
     }
   }
@@ -131,15 +148,19 @@ async function runHolderGrowthCheck(api: Api): Promise<void> {
   }
 }
 
-/** Combined: pending ratings + holder growth + content batch + discovery
- *  + reddit comment angle, in one go. Ratings come first so admin processes old
- *  posts before new content; reddit angle ships last (extra fuel, optional). */
+/** One sweep: pending ratings first (so old posts get rated before new ones arrive), holder growth, the post drafts,
+ *  discovery only when asked for (`opportunities` > 0; token listings aren't posts anyone can reply to), and at most
+ *  one Reddit angle a day so it doesn't bury the drafts. */
 export async function runFullSweep(api: Api, opts: { variants?: number; opportunities?: number } = {}): Promise<void> {
   await dmPendingRatings(api, 2);
   await runHolderGrowthCheck(api);
   await runContentBatch(api, { count: opts.variants ?? 3 });
-  await runDiscoverySweep(api, { top: opts.opportunities ?? 5 });
-  await dmRedditAngle(api);
+  if ((opts.opportunities ?? 0) > 0) await runDiscoverySweep(api, { top: opts.opportunities });
+  const lastAngle = draftMemory.lastUsed("kind:reddit");
+  if (lastAngle === null || Date.now() - lastAngle > 20 * 3_600_000) {
+    await dmRedditAngle(api);
+    draftMemory.mark("kind:reddit");
+  }
 }
 
 /** Standalone manual fetch of one Reddit angle (admin command). */

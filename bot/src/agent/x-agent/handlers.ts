@@ -7,20 +7,31 @@ import { buildVariant, buildReply, parseVariantId } from "./content.js";
 import { renderVariantMessage, imageUrl } from "./queue.js";
 import { recordPost, recordRating, type Rating } from "./perf.js";
 import { enqueueX, pendingCountX } from "./xqueue.js";
+import { draftMemory } from "./drafts.js";
+import { composeOne } from "./compose.js";
+import { readSignals } from "./signals.js";
+import type { Category, Variant } from "./types.js";
 
-function rebuildVariant(variantId: string) {
+/** Data-driven drafts ("s.*" ids) are looked up as sent; template ids are rebuilt from (voice, category, seed). */
+function rebuildVariant(variantId: string): Variant | null {
+  const stored = draftMemory.get(variantId);
+  if (stored) return stored;
   const parsed = parseVariantId(variantId);
   if (!parsed) return null;
   return buildVariant(parsed.voice, parsed.category, parsed.seed);
 }
 
+const DATA_CATEGORIES = new Set<Category>(["radar-catch", "radar-digest", "red-flag", "feature", "usage", "token"]);
+
 function esc(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-function tgCaption(v: ReturnType<typeof buildVariant>): string {
+function tgCaption(v: Variant | null): string {
   if (!v) return "";
-  return `<b>$GL1TCH</b>\n\n${esc(v.text).replace(/\$GL1TCH/g, "<b>$GL1TCH</b>")}`;
+  // Data posts are often about someone else's token, so they go out under the desk's name, not our ticker.
+  const head = DATA_CATEGORIES.has(v.category) ? "<b>📡 GL1TCH SIGNAL</b>" : "<b>$GL1TCH</b>";
+  return `${head}\n\n${esc(v.text).replace(/\$GL1TCH/g, "<b>$GL1TCH</b>")}`;
 }
 
 export const xCallbacks = new Composer<Context>();
@@ -91,7 +102,23 @@ xCallbacks.callbackQuery(/^xq:(next|done|skip):(.+)$/, async (ctx) => {
     await ctx.answerCallbackQuery({ text: "Skipped." });
     return;
   }
-  // action === "next" — generate a new variant in same voice+category, next seed
+  // action === "next" for a data-driven draft: a fresh one of the same kind from current data. The previous draft's
+  // subject is already marked as used, so this picks a different token / red flag / feature.
+  if (variantId.startsWith("s.")) {
+    const category = (draftMemory.get(variantId)?.category ?? variantId.split(".")[1]) as Category;
+    const sig = await readSignals();
+    const d = composeOne(category, { sig, seed: Math.floor(Date.now() / 1000), now: Date.now(), lastUsed: (k) => draftMemory.lastUsed(k) });
+    if (!d) {
+      await ctx.answerCallbackQuery({ text: "Nothing fresh left in this category; the next sweep brings new data." });
+      return;
+    }
+    draftMemory.commit([d]);
+    const m = renderVariantMessage(d.variant);
+    await ctx.editMessageText(m.text, { ...HTML, reply_markup: m.reply_markup });
+    await ctx.answerCallbackQuery({ text: "Fresh draft." });
+    return;
+  }
+  // action === "next" for a template variant: same voice+category, next seed
   const parsed = parseVariantId(variantId);
   if (!parsed) {
     await ctx.answerCallbackQuery({ text: "Variant ID malformed." });

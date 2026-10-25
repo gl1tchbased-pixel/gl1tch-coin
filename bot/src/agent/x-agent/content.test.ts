@@ -20,9 +20,10 @@ describe("X agent content", () => {
     for (const v of batch) expect(v.text.length).toBeLessThanOrEqual(280);
   });
 
-  it("buildReply text is short and brand-correct", () => {
+  it("buildReply is a short, helpful check prompt, not a pitch", () => {
     const r = buildReply(0);
     expect(r.text.length).toBeLessThanOrEqual(280);
-    expect(r.text).toMatch(/\$GL1TCH|GL1TCH/);
+    expect(r.text).toContain("gl1tchbased.xyz/scan");
+    expect(r.text).not.toMatch(/\$GL1TCH/);
   });
 });

@@ -1,8 +1,10 @@
-/** Variant generator — composes (voice × category) into ready tweet text. */
+/** Template variants (voice × category). The scheduled sweeps now draft from live data (compose.ts); these templates
+ *  stay for the manual /xcontent fallback and so buttons on older DMs can still rebuild their text. */
 
-import type { Category, Variant, Voice } from "./types.js";
+import type { Category, Opportunity, Variant, Voice } from "./types.js";
 import { availableCombos, clamp, pickTemplate } from "./voices.js";
 import { weightOf } from "./perf.js";
+import { replyText } from "./replies.js";
 
 /** Multi-image rotation per category — each generation cycles through the
  *  list using the seed so the same category doesn't always get the same visual. */
@@ -15,6 +17,12 @@ const IMAGES_BY_CATEGORY: Record<Category, string[]> = {
   "build-update": ["05-rugcheck-1.jpg", "02-zero-tax.jpg", "08-cult-emblem.jpg"],
   "value-prop": ["01-x-banner.jpg", "05-rugcheck-1.jpg", "07-meme-template.jpg"],
   "holder-journey": ["08-cult-emblem.jpg", "07-meme-template.jpg"],
+  "radar-catch": [],
+  "radar-digest": [],
+  "red-flag": [],
+  feature: [],
+  usage: [],
+  token: [],
 };
 
 function pickImage(category: Category, seed: number): string | undefined {
@@ -131,19 +139,15 @@ export function generateBatch(seed: number, count = 6): Variant[] {
   return picked;
 }
 
-/** A short, single-line reply suggestion targeted at a specific external post. */
+/** A reply suggestion with no context about the target post (manual /xreply). */
 export function buildReply(seed: number): Variant {
-  const lines = [
-    `On-chain transparency is the only proof. $GL1TCH: mint+freeze null, RugCheck 1/Low, 0% tax. gl1tchbased.xyz`,
-    `Solana memes that ship the audit: $GL1TCH. RugCheck score 1, Token-2022 zero tax, public give-back wallet. DYOR.`,
-    `If you want the proof first, not the promise: $GL1TCH. rugcheck.xyz/tokens/3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump`,
-    `One utility, shipped on day one: hold → verify → climb the ranks. $GL1TCH on Solana.`,
-  ];
-  const text = clamp(lines[seed % lines.length]);
-  return {
-    id: `reply-${seed.toString(36)}`,
-    voice: "proof",
-    category: "reply-to-trend",
-    text,
-  };
+  return { id: `reply-${seed.toString(36)}`, voice: "proof", category: "reply-to-trend", text: clamp(replyText("", seed)) };
+}
+
+/** A reply suggestion that answers the opportunity's own topic, linking the scan of its token when we know it. */
+export function buildReplyFor(o: Opportunity, seed: number): Variant {
+  const address = /^dex-(?:profile|boost)-([1-9A-HJ-NP-Za-km-z]{32,44})$/.exec(o.id)?.[1];
+  const text = clamp(replyText(`${o.title}
+${o.excerpt}`, seed, address));
+  return { id: `reply-${seed.toString(36)}`, voice: "proof", category: "reply-to-trend", text };
 }

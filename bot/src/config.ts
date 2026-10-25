@@ -75,12 +75,11 @@ export const config = {
   /** X Agent — human-in-the-loop content + discovery (no API posting). */
   xAgent: {
     enabled: process.env.XAGENT_ENABLED === "true",
-    // Default: 6 sweeps concentrated in the active window (Europe/Istanbul),
-    // not round-the-clock — Solana CT is alive ~12:00–24:00 local (EU afternoon
-    // through US prime). Firing in dead hours (03:00–10:00) just buried the DMs.
-    // Times: 12, 15, 17, 19, 21, 23 local. Each DM carries X + TG buttons —
-    // admin posts X manually, taps "📤 Post to TG" to mirror to the TG group.
-    sweepCron: process.env.XAGENT_SWEEP_CRON ?? "0 12,15,17,19,21,23 * * *",
+    // Default: every 3 hours inside the active window (Europe/Istanbul), not round-the-clock. Solana CT is
+    // alive ~12:00–24:00 local (EU afternoon through US prime); sweeps in dead hours just buried the DMs.
+    // Times: 12, 15, 18, 21, 00 local. Each sweep sends one summary plus 3 data-driven drafts with X + TG
+    // buttons; the admin posts to X manually and taps "📤 Post to TG" to mirror to the TG group.
+    sweepCron: process.env.XAGENT_SWEEP_CRON ?? "0 0,12,15,18,21 * * *",
   },
   /** X bridge — shared secret for the /xqueue endpoints the LOCAL Playwright
    *  worker polls. When the admin taps "🤖 Auto-post", the variant is queued
