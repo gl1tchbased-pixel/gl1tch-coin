@@ -82,6 +82,7 @@ flowchart LR
 | `src/app/api/` | Public API routes (scan, badge, radar, stats, agent check) |
 | `src/app/` | The website (Next.js App Router) |
 | `bot/` | Telegram bot, Watchtower sweeps, Signal Graph and counters, stored as files on its VM (no database); hosting in `bot/deploy/oracle` |
+| `mobile/` | Android prototype (Expo / React Native): share-to-scan, read-only wallet scan over Mobile Wallet Adapter, Sign in with Solana ([demo video](https://youtu.be/HubNomvZ7_k)) |
 | `docs/` | Threat model, risk register, scoring changelog, Signal Graph schema, specs |
 | `remotion/`, `e2e/` | Video pipeline and browser automation (not needed to run the scanner) |
 

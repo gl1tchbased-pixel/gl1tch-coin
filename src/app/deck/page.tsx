@@ -284,6 +284,7 @@ export default async function DeckPage() {
           arrival; connect a wallet over Mobile Wallet Adapter (read-only) and it risk-checks every token
           you hold; Sign in with Solana proves ownership with a signed message, never a transaction. The
           mobile milestones above turn it into a polished dApp Store release with Watchtower alerts.{" "}
+          <a className={styles.link} href="https://youtu.be/HubNomvZ7_k">Demo video</a> ·{" "}
           <a className={styles.link} href={`${OFFICIAL.GITHUB_URL}/tree/main/mobile`}>Source</a>
         </p>
       </article>
