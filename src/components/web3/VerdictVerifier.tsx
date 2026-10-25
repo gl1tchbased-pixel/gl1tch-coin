@@ -11,7 +11,9 @@ import styles from "./VerdictVerifier.module.css";
  * here; every check that matters runs in the browser.
  */
 
-const DEFAULT_RPC = "https://api.mainnet-beta.solana.com";
+// Solana's own public endpoint (api.mainnet-beta.solana.com) answers 403 to browser requests, so the default is
+// PublicNode's free, keyless RPC, which allows them.
+const DEFAULT_RPC = "https://solana-rpc.publicnode.com";
 const SPEC_URL = `${OFFICIAL.GITHUB_URL}/blob/main/docs/verdict-anchoring.md`;
 
 type Row = { entry: ProofEntry; result: Verification | null };
@@ -129,7 +131,7 @@ export function VerdictVerifier({ initialMint = "", initialChain = "solana" }: {
             aria-label="Solana RPC URL"
             spellCheck={false}
           />
-          <p className={styles.hint}>The seal is read from this node, straight from your browser. Default: Solana&apos;s public mainnet RPC.</p>
+          <p className={styles.hint}>The seal is read from this node, straight from your browser. Default: PublicNode&apos;s free mainnet RPC.</p>
         </details>
       </form>
 
@@ -157,7 +159,8 @@ export function VerdictVerifier({ initialMint = "", initialChain = "solana" }: {
                 <>
                   <ul className={styles.checks}>
                     {result.checks.map((c) => {
-                      const waiting = !c.ok && c.key === "sealed" && result.pendingSeal;
+                      const waiting =
+                        !c.ok && ((c.key === "sealed" && result.pendingSeal) || (c.key === "finalized" && result.rpcUnreachable));
                       return (
                         <li key={c.key} className={styles.check} data-ok={c.ok ? "1" : waiting ? "p" : "0"}>
                           <span className={styles.mark}>{c.ok ? "✓" : waiting ? "…" : "✗"}</span>
@@ -167,12 +170,14 @@ export function VerdictVerifier({ initialMint = "", initialChain = "solana" }: {
                       );
                     })}
                   </ul>
-                  <p className={styles.result} data-ok={result.verified ? "1" : result.pendingSeal ? "p" : "0"}>
+                  <p className={styles.result} data-ok={result.verified ? "1" : result.pendingSeal || result.rpcUnreachable ? "p" : "0"}>
                     {result.verified
                       ? "✅ Verified on your device: GL1TCH recorded this verdict at that time, and it hasn't changed since."
                       : result.pendingSeal
                         ? "The proof checks out. The Solana seal isn't there yet."
-                        : "✗ This record did not verify. Don't rely on it."}
+                        : result.rpcUnreachable
+                          ? "Not checked yet: this Solana RPC didn't answer. Try another one under “Use your own Solana RPC”."
+                          : "✗ This record did not verify. Don't rely on it."}
                   </p>
                 </>
               )}

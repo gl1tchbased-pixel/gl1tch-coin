@@ -53,6 +53,8 @@ export interface Verification {
   verified: boolean;
   /** The proof matches but there is no seal to check yet. */
   pendingSeal: boolean;
+  /** The RPC couldn't be read, so the seal is unchecked (not disproven). */
+  rpcUnreachable?: boolean;
 }
 
 /** The memo text if `tx` is exactly one GL1TCH v1 memo, paid and signed by `attester` alone; else null. */
@@ -143,6 +145,7 @@ export async function verifyEntry(
         ? `couldn't read the chain (${rpcError.slice(0, 80)}); try another RPC`
         : "the RPC has no finalized, successful transaction with this signature",
   });
+  if (rpcError) return { checks, verified: false, pendingSeal: false, rpcUnreachable: true };
 
   const memo = landed ? anchorMemoOf(tx!, opts.attester) : null;
   const signer = landed ? tx!.transaction.message.accountKeys[0] : "";

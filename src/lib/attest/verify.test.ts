@@ -77,6 +77,9 @@ describe("verifyEntry", () => {
     expect((await run(tx({ err: { InstructionError: [0, "x"] } }))).verified).toBe(false);
     const down = await verifyEntry(entry, { attester: ATTESTER, rpcUrl: "x", getTx: async () => Promise.reject(new Error("429")) });
     expect(down.checks.find((x) => x.key === "finalized")?.detail).toMatch(/couldn't read the chain/);
+    expect(down.verified).toBe(false);
+    expect(down.rpcUnreachable).toBe(true); // unchecked, not disproven
+    expect((await run(null)).rpcUnreachable).toBeFalsy();
   });
 
   it("checks only the proof while sealing isn't live", async () => {
