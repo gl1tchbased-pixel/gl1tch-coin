@@ -1,0 +1,1 @@
+GL1TCH Know Your Agent: Trust scores for on-chain AI agents.
