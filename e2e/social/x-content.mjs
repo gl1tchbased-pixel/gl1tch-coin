@@ -11,7 +11,7 @@ export const POSTS = [
 
 $GL1TCH's Signal Graph remembers every deployer it has seen. Ship two rugs, and any fresh token from that wallet is flagged ⚠ Serial deployer — before anyone buys.
 
-${SITE}/scan`,
+${SITE}/network`,
 
   `"But the contract looks clean."
 
@@ -52,7 +52,7 @@ ${SITE}/scan`,
 
   `Scanning is free and always will be.
 
-Holding $GL1TCH unlocks convenience — speed, depth, automation. Never the protection itself. A safety tool you have to pay to be safe from isn't a safety tool.
+Holding $GL1TCH unlocks community ranks and the randomness API, never the protection itself. A safety tool you have to pay to be safe from isn't a safety tool.
 
 ${SITE}/scan`,
 
@@ -87,7 +87,7 @@ ${SITE}`,
 
 Not a promise. What you see on-chain is what exists.
 
-${SITE}`,
+${SITE}/token`,
 
   // --- AI-agent narrative ---
   `They wanted an AI that obeys.
@@ -133,7 +133,7 @@ ${SITE}/scan`,
 
 $GL1TCH is. Every deployer we've seen, every token, every outcome — remembered. The Signal Graph doesn't forget.
 
-${SITE}/scan`,
+${SITE}/network`,
 
   `Green candles hide red flags.
 
@@ -183,6 +183,31 @@ ${SITE}/scan`,
 Rug Radar sweeps freshly-launched tokens every hour and flags the dangerous ones automatically — so you see the catch before the crowd sees the chart.
 
 ${SITE}/radar`,
+
+  // --- More pages, more cards ---
+  `Think you can spot a rug?
+
+Eight tokens, the same red flags the GL1TCH scanner reads. Call SAFE or RUG, see why, share your rank. Takes 2 minutes.
+
+${SITE}/play`,
+
+  `Every Rug Radar verdict is now sealed on Solana.
+
+Weeks later anyone can prove what GL1TCH said about a token, and that it was never edited. The check runs in your own browser, no trust in us needed.
+
+${SITE}/verify-scan`,
+
+  `Launching a token? Show buyers it's clean.
+
+A live "Scanned by GL1TCH" badge for your site or README. It updates with your token's verdict and links to the full scan. Free, any chain.
+
+${SITE}/embed`,
+
+  `Rug pull, honeypot, LP lock, mint authority.
+
+If any of those is fuzzy, these free plain-English guides fix it in a few minutes. Then check any token before you buy.
+
+${SITE}/learn`,
 
   // --- Agent Trust Layer / adoption (devs are the audience) ---
   `Building an AI agent that touches funds? Add a trust guardrail in one call — free, no key, no SDK:
@@ -287,7 +312,7 @@ When a deployer has shipped 2+ tokens we've flagged, ANY fresh token from that w
 Every scan — from the website or the Telegram bot — feeds the graph. The more it's used, the smarter it gets. A network effect on rug detection.`,
     `4/ And it stays free.
 
-Scanning + the verdict are free for everyone, never gated behind holding $GL1TCH. Holding unlocks convenience, never the protection.
+Scanning + the verdict are free for everyone, never gated behind holding $GL1TCH. Holding unlocks ranks, never the protection.
 
 See it: ${SITE}/scan`,
   ],
