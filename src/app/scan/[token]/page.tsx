@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ token: st
   let title = "Token safety scan | GL1TCH Scanner";
   let desc = "Honest, plain-English token safety — honeypot, LP lock, mint/freeze, tax, holders & insiders. Non-custodial, any chain.";
   try {
-    const r = await fetch(`${SITE}/api/scan?mint=${encodeURIComponent(address)}${chain ? `&chain=${chain}` : ""}`, { next: { revalidate: 300 } });
+    const r = await fetch(`${SITE}/api/scan?mint=${encodeURIComponent(address)}${chain ? `&chain=${chain}` : ""}`, { headers: { "x-gl1tch-source": "preview" }, next: { revalidate: 300 } });
     if (r.ok) {
       const d = await r.json();
       if (d?.verdict) {

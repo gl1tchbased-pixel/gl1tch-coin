@@ -115,7 +115,9 @@ approval signature.
 - Public numbers come with their caveats: the scan counter's all-time total includes automated
   Rug Radar sweeps; since 20 Oct 2026 people's scans and automated ones are counted separately
   (`/api/stats` returns `user`, `auto` and `splitSince`, or a 503 while the counter is unreachable,
-  never a made-up 0).
+  never a made-up 0). Automated means Rug Radar, Watchtower, link previews, badge renders and our own
+  pages' self-checks of $GL1TCH. Those self-checks were at first miscounted as people's scans, so the
+  split restarted once that was fixed (`splitSince` is the restart).
 
 ## The $GL1TCH token (disclosure)
 

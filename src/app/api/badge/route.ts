@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
   }
   try {
     if (address) {
-      const r = await fetch(`${SITE}/api/scan?mint=${encodeURIComponent(address)}${chain ? `&chain=${chain}` : ""}`, { signal: AbortSignal.timeout(12000) });
+      const r = await fetch(`${SITE}/api/scan?mint=${encodeURIComponent(address)}${chain ? `&chain=${chain}` : ""}`, { headers: { "x-gl1tch-source": "badge" }, signal: AbortSignal.timeout(12000) });
       if (r.ok) {
         const d = await r.json();
         if (d?.verdict) {

@@ -59,7 +59,7 @@ const funding: { track: string; items: Item[] }[] = [
         detail: [
           "Private Solana RPC, Helius Developer: $49/mo × 12 ≈ $590",
           "Site + public API, Vercel Pro (Hobby is non-commercial only): $20/mo × 12 = $240",
-          "Bot with persistent volume, Railway: ≈ $15/mo × 12 ≈ $180",
+          "Bot VM, Oracle Cloud Always Free: $0 today (moved off Railway in October 2026); ≈ $180 kept for a paid fallback VM if Oracle reclaims the free one",
           "Domain, mail forwarding, uptime monitoring: ≈ $90",
           "Reliability engineering, ≈ $1,900: status page and alerts, bot health checks, API abuse protection, daily backups of the bot's data, a load test at Rug Radar volume",
         ],
@@ -183,10 +183,12 @@ export default async function DeckPage() {
           </li>
           <li>
             From 20 October 2026 the counter records people&apos;s scans and automated scans
-            separately and publishes both at <code>/api/stats</code>
+            separately and publishes both at <code>/api/stats</code>. At first our own pages&apos; live
+            self-checks of $GL1TCH, link previews and badge renders were still counted as people&apos;s scans,
+            so we fixed that and restarted the split
             {stats?.splitSince ? (
               <>
-                : since {fmtDate(stats.splitSince)}, <strong>{stats.user.toLocaleString("en-US")} user scans</strong> and{" "}
+                {" "}on {fmtDate(stats.splitSince)}: since then, <strong>{stats.user.toLocaleString("en-US")} user scans</strong> and{" "}
                 {stats.auto.toLocaleString("en-US")} automated.
               </>
             ) : (
@@ -213,7 +215,7 @@ export default async function DeckPage() {
           <div className={styles.card}>
             <span className={styles.cardTitle}>Bot + Signal Graph</span>
             <span className={styles.cardText}>
-              TypeScript Telegram bot on Railway with a persistent volume (no database): the
+              TypeScript Telegram bot on an Oracle Cloud VM with on-disk state and daily snapshots (no database): the
               deployer reputation graph, Watchtower sweeps and the public counters.
             </span>
           </div>

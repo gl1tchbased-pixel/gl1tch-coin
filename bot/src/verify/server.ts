@@ -20,7 +20,7 @@ export interface VerifyServerOptions {
   stats?: {
     token: string;
     get: () => { scanned: number; flagged: number };
-    bump: (flagged: boolean, n?: number, flaggedN?: number, kind?: "user" | "auto") => void;
+    bump: (flagged: boolean, n?: number, flaggedN?: number, kind?: "user" | "auto", rev?: number) => void;
   };
   /** Signal Graph endpoints: public GET /signal/deployer (deployer track record),
    *  token-guarded POST /signal/observe (record a scan). Shares the stats token. */
@@ -141,9 +141,10 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
       req.on("end", () => {
         if (sTooLarge) return;
         try {
-          const b = sRaw ? (JSON.parse(sRaw) as { flagged?: boolean; n?: number; flaggedN?: number; kind?: string }) : {};
+          const b = sRaw ? (JSON.parse(sRaw) as { flagged?: boolean; n?: number; flaggedN?: number; kind?: string; rev?: number }) : {};
           const kind = b.kind === "user" || b.kind === "auto" ? b.kind : undefined;
-          opts.stats!.bump(!!b.flagged, typeof b.n === "number" ? b.n : 1, typeof b.flaggedN === "number" ? b.flaggedN : 0, kind);
+          const rev = typeof b.rev === "number" && Number.isInteger(b.rev) && b.rev > 0 ? b.rev : undefined;
+          opts.stats!.bump(!!b.flagged, typeof b.n === "number" ? b.n : 1, typeof b.flaggedN === "number" ? b.flaggedN : 0, kind, rev);
           res.writeHead(200, { "Content-Type": "application/json", ...cors });
           res.end(JSON.stringify({ ok: true }));
         } catch {

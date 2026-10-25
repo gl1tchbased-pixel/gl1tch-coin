@@ -245,7 +245,7 @@ export function startVerification(bot: Bot): Server | null {
     stats: {
       token: config.stats.token,
       get: () => statsStore.get(),
-      bump: (flagged, n, flaggedN, kind) => statsStore.bump(flagged, n, flaggedN, kind),
+      bump: (flagged, n, flaggedN, kind, rev) => statsStore.bump(flagged, n, flaggedN, kind, Date.now(), rev),
     },
     signal: {
       token: config.stats.token,

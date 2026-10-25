@@ -5,6 +5,7 @@ import { bumpStats } from "@/lib/stats";
 import { deployerReputation, observeDeployer } from "@/lib/signal-graph";
 import { parseScanInput } from "@/lib/validate";
 import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
+import { CONTRACT_ADDRESS } from "@/lib/official";
 
 /**
  * GL1TCH SCANNER API — multi-chain, read-only, free for everyone (no key, no token).
@@ -29,10 +30,6 @@ export async function GET(req: NextRequest) {
       { status: 429, headers: { "retry-after": String(rl.retryAfter) } }
     );
   }
-  // Automated re-scans (the bot's Watchtower sweep) tag themselves so the public counter can
-  // report people's scans separately from automation.
-  const kind = req.headers.get("x-gl1tch-source") === "watchtower" ? "auto" : "user";
-
   // Central input validation (Phase -1): reject malformed input before any RPC/fetch (SSRF guard).
   const sp = req.nextUrl.searchParams;
   const parsed = parseScanInput({ mint: sp.get("mint"), chain: sp.get("chain"), q: sp.get("q") });
@@ -50,6 +47,10 @@ export async function GET(req: NextRequest) {
 
   const mint = parsed.mint;
   let chain = parsed.chain;
+  // The public counter reports people's scans apart from automation. Our own automated callers
+  // (Watchtower re-scans, link previews, embedded badges) tag themselves, and scans of $GL1TCH's
+  // own contract are our pages' live self-checks (/proof, the trust badge, /token), not people.
+  const kind = req.headers.has("x-gl1tch-source") || mint === CONTRACT_ADDRESS ? "auto" : "user";
 
   try {
     // detect chain if not supplied

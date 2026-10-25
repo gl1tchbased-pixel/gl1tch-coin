@@ -41,7 +41,7 @@ export default async function Image({ params }: { params: Promise<{ token: strin
   const { chain, address } = parse(token);
   let d: SR | null = null;
   try {
-    const r = await fetch(`${SITE}/api/scan?mint=${encodeURIComponent(address)}${chain ? `&chain=${chain}` : ""}`, { next: { revalidate: 300 } });
+    const r = await fetch(`${SITE}/api/scan?mint=${encodeURIComponent(address)}${chain ? `&chain=${chain}` : ""}`, { headers: { "x-gl1tch-source": "preview" }, next: { revalidate: 300 } });
     if (r.ok) { const j = await r.json(); if (j?.verdict) d = j as SR; }
   } catch { /* generic card */ }
 
