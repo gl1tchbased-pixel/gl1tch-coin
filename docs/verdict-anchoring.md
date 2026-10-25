@@ -3,9 +3,9 @@
 GL1TCH seals every Rug Radar sweep on Solana. Afterwards anyone can prove that a verdict ("token X was
 RUG-SHAPED, score 22") existed at that time and hasn't been edited since, without trusting GL1TCH's servers.
 
-**Status:** built and tested (unit tests and a devnet end-to-end script), not live on mainnet yet. Mainnet starts
-once the attester wallet is created and funded. Its address will be published at `/attest/info` and on
-[/proof](https://gl1tchbased.xyz/proof).
+**Status:** live on Solana mainnet since 25 October 2026. The attester is
+`BSq18aJBhxYJgeEbcA3jGQNU1vmwZdo2PQkkpVsK7W6o`, a fee-only wallet that holds no tokens. Its address is pinned in
+`src/lib/official.ts` and published at `/attest/info` and on [/proof](https://gl1tchbased.xyz/proof).
 
 ## What gets sealed
 

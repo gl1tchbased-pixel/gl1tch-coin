@@ -109,7 +109,7 @@ approval signature.
   [`SECURITY.md`](./SECURITY.md) to report a vulnerability, and
   [`docs/threat-model.md`](./docs/threat-model.md).
 - A verdict is a risk signal, not a guarantee, and never financial advice.
-- Verdict anchoring (built, not live on mainnet yet): each Rug Radar sweep's verdicts are sealed on Solana as
+- Verdict anchoring (live on mainnet since 25 Oct 2026): each Rug Radar sweep's verdicts are sealed on Solana as
   a Merkle root in one SPL Memo, so anyone can prove a verdict existed at that time, unedited. The memos are
   signed by a dedicated fee-only attester wallet, never a user's. Check one in your browser at
   <https://gl1tchbased.xyz/verify-scan>; the spec is [`docs/verdict-anchoring.md`](./docs/verdict-anchoring.md).

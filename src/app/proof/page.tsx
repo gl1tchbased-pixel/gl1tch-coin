@@ -6,6 +6,7 @@ import {
   CONTRACT_ADDRESS,
   GIVEBACK_WALLET,
   DEPLOYER_WALLET,
+  ATTESTER_WALLET,
   links as officialLinks,
   solscanAccount,
 } from "@/lib/official";
@@ -36,6 +37,9 @@ const wallets = [
   { label: "Token contract (mint)", addr: CONTRACT_ADDRESS, href: officialLinks.explorer, note: "Token-2022 · 1B fixed supply" },
   { label: "Deployer wallet", addr: DEPLOYER_WALLET, href: solscanAccount(DEPLOYER_WALLET), note: "Who created the token — inspect its history" },
   { label: "Give-back wallet", addr: GIVEBACK_WALLET, href: officialLinks.givebackWallet, note: "" },
+  ...(ATTESTER_WALLET
+    ? [{ label: "Attester wallet", addr: ATTESTER_WALLET, href: solscanAccount(ATTESTER_WALLET), note: "Signs the on-chain seals of Rug Radar verdicts · fee-only, holds no tokens" }]
+    : []),
 ];
 
 const thirdParty = [
