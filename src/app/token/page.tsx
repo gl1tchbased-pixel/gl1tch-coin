@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { ApiKeyMinter } from "@/components/web3/ApiKeyMinter";
 import { HowToBuy } from "@/components/sections/HowToBuy";
@@ -6,12 +7,12 @@ import { RankCoins } from "@/components/ranks/RankCoins";
 import { SupplyRing } from "@/components/network/SupplyRing";
 import styles from "./token.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Why hold $GL1TCH — the honest investment case",
   description:
     "A useful product doesn't make a valuable token. Here's what $GL1TCH is for: community ranks and the verifiable-randomness API (every safety tool stays free for everyone) + a planned, revenue-driven value-accrual mechanism (GMX / Chainlink model) — with radical honesty about what's live vs. planned.",
   alternates: { canonical: "/token" },
-};
+});
 
 // The two questions serious investors actually interrogate (from diligence frameworks).
 const PILLARS = [

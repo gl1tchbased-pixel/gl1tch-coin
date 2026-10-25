@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { ScanTool } from "@/components/web3/ScanTool";
 import { CONTRACT_ADDRESS } from "@/lib/official";
 import styles from "./scan.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "GL1TCH Scanner — Don't Get Rugged | Free Multi-Chain Token Safety Scan",
   description:
     "Search any token by name or paste a contract — Solana, Ethereum, Base, BNB & more. The rogue AI checks honeypot, mint/freeze, tax, liquidity, ownership and holders — explained in plain language. Non-custodial. Read-only. It never touches your wallet.",
   alternates: { canonical: "/scan" },
-};
+});
 
 const POINTS = [
   { k: "01", t: "Non-custodial", d: "It never asks for your keys and never holds your funds. It only reads the chain." },

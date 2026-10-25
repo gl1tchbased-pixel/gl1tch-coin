@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -11,12 +12,12 @@ import { PROJECT_NAME, TICKER, BLOCKCHAIN } from "@/content/site";
 import { CopyField } from "@/components/ui/CopyField";
 import styles from "./press.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Press Kit — GL1TCH",
   description:
     "Official GL1TCH press kit — logos, brand assets, color palette, boilerplate copy, contract address and verified facts for media and exchange listings.",
   alternates: { canonical: "/press" },
-};
+});
 
 const facts: { label: string; value: string }[] = [
   { label: "Project", value: `${PROJECT_NAME} (${TICKER})` },

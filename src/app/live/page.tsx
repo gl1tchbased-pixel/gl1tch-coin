@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { LiveStats } from "@/components/web3/LiveStats";
 import { MarketChartEmbed } from "@/components/web3/MarketChartEmbed";
@@ -12,12 +13,12 @@ import { TICKER } from "@/content/site";
 import { GECKO_POOL_URL } from "@/lib/market";
 import styles from "./live.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Live Market — GL1TCH",
   description:
     "Live $GL1TCH price, market cap, liquidity and volume with a real-time chart. Buy on Jupiter and verify on-chain.",
   alternates: { canonical: "/live" },
-};
+});
 
 const JUP_SWAP = CONTRACT_ADDRESS
   ? `https://jup.ag/swap/SOL-${CONTRACT_ADDRESS}`

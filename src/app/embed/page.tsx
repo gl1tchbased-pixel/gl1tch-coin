@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { EmbedTool } from "@/components/web3/EmbedTool";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Embed the GL1TCH badge — prove your token is clean | GL1TCH",
   description:
     "Add a live 'Scanned by GL1TCH' safety badge to your site, README or docs. It auto-updates with your token's verdict and links back to the full scan. Free, non-custodial, any chain.",
   alternates: { canonical: "/embed" },
-};
+});
 
 const points = [
   { t: "Live, not a screenshot", d: "The badge re-renders from a fresh scan — it can never show a stale verdict." },

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { OFFICIAL } from "@/lib/official";
 import { getStats } from "@/lib/stats";
@@ -7,13 +8,13 @@ import styles from "./deck.module.css";
 
 // Grant/partner deck. Linked from funding applications only: kept out of nav,
 // sitemap and search. Every number here must stay verifiable (see /proof, /api/stats).
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Grant Deck — GL1TCH",
   description:
     "GL1TCH grant deck: a free, open-source (MIT) token safety scanner for Solana. Problem, product, architecture, honest traction, roadmap, itemized use of funds and token disclosure.",
   alternates: { canonical: "/deck" },
   robots: { index: false, follow: false },
-};
+});
 
 // Live numbers (scan counter split, deployer balance) refresh hourly.
 export const revalidate = 3600;

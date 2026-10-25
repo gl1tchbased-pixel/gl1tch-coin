@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import { VerifyClient } from "@/components/web3/VerifyClient";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Verify Wallet — GL1TCH",
   description:
     "Sign a free, off-chain message to link your Solana wallet and unlock your GL1TCH rank and gated rooms.",
   alternates: { canonical: "/verify" },
   robots: { index: false, follow: false },
-};
+});
 
 export default function VerifyPage() {
   return (

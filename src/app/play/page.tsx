@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { RugOrNot } from "@/components/play/RugOrNot";
 import { deckWeek, DECK_SIZE } from "@/content/play";
 import styles from "./play.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Rug or Not? — spot the rug in 8 tokens | GL1TCH",
   description:
     "A 2-minute game: eight made-up tokens, the same flags the GL1TCH scanner reads. Call SAFE or RUG, learn why, share your rank.",
   alternates: { canonical: "/play" },
-};
+});
 
 // The deck rotates weekly; re-render hourly so a new week's cards go out on time.
 export const revalidate = 3600;

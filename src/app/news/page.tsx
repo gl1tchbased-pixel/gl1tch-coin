@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { newsItems, TAG_LABEL, formatNewsDate } from "@/content/news";
 import styles from "./news.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Updates — GL1TCH",
   description:
     "The GL1TCH changelog — every shipped milestone, launch, listing and trust update, newest first.",
   alternates: { canonical: "/news" },
-};
+});
 
 export default function NewsPage() {
   return (

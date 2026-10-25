@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import { PrintButton } from "@/components/ui/PrintButton";
 import { WhitepaperNav } from "@/components/web3/WhitepaperNav";
 import { BackToTop } from "@/components/web3/BackToTop";
@@ -10,12 +11,12 @@ import {
 import { TICKER } from "@/content/site";
 import styles from "./whitepaper.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Whitepaper — GL1TCH",
   description:
     "The GL1TCH whitepaper (v3): the risk-intelligence product suite (Scanner, Signal Graph, Quantum Core, verifiable Randomness), a required-utility token, honest engineered value-accrual, Token-2022 zero-tax tokenomics, security, and risk.",
   alternates: { canonical: "/whitepaper" },
-};
+});
 
 const KEY_FACTS = [
   { k: "Chain", v: "Solana" },

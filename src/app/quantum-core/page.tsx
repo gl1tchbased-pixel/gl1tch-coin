@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { latestPulse } from "@/lib/quantum/curby";
 import { isPulseStale, formatPulseDate } from "@/lib/quantum/freshness";
@@ -6,12 +7,12 @@ import { QUANTUM_COUNT_WORD } from "@/content/quantum";
 import { EntropyField } from "@/components/quantum/EntropyField";
 import styles from "./quantum.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "GL1TCH Quantum Core — real quantum tech, holder-gated",
   description:
     `${QUANTUM_COUNT_WORD} quantum components: Vault (readiness score), Draw (NIST CURBy verifiable quantum randomness), Seal (post-quantum ML-KEM encryption), Forge (quantum-inspired optimization), Randomness (verifiable RNG-as-a-service). Honestly labelled, GL1TCH-holder-gated.`,
   alternates: { canonical: "/quantum-core" },
-};
+});
 
 export const dynamic = "force-dynamic";
 

@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { AgentCheck } from "@/components/web3/AgentCheck";
 import styles from "./agents.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Agent Trust Layer — Know Your Agent (KYA) — GL1TCH",
   description:
     "KYA — Know Your Agent for on-chain AI. Autonomous agents transact on-chain, but nobody can verify one is legit, reputable, or safe to let near funds. GL1TCH scores agent wallets on the two trust-stack layers you can't fake — provenance & reputation — from accumulated security data.",
   alternates: { canonical: "/agents" },
-};
+});
 
 const primitives = [
   { t: "Identity", d: "An agent proves it controls its wallet with a signature — no fund access, just proof it is who it claims. The verification rail we already run for holders, pointed at agents." },

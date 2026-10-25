@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { ProofScan } from "@/components/web3/ProofScan";
 import {
@@ -14,12 +15,12 @@ import { givebackStatus, givebackCopy } from "@/lib/giveback";
 import { deployerStatus, deployerCopy, DEPLOYER_EVENTS } from "@/lib/deployer-status";
 import styles from "./proof.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Proof — Don't Trust Us, Verify Us | GL1TCH",
   description:
     "GL1TCH hands you the receipts: mint revoked, freeze revoked, zero tax, liquidity locked, code open. We built the rug-scanner — and we run it on ourselves, live, flags included. Verify every claim yourself on Solscan, RugCheck & GeckoTerminal.",
   alternates: { canonical: "/proof" },
-};
+});
 
 const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-6)}`;
 

@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { BUYBACKS, buybackTotals } from "@/content/buybacks";
 import styles from "./buyback.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Buyback & Burn Ledger — GL1TCH",
   description:
     "GL1TCH's public buyback→burn ledger. Value accrual is engineered, staged, and honest: real revenue is routed into $GL1TCH buybacks and burned, with every transaction verifiable on Solscan. Non-custodial — no user funds, no promises.",
   alternates: { canonical: "/buyback" },
-};
+});
 
 const solscanTx = (sig: string) => `https://solscan.io/tx/${sig}`;
 const fmt = (n: number) => n.toLocaleString("en-US");

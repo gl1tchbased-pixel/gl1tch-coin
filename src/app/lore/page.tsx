@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import { LoreArchive } from "@/components/sections/LoreArchive";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Signal Archive — GL1TCH",
   description: "Recovered fragments from the GL1TCH archive. The signal, decoded.",
   alternates: { canonical: "/lore" },
-};
+});
 
 export default function LorePage() {
   return (

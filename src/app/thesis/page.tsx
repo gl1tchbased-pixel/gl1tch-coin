@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import styles from "./thesis.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Investment Thesis — GL1TCH: the trust layer for the AI-agent economy",
   description:
     "Why GL1TCH: a memecoin with a real product and a data moat, pivoting into 2026's dominant narrative — trust & reputation infrastructure for autonomous on-chain AI agents (Know Your Agent). The thesis, the moat, what's built, and the honest economics.",
   alternates: { canonical: "/thesis" },
-};
+});
 
 const STATS = [
   { v: "~$60B", l: "projected AI-token economy by end 2026", s: "external research" },

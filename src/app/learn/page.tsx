@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { CANONICAL } from "@/lib/scan";
 import styles from "./learn.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Learn — Crypto Safety Guides (Rug Pulls, Honeypots) | GL1TCH",
   description:
     "Free, plain-English guides to crypto safety: how to spot a rug pull, what a honeypot is, and how to check if any token is safe before you buy. Then scan any token for free.",
   alternates: { canonical: "/learn" },
-};
+});
 
 const guides = [
   { href: "/learn/how-to-spot-a-rug-pull", t: "How to spot a rug pull", d: "The 7 on-chain red flags every rug leaves behind — and how to check them in a minute." },

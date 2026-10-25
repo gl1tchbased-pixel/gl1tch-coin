@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { VerdictVerifier } from "@/components/web3/VerdictVerifier";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Verify a verdict — sealed on Solana | GL1TCH",
   description:
     "Check that a GL1TCH Rug Radar verdict existed at the time it was given and hasn't been edited since. The Merkle proof is recomputed and the Solana seal is read in your own browser — no trust in GL1TCH required.",
   alternates: { canonical: "/verify-scan" },
-};
+});
 
 const steps = [
   {

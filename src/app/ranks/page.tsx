@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import { RankChecker } from "@/components/web3/RankChecker";
 import { SignalLeaderboard } from "@/components/web3/SignalLeaderboard";
 import { RankCoins } from "@/components/ranks/RankCoins";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Verify Your Rank — GL1TCH",
   description:
     "Connect your Solana wallet to verify your rank in The Infected and unlock holder-gated access.",
   alternates: { canonical: "/ranks" },
-};
+});
 
 export default function RanksPage() {
   return (

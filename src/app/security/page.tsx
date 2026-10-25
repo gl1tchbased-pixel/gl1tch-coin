@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { OFFICIAL } from "@/lib/official";
 import styles from "./security.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Security & Transparency — GL1TCH",
   description:
     "How GL1TCH protects you: never asks for a fund/approval signature, hardened CSP, input validation, rate limiting, automated secret + dependency scanning, and a public threat model. Your protection is free, forever.",
   alternates: { canonical: "/security" },
-};
+});
 
 const posture = [
   { t: "We never move your funds", d: "No component ever requests a transaction, token approval, or spend signature — only a message that proves wallet ownership. This is enforced by an automated CI check, not just a promise." },

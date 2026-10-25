@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { RugRadar } from "@/components/web3/RugRadar";
 import { LiveTrustBadge } from "@/components/web3/LiveTrustBadge";
 import { ATTESTER_WALLET } from "@/lib/official";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Rug Radar — live risk scan of fresh launches | GL1TCH",
   description:
     "The GL1TCH scanner sweeps freshly-promoted tokens and ranks them by risk, live. The ones it flags HIGH RISK get the ⚠. Real targets, refreshed hourly, free & non-custodial. A risk signal — always DYOR.",
   alternates: { canonical: "/radar" },
-};
+});
 
 export default function RadarPage() {
   return (

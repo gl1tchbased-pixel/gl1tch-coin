@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { networkMetrics } from "@/lib/network";
 import { NetworkPanel } from "@/components/network/NetworkPanel";
@@ -6,12 +7,12 @@ import { SignalGraph3D } from "@/components/network/SignalGraph3D";
 import { signalGraphSnapshot } from "@/lib/signal-graph";
 import styles from "./network.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Signal Network — live GL1TCH engine, market and trust | GL1TCH",
   description:
     "GL1TCH is crypto risk-intelligence infrastructure: a multi-chain safety scanner + the Signal Graph (a growing deployer-reputation database) + a Know Your Agent trust layer. Live numbers — tokens scanned, deployers mapped, rugs caught, agents assessed.",
   alternates: { canonical: "/network" },
-};
+});
 
 export const revalidate = 60;
 const n = (x: number | undefined) => (typeof x === "number" ? x.toLocaleString("en-US") : "—");

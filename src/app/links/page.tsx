@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { shareMeta } from "@/lib/share-meta";
 import {
   OFFICIAL,
   CONTRACT_ADDRESS,
@@ -17,12 +18,12 @@ import { NoMintIcon, ShieldCheckIcon, LockIcon, CoinIcon } from "@/components/ic
 import { givebackStatus, givebackCopy } from "@/lib/giveback";
 import styles from "./links.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = shareMeta({
   title: "Official Links — GL1TCH",
   description:
     "The single source of truth for official GL1TCH links. Only trust links from this page.",
   alternates: { canonical: "/links" },
-};
+});
 
 const channels = [
   { id: "link-x", label: "Official X", handle: "@gl1tchbased", href: OFFICIAL.X_URL, Icon: XIcon },
