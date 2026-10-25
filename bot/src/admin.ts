@@ -26,14 +26,15 @@ import {
 
 export const adminCommands = new Composer<Context>();
 
-// All admin commands are gated and logged.
-adminCommands.use(adminOnly);
+// Each admin command is gated (adminOnly) and logged. The gate sits on the commands themselves, not on the
+// whole composer: this composer runs before the public ones, so a composer-wide gate answered every non-admin
+// update (/scan, a pasted address, a service message) with "Unauthorized".
 
 function logAdmin(ctx: Context, action: string, detail = "") {
   console.log(`[admin] ${action} by=${ctx.from?.id} ${detail}`);
 }
 
-adminCommands.command("announce", async (ctx) => {
+adminCommands.command("announce", adminOnly, async (ctx) => {
   const text = ctx.match?.toString().trim();
   if (!text) {
     await ctx.reply("Usage: /announce <message>");
@@ -43,7 +44,7 @@ adminCommands.command("announce", async (ctx) => {
   await ctx.reply(`📡 ANNOUNCEMENT\n\n${text}`);
 });
 
-adminCommands.command("pin", async (ctx) => {
+adminCommands.command("pin", adminOnly, async (ctx) => {
   const replyTo = ctx.message?.reply_to_message?.message_id;
   if (!replyTo) {
     await ctx.reply("Reply to a message with /pin to pin it.");
@@ -58,7 +59,7 @@ adminCommands.command("pin", async (ctx) => {
   }
 });
 
-adminCommands.command("warn", async (ctx) => {
+adminCommands.command("warn", adminOnly, async (ctx) => {
   const target = ctx.message?.reply_to_message?.from;
   if (!target) {
     await ctx.reply("Reply to a user's message with /warn <reason>.");
@@ -69,7 +70,7 @@ adminCommands.command("warn", async (ctx) => {
   await ctx.reply(`⚠ Warning issued to ${target.first_name} for ${reason}.`);
 });
 
-adminCommands.command("mute", async (ctx) => {
+adminCommands.command("mute", adminOnly, async (ctx) => {
   const target = ctx.message?.reply_to_message?.from;
   if (!target) {
     await ctx.reply("Reply to a user's message with /mute to mute them.");
@@ -86,7 +87,7 @@ adminCommands.command("mute", async (ctx) => {
   }
 });
 
-adminCommands.command("ban", async (ctx) => {
+adminCommands.command("ban", adminOnly, async (ctx) => {
   const target = ctx.message?.reply_to_message?.from;
   if (!target) {
     await ctx.reply("Reply to a user's message with /ban to ban them.");
@@ -101,7 +102,7 @@ adminCommands.command("ban", async (ctx) => {
   }
 });
 
-adminCommands.command("chatid", async (ctx) => {
+adminCommands.command("chatid", adminOnly, async (ctx) => {
   logAdmin(ctx, "chatid", String(ctx.chat?.id));
   await ctx.reply(
     `Chat ID: <code>${ctx.chat?.id}</code>\nType: ${ctx.chat?.type}\n\nUse this as AGENT_CHANNEL_ID (and add the bot as admin here).`,
@@ -109,13 +110,13 @@ adminCommands.command("chatid", async (ctx) => {
   );
 });
 
-adminCommands.command("agentpreview", async (ctx) => {
+adminCommands.command("agentpreview", adminOnly, async (ctx) => {
   logAdmin(ctx, "agentpreview");
   await ctx.reply("Generating today's preview…");
   await runDailyPost(ctx.api, { live: false });
 });
 
-adminCommands.command("agentpost", async (ctx) => {
+adminCommands.command("agentpost", adminOnly, async (ctx) => {
   logAdmin(ctx, "agentpost");
   await ctx.reply("Posting now (live)…");
   await runDailyPost(ctx.api, { live: true });
@@ -123,26 +124,26 @@ adminCommands.command("agentpost", async (ctx) => {
 
 // ---- X Agent (human-in-the-loop, free, ban-proof) ----
 
-adminCommands.command("xcontent", async (ctx) => {
+adminCommands.command("xcontent", adminOnly, async (ctx) => {
   const n = Number(ctx.match?.toString().trim()) || 3;
   logAdmin(ctx, "xcontent", `n=${n}`);
   await ctx.reply(`Generating ${n} variant${n === 1 ? "" : "s"}…`);
   await runContentBatch(ctx.api, { count: Math.min(8, Math.max(1, n)) });
 });
 
-adminCommands.command("xsweep", async (ctx) => {
+adminCommands.command("xsweep", adminOnly, async (ctx) => {
   logAdmin(ctx, "xsweep");
   await ctx.reply("Scanning Nitter · Reddit · DexScreener…");
   await runDiscoverySweep(ctx.api, { top: 5 });
 });
 
-adminCommands.command("xfull", async (ctx) => {
+adminCommands.command("xfull", adminOnly, async (ctx) => {
   logAdmin(ctx, "xfull");
   await ctx.reply("Running full cycle (ratings + holders + X + discovery + reddit angle)…");
   await runFullSweep(ctx.api, { variants: 3, opportunities: 5 });
 });
 
-adminCommands.command("xrcomment", async (ctx) => {
+adminCommands.command("xrcomment", adminOnly, async (ctx) => {
   logAdmin(ctx, "xrcomment");
   await runRedditAngle(ctx.api);
 });
@@ -150,7 +151,7 @@ adminCommands.command("xrcomment", async (ctx) => {
 /** /xpack — DMs the admin 15 curated Solana account reply cards.
  *  Each card has @handle, trigger, copy-ready reply text, and an
  *  "Open X profile" button for one-tap navigation. */
-adminCommands.command("xpack", async (ctx) => {
+adminCommands.command("xpack", adminOnly, async (ctx) => {
   logAdmin(ctx, "xpack");
   const escHtml = (s: string) =>
     s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -178,7 +179,7 @@ adminCommands.command("xpack", async (ctx) => {
 
 /** /xkol — DMs the admin the KOL outreach playbook: budget framework,
  *  30-sec vetting checklist, 5 copy-ready DM templates, and a workflow. */
-adminCommands.command("xkol", async (ctx) => {
+adminCommands.command("xkol", adminOnly, async (ctx) => {
   logAdmin(ctx, "xkol");
   const escHtml = (s: string) =>
     s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -205,7 +206,7 @@ adminCommands.command("xkol", async (ctx) => {
 });
 
 /** /xreddit — DMs the admin 4 subreddit-tuned post drafts (free growth). */
-adminCommands.command("xreddit", async (ctx) => {
+adminCommands.command("xreddit", adminOnly, async (ctx) => {
   logAdmin(ctx, "xreddit");
   const escHtml = (s: string) =>
     s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -235,7 +236,7 @@ adminCommands.command("xreddit", async (ctx) => {
 });
 
 /** /xgenesis — DMs the admin the Genesis 100 campaign kit (free FOMO play). */
-adminCommands.command("xgenesis", async (ctx) => {
+adminCommands.command("xgenesis", adminOnly, async (ctx) => {
   logAdmin(ctx, "xgenesis");
   const escHtml = (s: string) =>
     s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -257,7 +258,7 @@ adminCommands.command("xgenesis", async (ctx) => {
   await ctx.reply("Genesis 100 kit delivered — 4 cards above.");
 });
 
-adminCommands.command("xholders", async (ctx) => {
+adminCommands.command("xholders", adminOnly, async (ctx) => {
   logAdmin(ctx, "xholders");
   await ctx.reply("Querying on-chain holder count…");
   try {
@@ -268,7 +269,7 @@ adminCommands.command("xholders", async (ctx) => {
   }
 });
 
-adminCommands.command("xstats", async (ctx) => {
+adminCommands.command("xstats", adminOnly, async (ctx) => {
   logAdmin(ctx, "xstats");
   const rows = perfSummary();
   if (rows.length === 0) {
@@ -287,7 +288,7 @@ adminCommands.command("xstats", async (ctx) => {
  *  X public API + Nitter scraping are dead. To reply to a real X tweet, paste its
  *  URL here; bot returns a Telegram message with "🐦 Reply via X" deep-link that
  *  opens the X composer with the in-reply-to set and a brand-correct draft text. */
-adminCommands.command("xreply", async (ctx) => {
+adminCommands.command("xreply", adminOnly, async (ctx) => {
   const url = ctx.match?.toString().trim() ?? "";
   const tweetId = extractTweetId(url);
   if (!tweetId) {
@@ -321,7 +322,7 @@ adminCommands.command("xreply", async (ctx) => {
   );
 });
 
-adminCommands.command("incident", async (ctx) => {
+adminCommands.command("incident", adminOnly, async (ctx) => {
   const text = ctx.match?.toString().trim();
   logAdmin(ctx, "incident", text?.slice(0, 80) ?? "");
   await ctx.reply(
