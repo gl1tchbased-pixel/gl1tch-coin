@@ -219,6 +219,8 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
             ))}
           </div>
 
+          <IntegrityPanel result={result} />
+
           {result.risks && result.risks.length > 0 && (
             <div className={styles.risks}>
               <div className={styles.risksHead}>Named risks</div>
@@ -328,6 +330,72 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const fmtInt = (n: number) => Math.round(n).toLocaleString("en-US");
+
+/** Is the activity real? The readings behind the Trading activity and Linked wallets checks. */
+function IntegrityPanel({ result }: { result: ScanResult }) {
+  const m = result.meta.integrity;
+  if (!m || (m.trades24h == null && m.linkedWallets == null)) return null;
+  const status = (key: string) => result.checks.find((c) => c.key === key)?.status ?? "unknown";
+  const trade = status("trade_quality"), linked = status("wallet_network");
+  const both = [trade, linked];
+  const state = both.includes("fail") ? ["STAGED", styles.intStaged] : both.includes("warn") ? ["PARTLY STAGED", styles.intPartial] : both.includes("pass") ? ["REAL ACTIVITY", styles.intReal] : null;
+  const holders = result.meta.holderCount;
+  const buyShare = m.buys24h != null && m.sells24h != null && m.buys24h + m.sells24h > 0 ? (m.buys24h / (m.buys24h + m.sells24h)) * 100 : null;
+  const peakTone = m.fromPeakPct == null ? undefined : m.fromPeakPct >= 95 ? styles.t_fail : m.fromPeakPct >= 85 ? styles.t_warn : undefined;
+  const peakDate = m.peakAt != null ? `${new Date(m.peakAt).getUTCDate()} ${MONTHS[new Date(m.peakAt).getUTCMonth()]}` : null;
+  return (
+    <div className={styles.integrity}>
+      <div className={styles.intHead}>
+        <span aria-hidden="true">◈</span> Market integrity
+        {state && <span className={`${styles.intState} ${state[1]}`}>{state[0]}</span>}
+        <span className={styles.repTag}>Is the activity real?</span>
+      </div>
+      <div className={styles.intGrid}>
+        {m.avgTradeUsd != null && m.trades24h != null && (
+          <div className={`${styles.intTile} ${styles["t_" + trade] ?? ""}`}>
+            <span>Avg trade</span>
+            <div className={styles.intValue}>{m.avgTradeUsd < 10 ? `$${m.avgTradeUsd.toFixed(2)}` : `$${fmtInt(m.avgTradeUsd)}`}</div>
+            <div className={styles.intSub}>{fmtInt(m.trades24h)} trades · 24h</div>
+          </div>
+        )}
+        {buyShare != null && (
+          <div className={styles.intTile}>
+            <span>Buys : sells</span>
+            <div className={styles.intValue}>{m.sells24h ? `${((m.buys24h ?? 0) / m.sells24h).toFixed(1)} : 1` : "—"}</div>
+            <div className={styles.splitBar} role="img" aria-label={`${buyShare.toFixed(0)}% of trades were buys`}>
+              <span className={styles.splitBuy} style={{ width: `${buyShare}%` }} />
+              <span className={styles.splitSell} style={{ width: `${100 - buyShare}%` }} />
+            </div>
+          </div>
+        )}
+        {m.traders24h != null && m.trades24h != null && (
+          <div className={styles.intTile}>
+            <span>Wallets trading</span>
+            <div className={styles.intValue}>{fmtInt(m.traders24h)}</div>
+            <div className={styles.intSub}>≈{(m.trades24h / m.traders24h).toFixed(1)} trades each</div>
+          </div>
+        )}
+        {m.linkedWallets != null && holders != null && holders > 0 && (
+          <div className={`${styles.intTile} ${styles["t_" + linked] ?? ""}`}>
+            <span>Linked wallets</span>
+            <div className={styles.intValue}>{m.linkedWallets === 0 ? "None" : m.linkedWallets / holders < 0.001 ? "<0.1%" : `${((m.linkedWallets / holders) * 100).toFixed(m.linkedWallets / holders < 0.1 ? 1 : 0)}%`}</div>
+            <div className={styles.intSub}>{m.linkedWallets === 0 ? "no linked network" : `${fmtInt(m.linkedWallets)} of ${fmtInt(holders)} holders`}</div>
+          </div>
+        )}
+        {m.fromPeakPct != null && peakDate && (
+          <div className={`${styles.intTile} ${peakTone ?? ""}`}>
+            <span>From peak</span>
+            <div className={styles.intValue}>{m.fromPeakPct < 0.5 ? "At peak" : `−${Math.round(m.fromPeakPct)}%`}</div>
+            <div className={styles.intSub}>peak {peakDate}</div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -343,6 +343,43 @@
 .repTag { margin-left: auto; font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(245, 247, 248, 0.5); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 9999px; padding: 3px 8px; }
 .repNote { font-size: 13.5px; line-height: 1.55; color: rgba(245, 247, 248, 0.82); margin: 0; }
 
+/* Market integrity: is the activity real? */
+.integrity {
+  margin: 0 26px 18px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, rgba(122, 60, 255, 0.08), rgba(255, 255, 255, 0.015));
+}
+.intHead { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; margin-bottom: 12px; }
+.intState { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; border-radius: 9999px; padding: 3px 9px; border: 1px solid; }
+.intReal { color: #7cff4f; border-color: rgba(124, 255, 79, 0.45); background: rgba(124, 255, 79, 0.08); }
+.intPartial { color: #ffb050; border-color: rgba(255, 176, 80, 0.5); background: rgba(255, 176, 80, 0.08); }
+.intStaged { color: #ff7b7b; border-color: rgba(255, 90, 90, 0.55); background: rgba(255, 90, 90, 0.1); }
+.intGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 10px; }
+.intTile {
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #070807;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.intTile > span { display: block; font-size: 10.5px; line-height: 1.35; letter-spacing: 1.4px; text-transform: uppercase; color: rgba(245, 247, 248, 0.42); }
+.intValue { margin-top: 4px; font-size: 20px; font-weight: 700; color: #f5f7f8; font-variant-numeric: tabular-nums; }
+.intSub { margin-top: 2px; font-size: 12px; color: rgba(245, 247, 248, 0.5); overflow-wrap: anywhere; }
+.t_pass .intValue { color: #7cff4f; }
+.t_warn { border-color: rgba(255, 176, 80, 0.4); }
+.t_warn .intValue { color: #ffb050; }
+.t_fail { border-color: rgba(255, 90, 90, 0.45); }
+.t_fail .intValue { color: #ff7b7b; }
+.splitBar { display: flex; height: 5px; margin-top: 10px; border-radius: 3px; overflow: hidden; background: rgba(255, 255, 255, 0.08); }
+.splitBuy { background: #7cff4f; }
+.splitSell { background: #ff7b7b; }
+@media (max-width: 480px) {
+  .integrity { margin: 0 16px 16px; padding: 14px; }
+  .intValue { font-size: 18px; }
+}
+
 /* ---- multi-source transparency ---- */
 .sources { padding: 18px 26px; border-top: 1px solid rgba(255, 255, 255, 0.06); }
 .sourcesHead { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(245, 247, 248, 0.45); margin-bottom: 10px; }

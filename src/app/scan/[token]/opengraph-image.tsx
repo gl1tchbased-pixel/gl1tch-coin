@@ -50,7 +50,7 @@ export default async function Image({ params }: { params: Promise<{ token: strin
   const chainName = (d?.chain || chain || "").replace(/^\w/, (c) => c.toUpperCase());
 
   // pick the most decision-relevant checks present, in priority order
-  const PRIORITY = ["honeypot", "lp_lock", "mint_authority", "freeze_authority", "mintable", "ownership", "insiders", "liquidity", "concentration"];
+  const PRIORITY = ["honeypot", "lp_lock", "mint_authority", "freeze_authority", "mintable", "ownership", "insiders", "trade_quality", "wallet_network", "liquidity", "concentration"];
   const chips = d
     ? PRIORITY.map((k) => d!.checks.find((c) => c.key === k)).filter(Boolean).slice(0, 3) as SC[]
     : [];

@@ -8,7 +8,9 @@
 
 import type { ScanResult, ScanCheck, CheckStatus, Verdict } from "@/lib/scan";
 import { scoreChecks, bandVerdict, bottomLineFor, CANONICAL } from "@/lib/scan";
-import { fetchTokenMarket } from "@/lib/market-sources";
+import { fetchTokenMarket, geckoNetwork } from "@/lib/market-sources";
+import { capForIntegrity, fetchIntegrityExtras, integrityRisks, NO_EXTRAS, tradeActivityCheck } from "@/lib/market-integrity";
+import { marketIntegrity } from "@/lib/scan";
 import { deployerHoldingCheck, holdingPct } from "@/lib/deployer-holdings";
 import { capVerdictForAge, tokenAgeCheck } from "@/lib/token-age";
 
@@ -137,6 +139,12 @@ interface ChainMarket {
   liquidityUsd: number | null;
   volume24h: number | null;
   ageDays: number | null;
+  pool?: string | null;
+  buys24h?: number | null;
+  sells24h?: number | null;
+  traders24h?: number | null;
+  boosts?: number | null;
+  links?: number | null;
 }
 
 /**
@@ -149,6 +157,7 @@ export async function detectChainMarket(address: string, knownChain?: string, si
   return {
     chain: m.chain, name: m.name, symbol: m.symbol, priceUsd: m.priceUsd, priceChange24h: m.priceChange24h,
     marketCap: m.marketCap, liquidityUsd: m.liquidityUsd, volume24h: m.volume24h, ageDays: m.ageDays,
+    pool: m.pool, buys24h: m.buys24h, sells24h: m.sells24h, traders24h: m.traders24h, boosts: m.boosts, links: m.links,
   };
 }
 
@@ -193,12 +202,16 @@ export async function scanEvm(chain: string, address: string, market: ChainMarke
   const checks: ScanCheck[] = [];
   const add = (key: string, label: string, status: CheckStatus, value: string, explain: string) => checks.push({ key, label, status, value, explain });
 
+  const gtNet = geckoNetwork(chain);
+  const extrasP = market.pool && gtNet ? fetchIntegrityExtras(gtNet, market.pool, market.ageDays, signal) : Promise.resolve(NO_EXTRAS);
   let g: GoPlusEvm = {};
   try {
     const res = await fetch(`https://api.gopluslabs.io/api/v1/token_security/${goId}?contract_addresses=${address}`, { signal, headers: { accept: "application/json" } });
     const j = await res.json();
     g = (Object.values(j.result || {})[0] || {}) as GoPlusEvm;
   } catch { /* leave empty → unknowns */ }
+  const extras = await extrasP;
+  const traders = market.traders24h ?? extras.traders;
 
   const honeypot = g.is_honeypot === "1" || g.cannot_sell_all === "1";
   add("honeypot", "Sellable (honeypot)", g.is_honeypot == null ? "unknown" : honeypot ? "fail" : "pass",
@@ -273,6 +286,10 @@ export async function scanEvm(chain: string, address: string, market: ChainMarke
     liq == null ? "—" : fabricated ? `$${Math.round(liq).toLocaleString("en-US")} (suspect)` : `$${Math.round(liq).toLocaleString("en-US")}`,
     liq == null ? "No DEX pair found." : fabricated ? "Huge liquidity but almost no trading — likely fabricated or a locked vault, not depth you can exit into." : liq < 5000 ? "Very thin liquidity — you may not be able to exit." : liq < 20000 ? "Shallow liquidity, rough slippage." : "Healthy liquidity.");
 
+  // Trading activity — the same bot-volume read as on Solana (market-integrity.ts).
+  const trade = tradeActivityCheck({ volume24h: market.volume24h, buys: market.buys24h ?? null, sells: market.sells24h ?? null, traders });
+  add("trade_quality", "Trading activity", trade.status, trade.value, trade.explain);
+
   add("open_source", "Verified contract", g.is_open_source == null ? "unknown" : g.is_open_source === "1" ? "pass" : "fail",
     g.is_open_source == null ? "—" : g.is_open_source === "1" ? "YES" : "NO",
     g.is_open_source == null ? "—" : g.is_open_source === "1" ? "Source is verified — auditable." : "Unverified contract. You can't see what it does. High risk.");
@@ -294,11 +311,13 @@ export async function scanEvm(chain: string, address: string, market: ChainMarke
   if (g.trading_cooldown === "1") risks.push({ name: "Trading cooldown between sells", level: "warn" });
   if (g.is_anti_whale === "1" && g.anti_whale_modifiable === "1") risks.push({ name: "Adjustable max-tx (anti-whale)", level: "warn" });
   if (g.external_call === "1") risks.push({ name: "Makes external calls (extra trust surface)", level: "info" });
+  risks.push(...integrityRisks({ fromPeakPct: extras.fromPeakPct, peakAt: extras.peakAt, boosts: market.boosts ?? null, links: market.links ?? null }));
 
   // score & verdict (shared logic with Solana).
   const w: Record<string, number> = {
     honeypot: 26, ownership: 14, lp_lock: 14, mintable: 10, pausable: 10,
     modifiable_tax: 8, sell_tax: 6, liquidity: 8, blacklist: 4, open_source: 4, dev_holdings: 4, token_age: 3,
+    trade_quality: 6,
   };
   const { score, possible, confidence } = scoreChecks(checks, w);
   const fatal = honeypot || dangerousOwner || g.owner_change_balance === "1" || g.selfdestruct === "1";
@@ -309,15 +328,18 @@ export async function scanEvm(chain: string, address: string, market: ChainMarke
   else if (lpUnlocked && taxModifiable) verdict = "RUG-SHAPED";
   else verdict = bandVerdict(score, possible);
   verdict = capVerdictForAge(verdict, market.ageDays); // a token under 24 hours old is never CLEAN
+  const capped = capForIntegrity(verdict, score, checks); // botted volume is never CLEAN
+  verdict = capped.verdict;
 
   const gOk = Object.keys(g).length > 0;
   return {
     mint: address, name: market.name, symbol: market.symbol, isToken2022: false,
-    chain, score, confidence, verdict, verified: false, bottomLine: bottomLineFor(verdict, checks, confidence), aiVerdict: "",
+    chain, score: capped.score, confidence, verdict, verified: false, bottomLine: bottomLineFor(verdict, checks, confidence), aiVerdict: "",
     sources: [
       { name: "GoPlus Security", ok: gOk, detail: "honeypot, tax, ownership, LP" },
       { name: "Market", ok: market.priceUsd != null, detail: market.priceUsd != null ? "DexScreener / GeckoTerminal" : "no pair found" },
       { name: "On-chain", ok: gOk, detail: "supply, holders, creator" },
+      { name: "Trade flow", ok: trade.status !== "unknown", detail: "24h trades, wallets, price history" },
     ],
     checks, risks,
     meta: {
@@ -330,6 +352,7 @@ export async function scanEvm(chain: string, address: string, market: ChainMarke
       insiderPct: null, insiderCount: null,
       deployer: g.creator_address || null, deployPlatform: null, deployerCreated: null, deployerDead: null,
       deployerHoldingPct: creatorPct,
+      integrity: marketIntegrity(market, traders, null, extras),
     },
     scannedAt: 0,
   };

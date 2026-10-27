@@ -49,6 +49,8 @@ GET /api/scan?mint=<address>&chain=solana        (Solana native, or EVM via GoPl
 GET /api/scan?q=<name-or-symbol>                 (search candidates across chains)
 Response: { verdict, score, checks[], meta{ deployer, deployerReputation, ... }, aiVerdict, name, symbol, chain }
 Verdicts: CLEAN | LOW RISK | CAUTION | HIGH RISK | RUG-SHAPED | UNKNOWN.
+Market integrity: checks "trade_quality" (bot volume) and "wallet_network" (linked-wallet share of holders, Solana);
+readings in meta.integrity { trades24h, buys24h, sells24h, avgTradeUsd, traders24h, linkedWallets, fromPeakPct, peakAt }.
 No auth. Building an integration that needs more than 40/min? Ask at founder@gl1tchbased.xyz (free).
 Non-custodial and read-only.
 

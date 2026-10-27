@@ -45,6 +45,7 @@ const checks = [
   "Top-holder concentration and bundled, sniper or insider wallets",
   "Deployer track record across every token we have scanned",
   "Deployer holdings: how much of the supply the launching wallet holds right now (dump risk, or exited)",
+  "Market integrity: bot-driven volume and holder counts inflated by linked wallets, which cap a token at CAUTION",
   "RugCheck as an independent second source; GoPlus for 15 EVM chains (honeypot, sell tax, mintable, ownership, pausable)",
 ];
 

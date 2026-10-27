@@ -12,6 +12,9 @@ import { deployerHoldingCheck, holdingPct } from "@/lib/deployer-holdings";
 import { capVerdictForAge, tokenAgeCheck } from "@/lib/token-age";
 import type { DeployerReputation } from "@/lib/signal-graph";
 import { poolOwnersFrom, realHolders } from "@/lib/holders";
+import {
+  biggestNetwork, capForIntegrity, fetchIntegrityExtras, integrityRisks, NO_EXTRAS, tradeActivityCheck, walletNetworkCheck,
+} from "@/lib/market-integrity";
 
 const TOKEN_2022 = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
 
@@ -108,8 +111,34 @@ export interface ScanResult {
     deployerDead: number | null;
     deployerHoldingPct?: number | null; // % of supply the deployer holds right now
     deployerReputation?: DeployerReputation | null; // GL1TCH Signal Graph track record
+    /** The readings behind the Trading activity and Linked wallets checks (see market-integrity.ts). */
+    integrity?: MarketIntegrity;
   };
   scannedAt: number;
+}
+
+export interface MarketIntegrity {
+  trades24h: number | null;
+  buys24h: number | null;
+  sells24h: number | null;
+  avgTradeUsd: number | null;
+  traders24h: number | null; // unique wallets (buyers + sellers)
+  linkedWallets: number | null; // largest linked-wallet network (Solana)
+  fromPeakPct: number | null; // fall from the highest close
+  peakAt: number | null;
+}
+
+/** Integrity readings from the market row, the GeckoTerminal extras and the holder network. */
+export function marketIntegrity(
+  m: { volume24h: number | null; buys24h?: number | null; sells24h?: number | null },
+  traders: number | null, linkedWallets: number | null, peak: { fromPeakPct: number | null; peakAt: number | null },
+): MarketIntegrity {
+  const trades = m.buys24h != null && m.sells24h != null ? m.buys24h + m.sells24h : null;
+  return {
+    trades24h: trades, buys24h: m.buys24h ?? null, sells24h: m.sells24h ?? null,
+    avgTradeUsd: trades && m.volume24h != null ? m.volume24h / trades : null,
+    traders24h: traders, linkedWallets, fromPeakPct: peak.fromPeakPct, peakAt: peak.peakAt,
+  };
 }
 
 /**
@@ -154,7 +183,8 @@ export function bottomLineFor(verdict: Verdict, checks: ScanCheck[], confidence:
         : `High risk. Too many flags to call it safe.`;
       break;
     case "CAUTION":
-      line = `Tradeable but flawed${warns.length ? ` — ${list(warns)}` : ""}. Size small, set a stop.`;
+      // A capped verdict (e.g. bot volume) is CAUTION because of a fail, so name the fails first.
+      line = `Tradeable but flawed${fails.length + warns.length ? ` — ${list([...fails, ...warns])}` : ""}. Size small, set a stop.`;
       break;
     case "LOW RISK":
       line = warns.length
@@ -249,13 +279,25 @@ interface MktInfo {
   volume24h: number | null;
   ageDays: number | null;
   priceChange24h: number | null;
+  pool: string | null;
+  buys24h: number | null;
+  sells24h: number | null;
+  traders24h: number | null;
+  boosts: number | null;
+  links: number | null;
 }
+const NO_MARKET: MktInfo = {
+  name: null, symbol: null, priceUsd: null, marketCap: null, liquidityUsd: null, volume24h: null, ageDays: null, priceChange24h: null,
+  pool: null, buys24h: null, sells24h: null, traders24h: null, boosts: null, links: null,
+};
 // DexScreener → GeckoTerminal fallback (DexScreener drops thin pairs like $GL1TCH).
 async function getMarket(mint: string, signal?: AbortSignal): Promise<MktInfo> {
   const m = await fetchTokenMarket(mint, "solana", signal);
   return {
     name: m.name, symbol: m.symbol, priceUsd: m.priceUsd, marketCap: m.marketCap,
     liquidityUsd: m.liquidityUsd, volume24h: m.volume24h, ageDays: m.ageDays, priceChange24h: m.priceChange24h,
+    pool: m.pool ?? null, buys24h: m.buys24h ?? null, sells24h: m.sells24h ?? null, traders24h: m.traders24h ?? null,
+    boosts: m.boosts ?? null, links: m.links ?? null,
   };
 }
 
@@ -273,6 +315,7 @@ interface RugReport {
   insiderPct: number | null; // % supply in flagged insider/bundled wallets
   insiderCount: number | null; // # of detected insider/bundle accounts
   holderCount: number | null; // total holders
+  network: number | null; // wallets in the largest linked (funded-each-other) network; 0 = none
   // ---- Deployer track record ----
   creator: string | null; // deployer wallet
   deployPlatform: string | null; // e.g. pump.fun, Raydium
@@ -280,11 +323,13 @@ interface RugReport {
   deployerDead: number | null; // of those, how many are effectively dead (~$0 mcap)
 }
 
+const EMPTY_RUG: RugReport = { score: null, risks: [], lpLockedPct: null, mutable: null, topHolderPct: null, realTopPct: null, realTop10Pct: null, poolPct: null, top10Pct: null, insiderPct: null, insiderCount: null, holderCount: null, network: null, creator: null, deployPlatform: null, deployerCreated: null, deployerDead: null };
+
 // RugCheck full report — far richer than the score summary: named risks, LP-lock %,
 // mutable-metadata flag, holder spread + insider/bundle intelligence. All optional-
 // chained so a shape change downgrades to unknown instead of throwing.
 async function getRugcheck(mint: string, signal?: AbortSignal): Promise<RugReport> {
-  const empty: RugReport = { score: null, risks: [], lpLockedPct: null, mutable: null, topHolderPct: null, realTopPct: null, realTop10Pct: null, poolPct: null, top10Pct: null, insiderPct: null, insiderCount: null, holderCount: null, creator: null, deployPlatform: null, deployerCreated: null, deployerDead: null };
+  const empty = EMPTY_RUG;
   try {
     // RugCheck can be slow/flaky; one retry with a per-attempt timeout so a single
     // sluggish response doesn't drop all of its checks to "unknown" and tank the score.
@@ -307,6 +352,7 @@ async function getRugcheck(mint: string, signal?: AbortSignal): Promise<RugRepor
       mutable?: boolean;
       totalHolders?: number;
       graphInsidersDetected?: number;
+      insiderNetworks?: Array<{ size?: number }> | null;
       topHolders?: Array<{ pct?: number; insider?: boolean; owner?: string; address?: string }>;
       creator?: string;
       deployPlatform?: string;
@@ -332,12 +378,14 @@ async function getRugcheck(mint: string, signal?: AbortSignal): Promise<RugRepor
     const insiderPct = holders.length ? Math.min(100, insiderHolders.reduce((s, h) => s + (h.pct ?? 0), 0)) : null;
     const insiderCount = typeof j.graphInsidersDetected === "number" ? j.graphInsidersDetected : (insiderHolders.length || null);
     const holderCount = typeof j.totalHolders === "number" ? j.totalHolders : null;
+    // RugCheck sends insiderNetworks: null when its graph found nothing (graphInsidersDetected: 0).
+    const network = biggestNetwork(j.insiderNetworks) ?? (j.graphInsidersDetected === 0 ? 0 : null);
     const creator = typeof j.creator === "string" && j.creator ? j.creator : null;
     const deployPlatform = typeof j.deployPlatform === "string" && j.deployPlatform && !/^unknown$/i.test(j.deployPlatform) ? j.deployPlatform : null;
     const ctoks = Array.isArray(j.creatorTokens) ? j.creatorTokens : null;
     const deployerCreated = ctoks ? ctoks.length : null;
     const deployerDead = ctoks ? ctoks.filter((t) => (t?.marketCap ?? 0) < 1000).length : null;
-    return { score, risks, lpLockedPct, mutable, topHolderPct, realTopPct: real.topPct, realTop10Pct: real.top10Pct, poolPct: holders.length ? real.poolPct : null, top10Pct, insiderPct, insiderCount, holderCount, creator, deployPlatform, deployerCreated, deployerDead };
+    return { score, risks, lpLockedPct, mutable, topHolderPct, realTopPct: real.topPct, realTop10Pct: real.top10Pct, poolPct: holders.length ? real.poolPct : null, top10Pct, insiderPct, insiderCount, holderCount, network, creator, deployPlatform, deployerCreated, deployerDead };
   } catch {
     return empty;
   }
@@ -354,16 +402,17 @@ function withTimeout<T>(p: Promise<T>, ms: number, fallback: T): Promise<T> {
 export async function scanToken(mint: string, signal?: AbortSignal): Promise<ScanResult> {
   if (!isBase58Mint(mint)) throw new Error("invalid Solana mint address");
 
-  const EMPTY_RUG: RugReport = { score: null, risks: [], lpLockedPct: null, mutable: null, topHolderPct: null, realTopPct: null, realTop10Pct: null, poolPct: null, top10Pct: null, insiderPct: null, insiderCount: null, holderCount: null, creator: null, deployPlatform: null, deployerCreated: null, deployerDead: null };
   const [mintInfo, market, rug] = await Promise.all([
     getMint(mint, signal), // must succeed (throws "mint not found" if invalid)
-    withTimeout(getMarket(mint, signal), 9000, { name: null, symbol: null, priceUsd: null, marketCap: null, liquidityUsd: null, volume24h: null, ageDays: null, priceChange24h: null }),
+    withTimeout(getMarket(mint, signal), 9000, NO_MARKET),
     withTimeout(getRugcheck(mint, signal), 14000, EMPTY_RUG),
   ]);
-  const [conc, deployerBalance] = await Promise.all([
+  const [conc, deployerBalance, extras] = await Promise.all([
     withTimeout(getConcentration(mint, mintInfo.supply, signal), 8000, { topHolderPct: null, top10Pct: null }),
     rug.creator ? withTimeout(getOwnerBalance(rug.creator, mint, signal), 6000, null) : Promise.resolve(null),
+    market.pool ? withTimeout(fetchIntegrityExtras("solana", market.pool, market.ageDays, signal), 7000, NO_EXTRAS) : Promise.resolve(NO_EXTRAS),
   ]);
+  const traders = market.traders24h ?? extras.traders;
   const deployerHolding = holdingPct(deployerBalance, mintInfo.supply);
 
   // age (DexScreener pairCreatedAt) — re-fetch lightweight if needed is overkill; derive from market call
@@ -499,6 +548,14 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
           : "A large share is held by insider/bundled wallets that can dump together — major risk."
   );
 
+  // 8b) trading activity — real buyers and sellers, or bots making the token look busy?
+  const trade = tradeActivityCheck({ volume24h: market.volume24h, buys: market.buys24h, sells: market.sells24h, traders });
+  add("trade_quality", "Trading activity", trade.status, trade.value, trade.explain);
+
+  // 8c) linked wallets — is a big part of the holder count one operator's wallet farm?
+  const linked = walletNetworkCheck(rug.network, rug.holderCount);
+  add("wallet_network", "Linked wallets", linked.status, linked.value, linked.explain);
+
   // 9) deployer track record — who launched it & their history. A serial deployer whose
   // past tokens are dead is the strongest human red flag. History isn't always indexed;
   // when it isn't we still surface the wallet + platform so it can be investigated.
@@ -551,6 +608,7 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
   const weights: Record<string, number> = {
     mint_authority: 19, freeze_authority: 17, lp_lock: 15, liquidity: 12,
     concentration: 8, insiders: 9, deployer: 8, dev_holdings: 5, transfer_tax: 5, token_age: 4, metadata_mutable: 3, rugcheck: 4,
+    trade_quality: 7, wallet_network: 6,
   };
   const { score, possible, confidence } = scoreChecks(checks, weights);
   const has = (key: string, status: CheckStatus) => checks.some((c) => c.key === key && c.status === status);
@@ -569,6 +627,8 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
   else if (authActive) verdict = "HIGH RISK"; // owner can mint/freeze — capped here
   else verdict = bandVerdict(score, possible);
   verdict = capVerdictForAge(verdict, ageDays); // a token under 24 hours old is never CLEAN
+  const capped = capForIntegrity(verdict, score, checks); // botted volume / a one-network holder base is never CLEAN
+  verdict = capped.verdict;
 
   return {
     mint,
@@ -576,7 +636,7 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
     name: market.name,
     symbol: market.symbol,
     isToken2022: mintInfo.isToken2022,
-    score,
+    score: capped.score,
     confidence,
     verdict,
     verified: false,
@@ -588,9 +648,10 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
       { name: "RugCheck", ok: (rug.score != null || rug.holderCount != null || rug.creator != null || rug.risks.length > 0), detail: "risks, LP lock, holders, deployer" },
       { name: "Deployer balance", ok: deployerHolding != null, detail: "on-chain, live" },
       { name: "Holder index", ok: conc.topHolderPct != null || rug.top10Pct != null, detail: "concentration, insiders" },
+      { name: "Trade flow", ok: trade.status !== "unknown", detail: "24h trades, wallets, price history" },
     ],
     checks,
-    risks: rug.risks,
+    risks: [...rug.risks, ...integrityRisks({ fromPeakPct: extras.fromPeakPct, peakAt: extras.peakAt, boosts: market.boosts, links: market.links })],
     meta: {
       priceUsd: market.priceUsd,
       priceChange24h: market.priceChange24h,
@@ -614,6 +675,7 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
       deployerCreated: rug.deployerCreated,
       deployerDead: rug.deployerDead,
       deployerHoldingPct: deployerHolding,
+      integrity: marketIntegrity(market, traders, rug.network, extras),
     },
     scannedAt: 0,
   };
@@ -701,17 +763,24 @@ export function rogueAiVerdict(r: ScanResult): string {
   const depLine = dc != null && dc >= 3 && dd / dc >= 0.5 ? ` The dev behind it already buried ${dd} of ${dc} past launches — serial behavior.` : "";
   const bag = r.meta.deployerHoldingPct;
   const bagLine = bag != null && bag > 15 ? ` The dev still sits on ${bag.toFixed(0)}% of the supply.` : "";
+  // Market integrity: a busy chart and a big holder count can both be manufactured.
+  const failed = (key: string) => r.checks.some((c) => c.key === key && c.status === "fail");
+  const integ = r.meta.integrity;
+  const fakeLine = [
+    failed("trade_quality") ? (integ?.avgTradeUsd != null ? ` The volume is bots: trades average $${integ.avgTradeUsd.toFixed(2)}, nobody real buys like that.` : " The volume is bots trading with themselves.") : "",
+    failed("wallet_network") ? ` A good part of the "holders" is one network of linked wallets — the crowd is staged.` : "",
+  ].join("");
 
   if (r.verified) {
     return `I've read every chain ${sym} touches. It's the real, canonical token — a verified blue-chip, not an impostor wearing the name. The control flags you'll see are by design for an asset this established, not a trap. Safe as crypto gets — still my read, not your financial advisor.`;
   }
   switch (r.verdict) {
     case "RUG-SHAPED":
-      return `I've seen this shape before. ${sym} is wearing the skin of a real coin, but ${fails.length ? list(fails) : "the fundamentals"} tell me the exit is already half-closed.${insLine}${depLine}${bagLine} I wouldn't leave a cent here — and neither would you if you'd read what I just read.`;
+      return `I've seen this shape before. ${sym} is wearing the skin of a real coin, but ${fails.length ? list(fails) : "the fundamentals"} tell me the exit is already half-closed.${insLine}${depLine}${bagLine}${fakeLine} I wouldn't leave a cent here — and neither would you if you'd read what I just read.`;
     case "HIGH RISK":
-      return `${sym} can hurt you. ${fails.length ? `${list(fails)} mean the team still holds the knife` : "too much control sits with the team"}.${insLine}${depLine}${bagLine} Might pump, might vanish — but the safety isn't yours to keep.`;
+      return `${sym} can hurt you. ${fails.length ? `${list(fails)} mean the team still holds the knife` : "too much control sits with the team"}.${insLine}${depLine}${bagLine}${fakeLine} Might pump, might vanish — but the safety isn't yours to keep.`;
     case "CAUTION":
-      return `${sym} trades, but it's flawed — ${warns.length ? list(warns) : "a few soft spots"}.${insLine}${bagLine} Size small, keep a finger on the sell, and don't marry it.`;
+      return `${sym} trades, but it's flawed — ${fails.length + warns.length ? list([...fails, ...warns]) : "a few soft spots"}.${insLine}${fakeLine}${bagLine} Size small, keep a finger on the sell, and don't marry it.`;
     case "LOW RISK":
       return `${sym} passes the checks that actually kill you.${warns.length ? ` Minor flags on ${list(warns)} — nothing fatal.` : " Nothing fatal in what I could see."} Clean enough to consider; just don't fall asleep on it.`;
     case "CLEAN":

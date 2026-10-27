@@ -15,7 +15,7 @@ const isAddress = (s: string) => /^0x[0-9a-fA-F]{40}$/.test(s) || /^[1-9A-HJ-NP-
 const chainName = (c: string) => CHAIN_LABEL[c] || c.charAt(0).toUpperCase() + c.slice(1);
 const ICON: Record<string, string> = { pass: "✓", warn: "!", fail: "✕", unknown: "?" };
 // the checks worth comparing head-to-head
-const KEY = ["honeypot", "lp_lock", "mint_authority", "freeze_authority", "insiders", "deployer", "dev_holdings", "liquidity", "concentration"];
+const KEY = ["honeypot", "lp_lock", "mint_authority", "freeze_authority", "insiders", "trade_quality", "wallet_network", "deployer", "dev_holdings", "liquidity", "concentration"];
 
 async function resolve(q: string): Promise<ScanResult | null> {
   const t = q.trim();

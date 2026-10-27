@@ -21,6 +21,13 @@ export interface TokenMarket {
   ageDays: number | null;
   priceChange24h: number | null;
   source: "dexscreener" | "geckoterminal" | null;
+  /** The pool these numbers come from, and its last-24h trades (for the market-integrity checks). */
+  pool?: string | null;
+  buys24h?: number | null;
+  sells24h?: number | null;
+  traders24h?: number | null; // unique wallets, GeckoTerminal only
+  boosts?: number | null; // active paid DexScreener boosts
+  links?: number | null; // websites + socials listed on DexScreener
 }
 
 const EMPTY: TokenMarket = {
@@ -39,9 +46,14 @@ const GT_NETWORK: Record<string, string> = {
   cronos: "cro", zksync: "zksync", linea: "linea", scroll: "scroll", mantle: "mantle",
   blast: "blast", opbnb: "opbnb",
 };
+export const geckoNetwork = (chain: string): string | null => GT_NETWORK[chain] ?? null;
 
 interface DexPair {
   chainId?: string;
+  pairAddress?: string;
+  txns?: { h24?: { buys?: number; sells?: number } };
+  boosts?: { active?: number };
+  info?: { websites?: unknown[]; socials?: unknown[] };
   pairCreatedAt?: number;
   priceUsd?: string;
   marketCap?: number;
@@ -110,6 +122,14 @@ async function fromDexScreener(address: string, signal?: AbortSignal): Promise<T
       ageDays: created ? Math.max(0, Math.floor((Date.now() - created) / 86_400_000)) : null,
       priceChange24h: num(p.priceChange?.h24),
       source: "dexscreener",
+      pool: p.pairAddress ?? null,
+      buys24h: num(p.txns?.h24?.buys),
+      sells24h: num(p.txns?.h24?.sells),
+      traders24h: null,
+      boosts: num(p.boosts?.active) ?? 0,
+      // DexScreener sends no info block for a token nobody claimed; only an info block with no
+      // links means "nothing listed".
+      links: p.info ? (p.info.websites?.length ?? 0) + (p.info.socials?.length ?? 0) : null,
     };
   } catch {
     return null;
@@ -126,6 +146,8 @@ interface GtPoolAttrs {
   price_change_percentage?: { h24?: string };
   name?: string; // e.g. "GL1TCH / SOL"
   pool_created_at?: string | null;
+  address?: string;
+  transactions?: { h24?: { buys?: number; sells?: number; buyers?: number; sellers?: number } };
 }
 interface GtPool {
   attributes?: GtPoolAttrs;
@@ -179,6 +201,12 @@ async function fromGecko(chain: string, address: string, signal?: AbortSignal): 
       ageDays,
       priceChange24h: tokenIsBase ? num(a.price_change_percentage?.h24) : null,
       source: "geckoterminal",
+      pool: a.address ?? null,
+      buys24h: num(a.transactions?.h24?.buys),
+      sells24h: num(a.transactions?.h24?.sells),
+      traders24h: a.transactions?.h24 ? (num(a.transactions.h24.buyers) ?? 0) + (num(a.transactions.h24.sellers) ?? 0) || null : null,
+      boosts: null,
+      links: null,
     };
   } catch {
     return null;

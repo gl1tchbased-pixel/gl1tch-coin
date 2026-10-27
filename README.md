@@ -30,10 +30,15 @@ GL1TCH reads that state, explains it in plain words, and gives it away for free.
 | Top holder / insiders | Concentration and bundled or insider wallets |
 | Deployer | The launching wallet's track record across tokens |
 | Deployer holdings | How much of the supply the deployer holds right now (dump risk, or exited) |
+| Trading activity | Bot volume: thousands of micro-trades, buy-bot skew, the same wallets trading back and forth |
+| Linked wallets | A holder count inflated by one network of wallets that fund each other |
 | Metadata | Can the name and image still be swapped? |
 | RugCheck | An independent second opinion |
 
-EVM chains use GoPlus for honeypot, sell tax, mintable, ownership, pausable and blacklist checks.
+A token whose volume is botted, or whose holders are mostly one linked network, can't read better than CAUTION,
+whatever its contract looks like. The scan also flags a token that has fallen 85% or more from its peak, and paid
+DexScreener promotion. EVM chains use GoPlus for honeypot, sell tax, mintable, ownership, pausable and blacklist
+checks, plus the same trading-activity check.
 Every scan also feeds the **Signal Graph**, a cross-scan memory of deployers, so a serial
 rugger's next token is flagged. Scoring changes are logged in
 [`docs/scoring-changelog.md`](./docs/scoring-changelog.md).
