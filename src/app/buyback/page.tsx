@@ -92,6 +92,7 @@ export default function BuybackPage() {
         </p>
         <div className={styles.cta}>
           <Link href="/token" className={styles.btnPrimary}>The full investment case →</Link>
+          <Link href="/revenue" className={styles.btnGhost}>Revenue ledger</Link>
           <Link href="/quantum-core" className={styles.btnGhost}>See the product</Link>
           <Link href="/security" className={styles.btnGhost}>Security &amp; trust</Link>
         </div>

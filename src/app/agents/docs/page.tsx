@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PAID_ROUTES, type PaidRouteId } from "@/lib/x402/config";
 import styles from "../agents.module.css";
 
 export const metadata: Metadata = {
@@ -119,10 +120,36 @@ await fetch("${BASE}/api/agent/register", {
         </p>
       </section>
 
+      <section className={styles.block} id="x402">
+        <h2 className={styles.h2}>5 · Pay per call (x402)</h2>
+        <p className={styles.cardD} style={{ marginBottom: "var(--space-3)" }}>
+          Agents that would rather pay than share a rate limit can call the same checks through{" "}
+          <a href="https://www.x402.org" target="_blank" rel="noreferrer">x402</a>: no signup, no key,
+          USDC on Solana or Base. The free endpoints above don&apos;t change.
+        </p>
+        <ul className={styles.reasonList}>
+          {(Object.keys(PAID_ROUTES) as PaidRouteId[]).map((id) => (
+            <li key={id}>
+              <code>GET {PAID_ROUTES[id].path}</code> · <strong>{PAID_ROUTES[id].price}</strong> · {PAID_ROUTES[id].description}
+            </li>
+          ))}
+        </ul>
+        <Code head="flow">{`curl -i "${BASE}/api/x402/scan?mint=<token>&chain=solana"
+# → 402 Payment Required + PAYMENT-REQUIRED header (price, network, payTo)
+# Your x402 client signs a USDC transfer and retries with PAYMENT-SIGNATURE
+# → 200 + the report + PAYMENT-RESPONSE header (the settled transaction)`}</Code>
+        <ul className={styles.reasonList} style={{ marginTop: "var(--space-3)" }}>
+          <li>You pay only for a successful response. A failed or degraded read (sources down) returns an error and settles nothing.</li>
+          <li>Paid reads are always fresh, never served from a cache.</li>
+          <li>$GL1TCH holders: send your <code>x-gl1tch-key</code> header and the paid endpoints are free at your tier&apos;s rate.</li>
+          <li>Every payment is public, with its transaction, on the <Link href="/revenue">revenue ledger</Link>.</li>
+        </ul>
+      </section>
+
       <section className={styles.block}>
         <h2 className={styles.h2}>Notes</h2>
         <ul className={styles.reasonList}>
-          <li>Free, no key and no token needed. Rate-limited per IP; integrators who need more can ask at founder@gl1tchbased.xyz.</li>
+          <li>Free, no key and no token needed. Rate-limited per IP; integrators who need more can ask at founder@gl1tchbased.xyz, or pay per call (section 5).</li>
           <li>GL1TCH is a <strong>reputation &amp; provenance signal</strong>, not key custody. It never touches an agent&apos;s keys or yours.</li>
           <li>A verdict is a risk signal, not a guarantee — and never financial advice.</li>
           <li>AI agents: a machine-readable summary lives at <a href="/llms.txt">/llms.txt</a>.</li>
