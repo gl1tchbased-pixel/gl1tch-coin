@@ -37,3 +37,13 @@ the moment a clean patched version exists.
 - 2026-07-05 — Phase -1 shipped: CSP, central input validation, best-effort per-IP rate
   limiting (in-memory; upgrade to Upstash/WAF when traffic warrants), CI security scans.
   Rate limiter is per-serverless-instance — a global limit needs a shared store (documented).
+- 2026-10-28 — Paid agent API (x402). Risks taken on, with the response:
+  - **Facilitator dependency (PayAI).** If PayAI is down, paid calls fail before settlement (no charge, no
+    revenue). Each receiving wallet gets 1,000 free settlements for its lifetime; after that PayAI needs credits
+    (~$0.00133 per Solana settlement on 2026-10-27, ~13% of a $0.01 call). Response: watch the count on
+    /revenue; buy credits or add the Coinbase CDP facilitator before the free allowance runs out.
+  - **Upstream quotas under paid volume.** Every paid scan hits the same Helius / RugCheck / GoPlus / DexScreener
+    budget as the free scanner. Response: per-IP limit 120/min on paid routes; upgrade the Helius plan from
+    revenue if volume grows.
+  - **Hot receiving wallet.** USDC lands in a Phantom account. Response: sweep to the founder's main wallet
+    periodically; the receiving account holds nothing else.
