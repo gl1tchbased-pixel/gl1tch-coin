@@ -19,6 +19,7 @@ import { agentTrust } from "../agent-trust/trust.js";
 import { verifyAgentRegistration } from "../agent-trust/register.js";
 import { claimPendingX, ackX } from "../agent/x-agent/xqueue.js";
 import { statsStore } from "../stats.js";
+import { revenueStore, parseRevenueEntry } from "../revenue.js";
 import { quantumCore } from "../quantum-core/store.js";
 import { startQuantumCore } from "../quantum-core/executor.js";
 import { verifyDrawEntry } from "../quantum-core/enter.js";
@@ -139,6 +140,7 @@ export function startVerification(bot: Bot): Server | null {
   };
 
   statsStore.load();
+  revenueStore.load();
   attestStore.load();
   balanceHistory.load();
   signalGraph.load();
@@ -246,6 +248,14 @@ export function startVerification(bot: Bot): Server | null {
       token: config.stats.token,
       get: () => statsStore.get(),
       bump: (flagged, n, flaggedN, kind, rev) => statsStore.bump(flagged, n, flaggedN, kind, Date.now(), rev),
+    },
+    revenue: {
+      token: config.stats.token,
+      record: (body) => {
+        const entry = parseRevenueEntry(body);
+        return entry ? revenueStore.record(entry) : "invalid";
+      },
+      summary: () => revenueStore.summary(),
     },
     signal: {
       token: config.stats.token,

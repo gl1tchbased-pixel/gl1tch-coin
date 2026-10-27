@@ -22,6 +22,13 @@ export interface VerifyServerOptions {
     get: () => { scanned: number; flagged: number };
     bump: (flagged: boolean, n?: number, flaggedN?: number, kind?: "user" | "auto", rev?: number) => void;
   };
+  /** Paid agent API revenue ledger: public GET /revenue, token-guarded POST /revenue/record
+   *  (the website reports each settled x402 payment). Shares the stats token. */
+  revenue?: {
+    token: string;
+    record: (body: unknown) => "added" | "duplicate" | "invalid";
+    summary: () => unknown;
+  };
   /** Signal Graph endpoints: public GET /signal/deployer (deployer track record),
    *  token-guarded POST /signal/observe (record a scan). Shares the stats token. */
   signal?: {
@@ -151,6 +158,42 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
           res.writeHead(400, { "Content-Type": "application/json", ...cors });
           res.end(JSON.stringify({ ok: false, error: "bad_json" }));
         }
+      });
+      return;
+    }
+
+    // ---- paid agent API revenue ledger ----
+    if (opts.revenue && sPath === "/revenue" && req.method === "GET") {
+      res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=15", ...cors });
+      res.end(JSON.stringify(opts.revenue.summary()));
+      return;
+    }
+    if (opts.revenue && sPath === "/revenue/record" && req.method === "POST") {
+      const hdr = req.headers["x-stats-token"];
+      const token = (Array.isArray(hdr) ? hdr[0] : hdr) ?? "";
+      if (!safeEqual(token, opts.revenue.token)) {
+        res.writeHead(401, { "Content-Type": "application/json", ...cors });
+        res.end(JSON.stringify({ ok: false, error: "unauthorized" }));
+        return;
+      }
+      let rRaw = "";
+      let rTooLarge = false;
+      req.on("data", (chunk) => { rRaw += chunk; if (rRaw.length > 2048) { rTooLarge = true; req.destroy(); } });
+      req.on("end", () => {
+        if (rTooLarge) return;
+        let result: "added" | "duplicate" | "invalid" = "invalid";
+        try {
+          result = opts.revenue!.record(JSON.parse(rRaw));
+        } catch {
+          // bad JSON falls through as invalid
+        }
+        if (result === "invalid") {
+          res.writeHead(400, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify({ ok: false, error: "invalid_entry" }));
+          return;
+        }
+        res.writeHead(200, { "Content-Type": "application/json", ...cors });
+        res.end(JSON.stringify({ ok: true, result }));
       });
       return;
     }
