@@ -7,8 +7,11 @@
 
 import { ATTESTER_WALLET } from "@/lib/official";
 
-export const SOLANA_MAINNET = "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp";
-export const BASE_MAINNET = "eip155:8453";
+/** CAIP-2 chain id, the form x402 uses for networks. */
+export type Caip2 = `${string}:${string}`;
+
+export const SOLANA_MAINNET: Caip2 = "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp";
+export const BASE_MAINNET: Caip2 = "eip155:8453";
 
 export type PaidRouteId = "scan" | "agent" | "deployer";
 
@@ -39,7 +42,7 @@ export const PAID_ROUTES: Record<PaidRouteId, { path: string; price: string; pri
 export interface PaymentOption {
   scheme: "exact";
   price: string;
-  network: string;
+  network: Caip2;
   payTo: string;
   maxTimeoutSeconds: number;
 }
