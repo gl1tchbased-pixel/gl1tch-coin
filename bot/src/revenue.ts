@@ -9,7 +9,8 @@ import path from "node:path";
  * written to disk at once (atomic temp+rename), so a restart right after a payment loses nothing.
  */
 
-export type RevenueRoute = "scan" | "agent" | "deployer";
+/** Must list every paid route the site has (src/lib/x402/config.ts PaidRouteId); unknown routes are refused. */
+export type RevenueRoute = "scan" | "agent" | "deployer" | "verdict" | "radar" | "random";
 
 export interface RevenueEntry {
   tx: string;
@@ -34,7 +35,7 @@ export interface RevenueSummary {
   recent: RevenueEntry[];
 }
 
-const ROUTES: readonly RevenueRoute[] = ["scan", "agent", "deployer"];
+const ROUTES: readonly RevenueRoute[] = ["scan", "agent", "deployer", "verdict", "radar", "random"];
 const NETWORK = /^(solana|eip155):[A-Za-z0-9]{1,64}$/;
 const TX = /^([1-9A-HJ-NP-Za-km-z]{64,88}|0x[0-9a-fA-F]{64})$/;
 const MAX_MICRO = 1e9; // $1,000 per call: far above any price we charge

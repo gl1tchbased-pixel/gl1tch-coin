@@ -25,6 +25,9 @@ const FREE_ALTERNATIVE: Record<PaidRouteId, string> = {
   scan: "/api/scan",
   agent: "/api/agent/check",
   deployer: "/api/scan", // a scan's meta.deployerReputation carries the same record
+  verdict: "/api/scan", // the card is a condensed scan
+  radar: "/api/radar", // the free feed shows the eight riskiest of the same sweep
+  random: "/quantum-core/random", // $GL1TCH holders' key-gated Randomness API
 };
 
 type Handler = (req: NextRequest) => Promise<NextResponse>;
@@ -87,7 +90,7 @@ export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest)
               description: route.description,
               mimeType: "application/json",
               serviceName: "GL1TCH",
-              tags: ["crypto", "security", "token-safety", "rug-check", "honeypot", "pre-trade", "solana", "base", "agents"],
+              tags: route.tags,
               // Raster on purpose: the Coinbase Bazaar drops SVG icons (JPG/PNG/WebP/GIF only).
               iconUrl: `${OFFICIAL.SITE_URL}/brand/gl1tch-logo-256.png`,
               extensions: declareDiscoveryExtension(bazaarDiscovery(id)),
