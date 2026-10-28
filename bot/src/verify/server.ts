@@ -258,7 +258,7 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
       };
       if (sPath === "/attest/info") return send(200, { ok: true, ...opts.attest.info() }, 60);
       if (sPath === "/attest/pending") {
-        const limit = Math.max(1, Math.min(20, parseInt(qs.get("limit") ?? "6", 10) || 6));
+        const limit = Math.max(1, Math.min(50, parseInt(qs.get("limit") ?? "6", 10) || 6));
         return send(200, { ok: true, batches: opts.attest.pending(limit) }, 0);
       }
       if (sPath === "/attest/batch") {

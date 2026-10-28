@@ -44,7 +44,7 @@ export interface AttestPolicy {
 export const DEFAULT_POLICY: AttestPolicy = {
   maxFeeLamports: 10_000,
   maxPerDay: 100,
-  maxPerRun: 6,
+  maxPerRun: 20, // GitHub often starts the schedule only every 4-6 hours, so one run must clear a backlog
   warnWalletLamports: 250_000_000, // 0.25 SOL
   maxWalletLamports: 2_000_000_000, // 2 SOL
   minWalletLamports: 100_000,

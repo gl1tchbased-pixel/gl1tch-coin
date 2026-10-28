@@ -4,6 +4,7 @@ import type { Server } from "node:http";
 import { createVerifyServer } from "./server.js";
 
 const seen: unknown[] = [];
+const pendingLimits: number[] = [];
 let server: Server;
 let base: string;
 
@@ -15,7 +16,7 @@ beforeAll(async () => {
       token: "t".repeat(32),
       add: () => ({ ok: false }),
       info: () => ({}),
-      pending: () => [],
+      pending: (limit) => (pendingLimits.push(limit), []),
       batch: () => null,
       proof: () => [],
       link: async (body) => {
@@ -51,5 +52,13 @@ describe("bridge POST /attest/link (public: the report is verified on-chain, not
   it("refuses bad JSON and oversized bodies", async () => {
     expect((await post("{not json")).status).toBe(400);
     await expect(post(JSON.stringify({ pad: "x".repeat(4096) }))).rejects.toThrow();
+  });
+});
+
+describe("bridge GET /attest/pending", () => {
+  it("serves up to 50 sweeps, so one run can take a whole backlog", async () => {
+    await fetch(`${base}/attest/pending?limit=40`);
+    await fetch(`${base}/attest/pending?limit=500`);
+    expect(pendingLimits).toEqual([40, 50]);
   });
 });
