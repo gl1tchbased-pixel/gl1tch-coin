@@ -65,3 +65,4 @@ Agents pay per call in USDC. We hold no key: `payTo` is a founder-owned receive 
 - 2026-10-22 — per-IP limits on every public route and the bot server, constant-time token checks, radar sweep made non-triggerable; attester-key rules written before A3 step 2.
 - 2026-10-22 — A3 step 2 built to those rules (runner, linker, proof endpoints, CI confinement); the review added the genesis-hash check and signer verification on every memo hint.
 - 2026-10-28 — paid agent API (x402) added: entry points, no-charge-on-failure, private caching, payTo guard, ledger token risk.
+- 2026-10-28 — attester griefing closed: token-account and small-SOL-gift halts removed (valuable tokens and > 2 SOL still refuse), history paging + degraded one-anchor runs under a flood, linker reads the full 7-day window.
