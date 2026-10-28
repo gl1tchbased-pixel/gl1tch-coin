@@ -129,7 +129,7 @@ describe("wallet balance (a stranger can't halt it cheaply)", () => {
 
 describe("run budget", () => {
   it("normally sends up to the per-run cap, within what's left of the day", () => {
-    expect(runBudget({ sentLast24h: 10, historyComplete: true }, DEFAULT_POLICY)).toBe(6);
+    expect(runBudget({ sentLast24h: 10, historyComplete: true }, DEFAULT_POLICY)).toBe(20);
     expect(runBudget({ sentLast24h: 97, historyComplete: true }, DEFAULT_POLICY)).toBe(3);
     expect(runBudget({ sentLast24h: 100, historyComplete: true }, DEFAULT_POLICY)).toBe(0);
   });
@@ -138,6 +138,12 @@ describe("run budget", () => {
     expect(runBudget({ sentLast24h: 0, historyComplete: false }, DEFAULT_POLICY)).toBe(2);
     expect(runBudget({ sentLast24h: 99, historyComplete: false }, DEFAULT_POLICY)).toBe(1);
     expect(runBudget({ sentLast24h: 100, historyComplete: false }, DEFAULT_POLICY)).toBe(0);
+  });
+
+  it("lets one run clear a backlog: GitHub often starts the schedule only every 4-6 hours", () => {
+    // 4 runs a day must still cover a day of sweeps (one every 30 min = 48) plus catch-up.
+    expect(4 * DEFAULT_POLICY.maxPerRun).toBeGreaterThanOrEqual(48 + 24);
+    expect(DEFAULT_POLICY.maxPerRun).toBeLessThanOrEqual(DEFAULT_POLICY.maxPerDay);
   });
 
   it("never exceeds a per-run cap tightened by env, degraded or not", () => {

@@ -47,7 +47,7 @@ describe("anchoring routes", () => {
 
   it("serves the public reads with bounded inputs", async () => {
     const pending = (await (await fetch(`${base}/attest/pending?limit=999`)).json()) as { batches: unknown[] };
-    expect(pending.batches).toHaveLength(20);
+    expect(pending.batches).toHaveLength(50); // capped: one run may take a whole backlog
     expect((await fetch(`${base}/attest/batch?root=nothex`)).status).toBe(404);
     expect((await fetch(`${base}/attest/batch?root=${"cd".repeat(32)}`)).status).toBe(200);
     expect((await fetch(`${base}/attest/proof`)).status).toBe(400);
