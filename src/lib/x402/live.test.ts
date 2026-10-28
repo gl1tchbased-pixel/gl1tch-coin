@@ -37,9 +37,9 @@ describe.skipIf(!process.env.X402_LIVE)("live x402 challenge (PayAI)", () => {
     const { res, body } = await challenge("/api/x402/scan");
     expect(res.status).toBe(402);
     expect(body.x402Version).toBe(2);
-    expect(body.accepts[0]).toMatchObject({ scheme: "exact", network: SOLANA_MAINNET, amount: "10000", asset: USDC_SOLANA, payTo: DEPLOYER_WALLET });
+    expect(body.accepts[0]).toMatchObject({ scheme: "exact", network: SOLANA_MAINNET, amount: "5000", asset: USDC_SOLANA, payTo: DEPLOYER_WALLET });
     expect(body.accepts[0].extra?.feePayer).toBeTruthy();
-    expect(body.accepts[1]).toMatchObject({ network: BASE_MAINNET, amount: "10000", payTo: BASE_PAYTO });
+    expect(body.accepts[1]).toMatchObject({ network: BASE_MAINNET, amount: "5000", payTo: BASE_PAYTO });
     expect(body.accepts[1].asset.toLowerCase()).toBe(USDC_BASE.toLowerCase());
   }, 30_000);
 
@@ -47,7 +47,7 @@ describe.skipIf(!process.env.X402_LIVE)("live x402 challenge (PayAI)", () => {
     const { res } = await challenge("/api/x402/scan");
     expect(await res.json()).toMatchObject({
       error: "payment required",
-      price: "$0.01",
+      price: "$0.005",
       docs: "https://gl1tchbased.xyz/agents/docs#x402",
       free: "https://gl1tchbased.xyz/api/scan",
     });
@@ -72,8 +72,16 @@ describe.skipIf(!process.env.X402_LIVE)("live x402 challenge (PayAI)", () => {
     expect(body.resource.url).toBe("https://gl1tchbased.xyz/api/x402/scan");
   }, 30_000);
 
-  it("prices the deployer lookup at half a cent", async () => {
+  it("still answers with a working 402 when Coinbase keys are set but wrong (PayAI takes over)", async () => {
+    vi.stubEnv("CDP_API_KEY_ID", "not-a-real-key");
+    vi.stubEnv("CDP_API_KEY_SECRET", "not-a-real-secret");
+    const { res, body } = await challenge("/api/x402/scan");
+    expect(res.status).toBe(402);
+    expect(body.accepts[0].extra?.feePayer).toBeTruthy();
+  }, 60_000);
+
+  it("prices the deployer lookup at 0.3 cent", async () => {
     const { body } = await challenge("/api/x402/deployer");
-    expect(body.accepts[0].amount).toBe("5000");
+    expect(body.accepts[0].amount).toBe("3000");
   }, 30_000);
 });

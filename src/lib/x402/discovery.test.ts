@@ -28,8 +28,8 @@ describe("buildOpenApi — x402scan's OpenAPI-first discovery", () => {
 
   it("declares x402 payment info with a fixed USD price in dollars, and a 402 response", () => {
     const scan = doc.paths["/api/x402/scan"].get;
-    expect(scan["x-payment-info"]).toEqual({ protocols: ["x402"], price: { mode: "fixed", currency: "USD", amount: "0.01" } });
-    expect(doc.paths["/api/x402/deployer"].get["x-payment-info"].price.amount).toBe("0.005");
+    expect(scan["x-payment-info"]).toEqual({ protocols: ["x402"], price: { mode: "fixed", currency: "USD", amount: "0.005" } });
+    expect(doc.paths["/api/x402/deployer"].get["x-payment-info"].price.amount).toBe("0.003");
     for (const id of IDS) expect(doc.paths[PAID_ROUTES[id].path].get.responses).toHaveProperty("402");
   });
 

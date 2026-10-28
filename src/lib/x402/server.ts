@@ -1,6 +1,6 @@
 /**
- * The x402 resource server behind the paid agent API. PayAI verifies and settles payments (no API
- * key needed for ordinary exact payments); USDC on Solana and on Base. Every settled payment is
+ * The x402 resource server behind the paid agent API. Coinbase (when CDP keys are set) and/or PayAI verify and
+ * settle payments (see facilitators.ts); USDC on Solana and on Base. Every settled payment is
  * reported to the public revenue ledger. GL1TCH holds no key: the facilitator broadcasts the
  * payer's own signed transfer to our receive address.
  */
@@ -10,7 +10,7 @@ import { HTTPFacilitatorClient } from "@x402/core/server";
 import { ExactSvmScheme } from "@x402/svm/exact/server";
 import { ExactEvmScheme } from "@x402/evm/exact/server";
 import { bazaarResourceServerExtension } from "@x402/extensions/bazaar";
-import { facilitator } from "@payai/facilitator";
+import { facilitatorConfigs } from "./facilitators";
 import { readSelfPayers } from "./config";
 import { settleInputFromContext } from "./settle";
 import { recordRevenue, revenueEntryFromSettle } from "@/lib/revenue";
@@ -20,7 +20,7 @@ let server: x402ResourceServer | null = null;
 export function getX402Server(): x402ResourceServer {
   if (server) return server;
   const selfPayers = readSelfPayers(process.env);
-  const s = new x402ResourceServer(new HTTPFacilitatorClient(facilitator))
+  const s = new x402ResourceServer(facilitatorConfigs(process.env).map((c) => new HTTPFacilitatorClient(c)))
     .register("solana:*", new ExactSvmScheme())
     .register("eip155:*", new ExactEvmScheme());
   s.registerExtension(bazaarResourceServerExtension);
