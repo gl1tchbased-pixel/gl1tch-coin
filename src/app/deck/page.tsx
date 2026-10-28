@@ -36,6 +36,10 @@ const product = [
     title: "Telegram bot + Watchtower",
     text: "Scan from chat, and get alerted when a watched token’s risk changes or a watched wallet dumps 25%+ of a position. 25 tokens and 25 wallets per user, free for everyone.",
   },
+  {
+    title: "For AI agents: MCP + x402",
+    text: "The same checks as tools for AI agents: a free MCP server at /api/mcp (rate-limited per IP) and pay-per-call endpoints in USDC through x402 (no signup). Listed in the official MCP Registry, x402scan and the PayAI catalog. Payments are public at /revenue; the free JSON API stays free.",
+  },
 ];
 
 const checks = [
@@ -315,7 +319,8 @@ export default async function DeckPage() {
           it {deployer.now}. The token trades very thinly (a few thousand dollars of liquidity).
         </p>
         <p className={styles.body}>
-          Holding the token unlocks only community ranks and the verifiable-randomness API.{" "}
+          Holding the token unlocks only community ranks, the verifiable-randomness API and free use
+          of the pay-per-call agent API; the same safety checks stay free for everyone at /api/scan.{" "}
           <strong>No grant funds go to the token, buybacks or liquidity.</strong> Receipts are on
           the <Link className={styles.link} href="/proof">proof page</Link>.
         </p>

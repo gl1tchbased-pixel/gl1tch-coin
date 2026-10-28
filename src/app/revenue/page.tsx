@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { shareMeta } from "@/lib/share-meta";
 import { getRevenue, type RevenueEntry } from "@/lib/revenue";
-import { PAID_ROUTES, type PaidRouteId } from "@/lib/x402/config";
+import { PAID_ROUTES, readPayTo, type PaidRouteId } from "@/lib/x402/config";
+import { DEPLOYER_WALLET } from "@/lib/official";
 import styles from "../buyback/buyback.module.css";
 
 export const metadata: Metadata = shareMeta({
@@ -30,6 +31,8 @@ const when = (ms: number) => new Date(ms).toISOString().slice(0, 16).replace("T"
 export default async function RevenuePage() {
   const rev = await getRevenue();
   const routes = Object.keys(PAID_ROUTES) as PaidRouteId[];
+  // Grant reviewers ask where income lands: say it plainly when it is the disclosed deployer wallet.
+  const paysDeployer = readPayTo(process.env).solana === DEPLOYER_WALLET;
 
   return (
     <main className={styles.page}>
@@ -43,6 +46,13 @@ export default async function RevenuePage() {
           on-chain straight to a GL1TCH wallet and is recorded here with its transaction (the latest 50 are
           listed), so you can check it yourself. Our own test payments are listed too, marked, and never counted.
         </p>
+        {paysDeployer && (
+          <p className={styles.lede}>
+            Solana payments currently go to the deployer wallet ({DEPLOYER_WALLET.slice(0, 4)}…{DEPLOYER_WALLET.slice(-4)}),
+            the same wallet whose $GL1TCH balance and history are on the{" "}
+            <Link href="/proof">proof page</Link>.
+          </p>
+        )}
       </header>
 
       {!rev ? (
