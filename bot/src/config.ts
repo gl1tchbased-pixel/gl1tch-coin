@@ -48,7 +48,7 @@ export const config = {
   /** Verdict anchoring (A3). Public values only: the attester's secret key never lives on the bot's host. */
   attest: {
     attester: process.env.ATTESTER_PUBKEY ?? "",
-    cluster: process.env.ATTEST_CLUSTER === "devnet" ? "devnet" : "mainnet-beta",
+    cluster: (process.env.ATTEST_CLUSTER === "devnet" ? "devnet" : "mainnet-beta") as "devnet" | "mainnet-beta",
     rpc:
       process.env.ATTEST_RPC ??
       (process.env.ATTEST_CLUSTER === "devnet" ? "https://api.devnet.solana.com" : (process.env.SOLANA_RPC ?? "https://api.mainnet-beta.solana.com")),

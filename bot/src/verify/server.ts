@@ -73,6 +73,9 @@ export interface VerifyServerOptions {
     pending: (limit: number) => unknown[];
     batch: (root: string) => unknown | null;
     proof: (chain: string, mint: string) => unknown[];
+    /** Public POST /attest/link: the runner reports {root, sig} after sending an anchor. Nothing is trusted: the
+     *  linker fetches the transaction and links it only if the attester signed that root's memo. */
+    link?: (body: unknown) => Promise<string>;
   };
 }
 
@@ -219,6 +222,31 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
           res.writeHead(400, { "Content-Type": "application/json", ...cors });
           res.end(JSON.stringify({ ok: false, error: "bad_json" }));
         }
+      });
+      return;
+    }
+    if (opts.attest?.link && sPath === "/attest/link" && req.method === "POST") {
+      let lRaw = "";
+      let lTooLarge = false;
+      req.on("data", (c) => { lRaw += c; if (lRaw.length > 1024) { lTooLarge = true; req.destroy(); } });
+      req.on("end", async () => {
+        if (lTooLarge) return;
+        let body: unknown;
+        try {
+          body = JSON.parse(lRaw);
+        } catch {
+          res.writeHead(400, { "Content-Type": "application/json", ...cors });
+          res.end(JSON.stringify({ ok: false, error: "bad_json" }));
+          return;
+        }
+        let result = "error";
+        try {
+          result = await opts.attest!.link!(body);
+        } catch {
+          // reported as an error below
+        }
+        res.writeHead(result === "invalid" ? 400 : 200, { "Content-Type": "application/json", ...cors });
+        res.end(JSON.stringify({ ok: result === "queued", result }));
       });
       return;
     }

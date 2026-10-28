@@ -25,11 +25,15 @@ export function checkCluster(cluster: Cluster, genesisHash: string): string | nu
 export interface AttestPolicy {
   /** Max lamports one anchor may cost (base fee is 5,000 per signature; an anchor has one). */
   maxFeeLamports: number;
-  /** Max anchors in any rolling 24 h (48 sweeps a day plus headroom). */
+  /** Max anchors in any rolling 24 h: room for the 48 runs a day in degraded mode (2 each) plus normal sealing;
+   *  at 5,000 lamports an anchor that is still at most 0.0005 SOL a day. */
   maxPerDay: number;
   /** Max anchors one run may send. */
   maxPerRun: number;
-  /** A fuller wallet isn't a dedicated fee wallet: refuse to sign with it. */
+  /** Above this the wallet is fuller than a fee wallet needs: warn so the excess gets moved out. */
+  warnWalletLamports: number;
+  /** Hard ceiling: a wallet this full isn't a dedicated fee wallet, so refuse to sign. Set well above the warning
+   *  level so halting the attester by gifting it SOL costs the attacker more than a token amount. */
   maxWalletLamports: number;
   /** Below this the wallet can't pay; stop and ask for a top-up. */
   minWalletLamports: number;
@@ -39,9 +43,10 @@ export interface AttestPolicy {
 
 export const DEFAULT_POLICY: AttestPolicy = {
   maxFeeLamports: 10_000,
-  maxPerDay: 60,
+  maxPerDay: 100,
   maxPerRun: 6,
-  maxWalletLamports: 250_000_000, // 0.25 SOL
+  warnWalletLamports: 250_000_000, // 0.25 SOL
+  maxWalletLamports: 2_000_000_000, // 2 SOL
   minWalletLamports: 100_000,
   maxConsecutiveFailures: 3,
 };
@@ -56,6 +61,7 @@ export function policyFromEnv(env: Record<string, string | undefined>): AttestPo
     maxFeeLamports: tighten("ATTEST_MAX_FEE_LAMPORTS", DEFAULT_POLICY.maxFeeLamports),
     maxPerDay: tighten("ATTEST_MAX_PER_DAY", DEFAULT_POLICY.maxPerDay),
     maxPerRun: tighten("ATTEST_MAX_PER_RUN", DEFAULT_POLICY.maxPerRun),
+    warnWalletLamports: tighten("ATTEST_WARN_WALLET_LAMPORTS", DEFAULT_POLICY.warnWalletLamports),
     maxWalletLamports: tighten("ATTEST_MAX_WALLET_LAMPORTS", DEFAULT_POLICY.maxWalletLamports),
     minWalletLamports: DEFAULT_POLICY.minWalletLamports,
     maxConsecutiveFailures: tighten("ATTEST_MAX_FAILURES", DEFAULT_POLICY.maxConsecutiveFailures),
@@ -109,12 +115,50 @@ export function checkSimulation(
   return null;
 }
 
-/** Wallet isolation: the attester must be a small, dedicated fee wallet. */
-export function checkWallet(w: { lamports: number; tokenAccounts: number }, policy: AttestPolicy): string | null {
-  if (w.tokenAccounts > 0) return "attester wallet holds token accounts; use a dedicated fee-only wallet";
-  if (w.lamports > policy.maxWalletLamports) return `attester wallet holds ${w.lamports} lamports, over the ${policy.maxWalletLamports} cap for a fee wallet`;
+/** The attester's address, pinned in code: on mainnet the run signs with this key and no other, so pointing the
+ *  secret at a different wallet (say, the founder's main one) takes a reviewed commit, not just a changed
+ *  setting. To rotate, change it here and in src/lib/official.ts (a test keeps the two equal). */
+export const PINNED_ATTESTER = "BSq18aJBhxYJgeEbcA3jGQNU1vmwZdo2PQkkpVsK7W6o";
+
+/** What the attester signs to report an anchor to the bot (POST /attest/link). Only its key can make the proof,
+ *  so the bot refuses forged reports without spending an RPC call. Plain text with a GL1TCH prefix: it can't
+ *  double as a Solana transaction message, and nobody but the attester ever signs it. */
+export function linkReportMessage(root: string, sig: string): string {
+  return `gl1tch:attest-link:v1:${root}:${sig}`;
+}
+
+/** Signer identity: the secret's key must be the one named in ATTESTER_PUBKEY and, on mainnet, the pinned one. */
+export function checkSigner(cluster: Cluster, signer: string, envPubkey: string | undefined): string | null {
+  if (signer !== envPubkey?.trim()) return "ATTESTER_PUBKEY is missing or doesn't match the secret key";
+  if (cluster === "mainnet-beta" && signer !== PINNED_ATTESTER) return `signer ${signer} is not the pinned attester ${PINNED_ATTESTER}`;
+  return null;
+}
+
+/** Wallet balance: refuse a wallet that can't pay, or one far fuller than a fee wallet should ever be. Only the SOL
+ *  balance counts. Token accounts don't: anyone can open one for any address or send it dust, so judging them
+ *  would hand strangers a cheap way to halt sealing, and nothing in a token account can affect a memo-only signer.
+ *  Which wallet this is gets settled by the pinned address instead. */
+export function checkWallet(w: { lamports: number }, policy: AttestPolicy): string | null {
+  if (w.lamports > policy.maxWalletLamports) return `attester wallet holds ${w.lamports} lamports, over the ${policy.maxWalletLamports} ceiling for a fee wallet`;
   if (w.lamports < policy.minWalletLamports) return `attester wallet is low (${w.lamports} lamports); top it up`;
   return null;
+}
+
+/** Worth a look, but not a reason to stop: a stranger can cause it by sending SOL. */
+export function walletWarnings(w: { lamports: number }, policy: AttestPolicy): string[] {
+  return w.lamports > policy.warnWalletLamports
+    ? [`attester wallet holds ${w.lamports} lamports, more than a fee wallet needs; move the excess out`]
+    : [];
+}
+
+/** Anchors per run when the last 24 h couldn't be read or counted: with the schedule in attest.yml a whole day of
+ *  such runs stays under maxPerDay even if the count is off, and still keeps up with new sweeps (one per run). */
+export const DEGRADED_PER_RUN = 2;
+
+/** How many anchors this run may send. */
+export function runBudget(s: { sentLast24h: number; historyComplete: boolean }, policy: AttestPolicy): number {
+  const left = Math.max(0, policy.maxPerDay - s.sentLast24h);
+  return Math.min(policy.maxPerRun, s.historyComplete ? policy.maxPerRun : DEGRADED_PER_RUN, left);
 }
 
 export function checkDaily(sentLast24h: number, policy: AttestPolicy): string | null {

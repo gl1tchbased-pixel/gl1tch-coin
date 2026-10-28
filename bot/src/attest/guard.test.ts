@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import fs from "node:fs";
+import path from "node:path";
 import bs58 from "bs58";
 import { Keypair, PublicKey, SystemProgram, TransactionInstruction, TransactionMessage } from "@solana/web3.js";
 import {
@@ -11,9 +13,15 @@ import {
   checkDaily,
   checkFee,
   checkSimulation,
+  checkSigner,
   checkWallet,
+  DEGRADED_PER_RUN,
+  linkReportMessage,
+  PINNED_ATTESTER,
   parseSecretKey,
   policyFromEnv,
+  runBudget,
+  walletWarnings,
 } from "./guard.js";
 import { shapeOf } from "./chain.js";
 import { memoText } from "./merkle.js";
@@ -72,17 +80,87 @@ describe("spend checks", () => {
     expect(checkSimulation({ err: null, preLamports: 1, postLamports: null }, DEFAULT_POLICY)).toMatch(/no balance/);
   });
   it("enforces the daily cap", () => {
-    expect(checkDaily(59, DEFAULT_POLICY)).toBeNull();
-    expect(checkDaily(60, DEFAULT_POLICY)).toMatch(/daily cap/);
+    expect(checkDaily(99, DEFAULT_POLICY)).toBeNull();
+    expect(checkDaily(100, DEFAULT_POLICY)).toMatch(/daily cap/);
   });
 });
 
-describe("wallet isolation", () => {
-  it("wants a small, token-free fee wallet", () => {
-    expect(checkWallet({ lamports: 50_000_000, tokenAccounts: 0 }, DEFAULT_POLICY)).toBeNull();
-    expect(checkWallet({ lamports: 50_000_000, tokenAccounts: 1 }, DEFAULT_POLICY)).toMatch(/token accounts/);
-    expect(checkWallet({ lamports: 5_000_000_000, tokenAccounts: 0 }, DEFAULT_POLICY)).toMatch(/cap/);
-    expect(checkWallet({ lamports: 10, tokenAccounts: 0 }, DEFAULT_POLICY)).toMatch(/top it up/);
+describe("link report message", () => {
+  it("is a domain-separated text no Solana transaction message can equal", () => {
+    const m = linkReportMessage("ab".repeat(32), "SIG");
+    expect(m).toBe(`gl1tch:attest-link:v1:${"ab".repeat(32)}:SIG`);
+    expect(m).not.toMatch(/moves no funds/); // it isn't a wallet prompt: the attester signs it, nobody else sees it
+  });
+});
+
+describe("signer identity", () => {
+  it("on mainnet signs only with the attester pinned in code (and named in ATTESTER_PUBKEY)", () => {
+    expect(checkSigner("mainnet-beta", PINNED_ATTESTER, PINNED_ATTESTER)).toBeNull();
+    const other = Keypair.generate().publicKey.toBase58();
+    expect(checkSigner("mainnet-beta", other, other)).toMatch(/pinned/);
+    expect(checkSigner("mainnet-beta", PINNED_ATTESTER, other)).toMatch(/ATTESTER_PUBKEY/);
+  });
+
+  it("on devnet accepts any key that matches ATTESTER_PUBKEY (test setups)", () => {
+    const k = Keypair.generate().publicKey.toBase58();
+    expect(checkSigner("devnet", k, k)).toBeNull();
+    expect(checkSigner("devnet", k, undefined)).toMatch(/ATTESTER_PUBKEY/);
+  });
+
+  it("pins the same address the website publishes", () => {
+    const official = fs.readFileSync(path.resolve(__dirname, "../../../src/lib/official.ts"), "utf8");
+    expect(official).toContain(`ATTESTER_WALLET = "${PINNED_ATTESTER}"`);
+  });
+});
+
+describe("wallet balance (a stranger can't halt it cheaply)", () => {
+  it("judges the SOL balance only: token accounts, which anyone can open or dust, play no part", () => {
+    expect(checkWallet({ lamports: 50_000_000 }, DEFAULT_POLICY)).toBeNull();
+  });
+
+  it("only warns above the fee-wallet size and refuses past the 2 SOL ceiling", () => {
+    expect(checkWallet({ lamports: 1_000_000_000 }, DEFAULT_POLICY)).toBeNull();
+    expect(walletWarnings({ lamports: 1_000_000_000 }, DEFAULT_POLICY)[0]).toMatch(/move the excess out/);
+    expect(walletWarnings({ lamports: 50_000_000 }, DEFAULT_POLICY)).toEqual([]);
+    expect(checkWallet({ lamports: 3_000_000_000 }, DEFAULT_POLICY)).toMatch(/ceiling/);
+    expect(checkWallet({ lamports: 10 }, DEFAULT_POLICY)).toMatch(/top it up/);
+  });
+});
+
+describe("run budget", () => {
+  it("normally sends up to the per-run cap, within what's left of the day", () => {
+    expect(runBudget({ sentLast24h: 10, historyComplete: true }, DEFAULT_POLICY)).toBe(6);
+    expect(runBudget({ sentLast24h: 97, historyComplete: true }, DEFAULT_POLICY)).toBe(3);
+    expect(runBudget({ sentLast24h: 100, historyComplete: true }, DEFAULT_POLICY)).toBe(0);
+  });
+
+  it("drops to the degraded allowance when the last day couldn't be read or counted exactly", () => {
+    expect(runBudget({ sentLast24h: 0, historyComplete: false }, DEFAULT_POLICY)).toBe(2);
+    expect(runBudget({ sentLast24h: 99, historyComplete: false }, DEFAULT_POLICY)).toBe(1);
+    expect(runBudget({ sentLast24h: 100, historyComplete: false }, DEFAULT_POLICY)).toBe(0);
+  });
+
+  it("never exceeds a per-run cap tightened by env, degraded or not", () => {
+    const tight = { ...DEFAULT_POLICY, maxPerRun: 1 };
+    expect(runBudget({ sentLast24h: 0, historyComplete: false }, tight)).toBe(1);
+    expect(runBudget({ sentLast24h: 0, historyComplete: true }, tight)).toBe(1);
+  });
+
+  it("keeps a whole day of degraded runs within the daily cap (pins every cron entry in attest.yml)", () => {
+    const yml = fs.readFileSync(path.resolve(__dirname, "../../../.github/workflows/attest.yml"), "utf8");
+    const crons = [...yml.matchAll(/cron:\s*"([^"]+)"/g)].map((m) => m[1]);
+    expect(crons.length).toBeGreaterThan(0);
+    expect(crons.length).toBe((yml.match(/^\s*-?\s*cron:/gm) ?? []).length); // no entry escapes the parse (quoting)
+    let runsPerDay = 0;
+    for (const c of crons) {
+      const [minute, ...rest] = c.trim().split(/\s+/);
+      expect(minute).toMatch(/^\d{1,2}(,\d{1,2})*$/); // explicit minutes only, so the count below is exact
+      expect(rest).toEqual(["*", "*", "*", "*"]); // every hour of every day
+      runsPerDay += minute.split(",").length * 24;
+    }
+    expect(runsPerDay * DEGRADED_PER_RUN).toBeLessThanOrEqual(DEFAULT_POLICY.maxPerDay);
+    // Degraded mode must still keep up with sweeps (at most one per run on this schedule), or a backlog builds.
+    expect(DEGRADED_PER_RUN).toBeGreaterThanOrEqual(2);
   });
 });
 
@@ -114,6 +192,14 @@ describe("policy from env", () => {
     expect(p.maxPerDay).toBe(10);
     expect(p.maxFeeLamports).toBe(DEFAULT_POLICY.maxFeeLamports);
     expect(p.maxPerRun).toBe(DEFAULT_POLICY.maxPerRun);
+  });
+
+  it("lets env tighten the wallet ceiling and warning level, never raise them", () => {
+    expect(policyFromEnv({ ATTEST_MAX_WALLET_LAMPORTS: "9999999999" }).maxWalletLamports).toBe(DEFAULT_POLICY.maxWalletLamports);
+    expect(policyFromEnv({ ATTEST_MAX_WALLET_LAMPORTS: "100000000" }).maxWalletLamports).toBe(100_000_000);
+    const p = policyFromEnv({ ATTEST_WARN_WALLET_LAMPORTS: "9999999999" });
+    expect(p.warnWalletLamports).toBe(DEFAULT_POLICY.warnWalletLamports);
+    expect(DEFAULT_POLICY.warnWalletLamports).toBeLessThan(DEFAULT_POLICY.maxWalletLamports);
   });
 });
 

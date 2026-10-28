@@ -53,8 +53,8 @@ const EVM_ADDR = /^0x[0-9a-fA-F]{40}$/;
 type Env = Record<string, string | undefined>;
 
 /** Read the receiving wallets. A set-but-invalid value is reported in `rejected` and never used.
- *  The attester wallet is refused: USDC would give it a token account, and the attest runner
- *  refuses to sign from any wallet that has one. */
+ *  The attester wallet is refused: its key sits in CI secrets to sign memos, and revenue must never land
+ *  in a wallet whose key lives there. */
 export function readPayTo(env: Env): { solana?: string; base?: string; rejected: string[] } {
   const out: { solana?: string; base?: string; rejected: string[] } = { rejected: [] };
   const sol = (env.X402_PAY_TO_SOLANA ?? "").trim();

@@ -18,7 +18,7 @@ describe("readPayTo", () => {
     expect(readPayTo({ X402_PAY_TO_SOLANA: SOL, X402_PAY_TO_BASE: EVM })).toEqual({ solana: SOL, base: EVM, rejected: [] });
   });
 
-  it("refuses the attester wallet (USDC would give it a token account and stop the attest runner)", () => {
+  it("refuses the attester wallet (its key lives in CI secrets; revenue must never land there)", () => {
     const r = readPayTo({ X402_PAY_TO_SOLANA: ATTESTER_WALLET });
     expect(r.solana).toBeUndefined();
     expect(r.rejected).toContain("X402_PAY_TO_SOLANA");
