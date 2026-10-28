@@ -104,6 +104,7 @@ export function buildOpenApi(origin: string): Record<string, unknown> {
     info: {
       title: "GL1TCH paid agent API (x402)",
       version: "1.0.0",
+      contact: { name: "GL1TCH", email: "founder@gl1tchbased.xyz", url: "https://gl1tchbased.xyz" },
       description:
         "Token rug-risk scans, Know Your Agent checks and deployer reputation, paid per call in USDC (Solana or Base). Free versions of the same checks: /api/scan and /api/agent/check. Docs: /agents/docs#x402",
     },

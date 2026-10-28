@@ -87,7 +87,7 @@ export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest)
               description: route.description,
               mimeType: "application/json",
               serviceName: "GL1TCH",
-              tags: ["crypto", "security", "token-risk", "solana", "agents"],
+              tags: ["crypto", "security", "token-safety", "rug-check", "honeypot", "pre-trade", "solana", "base", "agents"],
               iconUrl: `${OFFICIAL.SITE_URL}/icon.svg`,
               extensions: declareDiscoveryExtension(bazaarDiscovery(id)),
               // For clients that don't speak x402: what this costs, and where the free version is.

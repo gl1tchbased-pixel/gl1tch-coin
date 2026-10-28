@@ -47,10 +47,16 @@ describe("buildAccepts", () => {
 });
 
 describe("PAID_ROUTES", () => {
-  it("prices scan and agent at one cent and deployer at half a cent", () => {
-    expect(PAID_ROUTES.scan).toMatchObject({ path: "/api/x402/scan", price: "$0.01", priceMicro: 10000 });
+  it("prices the scan at half a cent (the busiest token-safety seller's price), agent at one cent, deployer at 0.3 cent", () => {
+    expect(PAID_ROUTES.scan).toMatchObject({ path: "/api/x402/scan", price: "$0.005", priceMicro: 5000 });
     expect(PAID_ROUTES.agent).toMatchObject({ path: "/api/x402/agent", price: "$0.01", priceMicro: 10000 });
-    expect(PAID_ROUTES.deployer).toMatchObject({ path: "/api/x402/deployer", price: "$0.005", priceMicro: 5000 });
+    expect(PAID_ROUTES.deployer).toMatchObject({ path: "/api/x402/deployer", price: "$0.003", priceMicro: 3000 });
+  });
+
+  it("describes each route with the words agents search catalogs for (case-insensitive, like catalog search)", () => {
+    for (const w of ["rug", "honeypot", "pre-trade", "Solana", "Base", "LP", "tax"]) expect(PAID_ROUTES.scan.description.toLowerCase()).toContain(w.toLowerCase());
+    for (const w of ["Know Your Agent", "trust"]) expect(PAID_ROUTES.agent.description.toLowerCase()).toContain(w.toLowerCase());
+    for (const w of ["deployer", "rug"]) expect(PAID_ROUTES.deployer.description.toLowerCase()).toContain(w.toLowerCase());
   });
 });
 

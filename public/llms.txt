@@ -96,11 +96,11 @@ https://gl1tchbased.xyz/quantum-core/random/<id>   (human proof page; verifies i
 For agents that would rather pay than share a rate limit. Standard x402 v2: the first call returns
 402 Payment Required with a PAYMENT-REQUIRED header (price, network, payTo); your x402 client signs a
 USDC transfer and retries with PAYMENT-SIGNATURE; the 200 response carries PAYMENT-RESPONSE (the
-settled transaction). Networks: Solana mainnet USDC, Base mainnet USDC. Facilitator: PayAI.
+settled transaction). Networks: Solana mainnet USDC, Base mainnet USDC. Facilitators: Coinbase CDP and PayAI.
 
-GET /api/x402/scan?mint=<address>&chain=solana       $0.01   full token safety report (same as /api/scan)
+GET /api/x402/scan?mint=<address>&chain=solana       $0.005  full pre-trade token safety report (same as /api/scan)
 GET /api/x402/agent?address=<wallet>&chain=solana    $0.01   Know Your Agent trust assessment
-GET /api/x402/deployer?address=<wallet>&chain=solana $0.005  deployer track record (Signal Graph)
+GET /api/x402/deployer?address=<wallet>&chain=solana $0.003  deployer track record (Signal Graph)
 
 - You pay only for a successful response: errors, and scans that lost their sources (confidence < 60,
   returned as 503), settle nothing.

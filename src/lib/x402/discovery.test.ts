@@ -13,7 +13,7 @@ type Op = {
 };
 
 describe("buildOpenApi — x402scan's OpenAPI-first discovery", () => {
-  const doc = buildOpenApi(ORIGIN) as { openapi: string; info: { title: string; version: string }; servers: Array<{ url: string }>; paths: Record<string, { get: Op }> };
+  const doc = buildOpenApi(ORIGIN) as { openapi: string; info: { title: string; version: string; contact?: { email?: string } }; servers: Array<{ url: string }>; paths: Record<string, { get: Op }> };
 
   it("has the required top-level fields", () => {
     expect(doc.openapi).toMatch(/^3\.1/);
@@ -22,14 +22,18 @@ describe("buildOpenApi — x402scan's OpenAPI-first discovery", () => {
     expect(doc.servers).toEqual([{ url: ORIGIN }]);
   });
 
+  it("names a contact email, which x402scan uses to verify ownership", () => {
+    expect((doc.info as { contact?: { email?: string } }).contact?.email).toBe("founder@gl1tchbased.xyz");
+  });
+
   it("lists exactly the paid operations (free routes break registration)", () => {
     expect(Object.keys(doc.paths).sort()).toEqual(IDS.map((id) => PAID_ROUTES[id].path).sort());
   });
 
   it("declares x402 payment info with a fixed USD price in dollars, and a 402 response", () => {
     const scan = doc.paths["/api/x402/scan"].get;
-    expect(scan["x-payment-info"]).toEqual({ protocols: ["x402"], price: { mode: "fixed", currency: "USD", amount: "0.01" } });
-    expect(doc.paths["/api/x402/deployer"].get["x-payment-info"].price.amount).toBe("0.005");
+    expect(scan["x-payment-info"]).toEqual({ protocols: ["x402"], price: { mode: "fixed", currency: "USD", amount: "0.005" } });
+    expect(doc.paths["/api/x402/deployer"].get["x-payment-info"].price.amount).toBe("0.003");
     for (const id of IDS) expect(doc.paths[PAID_ROUTES[id].path].get.responses).toHaveProperty("402");
   });
 

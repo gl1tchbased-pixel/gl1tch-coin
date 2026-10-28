@@ -41,6 +41,7 @@
     "share:studio": "remotion studio remotion/index.ts"
   },
   "dependencies": {
+    "@coinbase/x402": "^2.1.0",
     "@modelcontextprotocol/server": "^2.4.0",
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "^2.2.0",
