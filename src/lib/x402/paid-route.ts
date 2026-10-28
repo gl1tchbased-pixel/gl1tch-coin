@@ -20,6 +20,13 @@ import { OFFICIAL } from "@/lib/official";
 const PAID_RATE_PER_MIN = 120;
 const NO_STORE = "private, no-store";
 
+/** The free version of each paid check, offered in the 402 body. */
+const FREE_ALTERNATIVE: Record<PaidRouteId, string> = {
+  scan: "/api/scan",
+  agent: "/api/agent/check",
+  deployer: "/api/scan", // a scan's meta.deployerReputation carries the same record
+};
+
 type Handler = (req: NextRequest) => Promise<NextResponse>;
 
 function noStore(handler: Handler): Handler {
@@ -70,6 +77,18 @@ export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest)
               tags: ["crypto", "security", "token-risk", "solana", "agents"],
               iconUrl: `${OFFICIAL.SITE_URL}/icon.svg`,
               extensions: declareDiscoveryExtension(bazaarDiscovery(id)),
+              // For clients that don't speak x402: what this costs, and where the free version is.
+              unpaidResponseBody: () => ({
+                contentType: "application/json",
+                body: {
+                  error: "payment required",
+                  price: route.price,
+                  currency: "USDC",
+                  networks: accepts.map((a) => a.network),
+                  docs: `${OFFICIAL.SITE_URL}/agents/docs#x402`,
+                  free: `${OFFICIAL.SITE_URL}${FREE_ALTERNATIVE[id]}`,
+                },
+              }),
             },
           },
           getX402Server()
