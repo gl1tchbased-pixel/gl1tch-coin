@@ -37,10 +37,12 @@ const OUTPUT_EXAMPLES: Record<PaidRouteId, unknown> = {
     verdict: "CLEAN",
     score: 95,
     confidence: 93,
-    // Values from a real BONK scan (2026-10-28).
-    bottomLine: "Verified blue-chip — established, audited and deeply liquid. Managed supply/ownership is by design for this asset, not rug risk.",
+    // Values from a real BONK scan (2026-10-28); the prose is kept flat and descriptive. The Coinbase
+    // Bazaar screens metadata for text that could steer an agent, and dropped the scan while this
+    // example read "Verified blue-chip … not rug risk".
+    bottomLine: "Established token. No rug-pull flags in this scan.",
     risks: [],
-    checks: [{ key: "mint_authority", label: "Mint authority", status: "pass", value: "REVOKED", explain: "No one can mint more. Supply is fixed — the way it should be." }],
+    checks: [{ key: "mint_authority", label: "Mint authority", status: "pass", value: "REVOKED", explain: "Mint authority is revoked; the supply cannot grow." }],
     meta: { deployer: "…", deployerReputation: { level: "clean", tokensSeen: 1, flaggedCount: 0 } },
   },
   // The sample wallet is GL1TCH's own attester, so its examples state only what is true of it.
