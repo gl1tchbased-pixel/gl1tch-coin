@@ -8,7 +8,7 @@ import styles from "../buyback/buyback.module.css";
 export const metadata: Metadata = shareMeta({
   title: "Revenue — GL1TCH",
   description:
-    "GL1TCH's public revenue ledger. AI agents pay per call in USDC through x402, and every payment is listed with its on-chain transaction. Our own test payments are shown but never counted.",
+    "GL1TCH's public revenue ledger. AI agents pay per call in USDC through x402; settled payments are recorded with their on-chain transaction. Our own test payments are shown but never counted.",
   alternates: { canonical: "/revenue" },
 });
 
@@ -40,8 +40,8 @@ export default async function RevenuePage() {
         </h1>
         <p className={styles.lede}>
           AI agents pay GL1TCH per call in USDC through x402: no signup, no invoice. Each payment settles
-          on-chain straight to a GL1TCH wallet and is listed here with its transaction, so you can check
-          it yourself. Our own test payments are listed too, marked, and never counted.
+          on-chain straight to a GL1TCH wallet and is recorded here with its transaction (the latest 50 are
+          listed), so you can check it yourself. Our own test payments are listed too, marked, and never counted.
         </p>
       </header>
 

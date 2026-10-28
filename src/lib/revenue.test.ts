@@ -1,6 +1,38 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
+import { readFileSync } from "node:fs";
 import { revenueEntryFromSettle } from "./revenue";
 import { SOLANA_MAINNET } from "./x402/config";
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
+  vi.restoreAllMocks();
+  vi.resetModules();
+});
+
+describe("recordRevenue", () => {
+  it("logs a ledger write the bot refused instead of swallowing it", async () => {
+    vi.stubEnv("STATS_TOKEN", "t");
+    const fetchMock = vi.fn(async () => new Response("no", { status: 500 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.resetModules(); // the static import above cached the module before STATS_TOKEN was set
+    const { recordRevenue } = await import("./revenue");
+    recordRevenue({ tx: "5".repeat(88), network: SOLANA_MAINNET, route: "scan", amountMicro: 10_000, self: false, at: 1 });
+    await new Promise((r) => setTimeout(r, 20));
+    expect(fetchMock).toHaveBeenCalledOnce();
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("500"));
+  });
+});
+
+describe("public revenue copy", () => {
+  it.each(["src/app/revenue/page.tsx", "public/llms.txt", "src/app/agents/docs/page.tsx"])(
+    "%s doesn't promise every payment (the ledger lists what was reported, latest 50)",
+    (file) => {
+      expect(readFileSync(file, "utf8")).not.toMatch(/every payment/i);
+    }
+  );
+});
 
 const TX = "5".repeat(88);
 const URL_SCAN = "https://gl1tchbased.xyz/api/x402/scan?mint=DezX";

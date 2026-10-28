@@ -106,7 +106,7 @@ GET /api/x402/deployer?address=<wallet>&chain=solana $0.005  deployer track reco
   returned as 503), settle nothing.
 - Paid responses are never served from a CDN cache (cache-control: private, no-store).
 - $GL1TCH holders: send x-gl1tch-key and these endpoints are free at your tier's rate.
-- Every payment is listed with its transaction at https://gl1tchbased.xyz/revenue
+- Settled payments are recorded with their transaction (latest 50 listed) at https://gl1tchbased.xyz/revenue
 
 ---
 

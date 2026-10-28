@@ -60,6 +60,24 @@ describe("RevenueStore", () => {
     expect(recent[0].at).toBe(1_059);
   });
 
+  it("persists each payment immediately (a restart right after a payment loses nothing)", () => {
+    store.record(entry());
+    const fresh = new RevenueStore(file);
+    fresh.load();
+    expect(fresh.summary().paid).toEqual({ count: 1, usdMicro: 10_000 });
+  });
+
+  it("keeps a corrupt ledger file aside instead of overwriting it with an empty one", () => {
+    fs.writeFileSync(file, "{not json");
+    const s = new RevenueStore(file);
+    s.load();
+    s.record(entry());
+    const dir = path.dirname(file);
+    const kept = fs.readdirSync(dir).filter((f) => f.startsWith("revenue.json.corrupt-"));
+    expect(kept).toHaveLength(1);
+    expect(fs.readFileSync(path.join(dir, kept[0]), "utf8")).toBe("{not json");
+  });
+
   it("survives a restart, duplicates included", () => {
     store.record(entry());
     store.flush();

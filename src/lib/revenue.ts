@@ -70,9 +70,14 @@ export function revenueEntryFromSettle(
   return entry;
 }
 
-/** Non-blocking report to the bot ledger. Runs via after() when inside a request. */
+/** Non-blocking report to the bot ledger. Runs via after() when inside a request. A refused or
+ *  failed write is logged with its tx (Sentry picks up warnings), so a lost row can be re-added
+ *  from the chain; it never fails the paid response. */
 export function recordRevenue(entry: RevenueEntry): void {
-  if (!TOKEN) return;
+  if (!TOKEN) {
+    console.warn(`[revenue] STATS_TOKEN not set; settlement ${entry.network}:${entry.tx} not recorded`);
+    return;
+  }
   const send = () =>
     fetch(`${BASE}/revenue/record`, {
       method: "POST",
@@ -80,13 +85,15 @@ export function recordRevenue(entry: RevenueEntry): void {
       body: JSON.stringify(entry),
       signal: AbortSignal.timeout(4000),
     }).then(
-      () => {},
-      () => {}
+      (r) => {
+        if (!r.ok) console.warn(`[revenue] ledger refused settlement ${entry.network}:${entry.tx} (HTTP ${r.status})`);
+      },
+      (e) => console.warn(`[revenue] ledger unreachable for settlement ${entry.network}:${entry.tx}: ${(e as Error).message}`)
     );
   try {
     after(send);
   } catch {
-    void send(); // outside a request scope (after() throws there)
+    void send(); // after() throws outside a request scope
   }
 }
 

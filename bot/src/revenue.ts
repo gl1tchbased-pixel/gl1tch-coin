@@ -5,7 +5,8 @@ import path from "node:path";
  * Revenue ledger for the paid agent API (x402). The website reports each settled payment here
  * (token-guarded POST); the public GET /revenue feeds the /revenue page. Every entry carries its
  * on-chain tx, so anyone can check a row against the chain. Our own test payments are kept apart
- * (`self`) and never counted as revenue. Amounts are integer micro-USDC (6 decimals).
+ * (`self`) and never counted as revenue. Amounts are integer micro-USDC (6 decimals). Every record is
+ * written to disk at once (atomic temp+rename), so a restart right after a payment loses nothing.
  */
 
 export type RevenueRoute = "scan" | "agent" | "deployer";
@@ -99,25 +100,38 @@ export class RevenueStore {
   load(): void {
     if (this.loaded) return;
     this.loaded = true;
+    let raw: string;
     try {
-      const p = JSON.parse(fs.readFileSync(this.file, "utf-8")) as Partial<Persisted>;
+      raw = fs.readFileSync(this.file, "utf-8");
+    } catch {
+      console.log(`[revenue] no existing ledger at ${this.file} (starting empty)`);
+      return;
+    }
+    try {
+      const p = JSON.parse(raw) as Partial<Persisted>;
       this.s = { ...empty(), ...p };
       this.seen = new Set(this.s.seen);
       console.log(`[revenue] loaded ${this.s.paid.count} paid / ${this.s.self.count} self-test calls from ${this.file}`);
-    } catch {
-      console.log(`[revenue] no existing ledger at ${this.file} (starting empty)`);
+    } catch (e) {
+      // Never overwrite a ledger we couldn't read: keep it for recovery and start a new one.
+      const aside = `${this.file}.corrupt-${Date.now()}`;
+      fs.renameSync(this.file, aside);
+      console.error(`[revenue] ledger at ${this.file} is unreadable (${(e as Error).message}); kept it as ${aside}`);
     }
-    // Debounced flush so a burst of payments writes at most ~once/5s.
-    setInterval(() => this.flush(), 5000).unref?.();
   }
 
+  /** Write the ledger now, atomically (temp file + rename), so a crash mid-write can't tear it.
+   *  Payments are rare and worth cents each, so every record is written immediately. */
   flush(): void {
     if (!this.dirty) return;
     this.dirty = false;
     try {
       fs.mkdirSync(path.dirname(this.file), { recursive: true });
-      fs.writeFileSync(this.file, JSON.stringify({ ...this.s, seen: [...this.seen] }));
+      const tmp = `${this.file}.tmp`;
+      fs.writeFileSync(tmp, JSON.stringify({ ...this.s, seen: [...this.seen] }));
+      fs.renameSync(tmp, this.file);
     } catch (e) {
+      this.dirty = true;
       console.error("[revenue] save failed:", (e as Error).message);
     }
   }
@@ -141,6 +155,7 @@ export class RevenueStore {
     this.s.recent.push(e);
     if (this.s.recent.length > KEEP_RECENT) this.s.recent.splice(0, this.s.recent.length - KEEP_RECENT);
     this.dirty = true;
+    this.flush();
     return "added";
   }
 
