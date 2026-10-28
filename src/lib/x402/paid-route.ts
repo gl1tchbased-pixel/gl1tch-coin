@@ -88,7 +88,8 @@ export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest)
               mimeType: "application/json",
               serviceName: "GL1TCH",
               tags: ["crypto", "security", "token-safety", "rug-check", "honeypot", "pre-trade", "solana", "base", "agents"],
-              iconUrl: `${OFFICIAL.SITE_URL}/icon.svg`,
+              // Raster on purpose: the Coinbase Bazaar drops SVG icons (JPG/PNG/WebP/GIF only).
+              iconUrl: `${OFFICIAL.SITE_URL}/brand/gl1tch-logo-256.png`,
               extensions: declareDiscoveryExtension(bazaarDiscovery(id)),
               // For clients that don't speak x402: what this costs, and where the free version is.
               unpaidResponseBody: () => ({
