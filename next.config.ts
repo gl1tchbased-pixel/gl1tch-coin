@@ -56,9 +56,13 @@ const nextConfig: NextConfig = {
       { source: "/dashboard/:path*", destination: "/network", permanent: true },
     ];
   },
-  // Serve RFC 9116 security.txt at its well-known path (public/ dot-dirs aren't served).
+  // Serve well-known files (public/ dot-dirs aren't served): RFC 9116 security.txt, and the x402
+  // resource list for paid-API discovery.
   async rewrites() {
-    return [{ source: "/.well-known/security.txt", destination: "/api/security-txt" }];
+    return [
+      { source: "/.well-known/security.txt", destination: "/api/security-txt" },
+      { source: "/.well-known/x402", destination: "/api/well-known-x402" },
+    ];
   },
 };
 

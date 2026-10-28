@@ -18,7 +18,7 @@ export const PAID_ROUTES: Record<PaidRouteId, { path: string; price: string; pri
     price: "$0.01",
     priceMicro: 10_000,
     description:
-      "Token rug-risk scan (Solana native + EVM): verdict, 0-100 score, named risks, deployer track record, market integrity. Always a fresh read. Not charged on failure.",
+      "Token rug-risk scan (Solana native + EVM): verdict, 0-100 score, named risks, deployer track record, market integrity. Not charged on failure.",
   },
   agent: {
     path: "/api/x402/agent",

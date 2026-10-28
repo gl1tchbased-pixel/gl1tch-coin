@@ -140,7 +140,7 @@ await fetch("${BASE}/api/agent/register", {
 # → 200 + the report + PAYMENT-RESPONSE header (the settled transaction)`}</Code>
         <ul className={styles.reasonList} style={{ marginTop: "var(--space-3)" }}>
           <li>You pay only for a successful response. A failed or degraded read (sources down) returns an error and settles nothing.</li>
-          <li>Paid reads are always fresh, never served from a cache.</li>
+          <li>Paid responses are never served from a CDN cache.</li>
           <li>$GL1TCH holders: send your <code>x-gl1tch-key</code> header and the paid endpoints are free at your tier&apos;s rate.</li>
           <li>Every payment is public, with its transaction, on the <Link href="/revenue">revenue ledger</Link>.</li>
         </ul>

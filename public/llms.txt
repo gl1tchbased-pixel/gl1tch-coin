@@ -104,7 +104,7 @@ GET /api/x402/deployer?address=<wallet>&chain=solana $0.005  deployer track reco
 
 - You pay only for a successful response: errors, and scans that lost their sources (confidence < 60,
   returned as 503), settle nothing.
-- Paid reads are always fresh (cache-control: private, no-store).
+- Paid responses are never served from a CDN cache (cache-control: private, no-store).
 - $GL1TCH holders: send x-gl1tch-key and these endpoints are free at your tier's rate.
 - Every payment is listed with its transaction at https://gl1tchbased.xyz/revenue
 
