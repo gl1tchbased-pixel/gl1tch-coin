@@ -1,7 +1,17 @@
 import fs from "node:fs";
 import { pathToFileURL } from "node:url";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
-import { CircuitBreaker, checkCluster, checkDaily, checkWallet, parseSecretKey, policyFromEnv } from "./guard.js";
+import {
+  CircuitBreaker,
+  checkCluster,
+  checkDaily,
+  checkWallet,
+  parseSecretKey,
+  policyFromEnv,
+  runBudget,
+  tokenAccountsSummary,
+  walletWarnings,
+} from "./guard.js";
 import { validateBatch } from "./records.js";
 import { recentMemoHints, verifyAnchor, verifyHints } from "./chain.js";
 import { anchorBatch, type Audit } from "./sender.js";
@@ -72,22 +82,33 @@ export async function runOnce(env: Record<string, string | undefined> = process.
       return 2;
     }
 
-    // Wallet isolation: a small, fee-only wallet.
+    // Wallet isolation: a small, fee-only wallet. Only what a stranger can't cheaply plant refuses the run
+    // (valuable tokens, SOL past the ceiling); token accounts anyone can open are ignored and reported.
     const lamports = await conn.getBalance(attester, "confirmed");
-    let tokenAccounts = 0;
+    const accounts: { mint: string; amount: string }[] = [];
     for (const p of TOKEN_PROGRAMS) {
-      tokenAccounts += (await conn.getTokenAccountsByOwner(attester, { programId: new PublicKey(p) }, "confirmed")).value.length;
+      const res = await conn.getParsedTokenAccountsByOwner(attester, { programId: new PublicKey(p) }, "confirmed");
+      for (const a of res.value) {
+        const info = (a.account.data as { parsed?: { info?: { mint?: unknown; tokenAmount?: { amount?: unknown } } } }).parsed?.info;
+        accounts.push({ mint: String(info?.mint ?? ""), amount: String(info?.tokenAmount?.amount ?? "0") });
+      }
     }
-    const badWallet = checkWallet({ lamports, tokenAccounts }, policy);
+    const { valueHoldings, spamTokenAccounts } = tokenAccountsSummary(accounts);
+    const badWallet = checkWallet({ lamports, valueHoldings }, policy);
     if (badWallet) {
       audit({ step: "wallet", ok: false, detail: badWallet });
       return 1;
     }
+    for (const w of walletWarnings({ lamports, spamTokenAccounts }, policy)) audit({ step: "wallet", ok: true, detail: w });
+
+    // History back to the backlog start. Anyone can put the attester in a transaction, so if a flood keeps us
+    // from reading back that far, the run degrades to one anchor (see runBudget) instead of trusting the count.
+    const now = Date.now();
+    const { hints, complete } = await recentMemoHints(conn, attester, { commitment: "confirmed", sinceMs: now - BACKLOG_MS });
+    if (!complete) audit({ step: "history", ok: true, detail: "attester history flooded past the read limit; one anchor this run" });
 
     // Rolling-24h cap. Memo hints over-count (strangers can copy the text), so they're trusted only to show we're
     // under the cap; at the cap, only transactions the attester really signed are counted.
-    const now = Date.now();
-    const hints = await recentMemoHints(conn, attester, { commitment: "confirmed", limit: 200 });
     const lastDay = hints.filter((h) => h.blockTime !== null && h.blockTime * 1000 > now - DAY_MS);
     let sentLast24h = lastDay.length;
     if (sentLast24h >= policy.maxPerDay) sentLast24h = (await verifyHints(conn, lastDay, attester, "confirmed")).length;
@@ -104,7 +125,7 @@ export async function runOnce(env: Record<string, string | undefined> = process.
     audit({ step: "pending", ok: true, detail: `${pending.length} sweep(s) waiting, ${sentLast24h} sealed in 24h` });
 
     const breaker = new CircuitBreaker(policy.maxConsecutiveFailures);
-    let budget = Math.min(policy.maxPerRun, policy.maxPerDay - sentLast24h);
+    let budget = runBudget({ sentLast24h, historyComplete: complete }, policy);
     for (const raw of pending) {
       if (budget <= 0 || breaker.open) break;
       const root = (raw as { root?: unknown })?.root;

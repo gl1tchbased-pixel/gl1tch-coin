@@ -1,5 +1,6 @@
 import bs58 from "bs58";
 import { parseMemo } from "./merkle.js";
+import { OFFICIAL } from "../content.js";
 
 /**
  * Safety policy for the attester, the one GL1TCH component that signs a transaction. Each check stands on its
@@ -29,7 +30,10 @@ export interface AttestPolicy {
   maxPerDay: number;
   /** Max anchors one run may send. */
   maxPerRun: number;
-  /** A fuller wallet isn't a dedicated fee wallet: refuse to sign with it. */
+  /** Above this the wallet is fuller than a fee wallet needs: warn so the excess gets moved out. */
+  warnWalletLamports: number;
+  /** Hard ceiling: a wallet this full isn't a dedicated fee wallet, so refuse to sign. Set well above the warning
+   *  level so halting the attester by gifting it SOL costs the attacker more than a token amount. */
   maxWalletLamports: number;
   /** Below this the wallet can't pay; stop and ask for a top-up. */
   minWalletLamports: number;
@@ -41,7 +45,8 @@ export const DEFAULT_POLICY: AttestPolicy = {
   maxFeeLamports: 10_000,
   maxPerDay: 60,
   maxPerRun: 6,
-  maxWalletLamports: 250_000_000, // 0.25 SOL
+  warnWalletLamports: 250_000_000, // 0.25 SOL
+  maxWalletLamports: 2_000_000_000, // 2 SOL
   minWalletLamports: 100_000,
   maxConsecutiveFailures: 3,
 };
@@ -56,6 +61,7 @@ export function policyFromEnv(env: Record<string, string | undefined>): AttestPo
     maxFeeLamports: tighten("ATTEST_MAX_FEE_LAMPORTS", DEFAULT_POLICY.maxFeeLamports),
     maxPerDay: tighten("ATTEST_MAX_PER_DAY", DEFAULT_POLICY.maxPerDay),
     maxPerRun: tighten("ATTEST_MAX_PER_RUN", DEFAULT_POLICY.maxPerRun),
+    warnWalletLamports: tighten("ATTEST_WARN_WALLET_LAMPORTS", DEFAULT_POLICY.warnWalletLamports),
     maxWalletLamports: tighten("ATTEST_MAX_WALLET_LAMPORTS", DEFAULT_POLICY.maxWalletLamports),
     minWalletLamports: DEFAULT_POLICY.minWalletLamports,
     maxConsecutiveFailures: tighten("ATTEST_MAX_FAILURES", DEFAULT_POLICY.maxConsecutiveFailures),
@@ -109,12 +115,55 @@ export function checkSimulation(
   return null;
 }
 
-/** Wallet isolation: the attester must be a small, dedicated fee wallet. */
-export function checkWallet(w: { lamports: number; tokenAccounts: number }, policy: AttestPolicy): string | null {
-  if (w.tokenAccounts > 0) return "attester wallet holds token accounts; use a dedicated fee-only wallet";
-  if (w.lamports > policy.maxWalletLamports) return `attester wallet holds ${w.lamports} lamports, over the ${policy.maxWalletLamports} cap for a fee wallet`;
+/** Tokens of real value. Holding any of them means the key is a working wallet, not a dedicated fee wallet.
+ *  Anything else in a token account is ignored: anyone can open a token account for any address, or send it
+ *  worthless tokens, and none of it can affect a memo-only signer. */
+export const VALUE_MINTS: Readonly<Record<string, string>> = {
+  EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v: "USDC",
+  Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB: "USDT",
+  "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo": "PYUSD",
+  So11111111111111111111111111111111111111112: "wSOL",
+  [OFFICIAL.CONTRACT]: "GL1TCH",
+};
+
+/** A non-zero balance (`amount` is the raw integer string) of a valuable mint. */
+const isValuable = (a: { mint: string; amount: string }) => !!VALUE_MINTS[a.mint] && /^\d+$/.test(a.amount) && /[1-9]/.test(a.amount);
+
+/** Names of the valuable tokens the wallet holds a non-zero balance of. */
+export function valueHoldingsOf(accounts: { mint: string; amount: string }[]): string[] {
+  return [...new Set(accounts.filter(isValuable).map((a) => VALUE_MINTS[a.mint]))];
+}
+
+/** The wallet's token accounts, split into valuable holdings (refuse) and everything else (warn, ignore). */
+export function tokenAccountsSummary(accounts: { mint: string; amount: string }[]): { valueHoldings: string[]; spamTokenAccounts: number } {
+  return { valueHoldings: valueHoldingsOf(accounts), spamTokenAccounts: accounts.filter((a) => !isValuable(a)).length };
+}
+
+/** Wallet isolation: refuse unless the attester is a small, dedicated fee wallet. Only signals a stranger can't
+ *  cheaply plant count here: valuable tokens, and SOL beyond a high ceiling. */
+export function checkWallet(w: { lamports: number; valueHoldings: string[] }, policy: AttestPolicy): string | null {
+  if (w.valueHoldings.length > 0) return `attester wallet holds ${w.valueHoldings.join(", ")}; use a dedicated fee-only wallet (move it out)`;
+  if (w.lamports > policy.maxWalletLamports) return `attester wallet holds ${w.lamports} lamports, over the ${policy.maxWalletLamports} ceiling for a fee wallet`;
   if (w.lamports < policy.minWalletLamports) return `attester wallet is low (${w.lamports} lamports); top it up`;
   return null;
+}
+
+/** Things worth a look that must not stop the run, since a stranger can cause them. */
+export function walletWarnings(w: { lamports: number; spamTokenAccounts: number }, policy: AttestPolicy): string[] {
+  const out: string[] = [];
+  if (w.lamports > policy.warnWalletLamports) out.push(`attester wallet holds ${w.lamports} lamports, more than a fee wallet needs; move the excess out`);
+  if (w.spamTokenAccounts > 0) out.push(`ignored ${w.spamTokenAccounts} token account(s) of no value (anyone can open these; they can't affect a memo-only signer)`);
+  return out;
+}
+
+/** Anchors per run when the history couldn't be read back to the window start (it was flooded): with the
+ *  schedule in attest.yml, a whole day of such runs stays under maxPerDay even if the count is off. */
+export const DEGRADED_PER_RUN = 1;
+
+/** How many anchors this run may send. */
+export function runBudget(s: { sentLast24h: number; historyComplete: boolean }, policy: AttestPolicy): number {
+  const left = Math.max(0, policy.maxPerDay - s.sentLast24h);
+  return Math.min(s.historyComplete ? policy.maxPerRun : DEGRADED_PER_RUN, left);
 }
 
 export function checkDaily(sentLast24h: number, policy: AttestPolicy): string | null {

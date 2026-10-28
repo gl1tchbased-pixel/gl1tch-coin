@@ -2,12 +2,23 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import type { AttestStore } from "./store.js";
 import { recentMemoHints, verifyAnchor } from "./chain.js";
 
+/** How far back sealed sweeps are looked for: the runner seals sweeps up to 7 days old. */
+const LINK_WINDOW_MS = 7 * 86_400_000;
+
 /**
  * Links sealed sweeps to their transactions by reading the attester's public history. The bot holds no key and
  * takes nobody's word for it: each match is re-checked from the finalized transaction (attester-signed, one memo).
+ * The history is read back over the whole window, so a flood of other transactions can't hide our anchors.
  */
-export async function linkOnce(conn: Connection, attester: PublicKey, store: AttestStore): Promise<number> {
-  const hints = await recentMemoHints(conn, attester, { commitment: "finalized", limit: 100 });
+export async function linkOnce(
+  conn: Connection,
+  attester: PublicKey,
+  store: AttestStore,
+  opts: { now?: number; pageSize?: number } = {}
+): Promise<number> {
+  const now = opts.now ?? Date.now();
+  const { hints, complete } = await recentMemoHints(conn, attester, { commitment: "finalized", sinceMs: now - LINK_WINDOW_MS, pageSize: opts.pageSize });
+  if (!complete) console.warn("[attest] attester history is flooded past the read limit; older anchors may link late");
   let linked = 0;
   for (const h of hints) {
     if (!store.isPending(h.root)) continue;

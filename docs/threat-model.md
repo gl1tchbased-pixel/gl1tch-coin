@@ -41,7 +41,8 @@
 
 ## Attester key (A3 verdict anchoring)
 The one place we sign a transaction. It signs **our own** SPL Memo transactions, never a user's, and never moves anyone's funds. Rules:
-- Dedicated wallet holding only fee money (~0.05 SOL). The runner refuses a wallet holding any token account or more than 0.25 SOL.
+- Dedicated wallet holding only fee money (~0.05 SOL). The runner refuses a wallet holding a valuable token (USDC, USDT, PYUSD, wSOL, $GL1TCH) or more than 2 SOL, and warns above 0.25 SOL. It ignores (and reports) other token accounts: anyone can open a token account for any address or send it worthless tokens, which must not be a cheap way to halt sealing, and nothing in a token account can affect a memo-only signer.
+- The attester's history is read back over the whole window (paged), because anyone can flood it with transactions that mention the attester. If the flood is bigger than the read limit, a run seals at most one sweep; with two runs an hour that stays under the daily cap even when the count is wrong (a test pins the schedule).
 - Key from env only, never logged, and never on the bot's host: the runner is a scheduled GitHub Actions job whose secret lives in the protected `attester` environment and reaches only the run step (installs run with scripts disabled, actions pinned by SHA).
 - The RPC must prove its cluster by genesis hash, so a devnet setup can't sign on mainnet.
 - Every transaction is checked against an allowlist on the compiled message (one Memo instruction, attester-paid, no other accounts, memo = `gl1tch:radar:v1:<root>:<count>:<sweepMs>`). The fee is capped, and the exact signed bytes are simulated with a balance-change cap before those same bytes are sent.

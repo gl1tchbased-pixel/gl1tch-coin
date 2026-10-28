@@ -38,19 +38,30 @@ export function shapeOf(msg: VersionedMessage): TxShape {
   };
 }
 
-/** Recent successful transactions touching the attester whose memo looks like an anchor. Unverified. */
+/** Successful transactions touching the attester since `sinceMs` whose memo looks like an anchor. Unverified.
+ *  Anyone can put the attester in a transaction, so a fixed "last N" window can be flooded until our own anchors
+ *  fall out of it. This pages back to the window start instead, up to `maxPages`; `complete` is false when the
+ *  window held more signatures than that (a flood), and callers must then act as if they missed anchors. */
 export async function recentMemoHints(
   conn: Connection,
   attester: PublicKey,
-  opts: { commitment: Finality; limit: number }
-): Promise<MemoHint[]> {
-  const sigs = await conn.getSignaturesForAddress(attester, { limit: opts.limit }, opts.commitment);
-  const out: MemoHint[] = [];
-  for (const s of sigs) {
-    const m = s.err ? null : findMemo(s.memo);
-    if (m) out.push({ sig: s.signature, ...m, blockTime: s.blockTime ?? null });
+  opts: { commitment: Finality; sinceMs: number; pageSize?: number; maxPages?: number }
+): Promise<{ hints: MemoHint[]; complete: boolean }> {
+  const pageSize = opts.pageSize ?? 1000;
+  const maxPages = opts.maxPages ?? 10;
+  const hints: MemoHint[] = [];
+  let before: string | undefined;
+  for (let page = 0; page < maxPages; page++) {
+    const sigs = await conn.getSignaturesForAddress(attester, { limit: pageSize, before }, opts.commitment);
+    for (const s of sigs) {
+      if (s.blockTime != null && s.blockTime * 1000 < opts.sinceMs) return { hints, complete: true };
+      const m = s.err ? null : findMemo(s.memo);
+      if (m) hints.push({ sig: s.signature, ...m, blockTime: s.blockTime ?? null });
+    }
+    if (sigs.length < pageSize) return { hints, complete: true };
+    before = sigs[sigs.length - 1].signature;
   }
-  return out;
+  return { hints, complete: false };
 }
 
 /** The anchor in `sig` if the attester really signed it, else null. */
