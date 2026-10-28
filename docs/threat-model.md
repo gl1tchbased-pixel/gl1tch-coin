@@ -53,7 +53,7 @@ The one place we sign a transaction. It signs **our own** SPL Memo transactions,
 
 ## Paid agent API (x402)
 Agents pay per call in USDC. We hold no key: `payTo` is a founder-owned receive address, and the facilitator (PayAI) broadcasts the payer's own signed transfer. Invariant 4 holds: the paid routes return the same scoring as the free ones; payment buys access, not a different verdict. Rules:
-- Settlement only for a handler response under 400 (`withX402`). Bad input (400), rate limit (429) and an unconfigured route (503) are answered before any payment is requested; a scan with confidence < 60 becomes a 503, so a degraded read is never charged.
+- Settlement only for a handler response under 400 (`withX402`). Rate limit (429) and an unconfigured route (503) are answered before any payment is requested. Bad input is answered by the handler (400), after the challenge, because discovery probes call without parameters; a 400 is never settled. A scan with confidence < 60 becomes a 503, so a degraded read is never charged.
 - Paid responses are `cache-control: private, no-store`, so a CDN can't hand a paid body to an unpaid caller.
 - `payTo` is validated at startup; the attester wallet is refused (a USDC token account would stop the attest runner).
 - The revenue ledger is written by the site with the shared stats token. A leaked token could add fake rows; every row links to its on-chain transaction, so a fake one is checkable, and the fix is rotating the token. A faulty facilitator could likewise report a settlement that didn't happen; the same tx link exposes it.

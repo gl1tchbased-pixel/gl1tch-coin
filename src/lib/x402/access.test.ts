@@ -1,15 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { accessMode } from "./access";
 
-const base = { configured: true, inputError: null, limited: false, holder: false };
+const base = { configured: true, limited: false, holder: false };
 
 describe("accessMode — what a request to a paid route gets, in order", () => {
   it("says unconfigured before anything else (never a 402 with nothing to pay)", () => {
-    expect(accessMode({ configured: false, inputError: "bad", limited: true, holder: true })).toBe("unconfigured");
-  });
-
-  it("rejects bad input before rate limits or payment, so no one pays for a typo", () => {
-    expect(accessMode({ ...base, inputError: "invalid address", limited: true, holder: true })).toBe("invalid");
+    expect(accessMode({ configured: false, limited: true, holder: true })).toBe("unconfigured");
   });
 
   it("rate-limits before payment", () => {
@@ -22,5 +18,10 @@ describe("accessMode — what a request to a paid route gets, in order", () => {
 
   it("asks everyone else to pay", () => {
     expect(accessMode(base)).toBe("paid");
+  });
+
+  it("never lets input validity block the challenge (x402scan probes without parameters)", () => {
+    const withInputError = { ...base, inputError: "invalid address" } as Parameters<typeof accessMode>[0];
+    expect(accessMode(withInputError)).toBe("paid");
   });
 });
