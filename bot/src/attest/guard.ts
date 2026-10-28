@@ -1,6 +1,5 @@
 import bs58 from "bs58";
 import { parseMemo } from "./merkle.js";
-import { OFFICIAL } from "../content.js";
 
 /**
  * Safety policy for the attester, the one GL1TCH component that signs a transaction. Each check stands on its
@@ -115,45 +114,33 @@ export function checkSimulation(
   return null;
 }
 
-/** Tokens of real value. Holding any of them means the key is a working wallet, not a dedicated fee wallet.
- *  Anything else in a token account is ignored: anyone can open a token account for any address, or send it
- *  worthless tokens, and none of it can affect a memo-only signer. */
-export const VALUE_MINTS: Readonly<Record<string, string>> = {
-  EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v: "USDC",
-  Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB: "USDT",
-  "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo": "PYUSD",
-  So11111111111111111111111111111111111111112: "wSOL",
-  [OFFICIAL.CONTRACT]: "GL1TCH",
-};
+/** The attester's address, pinned in code: on mainnet the run signs with this key and no other, so pointing the
+ *  secret at a different wallet (say, the founder's main one) takes a reviewed commit, not just a changed
+ *  setting. To rotate, change it here and in src/lib/official.ts (a test keeps the two equal). */
+export const PINNED_ATTESTER = "BSq18aJBhxYJgeEbcA3jGQNU1vmwZdo2PQkkpVsK7W6o";
 
-/** A non-zero balance (`amount` is the raw integer string) of a valuable mint. */
-const isValuable = (a: { mint: string; amount: string }) => !!VALUE_MINTS[a.mint] && /^\d+$/.test(a.amount) && /[1-9]/.test(a.amount);
-
-/** Names of the valuable tokens the wallet holds a non-zero balance of. */
-export function valueHoldingsOf(accounts: { mint: string; amount: string }[]): string[] {
-  return [...new Set(accounts.filter(isValuable).map((a) => VALUE_MINTS[a.mint]))];
+/** Signer identity: the secret's key must be the one named in ATTESTER_PUBKEY and, on mainnet, the pinned one. */
+export function checkSigner(cluster: Cluster, signer: string, envPubkey: string | undefined): string | null {
+  if (signer !== envPubkey?.trim()) return "ATTESTER_PUBKEY is missing or doesn't match the secret key";
+  if (cluster === "mainnet-beta" && signer !== PINNED_ATTESTER) return `signer ${signer} is not the pinned attester ${PINNED_ATTESTER}`;
+  return null;
 }
 
-/** The wallet's token accounts, split into valuable holdings (refuse) and everything else (warn, ignore). */
-export function tokenAccountsSummary(accounts: { mint: string; amount: string }[]): { valueHoldings: string[]; spamTokenAccounts: number } {
-  return { valueHoldings: valueHoldingsOf(accounts), spamTokenAccounts: accounts.filter((a) => !isValuable(a)).length };
-}
-
-/** Wallet isolation: refuse unless the attester is a small, dedicated fee wallet. Only signals a stranger can't
- *  cheaply plant count here: valuable tokens, and SOL beyond a high ceiling. */
-export function checkWallet(w: { lamports: number; valueHoldings: string[] }, policy: AttestPolicy): string | null {
-  if (w.valueHoldings.length > 0) return `attester wallet holds ${w.valueHoldings.join(", ")}; use a dedicated fee-only wallet (move it out)`;
+/** Wallet balance: refuse a wallet that can't pay, or one far fuller than a fee wallet should ever be. Only the SOL
+ *  balance counts. Token accounts don't: anyone can open one for any address or send it dust, so judging them
+ *  would hand strangers a cheap way to halt sealing, and nothing in a token account can affect a memo-only signer.
+ *  Which wallet this is gets settled by the pinned address instead. */
+export function checkWallet(w: { lamports: number }, policy: AttestPolicy): string | null {
   if (w.lamports > policy.maxWalletLamports) return `attester wallet holds ${w.lamports} lamports, over the ${policy.maxWalletLamports} ceiling for a fee wallet`;
   if (w.lamports < policy.minWalletLamports) return `attester wallet is low (${w.lamports} lamports); top it up`;
   return null;
 }
 
-/** Things worth a look that must not stop the run, since a stranger can cause them. */
-export function walletWarnings(w: { lamports: number; spamTokenAccounts: number }, policy: AttestPolicy): string[] {
-  const out: string[] = [];
-  if (w.lamports > policy.warnWalletLamports) out.push(`attester wallet holds ${w.lamports} lamports, more than a fee wallet needs; move the excess out`);
-  if (w.spamTokenAccounts > 0) out.push(`ignored ${w.spamTokenAccounts} token account(s) of no value (anyone can open these; they can't affect a memo-only signer)`);
-  return out;
+/** Worth a look, but not a reason to stop: a stranger can cause it by sending SOL. */
+export function walletWarnings(w: { lamports: number }, policy: AttestPolicy): string[] {
+  return w.lamports > policy.warnWalletLamports
+    ? [`attester wallet holds ${w.lamports} lamports, more than a fee wallet needs; move the excess out`]
+    : [];
 }
 
 /** Anchors per run when the history couldn't be read back to the window start (it was flooded): with the

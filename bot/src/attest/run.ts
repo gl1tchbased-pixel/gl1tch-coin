@@ -1,19 +1,9 @@
 import fs from "node:fs";
 import { pathToFileURL } from "node:url";
-import { Connection, Keypair, PublicKey } from "@solana/web3.js";
-import {
-  CircuitBreaker,
-  checkCluster,
-  checkDaily,
-  checkWallet,
-  parseSecretKey,
-  policyFromEnv,
-  runBudget,
-  tokenAccountsSummary,
-  walletWarnings,
-} from "./guard.js";
+import { Connection, Keypair } from "@solana/web3.js";
+import { CircuitBreaker, checkCluster, checkDaily, checkSigner, checkWallet, parseSecretKey, policyFromEnv, runBudget, walletWarnings } from "./guard.js";
 import { validateBatch } from "./records.js";
-import { recentMemoHints, verifyAnchor, verifyHints } from "./chain.js";
+import { VerifyBudget, countSentSince, coversSince, isSealedOnChain, recentMemoHints, verifyAnchor } from "./chain.js";
 import { anchorBatch, type Audit } from "./sender.js";
 
 /**
@@ -22,7 +12,8 @@ import { anchorBatch, type Audit } from "./sender.js";
  * the bot sends: every sweep is re-validated and its root recomputed before anything is signed.
  *
  *   ATTESTER_SECRET_KEY   attester secret (base58 or JSON byte array); env only, never logged
- *   ATTESTER_PUBKEY       the published attester address; the run refuses if the key doesn't match it
+ *   ATTESTER_PUBKEY       the published attester address; the run refuses if the key doesn't match it, and on
+ *                         mainnet both must be PINNED_ATTESTER (guard.ts)
  *   ATTEST_CLUSTER        devnet | mainnet-beta; no default, so a test setup can't reach mainnet by accident
  *   ATTEST_RPC            RPC URL (defaults to the cluster's public endpoint)
  *   ATTEST_SOURCE         bot base URL serving GET /attest/pending
@@ -32,10 +23,12 @@ import { anchorBatch, type Audit } from "./sender.js";
  * Exit codes: 0 done (or nothing to do), 1 halted by a safety check, 2 misconfigured.
  */
 
-const TOKEN_PROGRAMS = ["TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"];
 const DAY_MS = 86_400_000;
 const BACKLOG_MS = 7 * DAY_MS;
 const ROOT = /^[0-9a-f]{64}$/;
+/** Transactions one run may fetch to check hints: enough for the cap count and the "already sealed?" checks, too
+ *  few for a flood of copied memos to stall the run (anyone can mint hints). */
+const VERIFY_BUDGET = 120;
 
 function makeAudit(file?: string): Audit {
   return (e) => {
@@ -65,8 +58,9 @@ export async function runOnce(env: Record<string, string | undefined> = process.
     return 2;
   }
   const attester = signer.publicKey;
-  if (attester.toBase58() !== env.ATTESTER_PUBKEY?.trim()) {
-    audit({ step: "config", ok: false, detail: "ATTESTER_PUBKEY is missing or doesn't match the secret key" });
+  const wrongSigner = checkSigner(cluster, attester.toBase58(), env.ATTESTER_PUBKEY);
+  if (wrongSigner) {
+    audit({ step: "config", ok: false, detail: wrongSigner });
     return 2;
   }
   const policy = policyFromEnv(env);
@@ -82,36 +76,35 @@ export async function runOnce(env: Record<string, string | undefined> = process.
       return 2;
     }
 
-    // Wallet isolation: a small, fee-only wallet. Only what a stranger can't cheaply plant refuses the run
-    // (valuable tokens, SOL past the ceiling); token accounts anyone can open are ignored and reported.
+    // Wallet: enough SOL to pay, and not far more than a fee wallet should hold. Which wallet it is was settled by
+    // the pinned signer above; token accounts aren't read at all (anyone can open one or send it dust).
     const lamports = await conn.getBalance(attester, "confirmed");
-    const accounts: { mint: string; amount: string }[] = [];
-    for (const p of TOKEN_PROGRAMS) {
-      const res = await conn.getParsedTokenAccountsByOwner(attester, { programId: new PublicKey(p) }, "confirmed");
-      for (const a of res.value) {
-        const info = (a.account.data as { parsed?: { info?: { mint?: unknown; tokenAmount?: { amount?: unknown } } } }).parsed?.info;
-        accounts.push({ mint: String(info?.mint ?? ""), amount: String(info?.tokenAmount?.amount ?? "0") });
-      }
-    }
-    const { valueHoldings, spamTokenAccounts } = tokenAccountsSummary(accounts);
-    const badWallet = checkWallet({ lamports, valueHoldings }, policy);
+    const badWallet = checkWallet({ lamports }, policy);
     if (badWallet) {
       audit({ step: "wallet", ok: false, detail: badWallet });
       return 1;
     }
-    for (const w of walletWarnings({ lamports, spamTokenAccounts }, policy)) audit({ step: "wallet", ok: true, detail: w });
+    for (const w of walletWarnings({ lamports }, policy)) audit({ step: "wallet", ok: true, detail: w });
 
     // History back to the backlog start. Anyone can put the attester in a transaction, so if a flood keeps us
     // from reading back that far, the run degrades to one anchor (see runBudget) instead of trusting the count.
     const now = Date.now();
-    const { hints, complete } = await recentMemoHints(conn, attester, { commitment: "confirmed", sinceMs: now - BACKLOG_MS });
-    if (!complete) audit({ step: "history", ok: true, detail: "attester history flooded past the read limit; one anchor this run" });
+    const history = await recentMemoHints(conn, attester, { commitment: "confirmed", sinceMs: now - BACKLOG_MS });
+    const { hints } = history;
+    if (!history.complete) audit({ step: "history", ok: true, detail: "attester history flooded past the read limit" });
+    const verify = new VerifyBudget((sig) => verifyAnchor(conn, sig, attester, "confirmed"), VERIFY_BUDGET);
 
     // Rolling-24h cap. Memo hints over-count (strangers can copy the text), so they're trusted only to show we're
-    // under the cap; at the cap, only transactions the attester really signed are counted.
-    const lastDay = hints.filter((h) => h.blockTime !== null && h.blockTime * 1000 > now - DAY_MS);
+    // under the cap; at the cap, only transactions the attester really signed are counted, within the verify
+    // budget. A hint without a block time counts as recent.
+    const lastDay = hints.filter((h) => h.blockTime === null || h.blockTime * 1000 > now - DAY_MS);
     let sentLast24h = lastDay.length;
-    if (sentLast24h >= policy.maxPerDay) sentLast24h = (await verifyHints(conn, lastDay, attester, "confirmed")).length;
+    let countExact = true;
+    if (sentLast24h >= policy.maxPerDay) {
+      const c = await countSentSince(lastDay, verify, policy.maxPerDay);
+      sentLast24h = c.count;
+      countExact = c.exact;
+    }
     const capped = checkDaily(sentLast24h, policy);
     if (capped) {
       audit({ step: "daily", ok: true, detail: capped });
@@ -125,7 +118,10 @@ export async function runOnce(env: Record<string, string | undefined> = process.
     audit({ step: "pending", ok: true, detail: `${pending.length} sweep(s) waiting, ${sentLast24h} sealed in 24h` });
 
     const breaker = new CircuitBreaker(policy.maxConsecutiveFailures);
-    let budget = runBudget({ sentLast24h, historyComplete: complete }, policy);
+    // A day not fully read, or a count the budget couldn't settle, drops the run to one anchor (see runBudget).
+    const dayKnown = coversSince(history, now - DAY_MS) && countExact;
+    if (!dayKnown) audit({ step: "budget", ok: true, detail: "the last 24h couldn't be fully read or counted; one anchor this run" });
+    let budget = runBudget({ sentLast24h, historyComplete: dayKnown }, policy);
     for (const raw of pending) {
       if (budget <= 0 || breaker.open) break;
       const root = (raw as { root?: unknown })?.root;
@@ -135,15 +131,10 @@ export async function runOnce(env: Record<string, string | undefined> = process.
         audit({ step: "validate", ok: false, root: typeof root === "string" ? root.slice(0, 64) : undefined, detail: "error" in v ? v.error : "bad root" });
         continue;
       }
-      // Idempotent: skip a sweep the attester already sealed (the bot may not have linked it yet).
-      let sealed = false;
-      for (const h of hints) {
-        if (h.root === root && (await verifyAnchor(conn, h.sig, attester, "confirmed"))) {
-          sealed = true;
-          break;
-        }
-      }
-      if (sealed) {
+      // Idempotent: skip a sweep the attester already sealed (the bot may not have linked it yet). Only a few copies
+      // of a root are checked, within the run's verify budget; past that it is sealed again (one extra fee) rather
+      // than skipped, so copies of its memo can't block a sweep.
+      if (await isSealedOnChain(root, hints, verify)) {
         audit({ step: "skip", ok: true, root, detail: "already sealed on-chain" });
         continue;
       }

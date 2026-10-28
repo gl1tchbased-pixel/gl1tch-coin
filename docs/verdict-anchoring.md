@@ -59,13 +59,15 @@ transaction, and never moves anyone's funds. Every control below refuses on its 
 |---|---|
 | Runs as a scheduled GitHub Actions job in a protected environment, never on the bot's host | a compromised bot host leaking the key |
 | RPC genesis hash must match `ATTEST_CLUSTER` | a test setup signing on mainnet, or the reverse |
-| Wallet isolation: refuses if the wallet holds any token account or more than 0.25 SOL | pointing the attester at a real wallet |
+| Signer pinned in code (`PINNED_ATTESTER`, kept equal to the site's `ATTESTER_WALLET` by a test): on mainnet the run signs with that key only | pointing the attester at a real wallet by changing a setting |
+| Wallet balance: refuses below the fee floor or above 2 SOL, warns above 0.25 SOL; token accounts aren't read (anyone can open one or send dust) | an over-funded hot key, without a cheap way for strangers to halt sealing |
+| Flood-proof history: pages back over the window; verifies at most 120 transactions a run and 3 copies per root; if the last 24 h can't be read or counted, one anchor that run | strangers burying our anchors or stalling the run with copied memos |
 | Re-validates every record and recomputes the root; trusts nothing the bot sends | a compromised bot getting garbage sealed |
 | Allowlist on the compiled message: one Memo instruction, attester-paid, no other accounts | anything but a memo being signed |
 | Fee cap, then simulation of the exact signed bytes with a balance-change cap | an unexpected spend |
 | Caps: 6 per run, 60 per rolling 24 h | a runaway loop |
 | Circuit breaker: 3 consecutive failures halt the run (the job fails, so it's noticed) | repeated faults |
-| Idempotent: skips a sweep already sealed on-chain | double sealing |
+| Idempotent: skips a sweep already sealed on-chain (checks up to 3 copies of its memo; past that it seals again rather than skip) | double sealing, without letting copies block a sweep |
 | Every decision is audit-logged (the job log); the key is never logged | silent failures |
 | CI fails if any code outside `bot/src/attest/` can sign, or if the attester builds anything but a memo | the rules eroding over time |
 

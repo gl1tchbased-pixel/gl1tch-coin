@@ -13,13 +13,13 @@ import {
   checkDaily,
   checkFee,
   checkSimulation,
+  checkSigner,
   checkWallet,
   DEGRADED_PER_RUN,
+  PINNED_ATTESTER,
   parseSecretKey,
   policyFromEnv,
   runBudget,
-  tokenAccountsSummary,
-  valueHoldingsOf,
   walletWarnings,
 } from "./guard.js";
 import { shapeOf } from "./chain.js";
@@ -84,40 +84,37 @@ describe("spend checks", () => {
   });
 });
 
-describe("wallet isolation (a stranger can't halt it)", () => {
-  const USDC = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
-  const WSOL = "So11111111111111111111111111111111111111112";
-  const GL1TCH = "3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump";
-  const SPAM = Keypair.generate().publicKey.toBase58();
-
-  it("ignores token accounts a stranger opened or filled with unknown tokens", () => {
-    expect(valueHoldingsOf([{ mint: SPAM, amount: "1000000" }, { mint: USDC, amount: "0" }])).toEqual([]);
-    expect(checkWallet({ lamports: 50_000_000, valueHoldings: [] }, DEFAULT_POLICY)).toBeNull();
+describe("signer identity", () => {
+  it("on mainnet signs only with the attester pinned in code (and named in ATTESTER_PUBKEY)", () => {
+    expect(checkSigner("mainnet-beta", PINNED_ATTESTER, PINNED_ATTESTER)).toBeNull();
+    const other = Keypair.generate().publicKey.toBase58();
+    expect(checkSigner("mainnet-beta", other, other)).toMatch(/pinned/);
+    expect(checkSigner("mainnet-beta", PINNED_ATTESTER, other)).toMatch(/ATTESTER_PUBKEY/);
   });
 
-  it("refuses a wallet holding something of value: that isn't a dedicated fee wallet", () => {
-    expect(valueHoldingsOf([{ mint: USDC, amount: "1" }, { mint: WSOL, amount: "5" }, { mint: GL1TCH, amount: "7" }])).toEqual(["USDC", "wSOL", "GL1TCH"]);
-    expect(checkWallet({ lamports: 50_000_000, valueHoldings: ["USDC"] }, DEFAULT_POLICY)).toMatch(/USDC/);
+  it("on devnet accepts any key that matches ATTESTER_PUBKEY (test setups)", () => {
+    const k = Keypair.generate().publicKey.toBase58();
+    expect(checkSigner("devnet", k, k)).toBeNull();
+    expect(checkSigner("devnet", k, undefined)).toMatch(/ATTESTER_PUBKEY/);
   });
 
-  it("only warns above the fee-wallet size, refusing past a hard ceiling, so a small SOL gift can't halt it", () => {
-    expect(checkWallet({ lamports: 1_000_000_000, valueHoldings: [] }, DEFAULT_POLICY)).toBeNull();
-    expect(walletWarnings({ lamports: 1_000_000_000, spamTokenAccounts: 0 }, DEFAULT_POLICY)[0]).toMatch(/move the excess out/);
-    expect(checkWallet({ lamports: 3_000_000_000, valueHoldings: [] }, DEFAULT_POLICY)).toMatch(/ceiling/);
-    expect(checkWallet({ lamports: 10, valueHoldings: [] }, DEFAULT_POLICY)).toMatch(/top it up/);
+  it("pins the same address the website publishes", () => {
+    const official = fs.readFileSync(path.resolve(__dirname, "../../../src/lib/official.ts"), "utf8");
+    expect(official).toContain(`ATTESTER_WALLET = "${PINNED_ATTESTER}"`);
+  });
+});
+
+describe("wallet balance (a stranger can't halt it cheaply)", () => {
+  it("judges the SOL balance only: token accounts, which anyone can open or dust, play no part", () => {
+    expect(checkWallet({ lamports: 50_000_000 }, DEFAULT_POLICY)).toBeNull();
   });
 
-  it("splits the wallet's token accounts into valuable holdings and ignorable ones", () => {
-    expect(tokenAccountsSummary([
-      { mint: USDC, amount: "0" },
-      { mint: SPAM, amount: "5" },
-      { mint: GL1TCH, amount: "9" },
-    ])).toEqual({ valueHoldings: ["GL1TCH"], spamTokenAccounts: 2 });
-  });
-
-  it("reports ignored stranger token accounts as a warning, not a refusal", () => {
-    expect(walletWarnings({ lamports: 50_000_000, spamTokenAccounts: 2 }, DEFAULT_POLICY)[0]).toMatch(/2 token account/);
-    expect(walletWarnings({ lamports: 50_000_000, spamTokenAccounts: 0 }, DEFAULT_POLICY)).toEqual([]);
+  it("only warns above the fee-wallet size and refuses past the 2 SOL ceiling", () => {
+    expect(checkWallet({ lamports: 1_000_000_000 }, DEFAULT_POLICY)).toBeNull();
+    expect(walletWarnings({ lamports: 1_000_000_000 }, DEFAULT_POLICY)[0]).toMatch(/move the excess out/);
+    expect(walletWarnings({ lamports: 50_000_000 }, DEFAULT_POLICY)).toEqual([]);
+    expect(checkWallet({ lamports: 3_000_000_000 }, DEFAULT_POLICY)).toMatch(/ceiling/);
+    expect(checkWallet({ lamports: 10 }, DEFAULT_POLICY)).toMatch(/top it up/);
   });
 });
 
@@ -128,17 +125,22 @@ describe("run budget", () => {
     expect(runBudget({ sentLast24h: 60, historyComplete: true }, DEFAULT_POLICY)).toBe(0);
   });
 
-  it("drops to one anchor per run when the history was flooded past what it can read", () => {
+  it("drops to one anchor per run when the last day couldn't be read or counted exactly", () => {
     expect(runBudget({ sentLast24h: 0, historyComplete: false }, DEFAULT_POLICY)).toBe(1);
     expect(runBudget({ sentLast24h: 60, historyComplete: false }, DEFAULT_POLICY)).toBe(0);
   });
 
-  it("keeps a whole day of degraded runs under the daily cap (pins the schedule in attest.yml)", () => {
+  it("keeps a whole day of degraded runs within the daily cap (pins every cron entry in attest.yml)", () => {
     const yml = fs.readFileSync(path.resolve(__dirname, "../../../.github/workflows/attest.yml"), "utf8");
-    const cron = /cron:\s*"([^"]+)"/.exec(yml)?.[1] ?? "";
-    const [minute, hour] = cron.split(/\s+/);
-    expect(hour).toBe("*"); // every hour; a change here must re-check the arithmetic below
-    const runsPerDay = minute.split(",").length * 24;
+    const crons = [...yml.matchAll(/cron:\s*"([^"]+)"/g)].map((m) => m[1]);
+    expect(crons.length).toBeGreaterThan(0);
+    let runsPerDay = 0;
+    for (const c of crons) {
+      const [minute, ...rest] = c.trim().split(/\s+/);
+      expect(minute).toMatch(/^\d{1,2}(,\d{1,2})*$/); // explicit minutes only, so the count below is exact
+      expect(rest).toEqual(["*", "*", "*", "*"]); // every hour of every day
+      runsPerDay += minute.split(",").length * 24;
+    }
     expect(runsPerDay * DEGRADED_PER_RUN).toBeLessThanOrEqual(DEFAULT_POLICY.maxPerDay);
   });
 });
