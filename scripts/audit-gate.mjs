@@ -17,6 +17,7 @@ const ALLOW = new Set([
   "GHSA-685m-2w69-288q", // protobufjs
   "GHSA-wcpc-wj8m-hjx6", // protobufjs
   "GHSA-vfj7-8cjw-p6xm", // braces — only inside react-native's metro bundler (wallet-adapter-mobile), never runs on the site
+  "GHSA-mrhx-c7xc-m3w5", // zod <4.6.6 — x402 pins zod ^3 (no 3.x fix; breaks on zod 4); attacker input is header-size bounded
 ]);
 
 let audit;

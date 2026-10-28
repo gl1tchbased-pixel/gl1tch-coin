@@ -28,6 +28,7 @@ explicitly allow-listed and tracked, not silently ignored.
 | GHSA-848j-6mx2-7j84 | elliptic | Risky primitive, standard usage inside web3.js, not our code | web3.js v2 migration |
 | GHSA-r5fr-rjxr-66jc | lodash | Transitive, no reachable patched version | Remove when the pinning dep updates |
 | GHSA-66ff-…, 75px-…, jvwf-…, 685m-…, wcpc-… | protobufjs | Residual highs affecting all 7.x; low real risk (we don't parse untrusted protobuf) | Remove if a patched line ships |
+| GHSA-mrhx-c7xc-m3w5 | zod | Memory exhaustion when an array schema validates a huge failing array (all versions < 4.6.6; no 3.x fix). Reaches production through the x402 packages (pinned to `zod ^3`; they break on zod 4, which removed the single-argument `z.record`) and viem's `abitype` (optional zod helpers, not loaded). The only attacker-controlled input x402 parses is the `PAYMENT-SIGNATURE` header, which the platform's request-header limit caps at tens of KB: megabytes of issue objects at most, not an OOM. Facilitator responses come from PayAI (trusted). Allow-listed 2026-10-28 with the founder's approval | Remove when x402 moves to zod ≥ 4.6.6 |
 | GHSA-vfj7-8cjw-p6xm | braces | No patched version (all versions affected). Pulled in only by react-native's `metro` bundler via `@solana-mobile/wallet-adapter-mobile`; metro never runs in the web app or API | Remove when braces ships a fix or wallet-adapter drops react-native |
 
 **Review:** re-check on every `@solana/web3.js` / dependency upgrade. Remove from the allow-list
