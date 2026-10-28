@@ -13,13 +13,17 @@ type Op = {
 };
 
 describe("buildOpenApi — x402scan's OpenAPI-first discovery", () => {
-  const doc = buildOpenApi(ORIGIN) as { openapi: string; info: { title: string; version: string }; servers: Array<{ url: string }>; paths: Record<string, { get: Op }> };
+  const doc = buildOpenApi(ORIGIN) as { openapi: string; info: { title: string; version: string; contact?: { email?: string } }; servers: Array<{ url: string }>; paths: Record<string, { get: Op }> };
 
   it("has the required top-level fields", () => {
     expect(doc.openapi).toMatch(/^3\.1/);
     expect(typeof doc.info.title).toBe("string");
     expect(typeof doc.info.version).toBe("string");
     expect(doc.servers).toEqual([{ url: ORIGIN }]);
+  });
+
+  it("names a contact email, which x402scan uses to verify ownership", () => {
+    expect((doc.info as { contact?: { email?: string } }).contact?.email).toBe("founder@gl1tchbased.xyz");
   });
 
   it("lists exactly the paid operations (free routes break registration)", () => {
