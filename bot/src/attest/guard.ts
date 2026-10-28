@@ -158,7 +158,7 @@ export const DEGRADED_PER_RUN = 2;
 /** How many anchors this run may send. */
 export function runBudget(s: { sentLast24h: number; historyComplete: boolean }, policy: AttestPolicy): number {
   const left = Math.max(0, policy.maxPerDay - s.sentLast24h);
-  return Math.min(s.historyComplete ? policy.maxPerRun : DEGRADED_PER_RUN, left);
+  return Math.min(policy.maxPerRun, s.historyComplete ? policy.maxPerRun : DEGRADED_PER_RUN, left);
 }
 
 export function checkDaily(sentLast24h: number, policy: AttestPolicy): string | null {

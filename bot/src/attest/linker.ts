@@ -83,7 +83,7 @@ export async function linkOnce(
   return linked;
 }
 
-export type ReportResult = "queued" | "invalid" | "unauthorized" | "not_pending" | "rejected" | "not_found";
+export type ReportResult = "queued" | "invalid" | "unauthorized" | "not_pending" | "rejected";
 
 /** Whether `proof` is the attester's signature over the report (local check, no RPC). */
 function signedByAttester(root: string, sig: string, proof: string, attester: PublicKey): boolean {
@@ -99,9 +99,9 @@ function signedByAttester(root: string, sig: string, proof: string, attester: Pu
 /**
  * Links anchors the runner reports right after sending them ({root, sig, proof}), so a flood of copied memos in
  * the history can't hold a sweep unlinked. The proof is the attester's signature over the report, checked locally,
- * so forged reports cost no RPC call. The report is then trusted for nothing: the transaction is fetched and must
- * be an attester-signed memo of that root, and it is linked only once finalized. A transaction shown not to be
- * ours is never fetched again.
+ * so a report costs no RPC call: only the attester can queue one. The transaction itself is trusted for nothing:
+ * at each tick it is fetched at finalized and linked only if it is an attester-signed memo of that root. One shown
+ * not to be ours is dropped and never fetched again; one the RPC can't see yet waits (REPORT_TRIES ticks).
  */
 export class Linker {
   private readonly queue = new Map<string, { sig: string; tries: number }>();
@@ -120,17 +120,7 @@ export class Linker {
     if (!signedByAttester(root, sig, b.proof, this.attester)) return "unauthorized";
     if (!this.store.isPending(root)) return "not_pending";
     if (this.rejected.has(sig)) return "rejected";
-    let r: Awaited<ReturnType<typeof verifyAnchorOrReject>>;
-    try {
-      r = await verifyAnchorOrReject(this.conn, sig, this.attester, "confirmed");
-    } catch {
-      return "not_found";
-    }
-    if (r === null) return "not_found";
-    if (r === "rejected" || r.root !== root) {
-      this.rejected.add(sig);
-      return "rejected";
-    }
+    if (this.queue.get(root)?.sig === sig) return "queued"; // a replay: no work, and its tries aren't reset
     if (this.queue.size < REPORT_QUEUE_MAX || this.queue.has(root)) this.queue.set(root, { sig, tries: 0 });
     return "queued";
   }
@@ -152,7 +142,10 @@ export class Linker {
       if (r && r !== "rejected" && r.root === root) {
         if (this.store.markAnchored(r)) linked++;
         this.queue.delete(root);
-      } else if (r === "rejected" || (r && r.root !== root) || ++q.tries >= REPORT_TRIES) {
+      } else if (r === "rejected" || (r && r.root !== root)) {
+        this.rejected.add(q.sig);
+        this.queue.delete(root);
+      } else if (++q.tries >= REPORT_TRIES) {
         this.queue.delete(root);
       }
     }

@@ -74,17 +74,27 @@ describe("Linker.report — the runner says which transaction it sent", () => {
     const { store, marked } = pendingStore();
     const linker = new Linker(r.conn, attester.publicKey, store);
     expect(await linker.report(report(ROOT, SIG(150)))).toBe("queued");
+    expect(r.txCalls()).toBe(0); // the signed report is enough to queue: no RPC on the request
     expect(await linker.tick({ now: NOW_SEC * 1000, budget: 0 })).toBe(1); // history fallback off: the report alone links
     expect(marked).toEqual([ROOT]);
-    expect(r.txCalls()).toBe(2); // one check on report (confirmed), one on link (finalized)
+    expect(r.txCalls()).toBe(1); // one finalized check
   });
 
-  it("rejects a reported transaction the attester didn't sign, and never fetches it again", async () => {
+  it("drops a reported transaction that turns out not to be an attester anchor, and never fetches it again", async () => {
     const r = rpc(10, { realAt: 9 });
     const linker = new Linker(r.conn, attester.publicKey, pendingStore().store);
-    expect(await linker.report(report(ROOT, SIG(3)))).toBe("rejected");
+    expect(await linker.report(report(ROOT, SIG(3)))).toBe("queued");
+    expect(await linker.tick({ now: NOW_SEC * 1000, budget: 0 })).toBe(0);
     expect(await linker.report(report(ROOT, SIG(3)))).toBe("rejected");
     expect(r.txCalls()).toBe(1);
+  });
+
+  it("answers a replayed report from the queue, without an RPC call", async () => {
+    const r = rpc(10, { realAt: 4 });
+    const linker = new Linker(r.conn, attester.publicKey, pendingStore().store);
+    expect(await linker.report(report(ROOT, SIG(4)))).toBe("queued");
+    expect(await linker.report(report(ROOT, SIG(4)))).toBe("queued");
+    expect(r.txCalls()).toBe(0);
   });
 
   it("ignores a report for a root that isn't pending, without fetching anything", async () => {
@@ -104,12 +114,16 @@ describe("Linker.report — the runner says which transaction it sent", () => {
     expect(r.txCalls()).toBe(0);
   });
 
-  it("says not_found for a transaction it can't fetch yet, without remembering it as rejected", async () => {
-    const r = rpc(5, { realAt: 2, missing: [2] });
-    const linker = new Linker(r.conn, attester.publicKey, pendingStore().store);
-    expect(await linker.report(report(ROOT, SIG(2)))).toBe("not_found");
-    expect(await linker.report(report(ROOT, SIG(2)))).toBe("not_found");
-    expect(r.txCalls()).toBe(2);
+  it("keeps a reported anchor queued until its RPC can see it finalized, then links it", async () => {
+    const missing = [2];
+    const r = rpc(5, { realAt: 2, missing });
+    const { store, marked } = pendingStore();
+    const linker = new Linker(r.conn, attester.publicKey, store);
+    expect(await linker.report(report(ROOT, SIG(2)))).toBe("queued");
+    expect(await linker.tick({ now: NOW_SEC * 1000, budget: 0 })).toBe(0); // not visible yet
+    missing.length = 0; // now the RPC has it
+    expect(await linker.tick({ now: NOW_SEC * 1000, budget: 0 })).toBe(1);
+    expect(marked).toEqual([ROOT]);
   });
 });
 

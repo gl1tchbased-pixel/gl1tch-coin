@@ -46,6 +46,7 @@ export async function reportAnchor(
   secretKey: Uint8Array,
   opts: { fetchFn?: typeof fetch; attempts?: number; delayMs?: number } = {}
 ): Promise<string> {
+  if (!/^[1-9A-HJ-NP-Za-km-z]{64,88}$/.test(sig)) return "invalid_sig";
   const fetchFn = opts.fetchFn ?? fetch;
   const proof = bs58.encode(nacl.sign.detached(Buffer.from(linkReportMessage(root, sig), "utf8"), secretKey));
   const attempts = opts.attempts ?? 3;
@@ -105,8 +106,10 @@ export async function runOnce(env: Record<string, string | undefined> = process.
   const policy = policyFromEnv(env);
   const rpc = env.ATTEST_RPC || (cluster === "devnet" ? "https://api.devnet.solana.com" : "https://api.mainnet-beta.solana.com");
   const source = (env.ATTEST_SOURCE || "https://bot.gl1tchbased.xyz").replace(/\/$/, "");
-  // A 429 throws instead of being slept through, so a rate-limiting RPC can't push the run past its job timeout.
-  const conn = new Connection(rpc, { commitment: "confirmed", disableRetryOnRateLimit: true });
+  const conn = new Connection(rpc, "confirmed");
+  // Hint checks only: a 429 throws (counted as "unknown") instead of being slept through, so a rate-limiting RPC
+  // can't push the run past its job timeout. Sending and confirming keep web3.js's normal retries.
+  const verifyConn = new Connection(rpc, { commitment: "confirmed", disableRetryOnRateLimit: true });
   audit({ step: "start", ok: true, detail: `${cluster} · attester ${attester.toBase58()}` });
 
   try {
@@ -132,7 +135,7 @@ export async function runOnce(env: Record<string, string | undefined> = process.
     const history = await recentMemoHints(conn, attester, { commitment: "confirmed", sinceMs: now - BACKLOG_MS });
     const { hints } = history;
     if (!history.complete) audit({ step: "history", ok: true, detail: "attester history flooded past the read limit" });
-    const verify = new VerifyBudget((sig) => verifyAnchor(conn, sig, attester, "confirmed"), VERIFY_BUDGET);
+    const verify = new VerifyBudget((sig) => verifyAnchor(verifyConn, sig, attester, "confirmed"), VERIFY_BUDGET);
 
     // Rolling-24h cap. Memo hints over-count (strangers can copy the text), so they're trusted only to show we're
     // under the cap; at the cap, only transactions the attester really signed are counted, within the verify

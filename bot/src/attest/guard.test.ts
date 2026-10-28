@@ -134,10 +134,16 @@ describe("run budget", () => {
     expect(runBudget({ sentLast24h: 100, historyComplete: true }, DEFAULT_POLICY)).toBe(0);
   });
 
-  it("drops to one anchor per run when the last day couldn't be read or counted exactly", () => {
+  it("drops to the degraded allowance when the last day couldn't be read or counted exactly", () => {
     expect(runBudget({ sentLast24h: 0, historyComplete: false }, DEFAULT_POLICY)).toBe(2);
     expect(runBudget({ sentLast24h: 99, historyComplete: false }, DEFAULT_POLICY)).toBe(1);
     expect(runBudget({ sentLast24h: 100, historyComplete: false }, DEFAULT_POLICY)).toBe(0);
+  });
+
+  it("never exceeds a per-run cap tightened by env, degraded or not", () => {
+    const tight = { ...DEFAULT_POLICY, maxPerRun: 1 };
+    expect(runBudget({ sentLast24h: 0, historyComplete: false }, tight)).toBe(1);
+    expect(runBudget({ sentLast24h: 0, historyComplete: true }, tight)).toBe(1);
   });
 
   it("keeps a whole day of degraded runs within the daily cap (pins every cron entry in attest.yml)", () => {

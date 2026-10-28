@@ -76,6 +76,13 @@ jobs:
             exit 1
           fi
           echo "OK — signing lives only in the attester."
+          # Message signing (ed25519) by a key the bot holds belongs in the attester too; tests sign with throwaway keys.
+          grep -rEn --include=*.ts 'sign\.detached\(' bot/src > msg-hits.txt || [ $? -eq 1 ]
+          if grep -v '^bot/src/attest/' msg-hits.txt | grep -v '\.test\.ts:'; then
+            echo "::error::Message signing outside bot/src/attest/ (the attester)."
+            exit 1
+          fi
+          echo "OK — message signing lives only in the attester."
       - name: Attester builds memo instructions only
         run: |
           set -e
