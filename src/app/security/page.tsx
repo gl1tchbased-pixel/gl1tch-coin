@@ -21,7 +21,7 @@ const posture = [
 ];
 
 const principles = [
-  { t: "Your protection is free — forever", d: "Scanning, plain-English explanations and the safety verdict are free for everyone and are NEVER gated behind holding $GL1TCH. That includes the public API and Watchtower alerts. Holding only unlocks community ranks and the randomness API — never the protection itself." },
+  { t: "Your protection is free — forever", d: "Scanning, plain-English explanations and the safety verdict are free for everyone and are NEVER gated behind holding $GL1TCH. That includes the public API and Watchtower alerts. Holding only unlocks community ranks, the randomness API and free use of the pay-per-call agent API (the same checks stay free at /api/scan) — never the protection itself." },
   { t: "Plain language, not a black box", d: "Every risk finding comes with a clear 'why this matters', and every claim links to on-chain proof you can verify yourself." },
   { t: "Probabilistic, never accusatory", d: "We say 'this pattern matches projects that later rugged', never 'this is a scam' — and any project can appeal a flag through a verified process." },
   { t: "Not financial advice", d: "Every score is a risk signal, not investment advice. Crypto is high-risk; always DYOR." },

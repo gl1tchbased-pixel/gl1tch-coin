@@ -32,7 +32,7 @@ export const whitepaperSections: WPSection[] = [
       },
       {
         type: "p",
-        text: "The token is not a paywall on safety. The scanner, its public API, the badge, Rug Radar and Watchtower are free for everyone and are never token-gated. Holding $GL1TCH unlocks community features (holder rooms and ranks) and the verifiable-randomness API. A useful product does not, by itself, make a valuable token; value accrual must be engineered separately, and this document is explicit about what is live versus planned (Section 7).",
+        text: "The token is not a paywall on safety. The scanner, its public API, the badge, Rug Radar and Watchtower are free for everyone and are never token-gated. Holding $GL1TCH unlocks community features (holder rooms and ranks), the verifiable-randomness API and free use of the pay-per-call agent API (the same checks stay free at /api/scan). A useful product does not, by itself, make a valuable token; value accrual must be engineered separately, and this document is explicit about what is live versus planned (Section 7).",
       },
       {
         type: "p",
@@ -172,7 +172,7 @@ export const whitepaperSections: WPSection[] = [
       {
         type: "list",
         items: [
-          "Token utility — LIVE: holder-gated Randomness + Allocation, Quantum Core extras and sustained-holding rank tiers require holding $GL1TCH. Safety tools are deliberately excluded: the scanner, its API, the badge and Watchtower are free for everyone, because protection that depends on buying a token is not protection.",
+          "Token utility — LIVE: holder-gated Randomness + Allocation, free use of the pay-per-call agent API, Quantum Core extras and sustained-holding rank tiers require holding $GL1TCH. Safety tools are deliberately excluded: the scanner, its API, the badge and Watchtower are free for everyone, because protection that depends on buying a token is not protection.",
           "Value-accrual mechanism — DESIGNED, STAGED, NOT LIVE: the intended path is to route real revenue (B2B risk-API, verifiable-randomness-as-a-service, agent-trust API) into token demand via a fee-to-buyback or fee-share mechanism, on the proven templates of Chainlink Payment Abstraction, Sky Smart Burn, and GMX (which pays stakers a share of real fees).",
           "The condition — EXPLICIT: any such mechanism activates ONLY once real revenue exists, after a third-party audit and founder approval. Anything that could hold user funds is deliberately deferred and founder/audit-gated. We will never claim that usage magically lifts the price — that claim is false and we do not make it.",
         ],

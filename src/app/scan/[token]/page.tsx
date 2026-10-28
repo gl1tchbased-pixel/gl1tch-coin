@@ -118,8 +118,9 @@ export default async function ScanTokenPage({ params }: { params: Promise<{ toke
 
       <section className={styles.cta}>
         <p>
-          The scanner is free for everyone. Holding <strong>$GL1TCH</strong> unlocks unlimited
-          scans, wallet watchtower and real-time rug alerts — your rank, your access.
+          The scanner, Watchtower and rug alerts are free for everyone, no token needed. Holding{" "}
+          <strong>$GL1TCH</strong> unlocks community ranks, the randomness API and free use of the
+          pay-per-call agent API.
         </p>
         <div className={styles.ctaRow}>
           <Link href="/ranks" className={styles.ctaBtn}>See the rank ladder →</Link>

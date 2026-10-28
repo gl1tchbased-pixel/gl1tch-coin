@@ -43,7 +43,7 @@ const palette = [
   { name: "Graphite", hex: "#16181d" },
 ];
 
-const boilerplate = `${PROJECT_NAME} (${TICKER}) is a Solana-native, internet-born meme brand: a rogue-AI cult with one focused, live utility — token-gated access and on-chain ranks. Zero tax, fixed 1,000,000,000 supply, mint and freeze authorities revoked, and a public give-back wallet. Built to be verified, not trusted.`;
+const boilerplate = `${PROJECT_NAME} (${TICKER}) is a Solana-native, internet-born meme brand: a rogue-AI cult with one focused, live utility: token-gated community rooms and on-chain ranks (every safety tool stays free for everyone). Zero tax, fixed 1,000,000,000 supply, mint and freeze authorities revoked, and a public give-back wallet. Built to be verified, not trusted.`;
 
 export default function PressPage() {
   return (

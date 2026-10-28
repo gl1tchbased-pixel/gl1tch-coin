@@ -10,7 +10,7 @@ import styles from "./token.module.css";
 export const metadata: Metadata = shareMeta({
   title: "Why hold $GL1TCH — the honest investment case",
   description:
-    "A useful product doesn't make a valuable token. Here's what $GL1TCH is for: community ranks and the verifiable-randomness API (every safety tool stays free for everyone) + a planned, revenue-driven value-accrual mechanism (GMX / Chainlink model) — with radical honesty about what's live vs. planned.",
+    "A useful product doesn't make a valuable token. Here's what $GL1TCH is for: community ranks, the verifiable-randomness API and free use of the pay-per-call agent API (every safety tool stays free for everyone) + a planned, revenue-driven value-accrual mechanism (GMX / Chainlink model) — with radical honesty about what's live vs. planned.",
   alternates: { canonical: "/token" },
 });
 
@@ -19,7 +19,7 @@ const PILLARS = [
   {
     n: "01",
     q: "Is the token REQUIRED?",
-    a: "A token with no use inside the product is a red flag. $GL1TCH has one, behind a clear line: protection is free for everyone, and holding unlocks the community ranks and the verifiable-randomness API.",
+    a: "A token with no use inside the product is a red flag. $GL1TCH has one, behind a clear line: protection is free for everyone, and holding unlocks the community ranks, the verifiable-randomness API and free use of the pay-per-call agent API.",
   },
   {
     n: "02",
@@ -30,6 +30,7 @@ const PILLARS = [
 
 const UTILITY = [
   { t: "Verifiable randomness API", d: "Provably-fair RNG-as-a-service (drand-seeded, BLS-verifiable) for mints, raffles & allocations — the Chainlink-VRF lane, holder-gated. Plus Quantum Draw entry." },
+  { t: "Agent API, free for holders", d: "AI agents pay per call in USDC through x402. A holder's API key (x-gl1tch-key) skips the payment. The same checks stay free for everyone at /api/scan, rate-limited per IP." },
   { t: "Holder rooms + ranks", d: "Five wallet-verified ranks open the holder rooms, lore and coordination channels on the site and in Telegram." },
   { t: "Sustained-holding tiers", d: "A 7-day average balance gate (anti-gaming) — a flash-buy unlocks nothing." },
   { t: "Never gated: safety", d: "The scanner, its public API, the badge, Rug Radar and Watchtower are free for everyone. Protection that depends on buying a token isn't protection." },
@@ -49,7 +50,7 @@ const TRUST = [
 ];
 
 const SCORECARD = [
-  { k: "In-product utility", v: "Live — ranks + randomness API; safety stays free", s: "✓" },
+  { k: "In-product utility", v: "Live — ranks + randomness API + agent API; safety stays free", s: "✓" },
   { k: "Engineered value accrual", v: "Designed — activates on real revenue (fee→buyback / stake)", s: "⏳", href: "/buyback" },
   { k: "Traction", v: "Early, but published live", s: "📈", href: "/network" },
   { k: "Team", v: "Anonymous — substituted by verifiability + planned audit", s: "🔒" },
@@ -60,7 +61,7 @@ const SCORECARD = [
 const FAQ = [
   {
     q: "Do I need $GL1TCH to use GL1TCH?",
-    a: "Not for safety. The scanner, its public API, the badge, Rug Radar and Watchtower are free for everyone and never token-gated. Holding unlocks the verifiable-randomness API, Quantum Draw entry and the sustained-holding rank tiers (holder rooms). We drew the line there on purpose: protection that depends on buying a token isn't protection.",
+    a: "Not for safety. The scanner, its public API, the badge, Rug Radar and Watchtower are free for everyone and never token-gated. Holding unlocks the verifiable-randomness API, free use of the pay-per-call agent API, Quantum Draw entry and the sustained-holding rank tiers (holder rooms). We drew the line there on purpose: protection that depends on buying a token isn't protection.",
   },
   {
     q: "Does value actually accrue to the token?",
@@ -147,8 +148,8 @@ export default function TokenPage() {
             <h3 className={styles.cardT}>Mint a randomness API key</h3>
             <p className={styles.cardD}>
               Prove a sustained $GL1TCH balance and mint a rate-tiered key for the
-              verifiable-randomness API (higher tier → more requests/min). The scanner API needs no
-              key: it&apos;s free for everyone.
+              verifiable-randomness API (higher tier → more requests/min). The same key skips payment
+              on the pay-per-call agent API. The scanner API needs no key: it&apos;s free for everyone.
             </p>
           </div>
           <ApiKeyMinter />
