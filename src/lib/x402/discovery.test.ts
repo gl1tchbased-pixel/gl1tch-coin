@@ -47,6 +47,13 @@ describe("wellKnownX402", () => {
   });
 });
 
+describe("output examples match the real response shapes (agents build parsers from them)", () => {
+  it("a scan check carries ScanCheck's fields: key, label, status, value, explain", () => {
+    const example = bazaarDiscovery("scan").output.example as { checks: Array<Record<string, unknown>> };
+    expect(Object.keys(example.checks[0]).sort()).toEqual(["explain", "key", "label", "status", "value"]);
+  });
+});
+
 describe("bazaarDiscovery — the input schema x402 catalogs need to list a route", () => {
   it("gives every route an example input that satisfies its own schema", () => {
     for (const id of IDS) {

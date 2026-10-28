@@ -37,9 +37,10 @@ const OUTPUT_EXAMPLES: Record<PaidRouteId, unknown> = {
     verdict: "CLEAN",
     score: 95,
     confidence: 93,
-    bottomLine: "No structural rug vectors found.",
+    // Values from a real BONK scan (2026-10-28).
+    bottomLine: "Verified blue-chip — established, audited and deeply liquid. Managed supply/ownership is by design for this asset, not rug risk.",
     risks: [],
-    checks: [{ id: "mint_authority", status: "pass", label: "Mint authority revoked" }],
+    checks: [{ key: "mint_authority", label: "Mint authority", status: "pass", value: "REVOKED", explain: "No one can mint more. Supply is fixed — the way it should be." }],
     meta: { deployer: "…", deployerReputation: { level: "clean", tokensSeen: 1, flaggedCount: 0 } },
   },
   // The sample wallet is GL1TCH's own attester, so its examples state only what is true of it.
