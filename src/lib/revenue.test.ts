@@ -74,6 +74,11 @@ describe("revenueEntryFromSettle", () => {
     expect(revenueEntryFromSettle({ result: { ...ok, network: undefined }, resourceUrl: URL_SCAN }, new Set())).toBeNull();
   });
 
+  it("flags a call marked as a self-test even without a payer", () => {
+    const e = revenueEntryFromSettle({ result: { ...ok, payer: undefined }, resourceUrl: URL_SCAN, selfTest: true }, new Set());
+    expect(e?.self).toBe(true);
+  });
+
   it("flags our own test wallet as a self-test", () => {
     expect(revenueEntryFromSettle({ result: ok, resourceUrl: URL_SCAN }, new Set(["Payer111"]))?.self).toBe(true);
   });

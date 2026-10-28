@@ -44,9 +44,10 @@ export interface SettleLike {
 }
 
 /** A settled payment → ledger entry. Null unless it succeeded, names its tx and network, belongs
- *  to a paid route and carries a positive integer amount. Our own test wallets come back `self`. */
+ *  to a paid route and carries a positive integer amount. Our own test calls come back `self`:
+ *  marked by header (`selfTest`) or paid from a listed test wallet. */
 export function revenueEntryFromSettle(
-  input: { result: SettleLike; requirementsAmount?: string; resourceUrl?: string },
+  input: { result: SettleLike; requirementsAmount?: string; resourceUrl?: string; selfTest?: boolean },
   selfPayers: Set<string>,
   now = Date.now()
 ): RevenueEntry | null {
@@ -63,7 +64,7 @@ export function revenueEntryFromSettle(
     network: result.network,
     route,
     amountMicro,
-    self: !!result.payer && selfPayers.has(result.payer),
+    self: input.selfTest === true || (!!result.payer && selfPayers.has(result.payer)),
     at: now,
   };
   if (result.payer) entry.payer = result.payer;
