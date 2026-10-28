@@ -25,7 +25,8 @@ export function checkCluster(cluster: Cluster, genesisHash: string): string | nu
 export interface AttestPolicy {
   /** Max lamports one anchor may cost (base fee is 5,000 per signature; an anchor has one). */
   maxFeeLamports: number;
-  /** Max anchors in any rolling 24 h (48 sweeps a day plus headroom). */
+  /** Max anchors in any rolling 24 h: room for the 48 runs a day in degraded mode (2 each) plus normal sealing;
+   *  at 5,000 lamports an anchor that is still at most 0.0005 SOL a day. */
   maxPerDay: number;
   /** Max anchors one run may send. */
   maxPerRun: number;
@@ -42,7 +43,7 @@ export interface AttestPolicy {
 
 export const DEFAULT_POLICY: AttestPolicy = {
   maxFeeLamports: 10_000,
-  maxPerDay: 60,
+  maxPerDay: 100,
   maxPerRun: 6,
   warnWalletLamports: 250_000_000, // 0.25 SOL
   maxWalletLamports: 2_000_000_000, // 2 SOL
@@ -143,9 +144,9 @@ export function walletWarnings(w: { lamports: number }, policy: AttestPolicy): s
     : [];
 }
 
-/** Anchors per run when the history couldn't be read back to the window start (it was flooded): with the
- *  schedule in attest.yml, a whole day of such runs stays under maxPerDay even if the count is off. */
-export const DEGRADED_PER_RUN = 1;
+/** Anchors per run when the last 24 h couldn't be read or counted: with the schedule in attest.yml a whole day of
+ *  such runs stays under maxPerDay even if the count is off, and still keeps up with new sweeps (one per run). */
+export const DEGRADED_PER_RUN = 2;
 
 /** How many anchors this run may send. */
 export function runBudget(s: { sentLast24h: number; historyComplete: boolean }, policy: AttestPolicy): number {

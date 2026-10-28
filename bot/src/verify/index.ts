@@ -31,7 +31,7 @@ import { attestStore } from "../attest/store.js";
 import { validateBatch } from "../attest/records.js";
 import { ENGINE } from "../attest/merkle.js";
 import { DEFAULT_POLICY } from "../attest/guard.js";
-import { startAttestLinker } from "../attest/linker.js";
+import { linkerAttester, startAttestLinker, type Linker } from "../attest/linker.js";
 
 /** Shared store — the bot issues nonces here and the HTTP endpoint consumes them. */
 export const store = new VerifyStore();
@@ -241,6 +241,11 @@ export function startVerification(bot: Bot): Server | null {
     if (isRecordable(obs)) signalGraph.observe(obs);
   };
 
+  // Verdict anchoring: on mainnet the bot links anchors from the pinned attester only.
+  const linkAttester = linkerAttester(config.attest.cluster, config.attest.attester);
+  if (linkAttester.warning) console.warn(`[attest] ${linkAttester.warning}`);
+  let linker: Linker | null = null;
+
   const server = createVerifyServer({
     origin: config.verify.siteOrigin,
     handle,
@@ -360,6 +365,8 @@ export function startVerification(bot: Bot): Server | null {
     },
     attest: {
       token: config.stats.token,
+      // The runner reports each anchor it sends; the linker verifies it on-chain before linking.
+      link: (body) => (linker ? linker.report(body) : Promise.resolve("disabled")),
       // The site posts each Rug Radar sweep; only fresh, fully valid sweeps are kept for sealing.
       add: (body) => {
         const v = validateBatch(body, { maxAgeMs: 6 * 3_600_000 });
@@ -367,7 +374,7 @@ export function startVerification(bot: Bot): Server | null {
         return { ok: true, ...attestStore.add(v.records, v.sweepMs) };
       },
       info: () => ({
-        attester: config.attest.attester || null,
+        attester: linkAttester.attester,
         cluster: config.attest.cluster,
         memo: "gl1tch:radar:v1:<root>:<count>:<sweepMs>",
         engine: ENGINE,
@@ -403,6 +410,6 @@ export function startVerification(bot: Bot): Server | null {
   });
   startQuantumCore(); // scheduled commit-reveal Draw executor (externally untriggerable)
   // Anchoring: the bot only reads the attester's public history; the key lives with the runner, not here.
-  if (config.attest.attester) startAttestLinker(attestStore, { rpc: config.attest.rpc, attester: config.attest.attester });
+  if (linkAttester.attester) linker = startAttestLinker(attestStore, { rpc: config.attest.rpc, attester: linkAttester.attester });
   return server;
 }

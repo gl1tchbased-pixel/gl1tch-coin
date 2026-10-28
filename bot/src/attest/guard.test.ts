@@ -79,8 +79,8 @@ describe("spend checks", () => {
     expect(checkSimulation({ err: null, preLamports: 1, postLamports: null }, DEFAULT_POLICY)).toMatch(/no balance/);
   });
   it("enforces the daily cap", () => {
-    expect(checkDaily(59, DEFAULT_POLICY)).toBeNull();
-    expect(checkDaily(60, DEFAULT_POLICY)).toMatch(/daily cap/);
+    expect(checkDaily(99, DEFAULT_POLICY)).toBeNull();
+    expect(checkDaily(100, DEFAULT_POLICY)).toMatch(/daily cap/);
   });
 });
 
@@ -121,19 +121,21 @@ describe("wallet balance (a stranger can't halt it cheaply)", () => {
 describe("run budget", () => {
   it("normally sends up to the per-run cap, within what's left of the day", () => {
     expect(runBudget({ sentLast24h: 10, historyComplete: true }, DEFAULT_POLICY)).toBe(6);
-    expect(runBudget({ sentLast24h: 57, historyComplete: true }, DEFAULT_POLICY)).toBe(3);
-    expect(runBudget({ sentLast24h: 60, historyComplete: true }, DEFAULT_POLICY)).toBe(0);
+    expect(runBudget({ sentLast24h: 97, historyComplete: true }, DEFAULT_POLICY)).toBe(3);
+    expect(runBudget({ sentLast24h: 100, historyComplete: true }, DEFAULT_POLICY)).toBe(0);
   });
 
   it("drops to one anchor per run when the last day couldn't be read or counted exactly", () => {
-    expect(runBudget({ sentLast24h: 0, historyComplete: false }, DEFAULT_POLICY)).toBe(1);
-    expect(runBudget({ sentLast24h: 60, historyComplete: false }, DEFAULT_POLICY)).toBe(0);
+    expect(runBudget({ sentLast24h: 0, historyComplete: false }, DEFAULT_POLICY)).toBe(2);
+    expect(runBudget({ sentLast24h: 99, historyComplete: false }, DEFAULT_POLICY)).toBe(1);
+    expect(runBudget({ sentLast24h: 100, historyComplete: false }, DEFAULT_POLICY)).toBe(0);
   });
 
   it("keeps a whole day of degraded runs within the daily cap (pins every cron entry in attest.yml)", () => {
     const yml = fs.readFileSync(path.resolve(__dirname, "../../../.github/workflows/attest.yml"), "utf8");
     const crons = [...yml.matchAll(/cron:\s*"([^"]+)"/g)].map((m) => m[1]);
     expect(crons.length).toBeGreaterThan(0);
+    expect(crons.length).toBe((yml.match(/^\s*-?\s*cron:/gm) ?? []).length); // no entry escapes the parse (quoting)
     let runsPerDay = 0;
     for (const c of crons) {
       const [minute, ...rest] = c.trim().split(/\s+/);
@@ -142,6 +144,8 @@ describe("run budget", () => {
       runsPerDay += minute.split(",").length * 24;
     }
     expect(runsPerDay * DEGRADED_PER_RUN).toBeLessThanOrEqual(DEFAULT_POLICY.maxPerDay);
+    // Degraded mode must still keep up with sweeps (at most one per run on this schedule), or a backlog builds.
+    expect(DEGRADED_PER_RUN).toBeGreaterThanOrEqual(2);
   });
 });
 

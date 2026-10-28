@@ -30,6 +30,40 @@ const ROOT = /^[0-9a-f]{64}$/;
  *  few for a flood of copied memos to stall the run (anyone can mint hints). */
 const VERIFY_BUDGET = 120;
 
+/**
+ * Tells the bot which transaction sealed a sweep, so a flood of copied memos in the attester's history can't keep
+ * it unlinked. The bot verifies the transaction on-chain before linking; this only saves it the search. Retries
+ * while the bot's RPC hasn't seen the transaction yet. Never throws: if the bot can't be reached, its history
+ * scan still links the sweep later.
+ */
+export async function reportAnchor(
+  source: string,
+  root: string,
+  sig: string,
+  opts: { fetchFn?: typeof fetch; attempts?: number; delayMs?: number } = {}
+): Promise<string> {
+  const fetchFn = opts.fetchFn ?? fetch;
+  const attempts = opts.attempts ?? 3;
+  let last = "unreachable";
+  for (let i = 0; i < attempts; i++) {
+    if (i > 0) await new Promise((r) => setTimeout(r, opts.delayMs ?? 5_000));
+    try {
+      const res = await fetchFn(`${source}/attest/link`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ root, sig }),
+        signal: AbortSignal.timeout(10_000),
+      });
+      const d = (await res.json().catch(() => ({}))) as { result?: unknown };
+      last = typeof d.result === "string" ? d.result : `http ${res.status}`;
+    } catch {
+      last = "unreachable";
+    }
+    if (last !== "not_found" && last !== "unreachable") return last;
+  }
+  return last;
+}
+
 function makeAudit(file?: string): Audit {
   return (e) => {
     const line = JSON.stringify({ at: new Date().toISOString(), ...e });
@@ -66,7 +100,8 @@ export async function runOnce(env: Record<string, string | undefined> = process.
   const policy = policyFromEnv(env);
   const rpc = env.ATTEST_RPC || (cluster === "devnet" ? "https://api.devnet.solana.com" : "https://api.mainnet-beta.solana.com");
   const source = (env.ATTEST_SOURCE || "https://bot.gl1tchbased.xyz").replace(/\/$/, "");
-  const conn = new Connection(rpc, "confirmed");
+  // A 429 throws instead of being slept through, so a rate-limiting RPC can't push the run past its job timeout.
+  const conn = new Connection(rpc, { commitment: "confirmed", disableRetryOnRateLimit: true });
   audit({ step: "start", ok: true, detail: `${cluster} · attester ${attester.toBase58()}` });
 
   try {
@@ -139,7 +174,11 @@ export async function runOnce(env: Record<string, string | undefined> = process.
         continue;
       }
       const r = await anchorBatch(conn, signer, { root, count: v.records.length, sweepMs: v.sweepMs, records: v.records }, policy, breaker, audit);
-      if (r.ok) budget--;
+      if (r.ok) {
+        budget--;
+        const reported = await reportAnchor(source, root, r.sig);
+        audit({ step: "report", ok: reported === "queued", root, sig: r.sig, detail: reported });
+      }
     }
     if (breaker.open) {
       audit({ step: "halt", ok: false, detail: `circuit breaker opened after ${policy.maxConsecutiveFailures} consecutive failures` });
