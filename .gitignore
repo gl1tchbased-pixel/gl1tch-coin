@@ -95,3 +95,6 @@ audit.json
 # example env files carry no secrets and document setup
 !.env.example
 !bot/.env.example
+
+# x402 first-call test wallet (secret key)
+e2e/x402/
