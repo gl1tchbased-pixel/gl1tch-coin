@@ -1,4 +1,11 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["node_modules", "bot", "onchain", "**/*.test.ts", "**/*.test.tsx"]
+  "exclude": [
+    "node_modules",
+    "bot",
+    "onchain",
+    "mobile",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
 }
