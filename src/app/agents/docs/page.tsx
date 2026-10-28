@@ -146,6 +146,20 @@ await fetch("${BASE}/api/agent/register", {
         </ul>
       </section>
 
+      <section className={styles.block} id="mcp">
+        <h2 className={styles.h2}>6 · Use it from Claude, Cursor or any MCP client</h2>
+        <p className={styles.cardD} style={{ marginBottom: "var(--space-3)" }}>
+          GL1TCH is also an MCP server, so an assistant can check a token before you trade it. Free, 60 requests a
+          minute per IP. Tools: <code>scan_token</code>, <code>check_agent_wallet</code>, <code>deployer_reputation</code>.
+        </p>
+        <Code head="MCP client config (Streamable HTTP)">{`{
+  "mcpServers": {
+    "gl1tch": { "url": "${BASE}/api/mcp" }
+  }
+}
+// stdio-only clients: "command": "npx", "args": ["-y", "mcp-remote", "${BASE}/api/mcp"]`}</Code>
+      </section>
+
       <section className={styles.block}>
         <h2 className={styles.h2}>Notes</h2>
         <ul className={styles.reasonList}>

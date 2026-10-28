@@ -110,6 +110,17 @@ GET /api/x402/deployer?address=<wallet>&chain=solana $0.003  deployer track reco
 
 ---
 
+## 5. MCP server — the same checks as tools for Claude, Cursor or any MCP client
+
+Streamable HTTP endpoint: https://gl1tchbased.xyz/api/mcp (free, 60 requests/min per IP)
+Tools:
+  scan_token(mint, chain?)             pre-trade rug/honeypot verdict, 0-100 score, named risks, report link
+  check_agent_wallet(address, chain?)  Know Your Agent trust score and level
+  deployer_reputation(address, chain?) tokens launched and how many were flagged (serial rugger check)
+Client config: { "gl1tch": { "url": "https://gl1tchbased.xyz/api/mcp" } }  (stdio-only clients: npx -y mcp-remote <url>)
+
+---
+
 ## Docs & discovery
 - Agent developer docs (curl / JS / Python): https://gl1tchbased.xyz/agents/docs
 - Pay-per-call (x402) docs: https://gl1tchbased.xyz/agents/docs#x402
