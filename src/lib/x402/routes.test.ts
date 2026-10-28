@@ -14,6 +14,9 @@ describe("paid routes without a receiving wallet", () => {
     ["scan", `/api/x402/scan?mint=${BONK}`],
     ["agent", `/api/x402/agent?address=${BONK}`],
     ["deployer", `/api/x402/deployer?address=${BONK}`],
+    ["verdict", `/api/x402/verdict?mint=${BONK}`],
+    ["radar", "/api/x402/radar"],
+    ["random", "/api/x402/random?min=1&max=6"],
   ])("%s answers 503 'paid API not configured', never an empty 402", async (id, path) => {
     vi.stubEnv("X402_PAY_TO_SOLANA", "");
     vi.stubEnv("X402_PAY_TO_BASE", "");
@@ -47,10 +50,34 @@ describe("paid handlers validate their own input (after the challenge; a 400 is 
     expect((await scanHandler(req("/api/x402/scan?q=bonk"))).status).toBe(400);
   });
 
+  it("verdict needs a valid mint", async () => {
+    const { verdictHandler } = await import("./handlers");
+    expect((await verdictHandler(req("/api/x402/verdict"))).status).toBe(400);
+    expect((await verdictHandler(req("/api/x402/verdict?mint=xyz"))).status).toBe(400);
+  });
+
+  it("random refuses a bad range before touching the beacon", async () => {
+    const { randomHandler } = await import("./handlers");
+    const res = await randomHandler(req("/api/x402/random?min=9&max=1"));
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toContain("not charged");
+  });
+
   it("agent and deployer need a valid address and chain", async () => {
     const { agentHandler, deployerHandler } = await import("./handlers");
     expect((await agentHandler(req("/api/x402/agent?address=bad"))).status).toBe(400);
     expect((await agentHandler(req(`/api/x402/agent?address=${BONK}&chain=nope`))).status).toBe(400);
     expect((await deployerHandler(req("/api/x402/deployer"))).status).toBe(400);
+  });
+});
+
+describe("the bot's revenue ledger accepts every paid route", () => {
+  it("records a settlement for each PaidRouteId (a route the bot refuses would vanish from /revenue)", async () => {
+    const { PAID_ROUTES } = await import("./config");
+    const { parseRevenueEntry } = await import("../../../bot/src/revenue");
+    for (const route of Object.keys(PAID_ROUTES)) {
+      const entry = parseRevenueEntry({ tx: "5".repeat(88), network: "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp", route, amountMicro: 3000 });
+      expect(entry, route).not.toBeNull();
+    }
   });
 });

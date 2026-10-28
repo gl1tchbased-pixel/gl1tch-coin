@@ -143,6 +143,14 @@ await fetch("${BASE}/api/agent/register", {
           <li>Paid responses are never served from a CDN cache.</li>
           <li>$GL1TCH holders: send your <code>x-gl1tch-key</code> header and the paid endpoints are free at your tier&apos;s rate.</li>
           <li>Settled payments are recorded with their transaction on the public <Link href="/revenue">revenue ledger</Link> (latest 50 listed).</li>
+          <li>
+            <code>/api/x402/random</code> commits to a drand quicknet round that is still in the future, so nobody can know the
+            numbers when you ask. To check a result: <code>randomness = sha256(signature)</code>, the signature is the drand
+            quicknet BLS signature over <code>sha256(uint64_be(round))</code>, <code>requestId = sha256(commitment)</code>, and the
+            values come from{" "}
+            <a href="https://github.com/gl1tchbased-pixel/gl1tch-coin/blob/main/src/lib/quantum/random.ts" target="_blank" rel="noreferrer">deriveResult</a>
+            {" "}(the same derivation as the holder Randomness API).
+          </li>
         </ul>
       </section>
 

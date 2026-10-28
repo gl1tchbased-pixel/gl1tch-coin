@@ -15,9 +15,18 @@ export interface DrandPulse {
 }
 
 /** The latest quicknet round as published, NOT yet verified (`verified: false`). */
-export async function fetchLatestRound(): Promise<DrandPulse | null> {
+export function fetchLatestRound(): Promise<DrandPulse | null> {
+  return fetchPulse("latest");
+}
+
+/** One quicknet round as published, NOT yet verified. Null until it exists (drand answers 425/404 early). */
+export function fetchRound(round: number): Promise<DrandPulse | null> {
+  return fetchPulse(String(Math.floor(round)));
+}
+
+async function fetchPulse(which: string): Promise<DrandPulse | null> {
   try {
-    const r = await fetch(`${BASE}/${CHAIN}/public/latest`, { cache: "no-store", signal: AbortSignal.timeout(8000) });
+    const r = await fetch(`${BASE}/${CHAIN}/public/${which}`, { cache: "no-store", signal: AbortSignal.timeout(8000) });
     if (!r.ok) return null;
     const d = (await r.json()) as { round?: number; randomness?: string; signature?: string };
     if (typeof d.round !== "number" || typeof d.randomness !== "string" || typeof d.signature !== "string") return null;
