@@ -23,6 +23,7 @@
 - `/api/scan`, `/api/radar`, `/api/stats`, `/api/badge`, `/api/agent/badge`, `/api/random/badge`, `/api/market`, `/api/market/history` — public, unauthenticated.
 - Telegram bot (grammY) + its HTTP server on an Oracle Cloud VM behind Caddy (`/verify`, `/stats`, `/signal/*`, `/attest/*`, …) — reachable directly, not only through the site.
 - The attester runner (GitHub Actions, `attester` environment) — the only holder of a signing key.
+- `/api/x402/scan`, `/api/x402/agent`, `/api/x402/deployer` — the paid agent API (x402). Public; the handler runs only after the facilitator verifies a payment (or for a valid `x-gl1tch-key`).
 - The site itself (XSS via any user-reflected value → CSP is the mitigation).
 
 ## Core invariants (never violated)
@@ -50,7 +51,16 @@ The one place we sign a transaction. It signs **our own** SPL Memo transactions,
 - CI fails if code outside `bot/src/attest/` can sign, or if the attester builds anything but a memo.
 - The public verifier checks the signer against the published attester address and accepts only finalized transactions, so a stolen key can be revoked by publishing a new address and the old roots stay checkable. Spec: `docs/verdict-anchoring.md`.
 
+## Paid agent API (x402)
+Agents pay per call in USDC. We hold no key: `payTo` is a founder-owned receive address, and the facilitator (PayAI) broadcasts the payer's own signed transfer. Invariant 4 holds: the paid routes return the same scoring as the free ones; payment buys access, not a different verdict. Rules:
+- Settlement only for a handler response under 400 (`withX402`). Rate limit (429) and an unconfigured route (503) are answered before any payment is requested. Bad input is answered by the handler (400), after the challenge, because discovery probes call without parameters; a 400 is never settled. A scan with confidence < 60 becomes a 503, so a degraded read is never charged.
+- Paid responses are `cache-control: private, no-store`, so a CDN can't hand a paid body to an unpaid caller.
+- `payTo` is checked on every request and fails closed: if any set address is invalid, or is the attester (a USDC token account would stop the attest runner), every paid route answers 503 and the error is logged, so a typo can't quietly drop a network.
+- The revenue ledger is written by the site with the shared stats token. A leaked token could add fake rows; every row links to its on-chain transaction, so a fake one is checkable, and the fix is rotating the token. A faulty facilitator could likewise report a settlement that didn't happen; the same tx link exposes it.
+- Our own test payments are recorded as self-tests and never counted as revenue: the test client sends `x-gl1tch-self-test: 1`, and payers listed in `X402_SELF_PAYERS` count as self-tests too. Anyone can send that header, but all it does is keep their own payment out of the total.
+
 ## Reviewed
 - 2026-07-05 — initial model (Phase -1 kickoff). Next review before Phase 2 (wallet-connect).
 - 2026-10-22 — per-IP limits on every public route and the bot server, constant-time token checks, radar sweep made non-triggerable; attester-key rules written before A3 step 2.
 - 2026-10-22 — A3 step 2 built to those rules (runner, linker, proof endpoints, CI confinement); the review added the genesis-hash check and signer verification on every memo hint.
+- 2026-10-28 — paid agent API (x402) added: entry points, no-charge-on-failure, private caching, payTo guard, ledger token risk.

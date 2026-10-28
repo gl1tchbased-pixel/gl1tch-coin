@@ -3,7 +3,8 @@
 > GL1TCH is a free, non-custodial platform on Solana: a token rug-scanner, a cross-scan
 > deployer-reputation graph, a Know-Your-Agent trust layer, and verifiable randomness. If you are
 > an AI agent or an agent framework, you can call these APIs directly. The scanner and its API are
-> free for every caller (no key); only the verifiable-randomness API needs a $GL1TCH holder key.
+> free for every caller (no key, 40/min per IP); only the verifiable-randomness API needs a $GL1TCH
+> holder key. Agents that want pay-per-call with no signup can use the x402 endpoints in section 4.
 > Nothing here takes custody of keys or funds. Not financial advice.
 
 ## API base: https://gl1tchbased.xyz
@@ -90,8 +91,29 @@ https://gl1tchbased.xyz/quantum-core/random/<id>   (human proof page; verifies i
 
 ---
 
+## 4. Pay-per-call (x402) — the same checks, paid in USDC, no signup
+
+For agents that would rather pay than share a rate limit. Standard x402 v2: the first call returns
+402 Payment Required with a PAYMENT-REQUIRED header (price, network, payTo); your x402 client signs a
+USDC transfer and retries with PAYMENT-SIGNATURE; the 200 response carries PAYMENT-RESPONSE (the
+settled transaction). Networks: Solana mainnet USDC, Base mainnet USDC. Facilitator: PayAI.
+
+GET /api/x402/scan?mint=<address>&chain=solana       $0.01   full token safety report (same as /api/scan)
+GET /api/x402/agent?address=<wallet>&chain=solana    $0.01   Know Your Agent trust assessment
+GET /api/x402/deployer?address=<wallet>&chain=solana $0.005  deployer track record (Signal Graph)
+
+- You pay only for a successful response: errors, and scans that lost their sources (confidence < 60,
+  returned as 503), settle nothing.
+- Paid responses are never served from a CDN cache (cache-control: private, no-store).
+- $GL1TCH holders: send x-gl1tch-key and these endpoints are free at your tier's rate.
+- Settled payments are recorded with their transaction (latest 50 listed) at https://gl1tchbased.xyz/revenue
+
+---
+
 ## Docs & discovery
 - Agent developer docs (curl / JS / Python): https://gl1tchbased.xyz/agents/docs
+- Pay-per-call (x402) docs: https://gl1tchbased.xyz/agents/docs#x402
+- Public revenue ledger (every paid call, with its transaction): https://gl1tchbased.xyz/revenue
 - Quantum Core (Vault, Draw, Seal, Forge, Randomness): https://gl1tchbased.xyz/quantum-core
 - Randomness console + docs: https://gl1tchbased.xyz/quantum-core/random
 - Directory of assessed agents: https://gl1tchbased.xyz/agents/directory

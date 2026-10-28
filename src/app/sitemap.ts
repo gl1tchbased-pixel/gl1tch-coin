@@ -26,6 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/quantum-core/random",
     "/quantum-core/beacon",
     "/buyback",
+    "/revenue",
     "/radar",
     "/verify-scan",
     "/embed",
