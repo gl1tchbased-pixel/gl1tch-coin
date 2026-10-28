@@ -16,6 +16,7 @@ import {
   checkSigner,
   checkWallet,
   DEGRADED_PER_RUN,
+  linkReportMessage,
   PINNED_ATTESTER,
   parseSecretKey,
   policyFromEnv,
@@ -81,6 +82,14 @@ describe("spend checks", () => {
   it("enforces the daily cap", () => {
     expect(checkDaily(99, DEFAULT_POLICY)).toBeNull();
     expect(checkDaily(100, DEFAULT_POLICY)).toMatch(/daily cap/);
+  });
+});
+
+describe("link report message", () => {
+  it("is a domain-separated text no Solana transaction message can equal", () => {
+    const m = linkReportMessage("ab".repeat(32), "SIG");
+    expect(m).toBe(`gl1tch:attest-link:v1:${"ab".repeat(32)}:SIG`);
+    expect(m).not.toMatch(/moves no funds/); // it isn't a wallet prompt: the attester signs it, nobody else sees it
   });
 });
 

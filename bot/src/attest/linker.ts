@@ -1,7 +1,9 @@
 import { Connection, PublicKey } from "@solana/web3.js";
+import nacl from "tweetnacl";
+import bs58 from "bs58";
 import type { AttestStore } from "./store.js";
 import { recentMemoHints, verifyAnchorOrReject } from "./chain.js";
-import { PINNED_ATTESTER, type Cluster } from "./guard.js";
+import { PINNED_ATTESTER, linkReportMessage, type Cluster } from "./guard.js";
 
 /** How far back sealed sweeps are looked for: the runner seals sweeps up to 7 days old. */
 const LINK_WINDOW_MS = 7 * 86_400_000;
@@ -81,13 +83,25 @@ export async function linkOnce(
   return linked;
 }
 
-export type ReportResult = "queued" | "invalid" | "not_pending" | "rejected" | "not_found";
+export type ReportResult = "queued" | "invalid" | "unauthorized" | "not_pending" | "rejected" | "not_found";
+
+/** Whether `proof` is the attester's signature over the report (local check, no RPC). */
+function signedByAttester(root: string, sig: string, proof: string, attester: PublicKey): boolean {
+  let bytes: Uint8Array;
+  try {
+    bytes = bs58.decode(proof);
+  } catch {
+    return false;
+  }
+  return bytes.length === 64 && nacl.sign.detached.verify(Buffer.from(linkReportMessage(root, sig), "utf8"), bytes, attester.toBytes());
+}
 
 /**
- * Links anchors the runner reports right after sending them ({root, sig}), so a flood of copied memos in the
- * history can't hold a sweep unlinked. A report is trusted for nothing: the transaction is fetched and must be an
- * attester-signed memo of that root (only the attester's key can make one), and it is linked only once finalized.
- * Anything else is refused, and a transaction shown not to be ours is never fetched again.
+ * Links anchors the runner reports right after sending them ({root, sig, proof}), so a flood of copied memos in
+ * the history can't hold a sweep unlinked. The proof is the attester's signature over the report, checked locally,
+ * so forged reports cost no RPC call. The report is then trusted for nothing: the transaction is fetched and must
+ * be an attester-signed memo of that root, and it is linked only once finalized. A transaction shown not to be
+ * ours is never fetched again.
  */
 export class Linker {
   private readonly queue = new Map<string, { sig: string; tries: number }>();
@@ -99,9 +113,11 @@ export class Linker {
   ) {}
 
   async report(body: unknown): Promise<ReportResult> {
-    const b = (body ?? {}) as { root?: unknown; sig?: unknown };
+    const b = (body ?? {}) as { root?: unknown; sig?: unknown; proof?: unknown };
     if (typeof b.root !== "string" || !ROOT_RE.test(b.root) || typeof b.sig !== "string" || !SIG_RE.test(b.sig)) return "invalid";
+    if (typeof b.proof !== "string" || b.proof.length > 120) return "invalid";
     const { root, sig } = b;
+    if (!signedByAttester(root, sig, b.proof, this.attester)) return "unauthorized";
     if (!this.store.isPending(root)) return "not_pending";
     if (this.rejected.has(sig)) return "rejected";
     let r: Awaited<ReturnType<typeof verifyAnchorOrReject>>;

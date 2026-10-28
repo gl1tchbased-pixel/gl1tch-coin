@@ -120,6 +120,13 @@ export function checkSimulation(
  *  setting. To rotate, change it here and in src/lib/official.ts (a test keeps the two equal). */
 export const PINNED_ATTESTER = "BSq18aJBhxYJgeEbcA3jGQNU1vmwZdo2PQkkpVsK7W6o";
 
+/** What the attester signs to report an anchor to the bot (POST /attest/link). Only its key can make the proof,
+ *  so the bot refuses forged reports without spending an RPC call. Plain text with a GL1TCH prefix: it can't
+ *  double as a Solana transaction message, and nobody but the attester ever signs it. */
+export function linkReportMessage(root: string, sig: string): string {
+  return `gl1tch:attest-link:v1:${root}:${sig}`;
+}
+
 /** Signer identity: the secret's key must be the one named in ATTESTER_PUBKEY and, on mainnet, the pinned one. */
 export function checkSigner(cluster: Cluster, signer: string, envPubkey: string | undefined): string | null {
   if (signer !== envPubkey?.trim()) return "ATTESTER_PUBKEY is missing or doesn't match the secret key";

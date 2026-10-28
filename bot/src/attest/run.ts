@@ -1,7 +1,9 @@
 import fs from "node:fs";
 import { pathToFileURL } from "node:url";
 import { Connection, Keypair } from "@solana/web3.js";
-import { CircuitBreaker, checkCluster, checkDaily, checkSigner, checkWallet, parseSecretKey, policyFromEnv, runBudget, walletWarnings } from "./guard.js";
+import nacl from "tweetnacl";
+import bs58 from "bs58";
+import { CircuitBreaker, checkCluster, checkDaily, checkSigner, checkWallet, linkReportMessage, parseSecretKey, policyFromEnv, runBudget, walletWarnings } from "./guard.js";
 import { validateBatch } from "./records.js";
 import { VerifyBudget, countSentSince, coversSince, isSealedOnChain, recentMemoHints, verifyAnchor } from "./chain.js";
 import { anchorBatch, type Audit } from "./sender.js";
@@ -32,7 +34,8 @@ const VERIFY_BUDGET = 120;
 
 /**
  * Tells the bot which transaction sealed a sweep, so a flood of copied memos in the attester's history can't keep
- * it unlinked. The bot verifies the transaction on-chain before linking; this only saves it the search. Retries
+ * it unlinked. The report is signed with the attester key (linkReportMessage), so the bot drops forgeries for
+ * free; it still verifies the transaction on-chain before linking, and this only saves it the search. Retries
  * while the bot's RPC hasn't seen the transaction yet. Never throws: if the bot can't be reached, its history
  * scan still links the sweep later.
  */
@@ -40,9 +43,11 @@ export async function reportAnchor(
   source: string,
   root: string,
   sig: string,
+  secretKey: Uint8Array,
   opts: { fetchFn?: typeof fetch; attempts?: number; delayMs?: number } = {}
 ): Promise<string> {
   const fetchFn = opts.fetchFn ?? fetch;
+  const proof = bs58.encode(nacl.sign.detached(Buffer.from(linkReportMessage(root, sig), "utf8"), secretKey));
   const attempts = opts.attempts ?? 3;
   let last = "unreachable";
   for (let i = 0; i < attempts; i++) {
@@ -51,7 +56,7 @@ export async function reportAnchor(
       const res = await fetchFn(`${source}/attest/link`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ root, sig }),
+        body: JSON.stringify({ root, sig, proof }),
         signal: AbortSignal.timeout(10_000),
       });
       const d = (await res.json().catch(() => ({}))) as { result?: unknown };
@@ -176,7 +181,7 @@ export async function runOnce(env: Record<string, string | undefined> = process.
       const r = await anchorBatch(conn, signer, { root, count: v.records.length, sweepMs: v.sweepMs, records: v.records }, policy, breaker, audit);
       if (r.ok) {
         budget--;
-        const reported = await reportAnchor(source, root, r.sig);
+        const reported = await reportAnchor(source, root, r.sig, signer.secretKey);
         audit({ step: "report", ok: reported === "queued", root, sig: r.sig, detail: reported });
       }
     }

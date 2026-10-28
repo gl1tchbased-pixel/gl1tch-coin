@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
+import nacl from "tweetnacl";
+import bs58 from "bs58";
 import { Keypair, PublicKey, TransactionInstruction, TransactionMessage, type Connection } from "@solana/web3.js";
 import { Linker, RejectedSigs, linkOnce, linkerAttester } from "./linker.js";
-import { MEMO_PROGRAM_ID, PINNED_ATTESTER } from "./guard.js";
+import { MEMO_PROGRAM_ID, PINNED_ATTESTER, linkReportMessage } from "./guard.js";
 import { memoText } from "./merkle.js";
 import type { AttestStore } from "./store.js";
 
@@ -11,6 +13,13 @@ const ROOT = "cd".repeat(32);
 const MEMO = memoText(ROOT, 3, 1_790_000_000_000);
 const NOW_SEC = 1_800_000_000;
 const SIG = (i: number) => `${i}`.replace(/0/g, "z").padStart(64, "A"); // unique, base58-safe, 64 chars
+
+/** A report signed by `by` (the attester unless a test says otherwise). */
+const report = (root: string, sig: string, by: Keypair = attester) => ({
+  root,
+  sig,
+  proof: bs58.encode(nacl.sign.detached(Buffer.from(linkReportMessage(root, sig), "utf8"), by.secretKey)),
+});
 
 const memoMessage = (payer: PublicKey) =>
   new TransactionMessage({
@@ -64,7 +73,7 @@ describe("Linker.report — the runner says which transaction it sent", () => {
     const r = rpc(200, { realAt: 150 });
     const { store, marked } = pendingStore();
     const linker = new Linker(r.conn, attester.publicKey, store);
-    expect(await linker.report({ root: ROOT, sig: SIG(150) })).toBe("queued");
+    expect(await linker.report(report(ROOT, SIG(150)))).toBe("queued");
     expect(await linker.tick({ now: NOW_SEC * 1000, budget: 0 })).toBe(1); // history fallback off: the report alone links
     expect(marked).toEqual([ROOT]);
     expect(r.txCalls()).toBe(2); // one check on report (confirmed), one on link (finalized)
@@ -73,23 +82,24 @@ describe("Linker.report — the runner says which transaction it sent", () => {
   it("rejects a reported transaction the attester didn't sign, and never fetches it again", async () => {
     const r = rpc(10, { realAt: 9 });
     const linker = new Linker(r.conn, attester.publicKey, pendingStore().store);
-    expect(await linker.report({ root: ROOT, sig: SIG(3) })).toBe("rejected");
-    expect(await linker.report({ root: ROOT, sig: SIG(3) })).toBe("rejected");
+    expect(await linker.report(report(ROOT, SIG(3)))).toBe("rejected");
+    expect(await linker.report(report(ROOT, SIG(3)))).toBe("rejected");
     expect(r.txCalls()).toBe(1);
   });
 
   it("ignores a report for a root that isn't pending, without fetching anything", async () => {
     const r = rpc(10, { realAt: 1 });
     const linker = new Linker(r.conn, attester.publicKey, pendingStore(false).store);
-    expect(await linker.report({ root: ROOT, sig: SIG(1) })).toBe("not_pending");
+    expect(await linker.report(report(ROOT, SIG(1)))).toBe("not_pending");
     expect(r.txCalls()).toBe(0);
   });
 
   it("refuses malformed reports", async () => {
     const r = rpc(1);
     const linker = new Linker(r.conn, attester.publicKey, pendingStore().store);
-    expect(await linker.report({ root: "nope", sig: SIG(0) })).toBe("invalid");
-    expect(await linker.report({ root: ROOT, sig: "0OIl" })).toBe("invalid");
+    expect(await linker.report({ ...report(ROOT, SIG(0)), root: "nope" })).toBe("invalid");
+    expect(await linker.report({ ...report(ROOT, SIG(0)), sig: "0OIl" })).toBe("invalid");
+    expect(await linker.report({ root: ROOT, sig: SIG(0) })).toBe("invalid"); // no proof
     expect(await linker.report(null)).toBe("invalid");
     expect(r.txCalls()).toBe(0);
   });
@@ -97,9 +107,19 @@ describe("Linker.report — the runner says which transaction it sent", () => {
   it("says not_found for a transaction it can't fetch yet, without remembering it as rejected", async () => {
     const r = rpc(5, { realAt: 2, missing: [2] });
     const linker = new Linker(r.conn, attester.publicKey, pendingStore().store);
-    expect(await linker.report({ root: ROOT, sig: SIG(2) })).toBe("not_found");
-    expect(await linker.report({ root: ROOT, sig: SIG(2) })).toBe("not_found");
+    expect(await linker.report(report(ROOT, SIG(2)))).toBe("not_found");
+    expect(await linker.report(report(ROOT, SIG(2)))).toBe("not_found");
     expect(r.txCalls()).toBe(2);
+  });
+});
+
+describe("Linker.report — only the attester can report", () => {
+  it("refuses a report not signed by the attester before spending any RPC call on it", async () => {
+    const r = rpc(10, { realAt: 1 });
+    const linker = new Linker(r.conn, attester.publicKey, pendingStore().store);
+    expect(await linker.report(report(ROOT, SIG(1), stranger))).toBe("unauthorized");
+    expect(await linker.report({ ...report(ROOT, SIG(1)), sig: SIG(2) })).toBe("unauthorized"); // proof for another sig
+    expect(r.txCalls()).toBe(0);
   });
 });
 

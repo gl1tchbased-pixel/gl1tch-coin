@@ -66,7 +66,7 @@ transaction, and never moves anyone's funds. Every control below refuses on its 
 | Allowlist on the compiled message: one Memo instruction, attester-paid, no other accounts | anything but a memo being signed |
 | Fee cap, then simulation of the exact signed bytes with a balance-change cap | an unexpected spend |
 | Caps: 6 per run, 100 per rolling 24 h (two per run when the last 24 h can't be read or counted) | a runaway loop |
-| The runner reports each anchor to the bot (POST /attest/link); the bot verifies it on-chain and links it once finalized | copied memos holding a sweep unlinked |
+| The runner reports each anchor to the bot (POST /attest/link), signed with the attester key; the bot checks the signature locally, verifies the transaction on-chain and links it once finalized | copied memos holding a sweep unlinked |
 | Circuit breaker: 3 consecutive failures halt the run (the job fails, so it's noticed) | repeated faults |
 | Idempotent: skips a sweep already sealed on-chain (checks up to 3 copies of its memo; past that it seals again rather than skip) | double sealing, without letting copies block a sweep |
 | Every decision is audit-logged (the job log); the key is never logged | silent failures |
