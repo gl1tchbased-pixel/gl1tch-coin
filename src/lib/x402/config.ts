@@ -18,24 +18,24 @@ export type PaidRouteId = "scan" | "agent" | "deployer";
 export const PAID_ROUTES: Record<PaidRouteId, { path: string; price: string; priceMicro: number; description: string }> = {
   scan: {
     path: "/api/x402/scan",
-    price: "$0.01",
-    priceMicro: 10_000,
+    price: "$0.005",
+    priceMicro: 5_000,
     description:
-      "Token rug-risk scan (Solana native + EVM): verdict, 0-100 score, named risks, deployer track record, market integrity. Not charged on failure.",
+      "Pre-trade token safety check for Solana and EVM (Ethereum, Base, BSC, Arbitrum, Polygon): rug-pull and honeypot risk verdict with a 0-100 score, mint/freeze authority, LP lock, buy/sell tax, holder concentration, deployer history, bot-volume and linked-wallet flags. One call; not charged on failure.",
   },
   agent: {
     path: "/api/x402/agent",
     price: "$0.01",
     priceMicro: 10_000,
     description:
-      "Know Your Agent: trust score and level for an AI-agent wallet before you let it transact (identity + on-chain track record).",
+      "Know Your Agent: trust score and level for an AI-agent wallet (or any wallet) before you transact with it: signature-verified identity plus its on-chain track record in GL1TCH scans. Not charged on failure.",
   },
   deployer: {
     path: "/api/x402/deployer",
-    price: "$0.005",
-    priceMicro: 5_000,
+    price: "$0.003",
+    priceMicro: 3_000,
     description:
-      "Deployer reputation from the GL1TCH Signal Graph: how many tokens this wallet launched and how many scanned as high risk or rug-shaped.",
+      "Token deployer reputation (serial rugger check) from the GL1TCH Signal Graph: how many tokens this wallet launched and how many scanned as high risk or rug-shaped. Not charged on failure.",
   },
 };
 

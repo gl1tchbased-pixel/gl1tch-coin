@@ -48,3 +48,8 @@ the moment a clean patched version exists.
     revenue if volume grows.
   - **Hot receiving wallet.** USDC lands in a Phantom account. Response: sweep to the founder's main wallet
     periodically; the receiving account holds nothing else.
+- 2026-10-28 — Second facilitator: when `CDP_API_KEY_ID` + `CDP_API_KEY_SECRET` are set, Coinbase CDP verifies and
+  settles first (settling through it lists the endpoints in the Coinbase Bazaar) and PayAI is the fallback; x402 picks
+  the first facilitator that supports a payment kind at startup. Malformed keys fall back to PayAI (live-tested).
+  Keys that are valid but lack permissions could be picked and then fail at verify (no charge, no revenue): after
+  setting them, make one test payment and check `/revenue`.
