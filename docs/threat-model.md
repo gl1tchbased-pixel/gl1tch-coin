@@ -55,9 +55,9 @@ The one place we sign a transaction. It signs **our own** SPL Memo transactions,
 Agents pay per call in USDC. We hold no key: `payTo` is a founder-owned receive address, and the facilitator (PayAI) broadcasts the payer's own signed transfer. Invariant 4 holds: the paid routes return the same scoring as the free ones; payment buys access, not a different verdict. Rules:
 - Settlement only for a handler response under 400 (`withX402`). Rate limit (429) and an unconfigured route (503) are answered before any payment is requested. Bad input is answered by the handler (400), after the challenge, because discovery probes call without parameters; a 400 is never settled. A scan with confidence < 60 becomes a 503, so a degraded read is never charged.
 - Paid responses are `cache-control: private, no-store`, so a CDN can't hand a paid body to an unpaid caller.
-- `payTo` is validated at startup; the attester wallet is refused (a USDC token account would stop the attest runner).
+- `payTo` is checked on every request and fails closed: if any set address is invalid, or is the attester (a USDC token account would stop the attest runner), every paid route answers 503 and the error is logged, so a typo can't quietly drop a network.
 - The revenue ledger is written by the site with the shared stats token. A leaked token could add fake rows; every row links to its on-chain transaction, so a fake one is checkable, and the fix is rotating the token. A faulty facilitator could likewise report a settlement that didn't happen; the same tx link exposes it.
-- Our own test payments (`X402_SELF_PAYERS`) are recorded as self-tests and never counted as revenue.
+- Our own test payments are recorded as self-tests and never counted as revenue: the test client sends `x-gl1tch-self-test: 1`, and payers listed in `X402_SELF_PAYERS` count as self-tests too. Anyone can send that header, but all it does is keep their own payment out of the total.
 
 ## Reviewed
 - 2026-07-05 — initial model (Phase -1 kickoff). Next review before Phase 2 (wallet-connect).

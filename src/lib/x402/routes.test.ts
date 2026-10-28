@@ -25,6 +25,20 @@ describe("paid routes without a receiving wallet", () => {
   });
 });
 
+describe("a mistyped or refused receiving wallet", () => {
+  it("fails closed with 503 and names the variable, instead of silently dropping that network", async () => {
+    vi.stubEnv("X402_PAY_TO_SOLANA", "BSq18aJBhxYJgeEbcA3jGQNU1vmwZdo2PQkkpVsK7W6o"); // the attester: refused
+    vi.stubEnv("X402_PAY_TO_BASE", "0x" + "ab".repeat(20)); // valid
+    const err = vi.spyOn(console, "error").mockImplementation(() => {});
+    const { GET } = await import("../../app/api/x402/scan/route");
+    const res: Response = await GET(req(`/api/x402/scan?mint=${BONK}`));
+    expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ error: "paid API misconfigured" });
+    expect(err).toHaveBeenCalledWith(expect.stringContaining("X402_PAY_TO_SOLANA"));
+    err.mockRestore();
+  });
+});
+
 describe("paid handlers validate their own input (after the challenge; a 400 is never settled)", () => {
   it("scan needs a valid mint", async () => {
     const { scanHandler } = await import("./handlers");

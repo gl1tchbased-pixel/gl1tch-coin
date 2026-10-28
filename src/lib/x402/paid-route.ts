@@ -29,6 +29,8 @@ const FREE_ALTERNATIVE: Record<PaidRouteId, string> = {
 
 type Handler = (req: NextRequest) => Promise<NextResponse>;
 
+let warnedMisconfig = false;
+
 function noStore(handler: Handler): Handler {
   return async (req) => {
     const res = await handler(req);
@@ -42,7 +44,16 @@ export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest)
   let paid: Handler | null = null;
 
   return async function GET(req: NextRequest): Promise<Response> {
-    const accepts = buildAccepts(route.price, readPayTo(process.env));
+    const payTo = readPayTo(process.env);
+    if (payTo.rejected.length > 0) {
+      // Fail closed: a mistyped wallet must not quietly drop a network (or route money elsewhere).
+      if (!warnedMisconfig) {
+        warnedMisconfig = true;
+        console.error(`[x402] paid API disabled: ${payTo.rejected.join(", ")} is not a valid receiving address (or is the attester)`);
+      }
+      return NextResponse.json({ error: "paid API misconfigured" }, { status: 503, headers: { "cache-control": NO_STORE } });
+    }
+    const accepts = buildAccepts(route.price, payTo);
 
     sweepBuckets();
     const key = req.headers.get("x-gl1tch-key") ?? "";
@@ -68,8 +79,10 @@ export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest)
         paid ??= withX402(
           noStore(handler),
           {
-            // Keyed by path so catalogs list the bare endpoint, not one caller's query string.
+            // The key only matches the request; `resource` is what catalogs list. Without it the
+            // first caller's query string would be advertised as the endpoint.
             [route.path]: {
+              resource: `${OFFICIAL.SITE_URL}${route.path}`,
               accepts,
               description: route.description,
               mimeType: "application/json",

@@ -67,6 +67,11 @@ describe.skipIf(!process.env.X402_LIVE)("live x402 challenge (PayAI)", () => {
     expect(again.res.headers.get("cache-control") ?? "").not.toMatch(/public|s-maxage/);
   }, 30_000);
 
+  it("advertises the bare endpoint as the resource, never one caller's query string", async () => {
+    const { body } = await challenge(`/api/x402/scan?mint=DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263&chain=solana`);
+    expect(body.resource.url).toBe("https://gl1tchbased.xyz/api/x402/scan");
+  }, 30_000);
+
   it("prices the deployer lookup at half a cent", async () => {
     const { body } = await challenge("/api/x402/deployer");
     expect(body.accepts[0].amount).toBe("5000");
