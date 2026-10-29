@@ -54,9 +54,22 @@ describe("PAID_ROUTES", () => {
   });
 
   it("describes each route with the words agents search catalogs for (case-insensitive, like catalog search)", () => {
-    for (const w of ["rug", "honeypot", "pre-trade", "Solana", "Base", "LP", "tax"]) expect(PAID_ROUTES.scan.description.toLowerCase()).toContain(w.toLowerCase());
+    for (const w of ["token safety", "rug check", "honeypot", "Solana", "Base", "LP", "tax"]) expect(PAID_ROUTES.scan.description.toLowerCase()).toContain(w.toLowerCase());
     for (const w of ["Know Your Agent", "trust"]) expect(PAID_ROUTES.agent.description.toLowerCase()).toContain(w.toLowerCase());
     for (const w of ["deployer", "rug"]) expect(PAID_ROUTES.deployer.description.toLowerCase()).toContain(w.toLowerCase());
+    for (const w of ["new", "launches", "memecoin"]) expect(PAID_ROUTES.radar.description.toLowerCase()).toContain(w);
+  });
+
+  it("says when to use each route, in at most 500 characters (the Bazaar's limit; longer silently fails to list)", () => {
+    for (const r of Object.values(PAID_ROUTES)) {
+      expect(r.description.length).toBeLessThanOrEqual(500);
+      expect(r.description).toMatch(/Use it (before|when|to|for) /);
+    }
+  });
+
+  it("puts the most searched tags in the first five (the Bazaar keeps five)", () => {
+    expect(PAID_ROUTES.scan.tags.slice(0, 5)).toEqual(expect.arrayContaining(["token-safety", "rug-check", "honeypot", "solana"]));
+    expect(PAID_ROUTES.radar.tags.slice(0, 5)).toEqual(expect.arrayContaining(["new-launches", "memecoin", "solana"]));
   });
 });
 

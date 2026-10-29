@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { RevenueStore, parseRevenueEntry, type RevenueEntry } from "./revenue.js";
+import { RevenueStore, parseRevenueEntry, parseQuote, type RevenueEntry } from "./revenue.js";
 
 const TX_A = "5".repeat(88);
 const TX_B = "4".repeat(87);
@@ -119,5 +119,44 @@ describe("parseRevenueEntry", () => {
   it("rejects non-objects", () => {
     expect(parseRevenueEntry(null)).toBeNull();
     expect(parseRevenueEntry("x")).toBeNull();
+  });
+});
+
+describe("quotes (unpaid 402 answers)", () => {
+  const NOW = Date.UTC(2026, 9, 29, 12);
+
+  it("parses a report into a route and a short printable user agent", () => {
+    expect(parseQuote({ route: "scan", ua: "x402-client/1.0" })).toEqual({ route: "scan", ua: "x402-client/1.0" });
+    expect(parseQuote({ route: "radar" })).toEqual({ route: "radar", ua: "(none)" });
+    expect(parseQuote({ route: "scan", ua: `a\u0000b\n${"c".repeat(200)}` })?.ua).toBe(`ab${"c".repeat(78)}`);
+    expect(parseQuote({ route: "nope", ua: "x" })).toBeNull();
+    expect(parseQuote(null)).toBeNull();
+  });
+
+  it("counts quotes by route and day, keeps them out of revenue, and lists the busiest user agents", () => {
+    store.quote({ route: "scan", ua: "crawler" }, NOW);
+    store.quote({ route: "scan", ua: "crawler" }, NOW);
+    store.quote({ route: "radar", ua: "agent" }, NOW);
+    const s = store.summary(NOW);
+    expect(s.paid.count).toBe(0);
+    expect(s.quotes.last30).toEqual({ total: 3, byRoute: { scan: 2, radar: 1 } });
+    expect(s.quotes.daily).toEqual({ "2026-10-29": 3 });
+    expect(s.quotes.userAgents7d).toEqual([{ ua: "crawler", count: 2 }, { ua: "agent", count: 1 }]);
+  });
+
+  it("drops days older than 30 and caps the distinct user agents per day", () => {
+    store.quote({ route: "scan", ua: "old" }, NOW - 40 * 86_400_000);
+    for (let i = 0; i < 45; i++) store.quote({ route: "scan", ua: `ua-${i}` }, NOW);
+    const s = store.summary(NOW);
+    expect(s.quotes.last30.total).toBe(45);
+    expect(s.quotes.userAgents7d[0]).toEqual({ ua: "(other)", count: 5 });
+  });
+
+  it("keeps quotes across a restart once written", () => {
+    store.quote({ route: "deployer", ua: "agent" }, NOW);
+    store.flush();
+    const again = new RevenueStore(file);
+    again.load();
+    expect(again.summary(NOW).quotes.last30.byRoute).toEqual({ deployer: 1 });
   });
 });

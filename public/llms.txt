@@ -110,6 +110,7 @@ GET /api/x402/random?min=1&max=100&count=1&salt=<s>  $0.003  verifiable random i
 - Paid responses are never served from a CDN cache (cache-control: private, no-store).
 - $GL1TCH holders: send x-gl1tch-key and these endpoints are free at your tier's rate.
 - Settled payments are recorded with their transaction (latest 50 listed) at https://gl1tchbased.xyz/revenue
+  (as JSON, with unpaid 402 quote counts: https://gl1tchbased.xyz/revenue.json)
 
 ---
 
@@ -127,7 +128,7 @@ Client config: { "gl1tch": { "url": "https://gl1tchbased.xyz/api/mcp" } }  (stdi
 ## Docs & discovery
 - Agent developer docs (curl / JS / Python): https://gl1tchbased.xyz/agents/docs
 - Pay-per-call (x402) docs: https://gl1tchbased.xyz/agents/docs#x402
-- Public revenue ledger (every paid call, with its transaction): https://gl1tchbased.xyz/revenue
+- Public revenue ledger (paid calls with their transactions, latest 50): https://gl1tchbased.xyz/revenue (JSON: /revenue.json)
 - Quantum Core (Vault, Draw, Seal, Forge, Randomness): https://gl1tchbased.xyz/quantum-core
 - Randomness console + docs: https://gl1tchbased.xyz/quantum-core/random
 - Directory of assessed agents: https://gl1tchbased.xyz/agents/directory

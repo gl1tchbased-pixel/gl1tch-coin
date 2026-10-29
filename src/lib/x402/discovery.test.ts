@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { buildOpenApi, wellKnownX402, bazaarDiscovery } from "./discovery";
 import { PAID_ROUTES, type PaidRouteId } from "./config";
+import { declareDiscoveryExtension, validateDiscoveryExtension } from "@x402/extensions/bazaar";
 
 const ORIGIN = "https://gl1tchbased.xyz";
 const IDS = Object.keys(PAID_ROUTES) as PaidRouteId[];
@@ -55,6 +56,32 @@ describe("output examples match the real response shapes (agents build parsers f
   it("a scan check carries ScanCheck's fields: key, label, status, value, explain", () => {
     const example = bazaarDiscovery("scan").output.example as { checks: Array<Record<string, unknown>> };
     expect(Object.keys(example.checks[0]).sort()).toEqual(["explain", "key", "label", "status", "value"]);
+  });
+});
+
+describe("output schemas (the Bazaar ranks on their completeness; agents parse with them)", () => {
+  it("every route's catalog example validates against its own output schema", () => {
+    for (const id of IDS) {
+      const { bazaar } = declareDiscoveryExtension(bazaarDiscovery(id));
+      // The method is filled in per request by the resource-server extension; the schema requires it.
+      const ext = { ...bazaar, info: { ...bazaar.info, input: { ...bazaar.info.input, method: "GET" } } };
+      expect(validateDiscoveryExtension(ext as typeof bazaar), id).toEqual({ valid: true });
+    }
+  });
+
+  it("the schema names every top-level field of the example", () => {
+    for (const id of IDS) {
+      const { example, schema } = bazaarDiscovery(id).output;
+      const props = Object.keys((schema as { properties: Record<string, unknown> }).properties);
+      for (const key of Object.keys(example as object)) expect(props, `${id}.${key}`).toContain(key);
+    }
+  });
+
+  it("the OpenAPI 200 response carries the same schema", () => {
+    const doc = buildOpenApi(ORIGIN) as { paths: Record<string, { get: { responses: { "200": { content: { "application/json": { schema: unknown } } } } } }> };
+    for (const id of IDS) {
+      expect(doc.paths[PAID_ROUTES[id].path].get.responses["200"].content["application/json"].schema).toEqual(bazaarDiscovery(id).output.schema);
+    }
   });
 });
 

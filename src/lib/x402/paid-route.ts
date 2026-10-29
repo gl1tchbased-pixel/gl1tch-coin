@@ -15,6 +15,8 @@ import { getX402Server } from "./server";
 import { checkApiKey } from "@/lib/apikey";
 import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 import { OFFICIAL } from "@/lib/official";
+import { recordQuote } from "@/lib/revenue";
+import { SELF_TEST_HEADER } from "./settle";
 
 /** Per-IP requests per minute on paid routes; guards the upstream sources, not revenue. */
 const PAID_RATE_PER_MIN = 120;
@@ -110,7 +112,10 @@ export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest)
           },
           getX402Server()
         );
-        return paid(req);
+        const res = await paid(req);
+        // A 402 is a price quote: counted so the ledger shows found-versus-bought (our own test client excluded).
+        if (res.status === 402 && req.headers.get(SELF_TEST_HEADER) !== "1") recordQuote(id, req.headers.get("user-agent"));
+        return res;
     }
   };
 }

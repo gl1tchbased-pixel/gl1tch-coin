@@ -27,6 +27,8 @@ export interface VerifyServerOptions {
   revenue?: {
     token: string;
     record: (body: unknown) => "added" | "duplicate" | "invalid";
+    /** Count an unpaid 402 answer; false for a malformed report. */
+    quote?: (body: unknown) => boolean;
     summary: () => unknown;
   };
   /** Signal Graph endpoints: public GET /signal/deployer (deployer track record),
@@ -197,6 +199,30 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
         }
         res.writeHead(200, { "Content-Type": "application/json", ...cors });
         res.end(JSON.stringify({ ok: true, result }));
+      });
+      return;
+    }
+    if (opts.revenue?.quote && sPath === "/revenue/quote" && req.method === "POST") {
+      const hdr = req.headers["x-stats-token"];
+      const token = (Array.isArray(hdr) ? hdr[0] : hdr) ?? "";
+      if (!safeEqual(token, opts.revenue.token)) {
+        res.writeHead(401, { "Content-Type": "application/json", ...cors });
+        res.end(JSON.stringify({ ok: false, error: "unauthorized" }));
+        return;
+      }
+      let qRaw = "";
+      let qTooLarge = false;
+      req.on("data", (chunk) => { qRaw += chunk; if (qRaw.length > 1024) { qTooLarge = true; req.destroy(); } });
+      req.on("end", () => {
+        if (qTooLarge) return;
+        let ok = false;
+        try {
+          ok = opts.revenue!.quote!(JSON.parse(qRaw));
+        } catch {
+          // bad JSON falls through as invalid
+        }
+        res.writeHead(ok ? 200 : 400, { "Content-Type": "application/json", ...cors });
+        res.end(JSON.stringify(ok ? { ok: true } : { ok: false, error: "invalid_quote" }));
       });
       return;
     }

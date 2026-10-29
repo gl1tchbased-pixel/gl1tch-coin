@@ -22,48 +22,48 @@ export const PAID_ROUTES: Record<PaidRouteId, { path: string; price: string; pri
     price: "$0.005",
     priceMicro: 5_000,
     description:
-      "Pre-trade token safety check for Solana and EVM (Ethereum, Base, BSC, Arbitrum, Polygon): rug-pull and honeypot risk verdict with a 0-100 score, mint/freeze authority, LP lock, buy/sell tax, holder concentration, deployer history, bot-volume and linked-wallet flags. One call; not charged on failure.",
-    tags: ["crypto", "security", "token-safety", "rug-check", "honeypot", "pre-trade", "solana", "base", "agents"],
+      "Token safety and rug check for one Solana or EVM token. Returns a verdict from CLEAN to RUG-SHAPED, a 0-100 safety score, a one-line summary and every check behind it: mint and freeze authority, LP lock, buy and sell tax (honeypot), holder concentration, deployer history, bot volume and linked wallets. Use it before an agent buys, swaps into, lists or recommends an unfamiliar token. Chains: Solana, Ethereum, Base, BSC, Arbitrum, Polygon. Not charged on failure.",
+    tags: ["token-safety", "rug-check", "honeypot", "solana", "crypto", "base", "security", "agents"],
   },
   agent: {
     path: "/api/x402/agent",
     price: "$0.01",
     priceMicro: 10_000,
     description:
-      "Know Your Agent: trust score and level for an AI-agent wallet (or any wallet) before you transact with it: signature-verified identity plus its on-chain track record in GL1TCH scans. Not charged on failure.",
-    tags: ["know-your-agent", "agents", "wallet", "trust", "security", "solana", "base"],
+      "Know Your Agent trust check for an AI-agent wallet, or any wallet, on Solana or EVM chains. Returns a 0-100 trust score, a level (trusted, neutral, caution or unknown), the reasons, and whether the owner proved the wallet with a signature. Built from signature-verified registrations and the wallet's on-chain record in GL1TCH scans. Use it before an agent pays, trades with or accepts work from another agent. Not charged on failure.",
+    tags: ["know-your-agent", "agent-trust", "wallet", "security", "agents", "solana", "base"],
   },
   deployer: {
     path: "/api/x402/deployer",
     price: "$0.003",
     priceMicro: 3_000,
     description:
-      "Token deployer reputation (serial rugger check) from the GL1TCH Signal Graph: how many tokens this wallet launched and how many scanned as high risk or rug-shaped. Not charged on failure.",
-    tags: ["deployer", "rug-check", "token-safety", "crypto", "security", "solana", "base"],
+      "Token deployer reputation (serial rugger check) for a creator wallet: how many of its launches GL1TCH has scanned, how many scanned as high risk or rug-shaped, its worst score and its recent launches, from the GL1TCH Signal Graph. Use it to check who created a token before trusting a new launch. Not charged on failure.",
+    tags: ["deployer", "rug-check", "token-safety", "solana", "security", "crypto", "base"],
   },
   verdict: {
     path: "/api/x402/verdict",
     price: "$0.01",
     priceMicro: 10_000,
     description:
-      "Token verdict card for Solana and EVM tokens (Ethereum, Base, BSC, Arbitrum, Polygon): grade from CLEAN to RUG-SHAPED, 0-100 safety score, a one-line summary, the top three risk reasons and a shareable verdict card image. Built for agents that post token checks to chats and social feeds. Not charged on failure.",
-    tags: ["token-verdict", "rug-check", "token-safety", "crypto", "social", "solana", "base", "agents"],
+      "Token verdict card for one Solana or EVM token: a grade from CLEAN to RUG-SHAPED, a 0-100 safety score, a one-line summary, the top three risk reasons, and links to a shareable scan page and card image. Use it when an agent answers a token safety question in a chat, a Telegram group or a social feed and needs a short result it can post. Chains: Solana, Ethereum, Base, BSC, Arbitrum, Polygon. Not charged on failure.",
+    tags: ["token-verdict", "rug-check", "token-safety", "social", "solana", "crypto", "base", "agents"],
   },
   radar: {
     path: "/api/x402/radar",
     price: "$0.005",
     priceMicro: 5_000,
     description:
-      "Rug Radar feed: the latest sweep of freshly listed and promoted Solana tokens (new pump.fun mints, DexScreener profiles and boosts), each scanned for rug-pull and honeypot risk and ranked riskiest first, with verdict, 0-100 score and the main red flag. Refreshed about every 10 minutes. Not charged on failure.",
-    tags: ["new-launches", "memecoin", "rug-check", "solana", "feed", "token-safety", "crypto"],
+      "Rug Radar: new Solana token launches (fresh pump.fun mints, DexScreener profiles and boosts), each scanned for rug-pull and honeypot risk and ranked riskiest first, with a verdict, a 0-100 score and its main red flag. Refreshed about every 10 minutes. Use it to screen a feed of new memecoin launches before a trading or alert agent acts on them. Not charged on failure.",
+    tags: ["new-launches", "memecoin", "solana", "rug-check", "feed", "token-safety", "crypto"],
   },
   random: {
     path: "/api/x402/random",
     price: "$0.003",
     priceMicro: 3_000,
     description:
-      "Verifiable random integers in your range, seeded by a future drand quicknet round (League of Entropy threshold-BLS beacon) that neither the caller nor the server can know at request time. Returned with the round signature and the commitment, so anyone can recompute and check the result. For raffles, giveaways, allocation and games. Not charged on failure.",
-    tags: ["randomness", "verifiable", "drand", "provably-fair", "raffle", "games"],
+      "Verifiable random numbers: integers in your range from a future drand quicknet round (League of Entropy threshold-BLS beacon), so neither the caller nor the server can know them at request time. Each result carries the round signature and the commitment, so anyone can recompute and check it. Use it for raffles, giveaways, lotteries, fair allocation and games. Not charged on failure.",
+    tags: ["randomness", "verifiable-random", "drand", "raffle", "provably-fair", "games"],
   },
 };
 

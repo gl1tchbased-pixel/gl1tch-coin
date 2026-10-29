@@ -25,6 +25,35 @@ describe("recordRevenue", () => {
   });
 });
 
+describe("recordQuote", () => {
+  it("sends only the route and a truncated user agent, token-guarded, and never throws on failure", async () => {
+    vi.stubEnv("STATS_TOKEN", "t");
+    const fetchMock = vi.fn<(url: string, init: RequestInit) => Promise<Response>>(async () => {
+      throw new Error("down");
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    vi.resetModules();
+    const { recordQuote } = await import("./revenue");
+    recordQuote("radar", "a".repeat(300));
+    await new Promise((r) => setTimeout(r, 20));
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toMatch(/\/revenue\/quote$/);
+    expect((init.headers as Record<string, string>)["x-stats-token"]).toBe("t");
+    expect(JSON.parse(init.body as string)).toEqual({ route: "radar", ua: "a".repeat(120) });
+  });
+
+  it("does nothing without the stats token", async () => {
+    vi.stubEnv("STATS_TOKEN", "");
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    vi.resetModules();
+    const { recordQuote } = await import("./revenue");
+    recordQuote("scan", "x");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
 describe("public revenue copy", () => {
   it.each(["src/app/revenue/page.tsx", "public/llms.txt", "src/app/agents/docs/page.tsx"])(
     "%s doesn't promise every payment (the ledger lists what was reported, latest 50)",

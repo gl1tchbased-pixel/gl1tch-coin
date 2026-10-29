@@ -5,7 +5,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { createVerifyServer } from "./server.js";
-import { RevenueStore, parseRevenueEntry } from "../revenue.js";
+import { RevenueStore, parseRevenueEntry, parseQuote } from "../revenue.js";
 
 const TOKEN = "t".repeat(32);
 const ENTRY = { tx: "5".repeat(88), network: "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp", route: "scan", amountMicro: 10_000, self: false };
@@ -24,6 +24,11 @@ beforeAll(async () => {
       record: (body) => {
         const e = parseRevenueEntry(body);
         return e ? store.record(e) : "invalid";
+      },
+      quote: (body) => {
+        const q = parseQuote(body);
+        if (q) store.quote(q);
+        return !!q;
       },
       summary: () => store.summary(),
     },
@@ -60,5 +65,25 @@ describe("bridge /revenue", () => {
     expect(g.headers.get("cache-control")).toBe("public, max-age=15");
     const s = (await g.json()) as { paid: { count: number; usdMicro: number } };
     expect(s.paid).toEqual({ count: 1, usdMicro: 10_000 });
+  });
+});
+
+describe("bridge /revenue/quote", () => {
+  const quote = (body: unknown, token?: string) =>
+    fetch(`${base}/revenue/quote`, {
+      method: "POST",
+      headers: { "content-type": "application/json", ...(token ? { "x-stats-token": token } : {}) },
+      body: JSON.stringify(body),
+    });
+
+  it("refuses a quote without the token and rejects an unknown route", async () => {
+    expect((await quote({ route: "scan", ua: "x" })).status).toBe(401);
+    expect((await quote({ route: "nope", ua: "x" }, TOKEN)).status).toBe(400);
+  });
+
+  it("counts a quote and shows it in the public summary, apart from revenue", async () => {
+    expect(await (await quote({ route: "verdict", ua: "agent/1" }, TOKEN)).json()).toEqual({ ok: true });
+    const s = (await (await fetch(`${base}/revenue`)).json()) as { quotes: { last30: { byRoute: Record<string, number> } } };
+    expect(s.quotes.last30.byRoute.verdict).toBe(1);
   });
 });
