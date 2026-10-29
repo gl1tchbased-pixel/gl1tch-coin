@@ -3,8 +3,8 @@
  * APYs are fractions (0.0457 = 4.57%); unknown values are null, never 0.
  */
 
-export type YieldChain = "ethereum" | "base" | "arbitrum" | "bsc" | "robinhood" | "solana";
-export type YieldKind = "lending" | "liquid-staking" | "vault";
+export type YieldChain = "ethereum" | "base" | "arbitrum" | "bsc" | "robinhood" | "tron" | "solana";
+export type YieldKind = "lending" | "liquid-staking" | "vault" | "dex-lp";
 /** rate: the protocol's live on-chain rate · epoch: one Solana epoch of pool growth · growth: GL1TCH's own snapshots */
 export type ApyMethod = "rate" | "epoch" | "growth";
 export type PriceKey = "ETH" | "SOL" | "BTC" | "BNB" | "USDC";
@@ -18,6 +18,10 @@ export interface YieldOpportunity {
   asset: { symbol: string; address: string; decimals: number };
   receipt: { symbol: string; address: string } | null;
   stable: boolean;
+  /** Impermanent-loss exposure: none for single-asset products; DEX pools low (correlated pair) or high. */
+  ilRisk: "none" | "low" | "high";
+  /** Every token involved, for scanner links. */
+  tokens: { symbol: string; address: string }[];
   method: ApyMethod;
   apy: number | null;
   window: "live" | "epoch" | "24h" | "7d" | null;
@@ -46,4 +50,6 @@ export interface YieldPoint {
   apy: number | null;
   tvlUsd: number | null;
   rate: string | null;
+  /** DEX pools: cumulative fee counters at this time. */
+  aux?: string[];
 }

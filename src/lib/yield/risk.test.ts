@@ -11,6 +11,8 @@ const base: YieldOpportunity = {
   asset: { symbol: "USDC", address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", decimals: 6 },
   receipt: { symbol: "aToken", address: "0x98c23e9d8f34fefb1b7bd6a91b7ff122f4e16f5c" },
   stable: true,
+  ilRisk: "none",
+  tokens: [],
   method: "rate",
   apy: 0.0459,
   window: "live",
@@ -60,5 +62,15 @@ describe("riskOf", () => {
   it("caps the score at 100", () => {
     const r = riskOf({ ...base, chain: "robinhood", kind: "vault", apy: 9, tvlUsd: null, idleShare: null, stale: true, method: "growth", window: "24h" });
     expect(r.score).toBeLessThanOrEqual(100);
+  });
+});
+
+describe("riskOf — DEX pools", () => {
+  it("counts impermanent loss for an uncorrelated pair, less for a correlated one", () => {
+    const dex = { ...base, kind: "dex-lp" as const, ilRisk: "high" as const, idleShare: null, method: "growth" as const, window: "7d" as const, apy: 0.3 };
+    const high = riskOf(dex);
+    expect(high.reasons.some((r) => /impermanent loss/i.test(r.text))).toBe(true);
+    const low = riskOf({ ...dex, ilRisk: "low" });
+    expect(low.score).toBeLessThan(high.score);
   });
 });

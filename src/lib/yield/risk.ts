@@ -11,7 +11,8 @@ export const RISK_WEIGHTS = {
   exit: { idleUnder5: 20, idleUnder15: 8, liquidStaking: 5, vault: 10 },
   maturity: { measuring: 10, oneDay: 8, oneEpoch: 3 },
   outlier: { stableOver15: 25, otherOver20: 20 },
-  structure: { vault: 10, liquidStaking: 5, lending: 5 },
+  structure: { vault: 10, liquidStaking: 5, lending: 5, dex: 10 },
+  impermanentLoss: { high: 20, low: 5 },
   youngChain: 5,
   stale: 10,
 } as const;
@@ -59,6 +60,9 @@ export function riskOf(o: YieldOpportunity): Risk {
   if (o.kind === "vault") add(W.structure.vault, "A curator decides where the money goes; their choices are part of the risk.");
   if (o.kind === "liquid-staking") add(W.structure.liquidStaking, "Smart-contract risk, and the token can trade below its backing.");
   if (o.kind === "lending") add(W.structure.lending, "Smart-contract and bad-debt risk if borrowers' collateral crashes.");
+  if (o.kind === "dex-lp") add(W.structure.dex, "The fee APR is for a full-range position; a concentrated range earns more in range, nothing outside it.");
+  if (o.ilRisk === "high") add(W.impermanentLoss.high, "The two tokens' prices move independently: impermanent loss can exceed the fees.");
+  if (o.ilRisk === "low") add(W.impermanentLoss.low, "The two tokens track each other, so impermanent loss stays small unless one breaks its link.");
 
   if (o.chain === "robinhood") add(W.youngChain, "Young chain with a short track record.");
   if (o.stale) add(W.stale, "This row is from an earlier reading: the latest read failed.");

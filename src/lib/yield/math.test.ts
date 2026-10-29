@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { projectValue, scenario, impermanentLoss, lpVsHold, breakEvenDays, gasCostUsd, ENTRY_EXIT_GAS } from "./math";
+import { projectValue, scenario, impermanentLoss, lpVsHold, breakEvenDays, gasCostUsd, ilBreakEvenRatio, ENTRY_EXIT_GAS } from "./math";
 
 describe("yield calculators", () => {
   it("compounds a value over days", () => {
@@ -39,5 +39,19 @@ describe("yield calculators", () => {
     expect(ENTRY_EXIT_GAS).toBe(446_000);
     expect(gasCostUsd(0.48, 2354)).toBeCloseTo(0.504, 3);
     expect(gasCostUsd(20, 2354)).toBeCloseTo(21.0, 1);
+  });
+});
+
+describe("ilBreakEvenRatio", () => {
+  it("finds the price move where impermanent loss equals the fees", () => {
+    const r = ilBreakEvenRatio(0.0572)!;
+    expect(r.up).toBeCloseTo(2, 1);
+    expect(r.down).toBeCloseTo(0.5, 2);
+  });
+
+  it("has no answer at or above 100%, or at zero", () => {
+    expect(ilBreakEvenRatio(1)).toBeNull();
+    expect(ilBreakEvenRatio(0)).toBeNull();
+    expect(ilBreakEvenRatio(-0.1)).toBeNull();
   });
 });

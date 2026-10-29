@@ -35,3 +35,16 @@ export function breakEvenDays(costUsd: number, amount: number, apy: number): num
 export function gasCostUsd(gwei: number, nativeUsd: number, gas = ENTRY_EXIT_GAS): number {
   return gas * gwei * 1e-9 * nativeUsd;
 }
+
+/**
+ * The price moves (as a ratio, both directions) at which a full-range pool's impermanent loss equals `apr` of
+ * fees — i.e. where a year of fees at this rate is wiped out. Solves 2√r/(1+r) − 1 = −apr. Null when fees never
+ * lose (apr ≤ 0) or never can be wiped out (apr ≥ 1, IL never reaches −100%).
+ */
+export function ilBreakEvenRatio(apr: number): { up: number; down: number } | null {
+  if (!(apr > 0) || apr >= 1) return null;
+  const k = 1 - apr;
+  const root = (1 + Math.sqrt(1 - k * k)) / k;
+  const up = root * root;
+  return { up, down: 1 / up };
+}
