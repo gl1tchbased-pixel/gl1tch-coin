@@ -294,7 +294,7 @@ export async function readJustLend(rpc: Rpc, prices: Prices, now: number, market
       kind: "lending",
       symbol: m.symbol,
       asset: { symbol: m.symbol, address: m.underlying, decimals: m.decimals },
-      receipt: { symbol: `j${m.symbol}`, address: m.jToken },
+      receipt: { symbol: `j${m.symbol}`, address: m.market },
       stable: true,
       ilRisk: "none",
       tokens: [{ symbol: m.symbol, address: m.underlying }],
@@ -307,7 +307,7 @@ export async function readJustLend(rpc: Rpc, prices: Prices, now: number, market
       feePct: null,
       rate: null,
       inputs: {
-        jToken: m.jToken,
+        jToken: m.market,
         supplyRatePerBlock: rate.toString(),
         cash: cash.toString(),
         totalBorrows: borrows.toString(),
@@ -317,7 +317,7 @@ export async function readJustLend(rpc: Rpc, prices: Prices, now: number, market
       verify: {
         rpc: rpcUrlFor("tron"),
         body: rpcBody("eth_call", [{ to: m.hex, data: SEL.supplyRatePerBlock }, "latest"]),
-        read: `Word 0 is supplyRatePerBlock (1e18 = 100%). Tron makes a block every 3 s, so APY = (1 + rate × 28,800)^365 − 1. The address is the jToken ${m.jToken} in hex.`,
+        read: `Word 0 is supplyRatePerBlock (1e18 = 100%). Tron makes a block every 3 s, so APY = (1 + rate × 28,800)^365 − 1. The address is the jToken ${m.market} in hex.`,
       },
       stale: false,
       updatedAt: now,

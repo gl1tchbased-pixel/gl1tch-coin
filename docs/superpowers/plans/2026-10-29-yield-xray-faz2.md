@@ -43,7 +43,7 @@
 
 ### Task 2: Tron JustLend USDT
 
-**Files:** `registry.ts` (`EvmChain` gains `"tron"`; `EVM_RPC.tron = ["https://api.trongrid.io/jsonrpc"]`; `JUSTLEND = [{ symbol: "USDT", jToken: "TXJgMdjVX5dKiQaUi9QobwNxtSQaFqccvd", hex: "0xea09611b57e89d67fbb33a516eb90508ca95a3e5", underlying: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", decimals: 6 }]`), `adapters.ts` (`readJustLend`), `collector.ts` (source `justlend`), tests.
+**Files:** `registry.ts` (`EvmChain` gains `"tron"`; `EVM_RPC.tron = ["https://api.trongrid.io/jsonrpc"]`; `JUSTLEND = [{ symbol: "USDT", market: "TXJgMdjVX5dKiQaUi9QobwNxtSQaFqccvd", hex: "0xea09611b57e89d67fbb33a516eb90508ca95a3e5", underlying: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", decimals: 6 }]`), `adapters.ts` (`readJustLend`), `collector.ts` (source `justlend`), tests.
 
 **Interfaces — produces:** `readJustLend(rpc, prices, now, markets = JUSTLEND, pause = 300)`: sequential `supplyRatePerBlock` 0xae9d70b0, `getCash` 0x3b1d21a2, `totalBorrows` 0x47bd3718, `totalReserves` 0x8f840ddd (word 0 of each — delegators append padding); `apy = (1 + rate/1e18 · 28_800)^365 − 1` (Tron 3 s blocks, Compound daily compounding); `tvlUsd = (cash + borrows − reserves)/1e6 · USDC`; `idleShare = cash / (cash + borrows − reserves)`; `method:"rate"`, `window:"live"`, kind `lending`, inputs include the base58 jToken. `readGas` skips tron.
 - [ ] Failing tests: fake RPC words → APR from `0x569d4dec` ≈ 1.527% → APY ≈ 1.54%; empty result → throws (source failed, not 0%). Implement, tests PASS, live smoke shows `tron-justlend-usdt`. Commit `feat(yield): Tron JustLend USDT`.

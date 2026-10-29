@@ -19,9 +19,9 @@ export const EVM_RPC: Record<EvmChain, string[]> = {
   tron: ["https://api.trongrid.io/jsonrpc"],
 };
 
-/** JustLend (Compound-style lending on Tron). `hex` is the base58 jToken address without its 0x41 prefix. */
-export const JUSTLEND: { symbol: string; jToken: string; hex: string; underlying: string; decimals: number }[] = [
-  { symbol: "USDT", jToken: "TXJgMdjVX5dKiQaUi9QobwNxtSQaFqccvd", hex: "0xea09611b57e89d67fbb33a516eb90508ca95a3e5", underlying: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", decimals: 6 },
+/** JustLend (Compound-style lending on Tron). `market` is the base58 jToken contract; `hex` the same address without its 0x41 prefix. */
+export const JUSTLEND: { symbol: string; market: string; hex: string; underlying: string; decimals: number }[] = [
+  { symbol: "USDT", market: "TXJgMdjVX5dKiQaUi9QobwNxtSQaFqccvd", hex: "0xea09611b57e89d67fbb33a516eb90508ca95a3e5", underlying: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", decimals: 6 },
 ];
 export const SOLANA_PUBLIC_RPC = "https://solana-rpc.publicnode.com";
 
