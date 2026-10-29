@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { IntentLink } from "@/components/ui/IntentLink";
 import { shareMeta } from "@/lib/share-meta";
 import { getYieldSnapshot } from "@/lib/yield/client";
 import { pct, usd } from "@/lib/yield/format";
@@ -33,7 +33,7 @@ function StakingTable({ rows }: { rows: YieldOpportunity[] }) {
           {rows.map((o) => (
             <tr key={o.id}>
               <td>
-                <Link href={`/yield/${o.id}`}>{displayName(o)}</Link>
+                <IntentLink href={`/yield/${o.id}`}>{displayName(o)}</IntentLink>
                 {o.stale && <span className={styles.stale}>stale</span>}
                 <div className={styles.dim}>{protocolName(o)}</div>
               </td>

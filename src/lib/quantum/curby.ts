@@ -88,9 +88,10 @@ function parseRound(rec: unknown): QuantumPulse | null {
   };
 }
 
-async function fetchRounds(path: string): Promise<QuantumPulse | null> {
+async function fetchRounds(path: string, revalidate?: number): Promise<QuantumPulse | null> {
   try {
-    const res = await fetch(`${API}${path}`, { signal: AbortSignal.timeout(12000), cache: "no-store" });
+    const cache = revalidate ? { next: { revalidate } } : ({ cache: "no-store" } as const);
+    const res = await fetch(`${API}${path}`, { signal: AbortSignal.timeout(12000), ...cache });
     if (!res.ok) return null;
     const json = await res.json();
     const rec = Array.isArray(json) ? json[json.length - 1] : json;
@@ -103,6 +104,12 @@ async function fetchRounds(path: string): Promise<QuantumPulse | null> {
 /** Latest finalized quantum pulse, or null if the current round is not yet complete. */
 export function latestPulse(): Promise<QuantumPulse | null> {
   return fetchRounds("/round/latest");
+}
+
+/** The latest pulse for display only, cached for a minute — lets a page that just shows it be served from cache.
+ *  Draws and verification keep using the uncached latestPulse(). */
+export function latestPulseForDisplay(): Promise<QuantumPulse | null> {
+  return fetchRounds("/round/latest", 60);
 }
 
 /** A specific finalized round by its ROUND number (the /round/{n} path key is the round, not

@@ -14,7 +14,7 @@ export default function RoadmapPage() {
   return (
     <>
       <div style={{ paddingTop: "var(--space-12)" }} />
-      <Roadmap />
+      <Roadmap asPage />
       <p className="container" style={{ paddingBottom: "var(--space-12)", color: "var(--text-muted)" }}>
         Status reflects what is live on the site and bot today. See the{" "}
         <Link href="/whitepaper" style={{ color: "var(--signal-ink)" }}>whitepaper</Link> for the full plan.

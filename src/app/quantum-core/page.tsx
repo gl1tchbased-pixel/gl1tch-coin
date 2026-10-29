@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
-import { latestPulse } from "@/lib/quantum/curby";
+import { latestPulseForDisplay } from "@/lib/quantum/curby";
 import { isPulseStale, formatPulseDate } from "@/lib/quantum/freshness";
 import { QUANTUM_COUNT_WORD } from "@/content/quantum";
 import { EntropyField } from "@/components/quantum/EntropyField";
@@ -14,7 +14,8 @@ export const metadata: Metadata = shareMeta({
   alternates: { canonical: "/quantum-core" },
 });
 
-export const dynamic = "force-dynamic";
+// Served from cache and refreshed every minute: the page only displays the latest pulse.
+export const revalidate = 60;
 
 const PILLARS = [
   {
@@ -72,7 +73,7 @@ const TIERS = [
 ];
 
 export default async function QuantumCorePage() {
-  const pulse = await latestPulse();
+  const pulse = await latestPulseForDisplay();
   const stale = pulse ? isPulseStale(pulse.timestamp) : false;
   const curbyLive = !!pulse?.verified && !stale;
   const lastRound = pulse ? formatPulseDate(pulse.timestamp) : "";

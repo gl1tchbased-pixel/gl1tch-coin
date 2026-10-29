@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { IntentLink } from "@/components/ui/IntentLink";
 import { shareMeta } from "@/lib/share-meta";
 import { getYieldSnapshot } from "@/lib/yield/client";
 import { CHAIN_LABEL } from "@/lib/yield/copy";
@@ -56,9 +56,9 @@ export default async function DollarPage() {
               <div className={styles.bars}>
                 {g.rows.map((o) => (
                   <div key={o.id} className={styles.barRow}>
-                    <Link href={`/yield/${o.id}`}>
+                    <IntentLink href={`/yield/${o.id}`}>
                       {displayName(o)} <span className={styles.dim}>· {protocolName(o)}</span>
-                    </Link>
+                    </IntentLink>
                     <div className={styles.barTrack} aria-hidden>
                       <div className={styles.barFill} style={{ width: `${Math.max(0, ((o.apy ?? 0) / max) * 100)}%` }} />
                     </div>
