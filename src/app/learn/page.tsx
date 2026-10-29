@@ -15,6 +15,7 @@ const guides = [
   { href: "/learn/how-to-spot-a-rug-pull", t: "How to spot a rug pull", d: "The 7 on-chain red flags every rug leaves behind — and how to check them in a minute." },
   { href: "/learn/what-is-a-honeypot", t: "What is a honeypot?", d: "The scam that lets you buy but not sell — how it works and how to detect one for free." },
   { href: "/learn/how-to-check-if-a-token-is-safe", t: "How to check if a token is safe", d: "An 8-point on-chain checklist to verify any token before you buy, on any chain." },
+  { href: "/learn/how-to-read-an-apy", t: "How to read an APY before you deposit", d: "Five questions that turn a yield number into a decision: who pays it, what it's paid in, how you get out, impermanent loss, and how to verify it." },
 ];
 
 const agentGuides = [

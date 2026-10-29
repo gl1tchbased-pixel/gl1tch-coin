@@ -116,6 +116,10 @@ export const METHOD_TEXT: Record<ApyMethod, string> = {
   growth: "Measured by GL1TCH from the share price's growth between our own hourly snapshots.",
 };
 
+/** DEX pools are measured differently from every other kind. */
+export const DEX_METHOD_TEXT =
+  "Measured by GL1TCH from the pool's own fee counters between our hourly snapshots. The headline is the pool average (all LPs' fees ÷ everything in the pool), the number DEX sites show; the full-range figure is what a set-and-forget position across the whole price range earned.";
+
 export const WINDOW_TEXT: Record<string, string> = {
   live: "live rate",
   epoch: "last epoch",

@@ -49,7 +49,7 @@ export function LpCalculator({ apr, pair }: { apr: number | null; pair: [string,
       </div>
       <div className={styles.result}>
         <div className={styles.stat}>
-          <div className={styles.statLabel}>In the pool, with fees</div>
+          <div className={styles.statLabel}>Full-range position, with fees</div>
           <div className={styles.statValue}>{money(net)}</div>
           <div className={styles.statNote}>{money(fees)} fees at {pct(apr)} for {days} days</div>
         </div>

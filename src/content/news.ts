@@ -33,6 +33,13 @@ export const TAG_LABEL: Record<NewsTag, string> = {
 
 export const newsItems: NewsItem[] = [
   {
+    id: "yield-xray",
+    date: "2026-10-29",
+    tag: "product",
+    title: "Yield X-Ray is live — where does the APY come from?",
+    body: "Staking, lending, vault and DEX-pool yields on Ethereum, Base, Arbitrum, BNB Chain, Robinhood Chain, Tron and Solana, read straight from the chain. Each card says who pays the yield, how you get out, gives an explainable risk score and prints the exact public request to verify the number yourself. Tap 🔔 on a card (or send /yield to the Telegram bot) to get a ping if a yield halves, deposits leave or withdrawals get stuck. Free, read-only, never asks for a wallet. gl1tchbased.xyz/yield",
+  },
+  {
     id: "signal-graph",
     date: "2026-07-05",
     tag: "product",

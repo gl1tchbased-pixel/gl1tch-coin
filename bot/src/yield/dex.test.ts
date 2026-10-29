@@ -71,6 +71,7 @@ describe("readDex", () => {
       [`${addr}|${DEX_SEL.feeGrowth0}`]: hexWords(123n),
       [`${addr}|${DEX_SEL.feeGrowth1}`]: hexWords(456n),
       [`${addr}|${DEX_SEL.fee}`]: hexWords(500n),
+      [`${addr}|${DEX_SEL.liquidity}`]: hexWords(1000n),
       [`${pool.tokenA.address.toLowerCase()}|0x70a08231${pad32(pool.pool)}`]: hexWords(10n ** 18n * 10n), // 10 WETH
       [`${pool.tokenB.address.toLowerCase()}|0x70a08231${pad32(pool.pool)}`]: hexWords(20_000n * 10n ** 6n), // 20,000 USDC
     };
@@ -89,6 +90,8 @@ describe("readDex", () => {
     expect(o.inputs.q).toBe("128/96");
     expect(o.inputs.feeTier).toBe("0.05%");
     expect(o.inputs.fee0).toBe("123");
+    expect(o.inputs.liquidity).toBe("1000");
+    expect(o.inputs.amount0Raw).toBe(String(10n ** 18n * 10n));
     // price raw s² = 4 (USDC raw per WETH raw) → 4·10^(18−6) USDC per WETH; TVL = 20,000 + 10 × 4e12 … dominated by price
     expect(o.tvlUsd).toBeCloseTo(20_000 + 10 * 4e12, -6);
   });

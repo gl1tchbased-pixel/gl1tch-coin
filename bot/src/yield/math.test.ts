@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { rayAprToApy, growthApy, epochApy, epochsPerYear, feeApr, YEAR_MS } from "./math.js";
+import { rayAprToApy, growthApy, epochApy, epochsPerYear, feeApr, poolFeeApr, YEAR_MS } from "./math.js";
 
 describe("yield math", () => {
   it("compounds an Aave ray APR per second (USDC Ethereum, 29 Oct 2026)", () => {
@@ -58,5 +58,28 @@ describe("feeApr (full-range LP fees from cumulative fee counters)", () => {
     const fee = Q128 / 1000n;
     const apr = feeApr({ t: 0, fee0: 0n, fee1: 0n }, { t: DAY, fee0: fee, fee1: fee, sqrtPrice: Q96 }, { fee: 128, sqrt: 96 });
     expect(apr).toBeCloseTo(0.365, 4);
+  });
+});
+
+describe("poolFeeApr (all LPs' fees ÷ pool value)", () => {
+  const Q64 = 1n << 64n;
+  const DAY = 86_400_000;
+
+  it("values the fees earned by the pool's active liquidity against everything in the pool", () => {
+    const fee = Q64 / 1000n; // 0.001 per unit of liquidity in each token
+    const apr = poolFeeApr(
+      { t: 0, fee0: 0n, fee1: 0n, liquidity: 1000n },
+      { t: DAY, fee0: fee, fee1: fee, sqrtPrice: Q64, liquidity: 1000n, amount0: 500n, amount1: 500n },
+      { fee: 64, sqrt: 64 }
+    );
+    // fees = (0.001·1 + 0.001)·1000 = 2 ; pool value = 500·1 + 500 = 1000 → 0.2%/day
+    expect(apr).toBeCloseTo(0.73, 4);
+  });
+
+  it("averages active liquidity across the window and refuses an empty pool", () => {
+    const fee = Q64 / 1000n;
+    const a = poolFeeApr({ t: 0, fee0: 0n, fee1: 0n, liquidity: 0n }, { t: DAY, fee0: fee, fee1: fee, sqrtPrice: Q64, liquidity: 2000n, amount0: 500n, amount1: 500n }, { fee: 64, sqrt: 64 });
+    expect(a).toBeCloseTo(0.73, 4);
+    expect(poolFeeApr({ t: 0, fee0: 0n, fee1: 0n, liquidity: 1n }, { t: DAY, fee0: fee, fee1: fee, sqrtPrice: Q64, liquidity: 1n, amount0: 0n, amount1: 0n }, { fee: 64, sqrt: 64 })).toBeNull();
   });
 });

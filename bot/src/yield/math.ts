@@ -51,3 +51,27 @@ export function feeApr(
   const s = Number(cur.sqrtPrice) / 2 ** q.sqrt;
   return ((d0 * s * s + d1) / (2 * s)) * (YEAR_MS / (cur.t - prev.t));
 }
+
+/**
+ * Pool-average fee APR: fees earned by all in-range liquidity ÷ everything in the pool — the number DEX sites show.
+ * Fees in token1 raw units ≈ (Δf0·s² + Δf1) × L, with L averaged over the window (active liquidity moves);
+ * pool value = amount0·s² + amount1 (raw vault balances). Concentrated LPs in range earn more than this, a
+ * full-range LP far less (feeApr).
+ */
+export function poolFeeApr(
+  prev: { t: number; fee0: bigint; fee1: bigint; liquidity: bigint },
+  cur: { t: number; fee0: bigint; fee1: bigint; sqrtPrice: bigint; liquidity: bigint; amount0: bigint; amount1: bigint },
+  q: { fee: 64 | 128; sqrt: 64 | 96 }
+): number | null {
+  if (!(cur.t > prev.t) || cur.sqrtPrice <= 0n) return null;
+  const mod = 1n << (q.fee === 64 ? 128n : 256n);
+  const delta = (a: bigint, b: bigint) => (((b - a) % mod) + mod) % mod;
+  const scale = 2 ** q.fee;
+  const d0 = Number(delta(prev.fee0, cur.fee0)) / scale;
+  const d1 = Number(delta(prev.fee1, cur.fee1)) / scale;
+  const s = Number(cur.sqrtPrice) / 2 ** q.sqrt;
+  const l = (Number(prev.liquidity) + Number(cur.liquidity)) / 2;
+  const value = Number(cur.amount0) * s * s + Number(cur.amount1);
+  if (!(value > 0)) return null;
+  return (((d0 * s * s + d1) * l) / value) * (YEAR_MS / (cur.t - prev.t));
+}

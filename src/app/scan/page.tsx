@@ -39,6 +39,8 @@ export default function ScanPage() {
 
       <p style={{ textAlign: "center", marginTop: 18 }}>
         <Link href="/scan/compare" className={styles.ctaAlt}>⚖ Compare two tokens →</Link>
+        {"  ·  "}
+        <Link href="/yield" className={styles.ctaAlt}>📈 Earning yield on it? X-Ray the APY →</Link>
       </p>
 
       <section className={styles.points}>

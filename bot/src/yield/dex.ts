@@ -16,6 +16,7 @@ export const DEX_SEL = {
   feeGrowth1: "0x46141319",
   fee: "0xddca3f43",
   balanceOf: "0x70a08231",
+  liquidity: "0x1a686502",
 } as const;
 
 export interface WhirlpoolState {
@@ -60,6 +61,9 @@ interface PoolRead {
   sqrtPrice: bigint;
   q: "64/64" | "128/96";
   feeTier: number;
+  liquidity: bigint;
+  rawA: bigint;
+  rawB: bigint;
   amountA: number;
   amountB: number;
   verify: YieldOpportunity["verify"];
@@ -72,7 +76,7 @@ async function readOrca(rpc: Rpc, p: DexPool): Promise<PoolRead> {
   const s = parseWhirlpool(Buffer.from(res.value.data[0], "base64"));
   if (!s) throw new Error(`${p.symbol}: unreadable pool`);
   if (s.mintA !== p.tokenA.address || s.mintB !== p.tokenB.address) throw new Error(`${p.symbol}: mint mismatch`);
-  const bal = async (vault: string) => Number(((await rpc.solana("getTokenAccountBalance", [vault])) as { value: { amount: string } }).value.amount);
+  const bal = async (vault: string) => BigInt(((await rpc.solana("getTokenAccountBalance", [vault])) as { value: { amount: string } }).value.amount);
   const [a, b] = [await bal(s.vaultA), await bal(s.vaultB)];
   return {
     fee0: s.feeGrowthA,
@@ -80,8 +84,11 @@ async function readOrca(rpc: Rpc, p: DexPool): Promise<PoolRead> {
     sqrtPrice: s.sqrtPrice,
     q: "64/64",
     feeTier: s.feeRate,
-    amountA: a / 10 ** p.tokenA.decimals,
-    amountB: b / 10 ** p.tokenB.decimals,
+    liquidity: s.liquidity,
+    rawA: a,
+    rawB: b,
+    amountA: Number(a) / 10 ** p.tokenA.decimals,
+    amountB: Number(b) / 10 ** p.tokenB.decimals,
     verify: {
       rpc: rpcUrlFor("solana"),
       body: rpcBody("getAccountInfo", params),
@@ -94,12 +101,13 @@ async function readUniswap(rpc: Rpc, p: DexPool): Promise<PoolRead> {
   const chain = p.chain as EvmChain;
   const one = async (to: string, data: string) => words(await rpc.evmCall(chain, to, data))[0] ?? 0n;
   const sqrtPrice = await one(p.pool, DEX_SEL.slot0);
-  const [fee0, fee1, fee, a, b] = await Promise.all([
+  const [fee0, fee1, fee, a, b, liquidity] = await Promise.all([
     one(p.pool, DEX_SEL.feeGrowth0),
     one(p.pool, DEX_SEL.feeGrowth1),
     one(p.pool, DEX_SEL.fee),
     one(p.tokenA.address, encodeCall(DEX_SEL.balanceOf, p.pool)),
     one(p.tokenB.address, encodeCall(DEX_SEL.balanceOf, p.pool)),
+    one(p.pool, DEX_SEL.liquidity),
   ]);
   return {
     fee0,
@@ -107,6 +115,9 @@ async function readUniswap(rpc: Rpc, p: DexPool): Promise<PoolRead> {
     sqrtPrice,
     q: "128/96",
     feeTier: Number(fee),
+    liquidity,
+    rawA: a,
+    rawB: b,
     amountA: Number(a) / 10 ** p.tokenA.decimals,
     amountB: Number(b) / 10 ** p.tokenB.decimals,
     verify: {
@@ -157,6 +168,9 @@ export async function readDex(rpc: Rpc, prices: Prices, now: number, pools: DexP
           fee1: r.fee1.toString(),
           sqrtPrice: r.sqrtPrice.toString(),
           q: r.q,
+          liquidity: r.liquidity.toString(),
+          amount0Raw: r.rawA.toString(),
+          amount1Raw: r.rawB.toString(),
           feeTier: pctTier(r.feeTier),
           [`${p.tokenA.symbol} in pool`]: r.amountA.toFixed(2),
           [`${p.tokenB.symbol} in pool`]: r.amountB.toFixed(2),

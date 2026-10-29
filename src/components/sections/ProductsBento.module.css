@@ -85,7 +85,8 @@
 .card:hover .go { transform: translateX(4px); color: var(--color-static); }
 
 @media (min-width: 900px) {
-  .grid { grid-template-columns: 1.25fr 1fr; grid-template-areas: "scanner radar" "scanner agents" "quantum quantum"; }
+  .grid { grid-template-columns: 1.25fr 1fr; grid-template-areas: "scanner radar" "scanner agents" "yield quantum"; }
+  .yield { grid-area: yield; }
   .scanner { grid-area: scanner; min-height: 380px; justify-content: flex-end; }
   .radar { grid-area: radar; }
   .agents { grid-area: agents; }

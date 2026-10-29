@@ -1,6 +1,6 @@
 import { readAave, readGas, readJustLend, readPrices, readRates, readSolanaNetwork, readSpl } from "./adapters.js";
 import { readDex } from "./dex.js";
-import { feeApr, growthApy } from "./math.js";
+import { feeApr, growthApy, poolFeeApr } from "./math.js";
 import { AAVE } from "./registry.js";
 import { createRpc, type Rpc } from "./rpc.js";
 import type { YieldPoint, YieldStore } from "./store.js";
@@ -32,9 +32,9 @@ const sourceOf = (o: YieldOpportunity) =>
 
 /** DEX pools: fee APR of a full-range position from the pool's fee counters, 7 days back, else 24 h. */
 function withFeeGrowth(o: YieldOpportunity, store: YieldStore, now: number): YieldOpportunity {
-  const { fee0, fee1, sqrtPrice, q } = o.inputs;
+  const { fee0, fee1, sqrtPrice, q, liquidity, amount0Raw, amount1Raw } = o.inputs;
   if (!fee0 || !fee1 || !sqrtPrice) return o;
-  const withAux = (p: YieldPoint | null) => (p?.aux?.length === 2 ? p : null);
+  const withAux = (p: YieldPoint | null) => ((p?.aux?.length ?? 0) >= 2 ? p : null);
   const week = withAux(store.nearest(o.id, now - 7 * D, 12 * H));
   const from = week ?? withAux(store.nearest(o.id, now - D, 3 * H));
   if (!from?.aux) return o;
@@ -45,7 +45,16 @@ function withFeeGrowth(o: YieldOpportunity, store: YieldStore, now: number): Yie
     qq
   );
   if (apr === null) return o;
-  return { ...o, apy: apr, window: week ? "7d" : "24h", inputs: { ...o.inputs, feeFrom: new Date(from.t).toISOString() } };
+  const lNow = BigInt(liquidity ?? "0");
+  const pool =
+    liquidity && amount0Raw && amount1Raw
+      ? poolFeeApr(
+          { t: from.t, fee0: BigInt(from.aux[0]), fee1: BigInt(from.aux[1]), liquidity: from.aux[2] ? BigInt(from.aux[2]) : lNow },
+          { t: now, fee0: BigInt(fee0), fee1: BigInt(fee1), sqrtPrice: BigInt(sqrtPrice), liquidity: lNow, amount0: BigInt(amount0Raw), amount1: BigInt(amount1Raw) },
+          qq
+        )
+      : null;
+  return { ...o, apy: pool ?? apr, fullRangeApr: apr, window: week ? "7d" : "24h", inputs: { ...o.inputs, feeFrom: new Date(from.t).toISOString() } };
 }
 
 /** Replace the adapter's APY with GL1TCH's own measured growth when history allows: 7 days, else 24 h (rate-only rows). */
@@ -106,7 +115,7 @@ export async function collect(rpc: Rpc, store: YieldStore, now: number, deps: Co
     }
     for (const fresh of g.rows) {
       const o = fresh.kind === "dex-lp" ? withFeeGrowth(fresh, store, now) : withGrowth(fresh, store, now);
-      const aux = fresh.kind === "dex-lp" ? [fresh.inputs.fee0, fresh.inputs.fee1] : undefined;
+      const aux = fresh.kind === "dex-lp" ? [fresh.inputs.fee0, fresh.inputs.fee1, fresh.inputs.liquidity ?? "0"] : undefined;
       store.append(o.id, { t: now, apy: o.apy, tvlUsd: o.tvlUsd, rate: o.rate, ...(aux ? { aux } : {}) }, now);
       opportunities.push(o.method === "growth" ? { ...o, measuredSinceMs: store.firstSeen(o.id) } : o);
     }

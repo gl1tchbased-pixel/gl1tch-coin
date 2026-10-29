@@ -55,6 +55,12 @@ export default function RadarPage() {
         >
           Scan any token yourself →
         </Link>
+        <Link
+          href="/yield"
+          style={{ display: "inline-block", marginLeft: 12, marginTop: 12, padding: "16px 32px", borderRadius: "var(--radius-md)", border: "1px solid var(--color-signal)", color: "var(--color-signal)", fontWeight: 700 }}
+        >
+          📈 X-Ray a yield →
+        </Link>
       </div>
     </section>
   );

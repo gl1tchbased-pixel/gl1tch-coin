@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getYieldSnapshot } from "@/lib/yield/client";
 import { networkMetrics } from "@/lib/network";
 import { QUANTUM_COUNT_WORD } from "@/content/quantum";
 import shared from "./shared.module.css";
@@ -7,11 +8,12 @@ import styles from "./ProductsBento.module.css";
 const n = (v: number) => v.toLocaleString("en-US");
 
 /**
- * The four products on one grid, each with a live number from the engine (bot /signal/metrics).
+ * The five products on one grid, each with a live number from the engine (bot /signal/metrics).
  * A number that isn't available is simply not shown — never a placeholder or a guess.
  */
 export async function ProductsBento() {
-  const m = await networkMetrics();
+  const [m, ys] = await Promise.all([networkMetrics(), getYieldSnapshot()]);
+  const yields = ys?.opportunities.length ?? 0;
   const live = (v: number | undefined, label: string) => (m && v && v > 0 ? `${n(v)} ${label}` : null);
 
   const cards = [
@@ -43,6 +45,15 @@ export async function ProductsBento() {
       tone: "neutral",
     },
     {
+      id: "yield",
+      href: "/yield",
+      name: "Yield X-Ray",
+      title: "Where does the APY come from?",
+      body: "Staking, lending and DEX yields on 7 chains, read from the chain, with who pays them, how you get out and a risk score.",
+      stats: [yields ? `${yields} yields measured on-chain` : null],
+      tone: "signal",
+    },
+    {
       id: "quantum",
       href: "/quantum-core",
       name: "Quantum Core",
@@ -59,7 +70,7 @@ export async function ProductsBento() {
         <div className={shared.head}>
           <span className={shared.eyebrow}>The products</span>
           <h2 id="products-title" className={shared.title}>
-            One engine. <span className="hl">Four ways in.</span>
+            One engine. <span className="hl">Five ways in.</span>
           </h2>
         </div>
         <div className={styles.grid}>

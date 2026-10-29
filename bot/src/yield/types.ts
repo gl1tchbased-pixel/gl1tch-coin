@@ -27,6 +27,8 @@ export interface YieldOpportunity {
   tokens: { symbol: string; address: string }[];
   method: ApyMethod;
   apy: number | null;
+  /** DEX pools: fee APR of a passive full-range position (apy is the pool average). */
+  fullRangeApr?: number | null;
   window: "live" | "epoch" | "24h" | "7d" | null;
   /** First time GL1TCH recorded this opportunity (growth method only). */
   measuredSinceMs: number | null;

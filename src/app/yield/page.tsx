@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { shareMeta } from "@/lib/share-meta";
 import { getYieldSnapshot } from "@/lib/yield/client";
-import { toRow } from "@/lib/yield/view";
+import { TELEGRAM_BOT, toRow } from "@/lib/yield/view";
+import Link from "next/link";
 import { ago } from "@/lib/yield/format";
 import { METHOD_TEXT } from "@/lib/yield/copy";
 import { RISK_WEIGHTS } from "@/lib/yield/risk";
@@ -14,7 +15,7 @@ export const revalidate = 300;
 export const metadata: Metadata = shareMeta({
   title: "Yield X-Ray — where does the APY come from? | GL1TCH",
   description:
-    "Staking, lending and vault yields on Ethereum, Base, Arbitrum, BNB Chain, Robinhood Chain and Solana, read straight from the chain. Who pays each yield, how you get out, an explainable risk score, and the exact request to verify it yourself. Free, read-only, not financial advice.",
+    "Staking, lending, vault and DEX-pool yields on Ethereum, Base, Arbitrum, BNB Chain, Robinhood Chain, Tron and Solana, read straight from the chain. Who pays each yield, how you get out, an explainable risk score, and the exact request to verify it yourself. Free, read-only, not financial advice.",
   alternates: { canonical: "/yield" },
 });
 
@@ -32,21 +33,44 @@ export default async function YieldPage() {
           Where does the <span style={{ color: "var(--color-signal)" }}>APY</span> come from?
         </h1>
         <p className={`t-body-lg ${styles.lede}`}>
-          Every number below is read straight from the chain: Aave&apos;s live rates, Solana stake pools, ETH staking tokens and
-          Robinhood Chain vaults. Each card says who pays the yield, how you get your money out, and gives you the exact request to
+          Every number below is read straight from the chain: Aave&apos;s live rates, Solana stake pools, ETH staking tokens,
+          DEX pool fees, Tron&apos;s JustLend and Robinhood Chain vaults. Each card says who pays the yield, how you get your money out, and gives you the exact request to
           check it yourself. Sorted by risk, not by the biggest number.
         </p>
         <YieldSubnav />
       </div>
 
+      <div className={styles.steps}>
+        <div className={styles.stepCard}>
+          <span className={styles.stepNum}>STEP 1</span>
+          <h2 className={styles.stepTitle}>Pick a yield</h2>
+          <p className={styles.stepBody}>Filter by chain or type. The list starts with the lowest risk, not the biggest number.</p>
+          <a className={styles.btn} href="#yields">Browse the yields ↓</a>
+        </div>
+        <div className={styles.stepCard}>
+          <span className={styles.stepNum}>STEP 2</span>
+          <h2 className={styles.stepTitle}>Read who pays it</h2>
+          <p className={styles.stepBody}>Each card says where the money comes from, how you get out, why it scored what it did, and how to check the number yourself.</p>
+          <Link className={styles.btn} href="/yield/base-aave-v3-usdc">See an example card →</Link>
+        </div>
+        <div className={styles.stepCard}>
+          <span className={styles.stepNum}>STEP 3</span>
+          <h2 className={styles.stepTitle}>Get a ping if it changes</h2>
+          <p className={styles.stepBody}>
+            Tap 🔔 on any card and the GL1TCH Telegram bot watches it for you. Or ask the bot directly: <code>/yield usdc</code>.
+          </p>
+          <a className={`${styles.btn} ${styles.btnPrimary}`} href={TELEGRAM_BOT} target="_blank" rel="noopener noreferrer">Open the Telegram bot ↗</a>
+        </div>
+      </div>
+
       {snap ? (
-        <>
+        <div id="yields" style={{ scrollMarginTop: "var(--space-16)" }}>
           <p className={styles.fresh}>
             Updated {ago(snap.updatedAt)} · {rows.length} opportunities on {chains} chains
             {failed > 0 && ` · ${failed} source${failed === 1 ? "" : "s"} failed on the last read (rows marked stale)`}
           </p>
           <YieldTable rows={rows} />
-        </>
+        </div>
       ) : (
         <Unavailable />
       )}
