@@ -91,3 +91,6 @@ export class YieldStore {
     return best;
   }
 }
+
+/** The bot-wide store: the collector writes it, the bridge and Telegram commands read it. */
+export const yieldStore = new YieldStore();

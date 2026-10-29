@@ -119,7 +119,7 @@ export async function collect(rpc: Rpc, store: YieldStore, now: number, deps: Co
 }
 
 /** Collect once shortly after boot, then hourly. Overlapping runs are skipped. */
-export function startYieldCollector(store: YieldStore, rpc: Rpc = createRpc()): void {
+export function startYieldCollector(store: YieldStore, rpc: Rpc = createRpc(), onSnapshot?: (s: YieldSnapshot) => Promise<unknown> | void): void {
   let running = false;
   const run = async () => {
     if (running) return;
@@ -127,6 +127,7 @@ export function startYieldCollector(store: YieldStore, rpc: Rpc = createRpc()): 
     try {
       const s = await collect(rpc, store, Date.now());
       console.log(`[yield] ${s.opportunities.length} opportunities, ${s.sources.filter((x) => !x.ok).length} sources failed`);
+      if (onSnapshot) await onSnapshot(s);
     } catch (e) {
       console.error("[yield] collect failed:", (e as Error).message);
     } finally {

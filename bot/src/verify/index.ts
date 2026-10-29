@@ -32,8 +32,11 @@ import { validateBatch } from "../attest/records.js";
 import { ENGINE } from "../attest/merkle.js";
 import { DEFAULT_POLICY } from "../attest/guard.js";
 import { linkerAttester, startAttestLinker, type Linker } from "../attest/linker.js";
-import { YieldStore } from "../yield/store.js";
+import { yieldStore } from "../yield/store.js";
 import { startYieldCollector } from "../yield/collector.js";
+import { createRpc } from "../yield/rpc.js";
+import { sendYieldAlerts } from "../yield/alerts.js";
+import { yieldWatchStore } from "../yield/watch-store.js";
 
 /** Shared store — the bot issues nonces here and the HTTP endpoint consumes them. */
 export const store = new VerifyStore();
@@ -144,9 +147,12 @@ export function startVerification(bot: Bot): Server | null {
   statsStore.load();
   revenueStore.load();
   // Yield X-Ray: on-chain yields collected hourly; history lives next to the other stores.
-  const yieldStore = new YieldStore();
   yieldStore.load();
-  startYieldCollector(yieldStore);
+  yieldWatchStore.load();
+  startYieldCollector(yieldStore, createRpc(), async (snap) => {
+    const n = await sendYieldAlerts(bot, snap);
+    if (n) console.log(`[yield-watch] ${n} alerts sent`);
+  });
   attestStore.load();
   balanceHistory.load();
   signalGraph.load();
