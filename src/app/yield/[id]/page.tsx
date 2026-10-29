@@ -20,6 +20,14 @@ import styles from "../yield.module.css";
 
 export const revalidate = 300;
 
+// Cards are prerendered from the bot's snapshot at build and refreshed every 5 minutes, so a click is served
+// from cache (and the link can be prefetched); ids added later render on first visit and are cached too.
+export const dynamicParams = true;
+export async function generateStaticParams() {
+  const snap = await getYieldSnapshot();
+  return (snap?.opportunities ?? []).map((o) => ({ id: o.id }));
+}
+
 type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

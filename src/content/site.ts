@@ -15,20 +15,65 @@ export const META_DESCRIPTION =
 
 // Header: the products sit behind one "Products" menu, then a short row of pages.
 // Everything else (Learn, Lore, Ranks, Tokenomics, Roadmap, FAQ, …) lives in the footer.
-export const NAV_PRODUCTS = [
-  { id: "nav-scan", label: "Scanner", href: "/scan", blurb: "Any token, any chain. Safe, sus, or rug-shaped." },
-  { id: "nav-radar", label: "Rug Radar", href: "/radar", blurb: "The riskiest fresh launches, swept hourly." },
-  { id: "nav-yield", label: "Yield X-Ray", href: "/yield", blurb: "Where an APY comes from, read from the chain." },
-  { id: "nav-agents", label: "Agent Trust", href: "/agents", blurb: "Know Your Agent: verify an AI agent's wallet." },
-  { id: "nav-quantum", label: "Quantum Core", href: "/quantum-core", blurb: "Verifiable randomness and post-quantum tools." },
-  { id: "nav-network", label: "Network", href: "/network", blurb: "Live engine metrics and the Signal Graph." },
-] as const;
+export interface NavItem {
+  id: string;
+  label: string;
+  href: string;
+  blurb: string;
+}
+
+/** Header dropdowns (and the mobile menu's sections): everything GL1TCH runs, one click from any page. */
+export const NAV_GROUPS: { id: string; label: string; items: NavItem[] }[] = [
+  {
+    id: "products",
+    label: "Products",
+    items: [
+      { id: "nav-scan", label: "Scanner", href: "/scan", blurb: "Any token, any chain. Safe, sus, or rug-shaped." },
+      { id: "nav-radar", label: "Rug Radar", href: "/radar", blurb: "The riskiest fresh launches, swept hourly." },
+      { id: "nav-yield", label: "Yield X-Ray", href: "/yield", blurb: "Where an APY comes from, read from the chain." },
+      { id: "nav-agents", label: "Agent Trust", href: "/agents", blurb: "Know Your Agent: verify an AI agent's wallet." },
+      { id: "nav-quantum", label: "Quantum Core", href: "/quantum-core", blurb: "Verifiable randomness and post-quantum tools." },
+    ],
+  },
+  {
+    id: "proof",
+    label: "Proof",
+    items: [
+      { id: "nav-proof", label: "Live proof", href: "/proof", blurb: "The scanner run on $GL1TCH itself, with every receipt." },
+      { id: "nav-revenue", label: "Revenue", href: "/revenue", blurb: "What the paid agent API earns, from settled payments." },
+      { id: "nav-buyback", label: "Buyback ledger", href: "/buyback", blurb: "Buybacks and burns with their transactions. None yet." },
+      { id: "nav-security", label: "Security", href: "/security", blurb: "Read-only by design: what GL1TCH can and can't do." },
+      { id: "nav-network", label: "Network stats", href: "/network", blurb: "Live engine metrics and the Signal Graph." },
+      { id: "nav-verify-scan", label: "Verify a verdict", href: "/verify-scan", blurb: "Check a scan against its seal on Solana." },
+    ],
+  },
+  {
+    id: "build",
+    label: "Build",
+    items: [
+      { id: "nav-agent-api", label: "Agent API", href: "/agents/docs", blurb: "Token safety for AI agents: pay per call, MCP, docs." },
+      { id: "nav-agent-directory", label: "Agent directory", href: "/agents/directory", blurb: "AI agents with a public trust record." },
+      { id: "nav-random", label: "Randomness API", href: "/quantum-core/random", blurb: "Random draws anyone can verify." },
+      { id: "nav-embed", label: "Embed badge", href: "/embed", blurb: "A live safety badge for your token's site." },
+    ],
+  },
+  {
+    id: "learn",
+    label: "Learn",
+    items: [
+      { id: "nav-learn", label: "Guides", href: "/learn", blurb: "Spot a rug, read an APY, verify an agent." },
+      { id: "nav-news", label: "Updates", href: "/news", blurb: "What shipped, newest first." },
+      { id: "nav-roadmap", label: "Roadmap", href: "/roadmap", blurb: "Shipped, in progress and planned." },
+      { id: "nav-whitepaper", label: "Whitepaper", href: "/whitepaper", blurb: "How GL1TCH works, in full." },
+      { id: "nav-token", label: "Why hold $GL1TCH", href: "/token", blurb: "What the token is for, honestly." },
+      { id: "nav-lore", label: "Lore", href: "/lore", blurb: "The archive behind the glitch." },
+    ],
+  },
+];
 
 export const NAV_LINKS = [
-  { id: "nav-proof", label: "Proof", href: "/proof" },
   { id: "nav-play", label: "Play", href: "/play" },
   { id: "nav-live", label: "Live", href: "/live" },
-  { id: "nav-whitepaper", label: "Whitepaper", href: "/whitepaper" },
 ] as const;
 
 export const FOOTER_LINKS = [

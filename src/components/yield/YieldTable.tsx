@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
+import { IntentLink } from "@/components/ui/IntentLink";
 import styles from "@/app/yield/yield.module.css";
 import { pct, usd } from "@/lib/yield/format";
 import type { YieldRow } from "@/lib/yield/view";
@@ -67,7 +67,7 @@ export function YieldTable({ rows }: { rows: YieldRow[] }) {
             {shown.map((r) => (
               <tr key={r.id}>
                 <td>
-                  <Link href={`/yield/${r.id}`}>{r.name}</Link>
+                  <IntentLink href={`/yield/${r.id}`}>{r.name}</IntentLink>
                   {r.stale && <span className={styles.stale}>stale</span>}
                   <div className={styles.dim}>{r.protocolName} · {r.kindLabel}</div>
                 </td>

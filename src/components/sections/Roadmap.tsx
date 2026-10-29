@@ -4,13 +4,15 @@ import { roadmapPhases } from "@/content/roadmap";
 import shared from "./shared.module.css";
 import styles from "./Roadmap.module.css";
 
-export function Roadmap() {
+/** On the homepage the heading is an h2; on /roadmap (`asPage`) it is the page's h1. */
+export function Roadmap({ asPage = false }: { asPage?: boolean }) {
+  const Heading = asPage ? "h1" : "h2";
   return (
     <section className={shared.section} id="roadmap">
       <div className="container">
         <Reveal className={shared.head}>
           <span className={shared.eyebrow}>Roadmap</span>
-          <h2 className={shared.title}>Build The Signal. Scale The Network.</h2>
+          <Heading className={shared.title}>Build The Signal. Scale The Network.</Heading>
         </Reveal>
         <Reveal className={styles.timeline}>
           {roadmapPhases.map((p) => (

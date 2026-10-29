@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { IntentLink } from "@/components/ui/IntentLink";
 import { PROJECT_NAME, SOCIAL_LINKS, FOOTER_LINKS } from "@/content/site";
 import { DISCLAIMER } from "@/lib/official";
 import { XIcon, TelegramIcon, InstagramIcon, RedditIcon, GlobeIcon } from "@/components/icons/SocialIcons";
@@ -49,9 +50,9 @@ export function Footer() {
         </div>
         <nav className={styles.resources} aria-label="Resources">
           {FOOTER_LINKS.map((link) => (
-            <Link key={link.id} id={link.id} href={link.href} className={styles.resourceLink}>
+            <IntentLink key={link.id} id={link.id} href={link.href} className={styles.resourceLink}>
               {link.label}
-            </Link>
+            </IntentLink>
           ))}
         </nav>
         <p className={styles.disclaimer}>

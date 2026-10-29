@@ -258,12 +258,20 @@
   .burger { display: flex; }
 }
 
-/* 1024–1199: Whitepaper steps out of the bar (footer + menu still have it) so the CTAs fit. */
+/* 1024–1199: Play and Live step out of the bar (footer + mobile menu still have them) so the CTAs fit. */
 @media (min-width: 1024px) and (max-width: 1199px) {
-  .nav :global(#nav-whitepaper) { display: none; }
+  .nav :global(#nav-play), .nav :global(#nav-live) { display: none; }
 }
 
 /* Phones: the scrolled header is near-opaque instead of blurring what's behind it on every frame. */
 @media (max-width: 768px) {
   .solid { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(7, 6, 13, 0.95); }
 }
+
+/* Dropdowns near the right edge open towards the left so they stay on screen. */
+.panelEnd { left: auto; right: -20px; }
+
+/* Mobile menu: one compact two-column block per group. */
+.overlaySection { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+.overlayGrid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3) var(--space-6); }
+.overlaySection .overlayLink { font-size: var(--fs-lg); }
