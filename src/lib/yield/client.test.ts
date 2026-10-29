@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { getYieldSnapshot, getYieldHistory, findOpportunity } from "./client";
+import { getYieldSnapshot, getYieldHistory, findOpportunity, findOpportunityFresh } from "./client";
 import type { YieldSnapshot } from "./types";
 
 const SNAP = {
@@ -51,5 +51,27 @@ describe("findOpportunity", () => {
     expect(findOpportunity(SNAP, "base-aave-v3-usdc")?.symbol).toBe("USDC");
     expect(findOpportunity(SNAP, "nope")).toBeNull();
     expect(findOpportunity(null, "base-aave-v3-usdc")).toBeNull();
+  });
+});
+
+describe("findOpportunityFresh", () => {
+  it("re-reads the bot without the cache when the cached snapshot doesn't know the id yet", async () => {
+    const fresh = { ...SNAP, opportunities: [...SNAP.opportunities, { id: "tron-justlend-usdt", chain: "tron", symbol: "USDT" }] };
+    const f = vi.fn(async (_url: string, init?: RequestInit) =>
+      new Response(JSON.stringify(init?.cache === "no-store" ? fresh : SNAP), { status: 200 })
+    );
+    vi.stubGlobal("fetch", f);
+    const r = await findOpportunityFresh(SNAP, "tron-justlend-usdt");
+    expect(r.opportunity?.id).toBe("tron-justlend-usdt");
+    expect(r.snapshot?.opportunities).toHaveLength(2);
+    expect(f).toHaveBeenCalledTimes(1);
+  });
+
+  it("doesn't refetch on a hit, and returns null for an unknown id", async () => {
+    const f = vi.fn(async () => new Response(JSON.stringify(SNAP), { status: 200 }));
+    vi.stubGlobal("fetch", f);
+    expect((await findOpportunityFresh(SNAP, "base-aave-v3-usdc")).opportunity?.id).toBe("base-aave-v3-usdc");
+    expect(f).not.toHaveBeenCalled();
+    expect((await findOpportunityFresh(SNAP, "nope")).opportunity).toBeNull();
   });
 });

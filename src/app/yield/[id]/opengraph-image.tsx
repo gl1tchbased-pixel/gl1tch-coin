@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { findOpportunity, getYieldSnapshot } from "@/lib/yield/client";
+import { findOpportunityFresh, getYieldSnapshot } from "@/lib/yield/client";
 import { CHAIN_LABEL, KIND_LABEL } from "@/lib/yield/copy";
 import { pct } from "@/lib/yield/format";
 import { riskOf } from "@/lib/yield/risk";
@@ -15,7 +15,7 @@ export const revalidate = 300;
 
 export default async function Image({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const o = findOpportunity(await getYieldSnapshot(), id);
+  const { opportunity: o } = await findOpportunityFresh(await getYieldSnapshot(), id);
   const card = o
     ? await yieldOgCard({
         title: displayName(o),
