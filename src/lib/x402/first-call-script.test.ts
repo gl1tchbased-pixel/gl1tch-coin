@@ -78,7 +78,7 @@ describe("scripts/x402-first-call.mjs", () => {
     seenSelfTestHeaders.length = 0;
     const r = await runAsync(["run", "--pay-to", PAY_TO, "--base", base], env, dir);
     expect(r.status).toBe(0);
-    expect(seenSelfTestHeaders).toEqual(["1", "1", "1", "1", "1", "1"]); // one call per paid route
+    expect(seenSelfTestHeaders).toEqual(Array(8).fill("1")); // one call per paid route
   }, 30_000);
 
   it("limits the run to --routes, and refuses an unknown route before paying", async () => {

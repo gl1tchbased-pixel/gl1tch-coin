@@ -19,6 +19,8 @@ export interface TokenMarket {
   liquidityUsd: number | null;
   volume24h: number | null;
   ageDays: number | null;
+  /** When the pool these numbers come from was created (Unix ms): the token's first listing, to the minute. */
+  listedAt?: number | null;
   priceChange24h: number | null;
   source: "dexscreener" | "geckoterminal" | null;
   /** The pool these numbers come from, and its last-24h trades (for the market-integrity checks). */
@@ -120,6 +122,7 @@ async function fromDexScreener(address: string, signal?: AbortSignal): Promise<T
       liquidityUsd: num(p.liquidity?.usd),
       volume24h: num(p.volume?.h24),
       ageDays: created ? Math.max(0, Math.floor((Date.now() - created) / 86_400_000)) : null,
+      listedAt: created && Number.isFinite(created) ? created : null,
       priceChange24h: num(p.priceChange?.h24),
       source: "dexscreener",
       pool: p.pairAddress ?? null,
@@ -199,6 +202,7 @@ async function fromGecko(chain: string, address: string, signal?: AbortSignal): 
       liquidityUsd: num(a.reserve_in_usd),
       volume24h: num(a.volume_usd?.h24),
       ageDays,
+      listedAt: Number.isFinite(created) ? created : null,
       priceChange24h: tokenIsBase ? num(a.price_change_percentage?.h24) : null,
       source: "geckoterminal",
       pool: a.address ?? null,

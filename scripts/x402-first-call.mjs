@@ -10,7 +10,7 @@
  *   node scripts/x402-first-call.mjs where
  *       Prints where the wallet file lives.
  *   node scripts/x402-first-call.mjs run --pay-to <revenue Solana address> [--base https://gl1tchbased.xyz] [--routes scan,radar]
- *       Pays each paid endpoint once (all six: $0.036 USDC on Solana; the facilitator pays the SOL fee).
+ *       Pays each paid endpoint once (all eight: $0.042 USDC on Solana; the facilitator pays the SOL fee).
  *
  * Guards: pays only on Solana mainnet, only to --pay-to, at most $0.01 per call; refuses to run if the
  * wallet holds more than 1 USDC or the revenue wallet has no USDC token account yet. Every call is
@@ -39,6 +39,7 @@ const MAX_WALLET_MICRO = 1_000_000; // refuse to run with more than 1 USDC in th
 
 const BONK = "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263";
 const ATTESTER = "BSq18aJBhxYJgeEbcA3jGQNU1vmwZdo2PQkkpVsK7W6o";
+const JUP = "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN";
 /** One call per paid route. A Bazaar listing refreshes its metadata only when a payment settles, so
  *  after a description change every route is paid once. `--routes scan,radar` limits the run. */
 const ALL_CALLS = {
@@ -48,6 +49,8 @@ const ALL_CALLS = {
   verdict: `/api/x402/verdict?mint=${BONK}&chain=solana`,
   radar: `/api/x402/radar`,
   random: `/api/x402/random?min=1&max=100`,
+  quick: `/api/x402/quick?mint=${BONK}&chain=solana`,
+  batch: `/api/x402/batch?mints=${BONK},${JUP}&chain=solana`,
 };
 const ROUTES = (arg("--routes") || Object.keys(ALL_CALLS).join(",")).split(",").map((r) => r.trim()).filter(Boolean);
 for (const r of ROUTES) if (!(r in ALL_CALLS)) throw new Error(`unknown route "${r}" (known: ${Object.keys(ALL_CALLS).join(", ")})`);
