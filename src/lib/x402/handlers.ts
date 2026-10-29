@@ -38,9 +38,9 @@ export async function scanHandler(req: NextRequest): Promise<NextResponse> {
 const scanCache = new ScanCache(5 * 60_000, 500);
 const cacheKey = (mint: string, chain: string) => `${chain || "auto"}:${mint}`;
 
-/** One scan for the quick check and the batch: from the cache when fresh, else a paid-grade scan
- *  (degraded reads come back as 503 and are not cached). */
-async function cachedScan(mint: string, chain: string): Promise<{ body: Record<string, unknown>; cached: boolean } | { status: number; body: Record<string, unknown> }> {
+/** One scan for the quick check, the batch and the Safe Swap gate: from the cache when fresh, else a
+ *  paid-grade scan (degraded reads come back as 503 and are not cached). */
+export async function cachedScan(mint: string, chain: string): Promise<{ body: Record<string, unknown>; cached: boolean } | { status: number; body: Record<string, unknown> }> {
   const key = cacheKey(mint, chain);
   const hit = scanCache.get(key);
   if (hit) return { body: hit, cached: true };

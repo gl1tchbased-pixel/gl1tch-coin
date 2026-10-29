@@ -4,6 +4,7 @@ import { shareMeta } from "@/lib/share-meta";
 import { getRevenue, type RevenueEntry } from "@/lib/revenue";
 import { PAID_ROUTES, readPayTo, type PaidRouteId } from "@/lib/x402/config";
 import { DEPLOYER_WALLET } from "@/lib/official";
+import { readSwapFee } from "@/lib/swap/jupiter";
 import styles from "../buyback/buyback.module.css";
 
 export const metadata: Metadata = shareMeta({
@@ -33,6 +34,7 @@ export default async function RevenuePage() {
   const routes = Object.keys(PAID_ROUTES) as PaidRouteId[];
   // Grant reviewers ask where income lands: say it plainly when it is the disclosed deployer wallet.
   const paysDeployer = readPayTo(process.env).solana === DEPLOYER_WALLET;
+  const swapFee = readSwapFee(process.env);
 
   return (
     <main className={styles.page}>
@@ -168,6 +170,28 @@ export default async function RevenuePage() {
           <a href="/revenue.json" className={styles.btnGhost}>Ledger as JSON</a>
           <Link href="/scan" className={styles.btnGhost}>Free scanner</Link>
         </div>
+      </section>
+
+      <section className={styles.how}>
+        <span className={styles.kicker}>Safe Swap</span>
+        <h2 className={styles.h2}>Swaps on the scanner, signed by your own wallet.</h2>
+        {swapFee ? (
+          <p className={styles.note}>
+            Solana scan results offer a swap through Jupiter. GL1TCH adds a {(swapFee.bps / 100).toFixed(2)}% fee through
+            Jupiter&apos;s referral program, and Jupiter keeps a fifth of it. Every fee lands on-chain in referral account{" "}
+            <a href={`https://solscan.io/account/${swapFee.account}`} target="_blank" rel="noreferrer">
+              {swapFee.account.slice(0, 4)}…{swapFee.account.slice(-4)} ↗
+            </a>
+            , so anyone can count them. Buys into tokens that read HIGH RISK or RUG-SHAPED are refused; sells never are.
+            The fee is the same whatever the verdict, and the verdict is computed without it.
+          </p>
+        ) : (
+          <p className={styles.note}>
+            Solana scan results offer a swap through Jupiter, signed by your own wallet. GL1TCH charges no fee on it
+            today; only Jupiter&apos;s own fee applies. Buys into tokens that read HIGH RISK or RUG-SHAPED are refused;
+            sells never are.
+          </p>
+        )}
       </section>
     </main>
   );

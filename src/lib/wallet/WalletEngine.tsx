@@ -8,12 +8,22 @@
 import { useEffect, useMemo, useRef } from "react";
 import { ConnectionProvider, WalletProvider, useWallet } from "@solana/wallet-adapter-react";
 import { WalletReadyState, type WalletName } from "@solana/wallet-adapter-base";
+import { VersionedTransaction } from "@solana/web3.js";
 import { SOLANA_RPC } from "./rpc";
 import type { WalletOption, WalletState } from "./WalletRoot";
 
 function Bridge({ onState }: { onState: (s: WalletState) => void }) {
-  const { wallets, wallet, select, connect, disconnect, connected, connecting, publicKey, signMessage } = useWallet();
+  const { wallets, wallet, select, connect, disconnect, connected, connecting, publicKey, signMessage, signTransaction } = useWallet();
   const pending = useRef(false);
+
+  // Bytes in, bytes out, so the light WalletRoot context never needs @solana/web3.js.
+  const signTx = useMemo(
+    () =>
+      signTransaction
+        ? async (bytes: Uint8Array) => (await signTransaction(VersionedTransaction.deserialize(bytes))).serialize()
+        : null,
+    [signTransaction],
+  );
 
   // connect once the chosen wallet is selected
   useEffect(() => {
@@ -48,8 +58,9 @@ function Bridge({ onState }: { onState: (s: WalletState) => void }) {
       select: (name: string) => { pending.current = true; select(name as WalletName); },
       disconnect: () => { void disconnect(); },
       signMessage: signMessage ?? null,
+      signTransaction: signTx,
     });
-  }, [onState, connected, connecting, address, wallet, options, select, disconnect, signMessage]);
+  }, [onState, connected, connecting, address, wallet, options, select, disconnect, signMessage, signTx]);
 
   return null;
 }
