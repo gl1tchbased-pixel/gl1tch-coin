@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { verdictCard } from "./verdict";
+import { verdictCard, verdictQuip } from "./verdict";
 
 const check = (label: string, status: string, value = "x") => ({ key: label.toLowerCase(), label, status, value, explain: "…" });
 
@@ -50,5 +50,26 @@ describe("verdictCard", () => {
 
   it("survives a sparse body", () => {
     expect(verdictCard({ mint: "M" }, "https://s")).toMatchObject({ verdict: "UNKNOWN", score: 0, confidence: null, reasons: [], summary: "" });
+  });
+});
+
+describe("verdictQuip", () => {
+  it("is stable per token, restates the top reason, and never advises", () => {
+    const reason = { label: "Mint authority", value: "ACTIVE" };
+    expect(verdictQuip("HIGH RISK", "Mint111", reason)).toBe(verdictQuip("HIGH RISK", "Mint111", reason));
+    expect(verdictQuip("HIGH RISK", "Mint111", reason)).toContain("mint authority ACTIVE");
+    expect(verdictQuip("NOT A GRADE", "Mint111")).toBe("Glitchy couldn't read enough of this token to judge it.");
+    expect(verdictQuip("CAUTION", "Mint111")).toBe("Glitchy couldn't read enough of this token to judge it.");
+    for (const grade of ["CLEAN", "LOW RISK", "CAUTION", "HIGH RISK", "RUG-SHAPED", "UNKNOWN"]) {
+      for (const mint of ["a", "b", "c", "d", "e"]) {
+        expect(verdictQuip(grade, mint, reason)).not.toMatch(/\b(buy|sell|ape|moon|pump|dump|invest|profit|exit)\b/i);
+      }
+    }
+  });
+
+  it("goes on the card with the disclaimer", () => {
+    const card = verdictCard({ mint: "Mint111", chain: "solana", verdict: "CLEAN", score: 95, checks: [] }, "https://gl1tchbased.xyz");
+    expect(card.quip).toBe(verdictQuip("CLEAN", "Mint111"));
+    expect(card.disclaimer).toBe("Automated risk read, not financial advice.");
   });
 });

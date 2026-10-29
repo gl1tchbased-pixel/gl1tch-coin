@@ -17,6 +17,8 @@ describe("paid routes without a receiving wallet", () => {
     ["verdict", `/api/x402/verdict?mint=${BONK}`],
     ["radar", "/api/x402/radar"],
     ["random", "/api/x402/random?min=1&max=6"],
+    ["quick", `/api/x402/quick?mint=${BONK}`],
+    ["batch", `/api/x402/batch?mints=${BONK}`],
   ])("%s answers 503 'paid API not configured', never an empty 402", async (id, path) => {
     vi.stubEnv("X402_PAY_TO_SOLANA", "");
     vi.stubEnv("X402_PAY_TO_BASE", "");
@@ -48,6 +50,24 @@ describe("paid handlers validate their own input (after the challenge; a 400 is 
     expect((await scanHandler(req("/api/x402/scan"))).status).toBe(400);
     expect((await scanHandler(req("/api/x402/scan?mint=xyz"))).status).toBe(400);
     expect((await scanHandler(req("/api/x402/scan?q=bonk"))).status).toBe(400);
+  });
+
+  it("quick needs a valid mint", async () => {
+    const { quickHandler } = await import("./handlers");
+    expect((await quickHandler(req("/api/x402/quick"))).status).toBe(400);
+    expect((await quickHandler(req("/api/x402/quick?mint=xyz"))).status).toBe(400);
+  });
+
+  it("batch needs 1 to 10 valid addresses", async () => {
+    const { batchHandler } = await import("./handlers");
+    expect((await batchHandler(req("/api/x402/batch"))).status).toBe(400);
+    expect((await batchHandler(req(`/api/x402/batch?mints=${BONK},xyz`))).status).toBe(400);
+    expect((await batchHandler(req(`/api/x402/batch?mints=${Array(11).fill(0).map((_, i) => BONK.slice(0, -2) + String(10 + i)).join(",")}`))).status).toBe(400);
+  });
+
+  it("radar refuses an unreadable since", async () => {
+    const { radarHandler } = await import("./handlers");
+    expect((await radarHandler(req("/api/x402/radar?since=yesterday"))).status).toBe(400);
   });
 
   it("verdict needs a valid mint", async () => {

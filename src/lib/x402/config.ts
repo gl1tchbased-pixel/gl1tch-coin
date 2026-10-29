@@ -13,7 +13,7 @@ export type Caip2 = `${string}:${string}`;
 export const SOLANA_MAINNET: Caip2 = "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp";
 export const BASE_MAINNET: Caip2 = "eip155:8453";
 
-export type PaidRouteId = "scan" | "agent" | "deployer" | "verdict" | "radar" | "random";
+export type PaidRouteId = "scan" | "agent" | "deployer" | "verdict" | "radar" | "random" | "quick" | "batch";
 
 /** Catalogs keep only the first few tags (the Coinbase Bazaar keeps five), so the most specific come first. */
 export const PAID_ROUTES: Record<PaidRouteId, { path: string; price: string; priceMicro: number; description: string; tags: string[] }> = {
@@ -46,15 +46,16 @@ export const PAID_ROUTES: Record<PaidRouteId, { path: string; price: string; pri
     price: "$0.01",
     priceMicro: 10_000,
     description:
-      "Token verdict card for one Solana or EVM token: a grade from CLEAN to RUG-SHAPED, a 0-100 safety score, a one-line summary, the top three risk reasons, and links to a shareable scan page and card image. Use it when an agent answers a token safety question in a chat, a Telegram group or a social feed and needs a short result it can post. Chains: Solana, Ethereum, Base, BSC, Arbitrum, Polygon. Not charged on failure.",
+      "Token verdict card for one Solana or EVM token: a grade from CLEAN to RUG-SHAPED, a 0-100 safety score, a one-line summary, the top three risk reasons, a one-line Glitchy quip, and links to a shareable scan page and card image. Use it when an agent answers a token safety question in a chat, a Telegram group or a social feed and needs a short result it can post. Chains: Solana, Ethereum, Base, BSC, Arbitrum, Polygon. Not charged on failure.",
     tags: ["token-verdict", "rug-check", "token-safety", "social", "solana", "crypto", "base", "agents"],
   },
   radar: {
     path: "/api/x402/radar",
-    price: "$0.005",
-    priceMicro: 5_000,
+    // Priced for polling: a feed is bought again and again, and per-call prices under half a cent sell best.
+    price: "$0.002",
+    priceMicro: 2_000,
     description:
-      "Rug Radar: new Solana token launches (fresh pump.fun mints, DexScreener profiles and boosts), each scanned for rug-pull and honeypot risk and ranked riskiest first, with a verdict, a 0-100 score and its main red flag. Refreshed about every 10 minutes. Use it to screen a feed of new memecoin launches before a trading or alert agent acts on them. Not charged on failure.",
+      "Rug Radar: new Solana token launches (fresh pump.fun mints, DexScreener profiles and boosts), each scanned for rug-pull and honeypot risk and ranked riskiest first, with a verdict, a 0-100 score, its main red flag and its listing time. Refreshed about every 10 minutes. Pass since=<cursor> from the last answer to get only tokens listed after it. Use it to screen new memecoin launches before a trading or alert agent acts on them. Not charged on failure.",
     tags: ["new-launches", "memecoin", "solana", "rug-check", "feed", "token-safety", "crypto"],
   },
   random: {
@@ -64,6 +65,22 @@ export const PAID_ROUTES: Record<PaidRouteId, { path: string; price: string; pri
     description:
       "Verifiable random numbers: integers in your range from a future drand quicknet round (League of Entropy threshold-BLS beacon), so neither the caller nor the server can know them at request time. Each result carries the round signature and the commitment, so anyone can recompute and check it. Use it for raffles, giveaways, lotteries, fair allocation and games. Not charged on failure.",
     tags: ["randomness", "verifiable-random", "drand", "raffle", "provably-fair", "games"],
+  },
+  quick: {
+    path: "/api/x402/quick",
+    price: "$0.001",
+    priceMicro: 1_000,
+    description:
+      "Quick token check: a compact, low-cost token safety and rug check for one Solana or EVM token. Returns the verdict (CLEAN to RUG-SHAPED), the 0-100 safety score, the checks that failed or warned, liquidity, LP lock, top-holder share and token age. A result can come from a scan up to 5 minutes old. Use it to screen tokens cheaply before running the full scan. Chains: Solana, Ethereum, Base, BSC, Arbitrum, Polygon. Not charged on failure.",
+    tags: ["token-safety", "rug-check", "quick-check", "solana", "crypto", "base", "agents"],
+  },
+  batch: {
+    path: "/api/x402/batch",
+    price: "$0.008",
+    priceMicro: 8_000,
+    description:
+      "Batch token safety check: up to 10 Solana or EVM tokens in one call (mints=a,b,c). Each gets the verdict (CLEAN to RUG-SHAPED), the 0-100 safety score and the checks that failed or warned; a token that cannot be read comes back with an error. Use it to screen a watchlist, a wallet's holdings or a list of new launches with one payment. Charged once per call; not charged when no token can be read.",
+    tags: ["token-safety", "batch", "rug-check", "watchlist", "solana", "crypto", "base"],
   },
 };
 

@@ -8,11 +8,14 @@
 
 import { PAID_ROUTES, type PaidRouteId } from "./config";
 import { CHAIN as DRAND_QUICKNET } from "@/lib/quantum/drand-round";
+import { BATCH_MAX } from "./quick";
+import { verdictQuip, VERDICT_DISCLAIMER } from "./verdict";
 
 /** `inExample`: an optional parameter that still goes into the catalog's example call. */
 interface Param { name: string; required: boolean; description: string; example: string; inExample?: boolean }
 
 const BONK = "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263";
+const JUP = "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN";
 const SAMPLE_WALLET = "BSq18aJBhxYJgeEbcA3jGQNU1vmwZdo2PQkkpVsK7W6o";
 const BONK_PAGE = `https://gl1tchbased.xyz/scan/solana-${BONK}`;
 
@@ -24,7 +27,14 @@ const TOKEN_PARAMS: Param[] = [
 const PARAMS: Record<PaidRouteId, Param[]> = {
   scan: TOKEN_PARAMS,
   verdict: TOKEN_PARAMS,
-  radar: [],
+  quick: TOKEN_PARAMS,
+  batch: [
+    { name: "mints", required: true, description: `Comma-separated token addresses, 1-${BATCH_MAX} (Solana mints or EVM contracts)`, example: `${BONK},${JUP}` },
+    { name: "chain", required: false, description: "Chain for every token (solana, ethereum, base, …); auto-detected per token when omitted", example: "solana" },
+  ],
+  radar: [
+    { name: "since", required: false, description: "Only tokens first listed after this time, Unix ms (seconds accepted). Pass the cursor from the last answer.", example: "1793216000000" },
+  ],
   random: [
     { name: "min", required: false, description: "Smallest value (integer, default 1)", example: "1", inExample: true },
     { name: "max", required: false, description: "Largest value (integer, default 100)", example: "100", inExample: true },
@@ -39,6 +49,47 @@ const PARAMS: Record<PaidRouteId, Param[]> = {
     { name: "address", required: true, description: "The deployer wallet address", example: SAMPLE_WALLET },
     { name: "chain", required: false, description: "Chain of the wallet (default solana)", example: "solana" },
   ],
+};
+
+const QUICK_BONK = {
+  mint: BONK,
+  chain: "solana",
+  symbol: "Bonk",
+  verdict: "CLEAN",
+  score: 95,
+  confidence: 93,
+  flags: [
+    { key: "metadata_mutable", status: "warn", value: "MUTABLE" },
+    { key: "dev_holdings", status: "warn", value: "<0.01% · exited" },
+    { key: "rugcheck", status: "warn", value: "7" },
+  ],
+  liquidityUsd: 275181.07,
+  lpLockedPct: 100,
+  topHolderPct: 8.83,
+  holderCount: 2100076,
+  ageDays: 468,
+  scannedAt: 1793265333485,
+  cached: false,
+};
+const QUICK_JUP = {
+  mint: JUP,
+  chain: "solana",
+  symbol: "JUP",
+  verdict: "CLEAN",
+  score: 93,
+  confidence: 86,
+  flags: [
+    { key: "concentration", status: "warn", value: "24.8%" },
+    { key: "metadata_mutable", status: "warn", value: "MUTABLE" },
+    { key: "rugcheck", status: "warn", value: "7" },
+  ],
+  liquidityUsd: 25224.35,
+  lpLockedPct: 100,
+  topHolderPct: 24.78,
+  holderCount: 2914712,
+  ageDays: 805,
+  scannedAt: 1793265342344,
+  cached: false,
 };
 
 const OUTPUT_EXAMPLES: Record<PaidRouteId, unknown> = {
@@ -78,6 +129,8 @@ const OUTPUT_EXAMPLES: Record<PaidRouteId, unknown> = {
     reasons: [],
     card: { page: BONK_PAGE, image: `${BONK_PAGE}/opengraph-image` },
     scannedAt: 1793217679232,
+    quip: verdictQuip("CLEAN", BONK),
+    disclaimer: VERDICT_DISCLAIMER,
   },
   // The shape of a sweep; the token entry is a placeholder, not a real token.
   radar: {
@@ -85,8 +138,15 @@ const OUTPUT_EXAMPLES: Record<PaidRouteId, unknown> = {
     flagged: 6,
     updatedAt: 1793217679232,
     ageSeconds: 120,
-    tokens: [{ chain: "solana", mint: "<token mint>", name: "<name>", symbol: "<symbol>", verdict: "HIGH RISK", score: 22, reason: "Mint authority: ACTIVE", flagged: true }],
+    since: 1793216000000,
+    cursor: 1793217500000,
+    tokens: [
+      { chain: "solana", mint: "<token mint>", name: "<name>", symbol: "<symbol>", verdict: "HIGH RISK", score: 22, reason: "Mint authority: ACTIVE", flagged: true, listedAt: 1793217500000 },
+    ],
   },
+  // Values from real scans (2026-10-29).
+  quick: QUICK_BONK,
+  batch: { count: 2, ok: 2, results: [QUICK_BONK, QUICK_JUP] },
   random: {
     kind: "ints",
     values: [42],
@@ -122,6 +182,32 @@ const list = (items: Schema, description: string): Schema => ({ type: "array", d
 const VERDICTS = ["CLEAN", "LOW RISK", "CAUTION", "HIGH RISK", "RUG-SHAPED", "UNKNOWN"];
 const verdictField: Schema = { type: "string", enum: VERDICTS, description: "Overall grade, safest to riskiest: CLEAN, LOW RISK, CAUTION, HIGH RISK, RUG-SHAPED (UNKNOWN when unreadable)" };
 const scoreField = num("Safety score, 0 (riskiest) to 100 (safest)");
+
+const QUICK_SCHEMA: Schema = obj(
+  {
+    mint: text("Token address that was scanned"),
+    chain: text("Chain of the token"),
+    symbol: textOrNull("Token symbol"),
+    verdict: verdictField,
+    score: scoreField,
+    confidence: numOrNull("How much of the checklist could be verified, 0-100"),
+    flags: list(
+      obj(
+        { key: text("Check id, e.g. mint_authority, lp_lock, sell_tax"), status: { type: "string", enum: ["fail", "warn"] }, value: text("What was read") },
+        ["key", "status", "value"]
+      ),
+      "Checks that failed or warned, failures first"
+    ),
+    liquidityUsd: numOrNull("Liquidity of the main pool, USD"),
+    lpLockedPct: numOrNull("Share of LP tokens locked or burned, %"),
+    topHolderPct: numOrNull("Largest holder that is not a liquidity pool, % of supply"),
+    holderCount: numOrNull("Number of holders"),
+    ageDays: numOrNull("Days since the main pool was created"),
+    scannedAt: numOrNull("Time of the scan, Unix milliseconds"),
+    cached: bool("True when the result came from a scan of the last 5 minutes"),
+  },
+  ["mint", "chain", "verdict", "score", "flags", "cached"]
+);
 
 /**
  * JSON Schema of each 200 body. The Coinbase Bazaar weighs output-schema completeness when it ranks
@@ -179,8 +265,10 @@ const OUTPUT_SCHEMAS: Record<PaidRouteId, Schema> = {
       ),
       card: obj({ page: text("Shareable scan page URL"), image: text("Verdict card image URL (PNG)") }, ["page", "image"]),
       scannedAt: numOrNull("Time of the scan, Unix milliseconds"),
+      quip: text("One light line in Glitchy's voice restating the grade and the top reason, for social posts"),
+      disclaimer: text("Short notice to show with the card"),
     },
-    ["mint", "chain", "verdict", "score", "summary", "reasons", "card"]
+    ["mint", "chain", "verdict", "score", "summary", "reasons", "card", "quip", "disclaimer"]
   ),
   radar: obj(
     {
@@ -188,6 +276,8 @@ const OUTPUT_SCHEMAS: Record<PaidRouteId, Schema> = {
       flagged: int("Tokens graded HIGH RISK or RUG-SHAPED"),
       updatedAt: num("Time of the sweep, Unix milliseconds"),
       ageSeconds: int("Seconds since the sweep ran"),
+      since: numOrNull("The since filter applied, Unix ms (null: the whole sweep)"),
+      cursor: numOrNull("Newest listing time in the sweep, Unix ms: pass it as since on the next call"),
       tokens: list(
         obj(
           {
@@ -199,13 +289,26 @@ const OUTPUT_SCHEMAS: Record<PaidRouteId, Schema> = {
             score: scoreField,
             reason: text("The main red flag, or a note that the contract checks passed"),
             flagged: bool("True for HIGH RISK or RUG-SHAPED"),
+            listedAt: numOrNull("First listing of the token's main pool, Unix ms"),
           },
           ["chain", "mint", "verdict", "score", "reason", "flagged"]
         ),
-        "Every token of the sweep, riskiest first"
+        "The sweep's tokens (with since: only those listed after it), riskiest first"
       ),
     },
     ["scanned", "flagged", "updatedAt", "tokens"]
+  ),
+  quick: QUICK_SCHEMA,
+  batch: obj(
+    {
+      count: int("Tokens asked for"),
+      ok: int("Tokens that could be read"),
+      results: list(
+        { anyOf: [QUICK_SCHEMA, obj({ mint: text("Token address"), error: text("Why it could not be read") }, ["mint", "error"])] },
+        "One entry per token, in the order asked"
+      ),
+    },
+    ["count", "ok", "results"]
   ),
   agent: obj(
     {

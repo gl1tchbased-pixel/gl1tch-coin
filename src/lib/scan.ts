@@ -91,6 +91,8 @@ export interface ScanResult {
     liquidityUsd: number | null;
     volume24h: number | null;
     ageDays: number | null;
+    /** First listing of the token's main pool, Unix ms (null when unknown). */
+    listedAt?: number | null;
     supply: number | null;
     /** Largest single account, pool included (the supply ring reads it as the pool's share). */
     topHolderPct: number | null;
@@ -278,6 +280,7 @@ interface MktInfo {
   liquidityUsd: number | null;
   volume24h: number | null;
   ageDays: number | null;
+  listedAt: number | null;
   priceChange24h: number | null;
   pool: string | null;
   buys24h: number | null;
@@ -287,7 +290,7 @@ interface MktInfo {
   links: number | null;
 }
 const NO_MARKET: MktInfo = {
-  name: null, symbol: null, priceUsd: null, marketCap: null, liquidityUsd: null, volume24h: null, ageDays: null, priceChange24h: null,
+  name: null, symbol: null, priceUsd: null, marketCap: null, liquidityUsd: null, volume24h: null, ageDays: null, listedAt: null, priceChange24h: null,
   pool: null, buys24h: null, sells24h: null, traders24h: null, boosts: null, links: null,
 };
 // DexScreener → GeckoTerminal fallback (DexScreener drops thin pairs like $GL1TCH).
@@ -295,7 +298,7 @@ async function getMarket(mint: string, signal?: AbortSignal): Promise<MktInfo> {
   const m = await fetchTokenMarket(mint, "solana", signal);
   return {
     name: m.name, symbol: m.symbol, priceUsd: m.priceUsd, marketCap: m.marketCap,
-    liquidityUsd: m.liquidityUsd, volume24h: m.volume24h, ageDays: m.ageDays, priceChange24h: m.priceChange24h,
+    liquidityUsd: m.liquidityUsd, volume24h: m.volume24h, ageDays: m.ageDays, listedAt: m.listedAt ?? null, priceChange24h: m.priceChange24h,
     pool: m.pool ?? null, buys24h: m.buys24h ?? null, sells24h: m.sells24h ?? null, traders24h: m.traders24h ?? null,
     boosts: m.boosts ?? null, links: m.links ?? null,
   };
@@ -659,6 +662,7 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
       liquidityUsd: market.liquidityUsd,
       volume24h: market.volume24h,
       ageDays,
+      listedAt: market.listedAt,
       supply: mintInfo.supply,
       topHolderPct: conc.topHolderPct ?? rug.topHolderPct,
       poolPct: rug.poolPct,

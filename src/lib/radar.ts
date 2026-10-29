@@ -18,6 +18,8 @@ const withTimeout = <T,>(p: Promise<T>, ms: number) =>
 export type Caught = {
   chain: string; mint: string; name: string; symbol: string;
   verdict: string; score: number; reason: string; flagged: boolean;
+  /** First listing of the token's main pool, Unix ms; null when the market sources don't say. */
+  listedAt: number | null;
 };
 
 export type RadarSweep = { scanned: number; flagged: number; ranked: Caught[]; updatedAt: number };
@@ -123,6 +125,7 @@ async function sweep(): Promise<RadarSweep> {
       symbol: s.symbol || "",
       verdict: s.verdict, score: s.score,
       reason: topReason(s.checks), flagged,
+      listedAt: s.meta?.listedAt ?? null,
     });
   }
   ranked.sort((a, b) => a.score - b.score); // riskiest first

@@ -101,8 +101,10 @@ settled transaction). Networks: Solana mainnet USDC, Base mainnet USDC. Facilita
 GET /api/x402/scan?mint=<address>&chain=solana       $0.005  full pre-trade token safety report (same as /api/scan)
 GET /api/x402/agent?address=<wallet>&chain=solana    $0.01   Know Your Agent trust assessment
 GET /api/x402/deployer?address=<wallet>&chain=solana $0.003  deployer track record (Signal Graph)
-GET /api/x402/verdict?mint=<address>&chain=solana    $0.01   verdict card: grade, score, top 3 reasons, shareable card image
-GET /api/x402/radar                                  $0.005  Rug Radar: latest sweep of new Solana launches, riskiest first
+GET /api/x402/verdict?mint=<address>&chain=solana    $0.01   verdict card: grade, score, top 3 reasons, Glitchy quip, shareable card image
+GET /api/x402/radar?since=<cursor>                   $0.002  Rug Radar: new Solana launches, riskiest first; since = only tokens listed after your last cursor
+GET /api/x402/quick?mint=<address>&chain=solana      $0.001  quick check: verdict, score, failed/warned checks, liquidity, LP lock, top holder (may be up to 5 min old)
+GET /api/x402/batch?mints=<a>,<b>,…&chain=solana     $0.008  up to 10 tokens in one call, each as a quick check
 GET /api/x402/random?min=1&max=100&count=1&salt=<s>  $0.003  verifiable random integers seeded by a future drand round
 
 - You pay only for a successful response: errors, and scans that lost their sources (confidence < 60,

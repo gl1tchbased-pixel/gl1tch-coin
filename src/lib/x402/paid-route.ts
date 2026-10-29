@@ -30,6 +30,8 @@ const FREE_ALTERNATIVE: Record<PaidRouteId, string> = {
   verdict: "/api/scan", // the card is a condensed scan
   radar: "/api/radar", // the free feed shows the eight riskiest of the same sweep
   random: "/quantum-core/random", // $GL1TCH holders' key-gated Randomness API
+  quick: "/api/scan", // the quick check is a condensed scan
+  batch: "/api/scan", // one free scan per token
 };
 
 type Handler = (req: NextRequest) => Promise<NextResponse>;
