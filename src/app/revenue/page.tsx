@@ -97,6 +97,30 @@ export default async function RevenuePage() {
         </>
       )}
 
+      {rev?.quotes && (
+        <section className={styles.how}>
+          <span className={styles.kicker}>Price quotes · last 30 days</span>
+          <p className={styles.note}>
+            {rev.quotes.last30.total.toLocaleString("en-US")} unpaid <code>402</code> answers, next to{" "}
+            {rev.paid.count.toLocaleString("en-US")} paid calls. Most quotes come from catalog crawlers and uptime
+            monitors checking the price, so a quote is not a sale; the gap between the two is the honest measure.
+          </p>
+          <div className={styles.ledger}>
+            <div className={`${styles.row} ${styles.head}`}>
+              <span>Endpoint</span><span>Price</span><span>Quotes</span><span>Paid</span>
+            </div>
+            {routes.map((id) => (
+              <div key={id} className={styles.row}>
+                <span>{PAID_ROUTES[id].path}</span>
+                <span>{PAID_ROUTES[id].price}</span>
+                <span>{(rev.quotes?.last30.byRoute[id] ?? 0).toLocaleString("en-US")}</span>
+                <span>{(rev.byRoute[id]?.count ?? 0).toLocaleString("en-US")}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {rev && rev.recent.length > 0 && (
         <section className={styles.how}>
           <span className={styles.kicker}>Latest payments</span>
@@ -141,6 +165,7 @@ export default async function RevenuePage() {
         <div className={styles.cta}>
           <Link href="/agents/docs#x402" className={styles.btnPrimary}>API docs →</Link>
           <Link href="/buyback" className={styles.btnGhost}>Buyback ledger</Link>
+          <a href="/revenue.json" className={styles.btnGhost}>Ledger as JSON</a>
           <Link href="/scan" className={styles.btnGhost}>Free scanner</Link>
         </div>
       </section>

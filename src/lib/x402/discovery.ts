@@ -104,10 +104,174 @@ const OUTPUT_EXAMPLES: Record<PaidRouteId, unknown> = {
   },
 };
 
+type Schema = Record<string, unknown>;
+const text = (description: string): Schema => ({ type: "string", description });
+const textOrNull = (description: string): Schema => ({ type: ["string", "null"], description });
+const num = (description: string): Schema => ({ type: "number", description });
+const numOrNull = (description: string): Schema => ({ type: ["number", "null"], description });
+const int = (description: string): Schema => ({ type: "integer", description });
+const bool = (description: string): Schema => ({ type: "boolean", description });
+const obj = (properties: Record<string, Schema>, required: string[], description?: string): Schema => ({
+  type: "object",
+  ...(description ? { description } : {}),
+  properties,
+  required,
+});
+const list = (items: Schema, description: string): Schema => ({ type: "array", description, items });
+
+const VERDICTS = ["CLEAN", "LOW RISK", "CAUTION", "HIGH RISK", "RUG-SHAPED", "UNKNOWN"];
+const verdictField: Schema = { type: "string", enum: VERDICTS, description: "Overall grade, safest to riskiest: CLEAN, LOW RISK, CAUTION, HIGH RISK, RUG-SHAPED (UNKNOWN when unreadable)" };
+const scoreField = num("Safety score, 0 (riskiest) to 100 (safest)");
+
+/**
+ * JSON Schema of each 200 body. The Coinbase Bazaar weighs output-schema completeness when it ranks
+ * search results, and agents build parsers from it. Loose on purpose (no additionalProperties: false),
+ * so a field added later doesn't break a caller. The tests check every example against its schema.
+ */
+const OUTPUT_SCHEMAS: Record<PaidRouteId, Schema> = {
+  scan: obj(
+    {
+      mint: text("Token address that was scanned"),
+      chain: text("Chain of the token (solana, ethereum, base, bsc, arbitrum, polygon, …)"),
+      name: textOrNull("Token name"),
+      symbol: textOrNull("Token symbol"),
+      verdict: verdictField,
+      score: scoreField,
+      confidence: num("How much of the checklist could be verified, 0-100"),
+      verified: bool("True for a known canonical token, not an impostor clone"),
+      bottomLine: text("One-line plain-language summary"),
+      checks: list(
+        obj(
+          {
+            key: text("Stable id of the check, e.g. mint_authority"),
+            label: text("Human-readable name of the check"),
+            status: { type: "string", enum: ["pass", "warn", "fail", "unknown"], description: "Result of the check" },
+            value: text("What was read, e.g. REVOKED"),
+            explain: text("One sentence on what the reading means"),
+          },
+          ["key", "label", "status", "value", "explain"]
+        ),
+        "Every check behind the verdict: authorities, LP lock, taxes, holders, deployer, trading activity, linked wallets"
+      ),
+      risks: list({ type: "object" }, "Named risks reported by RugCheck, when available"),
+      meta: { type: "object", description: "Readings behind the checks: price, liquidity, holders, LP lock, deployer and its reputation" },
+      scannedAt: num("Time of the scan, Unix milliseconds"),
+    },
+    ["mint", "chain", "verdict", "score", "confidence", "bottomLine", "checks"]
+  ),
+  verdict: obj(
+    {
+      mint: text("Token address that was scanned"),
+      chain: text("Chain of the token"),
+      name: textOrNull("Token name"),
+      symbol: textOrNull("Token symbol"),
+      verdict: verdictField,
+      score: scoreField,
+      confidence: numOrNull("How much of the checklist could be verified, 0-100"),
+      verified: bool("True for a known canonical token, not an impostor clone"),
+      summary: text("One-line plain-language summary"),
+      reasons: list(
+        obj(
+          { label: text("Name of the failed or flagged check"), value: text("What was read"), status: { type: "string", enum: ["fail", "warn"] } },
+          ["label", "value", "status"]
+        ),
+        "Up to three risk reasons, failures first"
+      ),
+      card: obj({ page: text("Shareable scan page URL"), image: text("Verdict card image URL (PNG)") }, ["page", "image"]),
+      scannedAt: numOrNull("Time of the scan, Unix milliseconds"),
+    },
+    ["mint", "chain", "verdict", "score", "summary", "reasons", "card"]
+  ),
+  radar: obj(
+    {
+      scanned: int("Tokens scanned in this sweep"),
+      flagged: int("Tokens graded HIGH RISK or RUG-SHAPED"),
+      updatedAt: num("Time of the sweep, Unix milliseconds"),
+      ageSeconds: int("Seconds since the sweep ran"),
+      tokens: list(
+        obj(
+          {
+            chain: text("Chain of the token"),
+            mint: text("Token address"),
+            name: text("Token name"),
+            symbol: text("Token symbol"),
+            verdict: verdictField,
+            score: scoreField,
+            reason: text("The main red flag, or a note that the contract checks passed"),
+            flagged: bool("True for HIGH RISK or RUG-SHAPED"),
+          },
+          ["chain", "mint", "verdict", "score", "reason", "flagged"]
+        ),
+        "Every token of the sweep, riskiest first"
+      ),
+    },
+    ["scanned", "flagged", "updatedAt", "tokens"]
+  ),
+  agent: obj(
+    {
+      address: text("Wallet that was checked"),
+      chain: text("Chain of the wallet"),
+      score: num("Trust score, 0-100"),
+      level: { type: "string", enum: ["trusted", "neutral", "caution", "unknown"], description: "Trust level" },
+      reasons: list({ type: "string" }, "Why the wallet got this score"),
+      registered: bool("The wallet is registered with GL1TCH Know Your Agent"),
+      verified: bool("The owner proved control of the wallet with a signature"),
+    },
+    ["address", "chain", "score", "level", "reasons", "registered", "verified"]
+  ),
+  deployer: obj(
+    {
+      address: text("Creator wallet that was checked"),
+      chain: text("Chain of the wallet"),
+      reputation: obj(
+        {
+          deployer: text("Creator wallet"),
+          chain: text("Chain of the wallet"),
+          tokensSeen: int("Launches by this wallet that GL1TCH has scanned"),
+          flaggedCount: int("How many of them scanned as HIGH RISK or RUG-SHAPED"),
+          worstScore: numOrNull("Lowest safety score among them"),
+          level: { type: "string", enum: ["unknown", "clean", "watch", "serial"], description: "unknown (no record), clean, watch, serial (repeat rug-shaped launches)" },
+          note: text("One-line summary of the record"),
+          recent: list(
+            obj(
+              { mint: text("Token address"), verdict: text("Verdict when scanned"), score: numOrNull("Safety score when scanned"), ts: num("When it was seen, Unix milliseconds") },
+              ["mint", "verdict", "ts"]
+            ),
+            "Most recent launches seen"
+          ),
+        },
+        ["deployer", "chain", "tokensSeen", "flaggedCount", "level", "note", "recent"]
+      ),
+    },
+    ["address", "chain", "reputation"]
+  ),
+  random: obj(
+    {
+      kind: { type: "string", enum: ["ints"] },
+      values: list({ type: "integer" }, "The random integers, in order"),
+      spec: obj({ kind: { type: "string", enum: ["ints"] }, min: int("Smallest value"), max: int("Largest value"), count: int("How many values") }, ["kind", "min", "max", "count"]),
+      proof: obj(
+        {
+          source: { type: "string", enum: ["drand-quicknet"] },
+          chainHash: text("drand quicknet chain hash"),
+          round: int("drand round the values come from"),
+          randomness: text("sha256 of the round signature"),
+          signature: text("drand BLS signature of the round"),
+          requestId: text("sha256 of the commitment"),
+          commitment: text("What was committed before the round existed"),
+          verify: text("How to recompute and check the values"),
+        },
+        ["source", "chainHash", "round", "randomness", "signature", "requestId", "commitment", "verify"]
+      ),
+    },
+    ["kind", "values", "spec", "proof"]
+  ),
+};
+
 export interface BazaarQueryDiscovery {
   input: Record<string, string>;
   inputSchema: { type: "object"; properties: Record<string, { type: "string"; description: string }>; required: string[] };
-  output: { example: unknown };
+  output: { example: unknown; schema: Schema };
 }
 
 /** The bazaar discovery hints for one route (passed to `declareDiscoveryExtension`). */
@@ -120,7 +284,7 @@ export function bazaarDiscovery(id: PaidRouteId): BazaarQueryDiscovery {
       properties: Object.fromEntries(params.map((p) => [p.name, { type: "string" as const, description: p.description }])),
       required: params.filter((p) => p.required).map((p) => p.name),
     },
-    output: { example: OUTPUT_EXAMPLES[id] },
+    output: { example: OUTPUT_EXAMPLES[id], schema: OUTPUT_SCHEMAS[id] },
   };
 }
 
@@ -143,7 +307,10 @@ export function buildOpenApi(origin: string): Record<string, unknown> {
         })),
         "x-payment-info": { protocols: ["x402"], price: { mode: "fixed", currency: "USD", amount: priceAmount(r.price) } },
         responses: {
-          "200": { description: "Success (the payment settles only now)", content: { "application/json": { example: OUTPUT_EXAMPLES[id] } } },
+          "200": {
+            description: "Success (the payment settles only now)",
+            content: { "application/json": { schema: OUTPUT_SCHEMAS[id], example: OUTPUT_EXAMPLES[id] } },
+          },
           "400": { description: "Invalid input (not charged)" },
           "402": { description: "Payment Required (x402 challenge in the PAYMENT-REQUIRED header)" },
           "503": { description: "Sources degraded or route not configured (not charged)" },

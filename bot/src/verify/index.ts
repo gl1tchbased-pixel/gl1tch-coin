@@ -19,7 +19,7 @@ import { agentTrust } from "../agent-trust/trust.js";
 import { verifyAgentRegistration } from "../agent-trust/register.js";
 import { claimPendingX, ackX } from "../agent/x-agent/xqueue.js";
 import { statsStore } from "../stats.js";
-import { revenueStore, parseRevenueEntry } from "../revenue.js";
+import { revenueStore, parseRevenueEntry, parseQuote } from "../revenue.js";
 import { quantumCore } from "../quantum-core/store.js";
 import { startQuantumCore } from "../quantum-core/executor.js";
 import { verifyDrawEntry } from "../quantum-core/enter.js";
@@ -259,6 +259,11 @@ export function startVerification(bot: Bot): Server | null {
       record: (body) => {
         const entry = parseRevenueEntry(body);
         return entry ? revenueStore.record(entry) : "invalid";
+      },
+      quote: (body) => {
+        const q = parseQuote(body);
+        if (q) revenueStore.quote(q);
+        return !!q;
       },
       summary: () => revenueStore.summary(),
     },

@@ -23,6 +23,13 @@ export interface RevenueEntry {
 
 export interface Tally { count: number; usdMicro: number }
 
+/** Unpaid 402 answers, counted next to the payments (mostly catalog crawlers and monitors). */
+export interface QuoteSummary {
+  last30: { total: number; byRoute: Record<string, number> };
+  daily: Record<string, number>;
+  userAgents7d: { ua: string; count: number }[];
+}
+
 export interface RevenueSummary {
   ok: true;
   since: number | null;
@@ -32,6 +39,8 @@ export interface RevenueSummary {
   byNetwork: Record<string, Tally>;
   daily: Record<string, Tally>;
   recent: RevenueEntry[];
+  /** Absent from a bot that predates quote counting. */
+  quotes?: QuoteSummary;
 }
 
 /** The fields we read from an x402 settlement response. */
@@ -90,6 +99,28 @@ export function recordRevenue(entry: RevenueEntry): void {
         if (!r.ok) console.warn(`[revenue] ledger refused settlement ${entry.network}:${entry.tx} (HTTP ${r.status})`);
       },
       (e) => console.warn(`[revenue] ledger unreachable for settlement ${entry.network}:${entry.tx}: ${(e as Error).message}`)
+    );
+  try {
+    after(send);
+  } catch {
+    void send(); // after() throws outside a request scope
+  }
+}
+
+/** Non-blocking count of one unpaid 402 answer (a price quote), so the ledger can show how often a
+ *  route is found next to how often it is bought. Only the route and a short user agent are sent;
+ *  a lost report costs nothing, so failures are not logged. */
+export function recordQuote(route: PaidRouteId, userAgent: string | null): void {
+  if (!TOKEN) return;
+  const send = () =>
+    fetch(`${BASE}/revenue/quote`, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-stats-token": TOKEN },
+      body: JSON.stringify({ route, ua: (userAgent ?? "").slice(0, 120) }),
+      signal: AbortSignal.timeout(3000),
+    }).then(
+      () => undefined,
+      () => undefined
     );
   try {
     after(send);
