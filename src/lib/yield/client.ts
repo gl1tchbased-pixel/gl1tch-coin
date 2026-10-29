@@ -18,9 +18,11 @@ function isSnapshot(x: unknown): x is YieldSnapshot {
   );
 }
 
-export async function getYieldSnapshot(): Promise<YieldSnapshot | null> {
+/** `fresh` skips the data cache — used only when a cached snapshot doesn't know an id yet. */
+export async function getYieldSnapshot(opts: { fresh?: boolean } = {}): Promise<YieldSnapshot | null> {
   try {
-    const r = await fetch(`${BASE}/yield`, { signal: AbortSignal.timeout(8000), next: { revalidate: 300 } });
+    const cache = opts.fresh ? ({ cache: "no-store" } as const) : { next: { revalidate: 300 } };
+    const r = await fetch(`${BASE}/yield`, { signal: AbortSignal.timeout(8000), ...cache });
     if (!r.ok) return null;
     const j: unknown = await r.json();
     return isSnapshot(j) ? j : null;
@@ -43,4 +45,18 @@ export async function getYieldHistory(id: string): Promise<YieldPoint[]> {
 
 export function findOpportunity(snapshot: YieldSnapshot | null, id: string): YieldOpportunity | null {
   return snapshot?.opportunities.find((o) => o.id === id) ?? null;
+}
+
+/**
+ * A cached snapshot can predate a newly added opportunity (the data cache even survives deploys), which would
+ * 404 a freshly shared card. On a miss, ask the bot once more without the cache before giving up.
+ */
+export async function findOpportunityFresh(
+  snapshot: YieldSnapshot | null,
+  id: string
+): Promise<{ snapshot: YieldSnapshot | null; opportunity: YieldOpportunity | null }> {
+  const hit = findOpportunity(snapshot, id);
+  if (hit || !ID_RE.test(id)) return { snapshot, opportunity: hit };
+  const fresh = await getYieldSnapshot({ fresh: true });
+  return { snapshot: fresh ?? snapshot, opportunity: findOpportunity(fresh, id) };
 }

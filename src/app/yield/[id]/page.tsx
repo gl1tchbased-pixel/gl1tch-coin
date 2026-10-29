@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { shareMeta } from "@/lib/share-meta";
-import { findOpportunity, getYieldHistory, getYieldSnapshot } from "@/lib/yield/client";
+import { findOpportunityFresh, getYieldHistory, getYieldSnapshot } from "@/lib/yield/client";
 import { CHAIN_LABEL, DEX_METHOD_TEXT, KIND_LABEL, METHOD_TEXT, PROTOCOLS, WINDOW_TEXT } from "@/lib/yield/copy";
 import { ago, pct, usd } from "@/lib/yield/format";
 import { gasCostUsd, ilBreakEvenRatio } from "@/lib/yield/math";
@@ -24,7 +24,7 @@ type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const o = findOpportunity(await getYieldSnapshot(), id);
+  const { opportunity: o } = await findOpportunityFresh(await getYieldSnapshot(), id);
   if (!o) return { title: "Yield X-Ray | GL1TCH", alternates: { canonical: `/yield/${id}` } };
   const name = `${displayName(o)} on ${CHAIN_LABEL[o.chain]}`;
   const apy = o.apy == null ? "still measuring" : `${pct(o.apy)} ${o.kind === "dex-lp" ? "fee APR" : "APY"}`;
@@ -61,8 +61,8 @@ function apyNote(o: YieldOpportunity): string {
 
 export default async function YieldCardPage({ params }: Props) {
   const { id } = await params;
-  const snap = await getYieldSnapshot();
-  if (!snap) {
+  const cached = await getYieldSnapshot();
+  if (!cached) {
     return (
       <section className="container" style={{ paddingBlock: "var(--space-16)" }}>
         <YieldSubnav />
@@ -70,8 +70,9 @@ export default async function YieldCardPage({ params }: Props) {
       </section>
     );
   }
-  const o = findOpportunity(snap, id);
+  const { snapshot, opportunity: o } = await findOpportunityFresh(cached, id);
   if (!o) notFound();
+  const snap = snapshot ?? cached;
 
   const history = await getYieldHistory(o.id);
   const risk = riskOf(o);
