@@ -47,6 +47,7 @@ const deps = (over: Partial<CollectorDeps> = {}): CollectorDeps => ({
   readSpl: async () => [],
   readRates: async () => [row({})],
   readDex: async () => [],
+  readJustLend: async () => [],
   ...over,
 });
 

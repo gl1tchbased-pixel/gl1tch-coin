@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import { pad32, encodeCall } from "./abi.js";
-import { readAave, readSpl, readRates, readPrices, readGas, SEL } from "./adapters.js";
-import { RATE_ASSETS, SPL_POOLS, CHAINLINK, type EvmChain } from "./registry.js";
+import { readAave, readSpl, readRates, readPrices, readGas, readJustLend, SEL } from "./adapters.js";
+import { RATE_ASSETS, SPL_POOLS, CHAINLINK, JUSTLEND, type EvmChain } from "./registry.js";
 import type { Rpc } from "./rpc.js";
 
 const NOW = Date.UTC(2026, 9, 29, 15, 0, 0);
@@ -155,5 +155,43 @@ describe("readGas", () => {
     expect(g.ethereum?.nativeUsd).toBe(2000);
     expect(g.bsc?.gwei).toBe(1);
     expect(g.bsc?.nativeUsd).toBe(750);
+  });
+});
+
+describe("readJustLend (Tron)", () => {
+  const J = JUSTLEND[0];
+  const tronRpc = (results: Record<string, string>): Rpc => ({
+    async evmCall(chain, to, data) {
+      if (chain !== "tron" || to !== J.hex) throw new Error("unexpected target");
+      if (!(data in results)) throw new Error("unexpected call " + data);
+      return results[data];
+    },
+    evmRaw: async () => "0x",
+    solana: async () => null,
+  });
+  // Delegator view calls append padding words after the value; only word 0 counts.
+  const pad = (v: bigint) => hexWords(v, 0n, 0n);
+
+  it("reads the USDT market: daily-compounded APY, deposits and idle share", async () => {
+    const rpc = tronRpc({
+      [SEL.supplyRatePerBlock]: pad(0x569d4decn),
+      [SEL.getCash]: pad(125_778_000_000_000n),
+      [SEL.totalBorrows]: hexWords(136_600_000_000_000n),
+      [SEL.totalReserves]: hexWords(205_000_000_000n),
+    });
+    const [o] = await readJustLend(rpc, { USDC: 1 }, NOW, JUSTLEND, 0);
+    expect(o.id).toBe("tron-justlend-usdt");
+    expect(o.chain).toBe("tron");
+    expect(o.kind).toBe("lending");
+    expect(o.apy).toBeCloseTo(0.01539, 4);
+    expect(o.tvlUsd).toBeCloseTo(125_778_000 + 136_600_000 - 205_000, -2);
+    expect(o.idleShare).toBeCloseTo(125_778_000 / (125_778_000 + 136_600_000 - 205_000), 6);
+    expect(o.inputs.jToken).toBe("TXJgMdjVX5dKiQaUi9QobwNxtSQaFqccvd");
+    expect(o.verify.rpc).toBe("https://api.trongrid.io/jsonrpc");
+  });
+
+  it("fails the source on an empty answer instead of reporting 0%", async () => {
+    const rpc = tronRpc({ [SEL.supplyRatePerBlock]: "0x", [SEL.getCash]: "0x", [SEL.totalBorrows]: "0x", [SEL.totalReserves]: "0x" });
+    await expect(readJustLend(rpc, { USDC: 1 }, NOW, JUSTLEND, 0)).rejects.toThrow();
   });
 });

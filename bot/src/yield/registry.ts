@@ -5,7 +5,7 @@ import { encodeCall } from "./abi.js";
  * verified on-chain on 2026-10-29 (Faz 0). Adding an entry here is the whole job of covering a new market.
  */
 
-export type YieldChain = "ethereum" | "base" | "arbitrum" | "bsc" | "robinhood" | "solana";
+export type YieldChain = "ethereum" | "base" | "arbitrum" | "bsc" | "robinhood" | "tron" | "solana";
 export type EvmChain = Exclude<YieldChain, "solana">;
 
 /** Public, key-less endpoints, tried in order. */
@@ -15,7 +15,14 @@ export const EVM_RPC: Record<EvmChain, string[]> = {
   arbitrum: ["https://arbitrum-one-rpc.publicnode.com"],
   bsc: ["https://bsc-rpc.publicnode.com"],
   robinhood: ["https://robinhood-rpc.publicnode.com", "https://rpc.mainnet.chain.robinhood.com"],
+  // TronGrid's Ethereum-compatible JSON-RPC answers eth_call with 0x-hex addresses (free tier: keep calls sequential).
+  tron: ["https://api.trongrid.io/jsonrpc"],
 };
+
+/** JustLend (Compound-style lending on Tron). `hex` is the base58 jToken address without its 0x41 prefix. */
+export const JUSTLEND: { symbol: string; jToken: string; hex: string; underlying: string; decimals: number }[] = [
+  { symbol: "USDT", jToken: "TXJgMdjVX5dKiQaUi9QobwNxtSQaFqccvd", hex: "0xea09611b57e89d67fbb33a516eb90508ca95a3e5", underlying: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", decimals: 6 },
+];
 export const SOLANA_PUBLIC_RPC = "https://solana-rpc.publicnode.com";
 
 export interface AaveAsset {

@@ -1,4 +1,4 @@
-import { readAave, readGas, readPrices, readRates, readSolanaNetwork, readSpl } from "./adapters.js";
+import { readAave, readGas, readJustLend, readPrices, readRates, readSolanaNetwork, readSpl } from "./adapters.js";
 import { readDex } from "./dex.js";
 import { feeApr, growthApy } from "./math.js";
 import { AAVE } from "./registry.js";
@@ -19,15 +19,16 @@ export interface CollectorDeps {
   readSpl: typeof readSpl;
   readRates: typeof readRates;
   readDex: typeof readDex;
+  readJustLend: typeof readJustLend;
 }
 
-const DEFAULT_DEPS: CollectorDeps = { readPrices, readSolanaNetwork, readGas, readAave, readSpl, readRates, readDex };
+const DEFAULT_DEPS: CollectorDeps = { readPrices, readSolanaNetwork, readGas, readAave, readSpl, readRates, readDex, readJustLend };
 const H = 3_600_000;
 const D = 24 * H;
 const NO_NETWORK: SolanaNetwork = { solanaEpochsPerYear: null, solanaInflation: null, solanaStakedShare: null };
 
 const sourceOf = (o: YieldOpportunity) =>
-  o.kind === "dex-lp" ? "dex" : o.protocol === "aave-v3" ? `aave:${o.chain}` : o.chain === "solana" ? "spl" : "rates";
+  o.kind === "dex-lp" ? "dex" : o.protocol === "justlend" ? "justlend" : o.protocol === "aave-v3" ? `aave:${o.chain}` : o.chain === "solana" ? "spl" : "rates";
 
 /** DEX pools: fee APR of a full-range position from the pool's fee counters, 7 days back, else 24 h. */
 function withFeeGrowth(o: YieldOpportunity, store: YieldStore, now: number): YieldOpportunity {
@@ -93,6 +94,7 @@ export async function collect(rpc: Rpc, store: YieldStore, now: number, deps: Co
     (async () => ({ id: "spl", rows: await timed("spl", () => deps.readSpl(rpc, prices, net.solanaEpochsPerYear, now)) }))(),
     (async () => ({ id: "rates", rows: await timed("rates", () => deps.readRates(rpc, prices, now)) }))(),
     (async () => ({ id: "dex", rows: await timed("dex", () => deps.readDex(rpc, prices, now)) }))(),
+    (async () => ({ id: "justlend", rows: await timed("justlend", () => deps.readJustLend(rpc, prices, now)) }))(),
   ]);
 
   const prev = store.snapshot();
