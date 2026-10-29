@@ -40,7 +40,7 @@
 - Produces: `rayAprToApy(ray: bigint): number`, `growthApy(r0: number, t0: number, r1: number, t1: number): number | null`, `epochApy(rateNow: number, ratePrev: number, epochsPerYear: number): number | null`, `epochsPerYear(slotsInEpoch: number, slotsPerSecond: number): number | null`, `YEAR_MS = 365 * 86_400_000`; `pad32(hexOrAddress: string): string` (64 hex chars, no 0x), `words(hex: string): bigint[]`, `wordToAddress(w: bigint): string` (0x + 40 lowercase hex), `encodeCall(selector: string, ...args: string[]): string`.
 
 - [ ] **Step 1: Write failing tests**
-  - `rayAprToApy(4_467_000_000_000_000_000_000_000n)` ≈ `0.04568` (±1e-4) (Aave USDC Ethereum 29 Oct: APR 4.467% → APY 4.569%).
+  - `rayAprToApy(44_670_000_000_000_000_000_000_000n)` ≈ `0.04568` (±1e-4) (Aave USDC Ethereum 29 Oct: APR 4.467% → APY 4.569%).
   - `growthApy(1.0, 0, 1.01, YEAR_MS/2)` ≈ `0.0201`; returns `null` when `t1 <= t0` or `r0 <= 0`; `growthApy(1.0, 0, 0.99, YEAR_MS)` = `-0.01` (negative kept).
   - `epochApy(1.30876307, 1.30857957, 341)` ≈ `0.0490` (±5e-4) (JitoSOL 29 Oct); `null` when `ratePrev <= 0`.
   - `epochsPerYear(432000, 4.669)` ≈ `341` (±1); `null` for non-positive inputs.
@@ -116,7 +116,7 @@
   - `readSolanaNetwork(rpc): Promise<YieldSnapshot["network"]>` — `getEpochInfo` + `getRecentPerformanceSamples(60)` → `epochsPerYear`; `getInflationRate().validator`; `getSupply` total vs Σ `activatedStake` from `getVoteAccounts` → `solanaStakedShare`.
   - `readGas(rpc): Promise<YieldSnapshot["gas"]>` — `eth_gasPrice` per EVM chain; `nativeUsd` = ETH price (BNB for bsc).
   - Every opportunity's `verify.body` is the exact JSON-RPC body of its main read; `verify.rpc = rpcUrlFor(chain)`.
-- [ ] **Step 1: Failing tests** with a fake `Rpc`: Aave USDC entry with liquidity-rate word `4467000000000000000000000` → `apy≈0.04569`, `idleShare` = idle/supply, `tvlUsd` = supply×price; an asset whose aToken word is 0 is omitted; SPL fixture from Task 2 + `epochsPerYear 341` → `apy` in (0.03, 0.08) and `method:"epoch"`; rate asset → `apy:null`, `rate:"1.24748084"`-style string, `verify.body` contains its `rateCall`; stale Chainlink feed (updatedAt 2 days ago) is dropped.
+- [ ] **Step 1: Failing tests** with a fake `Rpc`: Aave USDC entry with liquidity-rate word `44670000000000000000000000` → `apy≈0.04569`, `idleShare` = idle/supply, `tvlUsd` = supply×price; an asset whose aToken word is 0 is omitted; SPL fixture from Task 2 + `epochsPerYear 341` → `apy` in (0.03, 0.08) and `method:"epoch"`; rate asset → `apy:null`, `rate:"1.24748084"`-style string, `verify.body` contains its `rateCall`; stale Chainlink feed (updatedAt 2 days ago) is dropped.
 - [ ] **Step 2: Run → FAIL** · **Step 3: Implement** · **Step 4: Run → PASS**
 - [ ] **Step 5: Commit** `feat(yield): on-chain adapters`
 
