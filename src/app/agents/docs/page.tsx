@@ -138,6 +138,27 @@ await fetch("${BASE}/api/agent/register", {
 # → 402 Payment Required + PAYMENT-REQUIRED header (price, network, payTo)
 # Your x402 client signs a USDC transfer and retries with PAYMENT-SIGNATURE
 # → 200 + the report + PAYMENT-RESPONSE header (the settled transaction)`}</Code>
+        <Code head="JavaScript — pay from your agent's own Solana wallet (@x402/fetch)">{`import { x402Client, wrapFetchWithPayment } from "@x402/fetch";
+import { registerExactSvmScheme } from "@x402/svm/exact/client";
+import { toClientSvmSigner } from "@x402/svm";
+import { createKeyPairSignerFromBytes } from "@solana/kit";
+
+const signer = await createKeyPairSignerFromBytes(agentSecretKey); // 64-byte secret key
+const client = registerExactSvmScheme(new x402Client(), {
+  signer: toClientSvmSigner(signer),
+  networks: ["solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"],
+});
+const pay = wrapFetchWithPayment(fetch, client);
+
+const res = await pay("${BASE}/api/x402/quick?mint=<token>&chain=solana");
+const check = await res.json(); // { verdict, score, flags[], liquidityUsd, … }`}</Code>
+        <Code head="Coinbase agentic wallet (awal) — Base USDC, with a spending cap">{`npx awal@2.12.1 x402 pay "${BASE}/api/x402/quick?mint=<token>" --max-amount 1000 --json
+# --max-amount is in USDC atomic units: 1000 = $0.001`}</Code>
+        <Code head="Poll Rug Radar for new launches only">{`# First call: the whole sweep plus a cursor
+GET ${BASE}/api/x402/radar            → { cursor: 1793217500000, tokens: [...] }
+# Every next call: only tokens listed after the last cursor
+GET ${BASE}/api/x402/radar?since=1793217500000`}</Code>
+        <Code head="Agent skill (Claude Code, Codex, OpenClaw, …)">{`npx skills add gl1tchbased-pixel/gl1tch-coin --skill gl1tch-token-safety`}</Code>
         <ul className={styles.reasonList} style={{ marginTop: "var(--space-3)" }}>
           <li>You pay only for a successful response. A failed or degraded read (sources down) returns an error and settles nothing.</li>
           <li>Paid responses are never served from a CDN cache.</li>

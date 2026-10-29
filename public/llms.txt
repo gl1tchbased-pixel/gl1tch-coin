@@ -130,6 +130,7 @@ Client config: { "gl1tch": { "url": "https://gl1tchbased.xyz/api/mcp" } }  (stdi
 ## Docs & discovery
 - Agent developer docs (curl / JS / Python): https://gl1tchbased.xyz/agents/docs
 - Pay-per-call (x402) docs: https://gl1tchbased.xyz/agents/docs#x402
+- Agent skill (Claude Code, Codex, OpenClaw): npx skills add gl1tchbased-pixel/gl1tch-coin --skill gl1tch-token-safety
 - Public revenue ledger (paid calls with their transactions, latest 50): https://gl1tchbased.xyz/revenue (JSON: /revenue.json)
 - Quantum Core (Vault, Draw, Seal, Forge, Randomness): https://gl1tchbased.xyz/quantum-core
 - Randomness console + docs: https://gl1tchbased.xyz/quantum-core/random
