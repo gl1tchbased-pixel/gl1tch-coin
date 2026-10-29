@@ -34,17 +34,17 @@ describe("readAave", () => {
   const ORACLE = "0x54586be62e3c3580375ae3723c145253060ca0c2";
   const USDC = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
   const WETH = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
-  const ATOKEN = "0x98c23e9d8f34fefb1b7bd6a91b7ff122f4e16f5c";
+  const AUSDC = "0x98c23e9d8f34fefb1b7bd6a91b7ff122f4e16f5c";
   const reserve = (rate: bigint, aToken: string) => hexWords(0n, 0n, rate, 0n, 0n, 0n, 0n, 0n, aToken, 0n, 0n, 0n, 0n, 0n, 0n);
   const c = (to: string, data: string) => `ethereum|${to}|${data.toLowerCase()}`;
   const rpc = fakeRpc({
     [c(POOL, SEL.addressesProvider)]: hexWords(PROVIDER),
     [c(PROVIDER, SEL.getPriceOracle)]: hexWords(ORACLE),
-    [c(POOL, encodeCall(SEL.getReserveData, USDC))]: reserve(44_670_000_000_000_000_000_000_000n, ATOKEN),
+    [c(POOL, encodeCall(SEL.getReserveData, USDC))]: reserve(44_670_000_000_000_000_000_000_000n, AUSDC),
     [c(POOL, encodeCall(SEL.getReserveData, WETH))]: reserve(0n, "0x" + "0".repeat(40)),
     [c(USDC, SEL.decimals)]: hexWords(6n),
-    [c(ATOKEN, SEL.totalSupply)]: hexWords(1_000_000_000_000n), // 1,000,000 USDC
-    [c(USDC, encodeCall(SEL.balanceOf, ATOKEN))]: hexWords(55_000_000_000n), // 55,000 idle
+    [c(AUSDC, SEL.totalSupply)]: hexWords(1_000_000_000_000n), // 1,000,000 USDC
+    [c(USDC, encodeCall(SEL.balanceOf, AUSDC))]: hexWords(55_000_000_000n), // 55,000 idle
     [c(ORACLE, encodeCall(SEL.getAssetPrice, USDC))]: hexWords(100_000_000n), // $1.00
   });
   const entry = {
@@ -68,7 +68,7 @@ describe("readAave", () => {
     expect(o.tvlUsd).toBeCloseTo(1_000_000, 0);
     expect(o.idleShare).toBeCloseTo(0.055, 6);
     expect(o.stable).toBe(true);
-    expect(o.receipt?.address).toBe(ATOKEN);
+    expect(o.receipt?.address).toBe(AUSDC);
     expect(o.inputs.liquidityRateRay).toBe("44670000000000000000000000");
     expect(o.verify.rpc).toBe("https://ethereum-rpc.publicnode.com");
     expect(JSON.parse(o.verify.body).params[0].data).toBe(encodeCall(SEL.getReserveData, entry.assets[0].address));
