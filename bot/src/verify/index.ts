@@ -32,6 +32,8 @@ import { validateBatch } from "../attest/records.js";
 import { ENGINE } from "../attest/merkle.js";
 import { DEFAULT_POLICY } from "../attest/guard.js";
 import { linkerAttester, startAttestLinker, type Linker } from "../attest/linker.js";
+import { YieldStore } from "../yield/store.js";
+import { startYieldCollector } from "../yield/collector.js";
 
 /** Shared store — the bot issues nonces here and the HTTP endpoint consumes them. */
 export const store = new VerifyStore();
@@ -141,6 +143,10 @@ export function startVerification(bot: Bot): Server | null {
 
   statsStore.load();
   revenueStore.load();
+  // Yield X-Ray: on-chain yields collected hourly; history lives next to the other stores.
+  const yieldStore = new YieldStore();
+  yieldStore.load();
+  startYieldCollector(yieldStore);
   attestStore.load();
   balanceHistory.load();
   signalGraph.load();
@@ -266,6 +272,10 @@ export function startVerification(bot: Bot): Server | null {
         return !!q;
       },
       summary: () => revenueStore.summary(),
+    },
+    yield: {
+      snapshot: () => yieldStore.snapshot(),
+      history: (id) => ({ id, points: yieldStore.history(id) }),
     },
     signal: {
       token: config.stats.token,

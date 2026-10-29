@@ -31,6 +31,7 @@ export const GOPLUS_CHAIN: Record<string, string> = {
   mantle: "5000",
   blast: "81457",
   opbnb: "204",
+  robinhood: "4663",
 };
 
 export const CHAIN_LABEL: Record<string, string> = {
@@ -38,6 +39,7 @@ export const CHAIN_LABEL: Record<string, string> = {
   polygon: "Polygon", arbitrum: "Arbitrum", optimism: "Optimism",
   avalanche: "Avalanche", fantom: "Fantom", cronos: "Cronos", zksync: "zkSync",
   linea: "Linea", scroll: "Scroll", mantle: "Mantle", blast: "Blast", opbnb: "opBNB",
+  robinhood: "Robinhood Chain",
 };
 
 export interface TokenCandidate {

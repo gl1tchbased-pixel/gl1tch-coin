@@ -1,0 +1,171 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { shareMeta } from "@/lib/share-meta";
+import { findOpportunity, getYieldHistory, getYieldSnapshot } from "@/lib/yield/client";
+import { CHAIN_LABEL, KIND_LABEL, METHOD_TEXT, PROTOCOLS, WINDOW_TEXT } from "@/lib/yield/copy";
+import { ago, pct, usd } from "@/lib/yield/format";
+import { gasCostUsd } from "@/lib/yield/math";
+import { riskOf } from "@/lib/yield/risk";
+import { displayName, protocolName, scanLinks } from "@/lib/yield/view";
+import type { YieldOpportunity, YieldSnapshot } from "@/lib/yield/types";
+import { YieldCalculator } from "@/components/yield/YieldCalculator";
+import { RiskPanel } from "@/components/yield/RiskPanel";
+import { VerifyBlock } from "@/components/yield/VerifyBlock";
+import { Sparkline } from "@/components/yield/Sparkline";
+import { Disclaimer, Unavailable, YieldSubnav } from "@/components/yield/YieldChrome";
+import styles from "../yield.module.css";
+
+export const revalidate = 300;
+
+type Props = { params: Promise<{ id: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const o = findOpportunity(await getYieldSnapshot(), id);
+  if (!o) return { title: "Yield X-Ray | GL1TCH", alternates: { canonical: `/yield/${id}` } };
+  const name = `${displayName(o)} on ${CHAIN_LABEL[o.chain]}`;
+  const apy = o.apy == null ? "still measuring" : `${pct(o.apy)} APY`;
+  return shareMeta({
+    title: `${name}: ${apy} — Yield X-Ray | GL1TCH`,
+    description: `Where the ${displayName(o)} yield on ${protocolName(o)} comes from, how you get out, its risk score and the on-chain request to verify it. Not financial advice.`,
+    alternates: { canonical: `/yield/${o.id}` },
+  });
+}
+
+/** Default entry + exit cost for the calculator, from the chain's live gas price. */
+function defaultCost(o: YieldOpportunity, snap: YieldSnapshot): { usd: number; note: string } {
+  if (o.chain === "solana") {
+    return { usd: 0.01, note: "Solana network fees are a fraction of a cent per transaction; priority fees can add a little. Change it if you pay more." };
+  }
+  const g = snap.gas[o.chain];
+  if (!g || g.nativeUsd == null) return { usd: 0, note: "Gas price unavailable right now; enter your own cost." };
+  const usdCost = gasCostUsd(g.gwei, g.nativeUsd);
+  return {
+    usd: usdCost,
+    note: `Estimated from ${CHAIN_LABEL[o.chain]}'s gas price right now (${g.gwei.toFixed(3)} gwei) for approve + deposit + withdraw, about 446,000 gas. Busy days can cost many times more.`,
+  };
+}
+
+function apyNote(o: YieldOpportunity): string {
+  if (o.apy == null) {
+    return o.measuredSinceMs ? `GL1TCH started measuring ${ago(o.measuredSinceMs)}; the first reading needs 24 h of snapshots.` : "Measuring.";
+  }
+  return `${WINDOW_TEXT[o.window ?? ""] ?? ""}${o.measuredSinceMs ? ` · measured since ${new Date(o.measuredSinceMs).toISOString().slice(0, 10)}` : ""}`;
+}
+
+export default async function YieldCardPage({ params }: Props) {
+  const { id } = await params;
+  const snap = await getYieldSnapshot();
+  if (!snap) {
+    return (
+      <section className="container" style={{ paddingBlock: "var(--space-16)" }}>
+        <YieldSubnav />
+        <div style={{ marginTop: "var(--space-8)" }}><Unavailable /></div>
+      </section>
+    );
+  }
+  const o = findOpportunity(snap, id);
+  if (!o) notFound();
+
+  const history = await getYieldHistory(o.id);
+  const risk = riskOf(o);
+  const copy = PROTOCOLS[o.protocol];
+  const cost = defaultCost(o, snap);
+  const links = scanLinks(o);
+
+  return (
+    <section className="container" style={{ paddingBlock: "var(--space-16)", maxWidth: 960 }}>
+      <div className={styles.crumbs}>
+        <Link href="/yield">Yield X-Ray</Link> / {CHAIN_LABEL[o.chain]}
+      </div>
+      <div className={styles.cardHead}>
+        <div>
+          <h1 className="t-h1" style={{ margin: 0 }}>{displayName(o)}</h1>
+          <p className={styles.dim} style={{ marginTop: "var(--space-2)" }}>
+            {protocolName(o)} · {KIND_LABEL[o.kind]} · {CHAIN_LABEL[o.chain]}
+            {o.stale && <span className={styles.stale}>stale: last read failed, showing {ago(o.updatedAt)}</span>}
+          </p>
+        </div>
+      </div>
+
+      <div className={styles.stats}>
+        <div className={styles.stat}>
+          <div className={styles.statLabel}>APY</div>
+          <div className={styles.statValue}>{o.apy == null ? "measuring…" : pct(o.apy)}</div>
+          <div className={styles.statNote}>{apyNote(o)}</div>
+        </div>
+        <div className={styles.stat}>
+          <div className={styles.statLabel}>Deposits</div>
+          <div className={styles.statValue}>{usd(o.tvlUsd)}</div>
+          <div className={styles.statNote}>priced with Chainlink / the protocol&apos;s oracle</div>
+        </div>
+        {o.idleShare != null && (
+          <div className={styles.stat}>
+            <div className={styles.statLabel}>Can leave right now</div>
+            <div className={styles.statValue}>{pct(o.idleShare, 1)}</div>
+            <div className={styles.statNote}>of deposits are not lent out</div>
+          </div>
+        )}
+        {o.feePct != null && (
+          <div className={styles.stat}>
+            <div className={styles.statLabel}>Pool fee</div>
+            <div className={styles.statValue}>{pct(o.feePct, 1)}</div>
+            <div className={styles.statNote}>of rewards, already taken out of the APY</div>
+          </div>
+        )}
+      </div>
+
+      <div className={styles.section}>
+        <h2 className={styles.h2}>Where the yield comes from</h2>
+        <p className={styles.p}>{copy?.income ?? "Not described yet."}</p>
+        {copy?.note && <p className={styles.p}>{copy.note}</p>}
+        <p className={styles.p}>{METHOD_TEXT[o.method]}</p>
+      </div>
+
+      <div className={styles.section}>
+        <h2 className={styles.h2}>How you get out</h2>
+        <p className={styles.p}>{copy?.exit ?? "Not described yet."}</p>
+      </div>
+
+      <div className={styles.section}>
+        <h2 className={styles.h2}>Risk</h2>
+        <RiskPanel risk={risk} />
+      </div>
+
+      <div className={styles.section}>
+        <h2 className={styles.h2}>What it means for your money</h2>
+        <YieldCalculator apy={o.apy} stable={o.stable} symbol={o.asset.symbol} defaultCostUsd={cost.usd} costNote={cost.note} />
+      </div>
+
+      {history.length >= 2 && (
+        <div className={styles.section}>
+          <h2 className={styles.h2}>APY history</h2>
+          <Sparkline points={history} />
+        </div>
+      )}
+
+      <div className={styles.section}>
+        <h2 className={styles.h2}>Verify it yourself</h2>
+        <VerifyBlock o={o} />
+      </div>
+
+      <div className={styles.section}>
+        <h2 className={styles.h2}>Check the tokens</h2>
+        <div className={styles.links}>
+          {links.map((l) => (
+            <Link key={l.href} href={l.href}>{l.label} with the GL1TCH scanner →</Link>
+          ))}
+          {copy && (
+            <a href={copy.url} target="_blank" rel="noopener noreferrer">{copy.name} official site ↗</a>
+          )}
+        </div>
+      </div>
+
+      <div style={{ marginTop: "var(--space-12)" }}>
+        <YieldSubnav />
+      </div>
+      <Disclaimer />
+    </section>
+  );
+}

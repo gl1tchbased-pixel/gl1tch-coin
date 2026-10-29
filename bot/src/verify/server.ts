@@ -31,6 +31,12 @@ export interface VerifyServerOptions {
     quote?: (body: unknown) => boolean;
     summary: () => unknown;
   };
+  /** Yield X-Ray: public GET /yield (latest on-chain yield snapshot; 503 until the first collection) and
+   *  GET /yield/history?id= (one opportunity's hourly/daily points). */
+  yield?: {
+    snapshot: () => unknown;
+    history: (id: string) => unknown;
+  };
   /** Signal Graph endpoints: public GET /signal/deployer (deployer track record),
    *  token-guarded POST /signal/observe (record a scan). Shares the stats token. */
   signal?: {
@@ -164,6 +170,30 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
           res.end(JSON.stringify({ ok: false, error: "bad_json" }));
         }
       });
+      return;
+    }
+
+    // ---- Yield X-Ray ----
+    if (opts.yield && sPath === "/yield" && req.method === "GET") {
+      const snap = opts.yield.snapshot();
+      if (!snap) {
+        res.writeHead(503, { "Content-Type": "application/json", "Retry-After": "60", ...cors });
+        res.end(JSON.stringify({ ok: false, error: "warming_up" }));
+        return;
+      }
+      res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=60", ...cors });
+      res.end(JSON.stringify(snap));
+      return;
+    }
+    if (opts.yield && sPath === "/yield/history" && req.method === "GET") {
+      const id = new URLSearchParams((req.url ?? "").split("?")[1] ?? "").get("id") ?? "";
+      if (!/^[a-z0-9-]{3,80}$/.test(id)) {
+        res.writeHead(400, { "Content-Type": "application/json", ...cors });
+        res.end(JSON.stringify({ ok: false, error: "bad_id" }));
+        return;
+      }
+      res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=60", ...cors });
+      res.end(JSON.stringify(opts.yield.history(id)));
       return;
     }
 
