@@ -1,0 +1,88 @@
+.swap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px 26px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.title { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: rgba(245, 247, 248, 0.8); font-weight: 700; }
+.via { font-size: 12px; color: rgba(245, 247, 248, 0.45); }
+
+.tabs { display: flex; gap: 8px; }
+.tab {
+  flex: 1;
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(245, 247, 248, 0.7);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.tabOn { border-color: rgba(124, 255, 79, 0.45); color: #7cff4f; background: rgba(124, 255, 79, 0.06); }
+.tab:disabled { cursor: default; opacity: 0.6; }
+
+.amountRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+}
+.amount {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 0;
+  border: 0;
+  background: transparent;
+  color: #f5f7f8;
+  font-family: inherit;
+  font-size: 20px;
+  outline: none;
+}
+.unit { font-size: 14px; font-weight: 700; color: rgba(245, 247, 248, 0.6); white-space: nowrap; }
+
+.ack { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; color: #ffd66b; line-height: 1.4; cursor: pointer; }
+.ack input { margin-top: 2px; accent-color: #ffd66b; }
+
+.connect { display: flex; justify-content: center; }
+
+.primary {
+  padding: 12px 18px;
+  border-radius: 9999px;
+  border: 0;
+  background: #7cff4f;
+  color: #06110a;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.primary:disabled { opacity: 0.45; cursor: default; }
+
+.quote { display: flex; flex-direction: column; gap: 10px; }
+.quoteMain { font-size: 16px; color: #f5f7f8; }
+.usd { color: rgba(245, 247, 248, 0.55); }
+.quoteMeta { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: rgba(245, 247, 248, 0.55); }
+.warn { color: #ffd66b; }
+.warnLine { margin: 0; font-size: 13px; color: #ffd66b; }
+
+.blocked {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 123, 123, 0.35);
+  background: rgba(255, 123, 123, 0.06);
+  color: #ff9b9b;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.fee, .note { margin: 0; font-size: 12px; line-height: 1.45; color: rgba(245, 247, 248, 0.45); }
+.ok { margin: 0; font-size: 14px; color: #7cff4f; }
+.err { margin: 0; font-size: 14px; color: #ff9b9b; }
+.ok a, .err a { color: inherit; }

@@ -27,6 +27,8 @@ export interface WalletState {
   disconnect: () => void;
   /** Present only when the connected wallet can sign messages. */
   signMessage: ((message: Uint8Array) => Promise<Uint8Array>) | null;
+  /** Signs a serialized versioned transaction and returns it serialized; null when the wallet can't. */
+  signTransaction: ((tx: Uint8Array) => Promise<Uint8Array>) | null;
 }
 
 export interface WalletApi extends WalletState {
@@ -44,6 +46,7 @@ const IDLE: WalletState = {
   select: () => {},
   disconnect: () => {},
   signMessage: null,
+  signTransaction: null,
 };
 
 const Ctx = createContext<WalletApi>({ ...IDLE, load: () => {} });

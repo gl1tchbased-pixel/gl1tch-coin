@@ -7,6 +7,7 @@ import { CHAIN_LABEL } from "@/lib/scan-multichain";
 import { formatHoldingPct } from "@/lib/deployer-holdings";
 import { fmtPrice } from "@/lib/market";
 import { RiskOrb } from "./RiskOrb";
+import { SafeSwap } from "./SafeSwap";
 import { unlock } from "@/lib/fun/achievements";
 import styles from "./ScanTool.module.css";
 
@@ -314,6 +315,10 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
               {result.scannedAt ? `scanned ${new Date(result.scannedAt).toUTCString().replace("GMT", "UTC")}` : "live on-chain read"}
             </span>
           </div>
+
+          {result.chain === "solana" && (
+            <SafeSwap key={result.mint} mint={result.mint} symbol={result.symbol} verdict={result.verdict} confidence={result.confidence} />
+          )}
 
           {/* Embed — turn every legit project into a backlink */}
           <div className={styles.embed}>

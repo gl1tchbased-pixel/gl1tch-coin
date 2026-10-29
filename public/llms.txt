@@ -58,6 +58,14 @@ Non-custodial and read-only.
 ### Deployer reputation (Signal Graph — cross-scan memory)
 Included in a scan's meta.deployerReputation; a deployer linked to prior rugs inherits that record.
 
+### Safe Swap (Solana; scan-gated; the taker's own wallet signs)
+GET /api/swap/order?side=buy|sell&mint=<token>&amount=<decimal>&taker=<wallet>[&ack=1]
+Returns a Jupiter quote and an unsigned transaction for the taker to sign. Buys (SOL → token) re-check
+the token first: CLEAN and LOW RISK pass, CAUTION needs ack=1, HIGH RISK, RUG-SHAPED and partial reads
+answer 403. Sells (token → SOL) are never blocked. 20 quotes/min per IP.
+POST /api/swap/execute { signedTransaction, requestId } lands the signed swap through Jupiter.
+Any GL1TCH fee is in the quote as gl1tchFeeBps (0 = none) and is listed on /revenue.
+
 ---
 
 ## 3. Verifiable randomness — provably-fair RNG-as-a-service (holder-gated)
