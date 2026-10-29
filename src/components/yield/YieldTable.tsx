@@ -74,7 +74,7 @@ export function YieldTable({ rows }: { rows: YieldRow[] }) {
                 <td>{r.chainLabel}</td>
                 <td className={styles.num}>
                   {r.apy == null ? <span className={styles.dim}>measuring…</span> : pct(r.apy)}
-                  {r.apy != null && r.window && <div className={styles.dim}>{r.window === "live" ? "live" : r.window}</div>}
+                  {r.apy != null && r.window && <div className={styles.dim}>{r.kind === "dex-lp" ? "fee APR · " : ""}{r.window}</div>}
                 </td>
                 <td className={styles.num}>{usd(r.tvlUsd)}</td>
                 <td>

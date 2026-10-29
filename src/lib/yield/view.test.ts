@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { toRow, displayName, scanLinks } from "./view";
+import { toRow, displayName, scanLinks, telegramLink, shareText } from "./view";
 import type { YieldOpportunity } from "./types";
 
 const vault = {
@@ -11,6 +11,11 @@ const vault = {
   asset: { symbol: "USDG", address: "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168", decimals: 6 },
   receipt: { symbol: "steakUSDG", address: "0xBeEff033F34C046626B8D0A041844C5d1A5409dd" },
   stable: true,
+  ilRisk: "none",
+  tokens: [
+    { symbol: "USDG", address: "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168" },
+    { symbol: "steakUSDG", address: "0xBeEff033F34C046626B8D0A041844C5d1A5409dd" },
+  ],
   method: "growth",
   apy: null,
   window: null,
@@ -38,7 +43,20 @@ describe("yield view helpers", () => {
       "/scan?t=robinhood:0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168",
       "/scan?t=robinhood:0xBeEff033F34C046626B8D0A041844C5d1A5409dd",
     ]);
-    const lst = { ...vault, chain: "solana", asset: { symbol: "SOL", address: "native", decimals: 9 }, receipt: { symbol: "JitoSOL", address: "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn" } } as YieldOpportunity;
+    const lst = { ...vault, chain: "solana", tokens: [{ symbol: "JitoSOL", address: "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn" }] } as YieldOpportunity;
     expect(scanLinks(lst)).toEqual([{ label: "Scan JitoSOL", href: "/scan?t=solana:J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn" }]);
+  });
+});
+
+describe("buttons", () => {
+  it("builds the Telegram deep link and skips scanning on Tron (the scanner can't read it)", () => {
+    expect(telegramLink("base-aave-v3-usdc")).toBe("https://t.me/gl1tch_infected_bot?start=yield_base-aave-v3-usdc");
+    expect(scanLinks({ ...vault, chain: "tron", tokens: [{ symbol: "USDT", address: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t" }] } as YieldOpportunity)).toEqual([]);
+  });
+
+  it("writes a share text with the number and the name", () => {
+    const t = shareText({ ...vault, apy: 0.037 } as YieldOpportunity);
+    expect(t).toContain("3.70%");
+    expect(t).toContain("Steakhouse USDG");
   });
 });

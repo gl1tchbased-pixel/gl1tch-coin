@@ -29,3 +29,49 @@ export function epochsPerYear(slotsInEpoch: number, slotsPerSecond: number): num
   if (!(slotsInEpoch > 0) || !(slotsPerSecond > 0)) return null;
   return (365 * 86_400 * slotsPerSecond) / slotsInEpoch;
 }
+
+/**
+ * Fee APR of a full-range liquidity position, from a concentrated-liquidity pool's cumulative fee counters
+ * (Orca `fee_growth_global_*`, Q64.64 · Uniswap v3 `feeGrowthGlobal*X128`, Q128.128). A full-range position is
+ * always in range, so it earns exactly the global growth per unit of liquidity. Its value is `2·L·s` in token1
+ * (s = √price), so fees ÷ value = (Δf0·s² + Δf1) ÷ (2s). Counters wrap by design; differences are modular.
+ * Not compounded: LP fees accrue to the position and are claimed, not reinvested.
+ */
+export function feeApr(
+  prev: { t: number; fee0: bigint; fee1: bigint },
+  cur: { t: number; fee0: bigint; fee1: bigint; sqrtPrice: bigint },
+  q: { fee: 64 | 128; sqrt: 64 | 96 }
+): number | null {
+  if (!(cur.t > prev.t) || cur.sqrtPrice <= 0n) return null;
+  const mod = 1n << (q.fee === 64 ? 128n : 256n);
+  const delta = (a: bigint, b: bigint) => (((b - a) % mod) + mod) % mod;
+  const scale = 2 ** q.fee;
+  const d0 = Number(delta(prev.fee0, cur.fee0)) / scale;
+  const d1 = Number(delta(prev.fee1, cur.fee1)) / scale;
+  const s = Number(cur.sqrtPrice) / 2 ** q.sqrt;
+  return ((d0 * s * s + d1) / (2 * s)) * (YEAR_MS / (cur.t - prev.t));
+}
+
+/**
+ * Pool-average fee APR: fees earned by all in-range liquidity ÷ everything in the pool — the number DEX sites show.
+ * Fees in token1 raw units ≈ (Δf0·s² + Δf1) × L, with L averaged over the window (active liquidity moves);
+ * pool value = amount0·s² + amount1 (raw vault balances). Concentrated LPs in range earn more than this, a
+ * full-range LP far less (feeApr).
+ */
+export function poolFeeApr(
+  prev: { t: number; fee0: bigint; fee1: bigint; liquidity: bigint },
+  cur: { t: number; fee0: bigint; fee1: bigint; sqrtPrice: bigint; liquidity: bigint; amount0: bigint; amount1: bigint },
+  q: { fee: 64 | 128; sqrt: 64 | 96 }
+): number | null {
+  if (!(cur.t > prev.t) || cur.sqrtPrice <= 0n) return null;
+  const mod = 1n << (q.fee === 64 ? 128n : 256n);
+  const delta = (a: bigint, b: bigint) => (((b - a) % mod) + mod) % mod;
+  const scale = 2 ** q.fee;
+  const d0 = Number(delta(prev.fee0, cur.fee0)) / scale;
+  const d1 = Number(delta(prev.fee1, cur.fee1)) / scale;
+  const s = Number(cur.sqrtPrice) / 2 ** q.sqrt;
+  const l = (Number(prev.liquidity) + Number(cur.liquidity)) / 2;
+  const value = Number(cur.amount0) * s * s + Number(cur.amount1);
+  if (!(value > 0)) return null;
+  return (((d0 * s * s + d1) * l) / value) * (YEAR_MS / (cur.t - prev.t));
+}

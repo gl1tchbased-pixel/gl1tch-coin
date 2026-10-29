@@ -51,4 +51,6 @@ export const startKb = () =>
   new InlineKeyboard()
     .text("Enter Control ◆", "m:home")
     .row()
+    .url("📈 Yield X-Ray ↗", `${OFFICIAL.SITE}/yield`)
+    .row()
     .url("Open Website ↗", OFFICIAL.SITE);

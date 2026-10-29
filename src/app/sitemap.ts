@@ -36,6 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/embed",
     "/learn",
     "/learn/how-to-spot-a-rug-pull",
+    "/learn/how-to-read-an-apy",
     "/learn/what-is-a-honeypot",
     "/learn/how-to-check-if-a-token-is-safe",
     "/learn/what-is-know-your-agent",

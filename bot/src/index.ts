@@ -4,6 +4,7 @@ import { antiSpam, scamFilter, logging } from "./middleware.js";
 import { publicCommands } from "./commands.js";
 import { scanCommands, autoScan } from "./scan.js";
 import { watchCommands, startWatchtower } from "./watch/index.js";
+import { yieldCommands } from "./yield/telegram.js";
 import { walletCommands } from "./watch/wallet.js";
 import { referralStore } from "./referrals.js";
 import { proofOfSignal } from "./proof-of-signal/store.js";
@@ -52,6 +53,8 @@ bot.use(xCallbacks);
 bot.use(adminCommands);
 bot.use(scanCommands);
 bot.use(watchCommands);
+// Yield X-Ray before publicCommands: it answers /start yield_<id> deep links and passes every other /start on.
+bot.use(yieldCommands);
 bot.use(walletCommands);
 bot.use(publicCommands);
 
@@ -78,6 +81,10 @@ async function main() {
     { command: "watch", description: "👁 Watch a token — alert me if its safety changes" },
     { command: "watching", description: "👁 Your Watchtower list" },
     { command: "unwatch", description: "🚫 Stop watching a token" },
+    { command: "yield", description: "📈 Yield X-Ray — where an APY comes from" },
+    { command: "yieldwatch", description: "📈 Alert me if a yield drops or gets stuck" },
+    { command: "yieldwatching", description: "📈 Your yield watches" },
+    { command: "yieldunwatch", description: "🚫 Stop watching a yield" },
     { command: "watchwallet", description: "🐋 Watch a wallet — alert on whale/dev sells" },
     { command: "wallets", description: "🐋 Your watched wallets" },
     { command: "unwatchwallet", description: "🚫 Stop watching a wallet" },

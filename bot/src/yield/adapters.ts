@@ -5,6 +5,7 @@ import {
   AAVE,
   CHAINLINK,
   EVM_RPC,
+  JUSTLEND,
   RATE_ASSETS,
   SPL_POOLS,
   opportunityId,
@@ -26,7 +27,14 @@ export const SEL = {
   balanceOf: "0x70a08231",
   getAssetPrice: "0xb3596f07",
   totalAssets: "0x01e1d114",
+  supplyRatePerBlock: "0xae9d70b0",
+  getCash: "0x3b1d21a2",
+  totalBorrows: "0x47bd3718",
+  totalReserves: "0x8f840ddd",
 } as const;
+
+/** Tron produces a block every 3 s. */
+const TRON_BLOCKS_PER_DAY = 28_800;
 
 const FEED_MAX_AGE_MS = 36 * 3_600_000;
 const ZERO_ADDRESS = "0x" + "0".repeat(40);
@@ -85,6 +93,8 @@ export async function readAave(rpc: Rpc, entry: (typeof AAVE)[number], now: numb
         asset: { symbol: asset.symbol, address: asset.address, decimals },
         receipt: { symbol: "aToken", address: aToken },
         stable: asset.stable,
+        ilRisk: "none",
+        tokens: [{ symbol: asset.symbol, address: asset.address }, { symbol: "aToken", address: aToken }],
         method: "rate",
         apy: rayAprToApy(liquidityRate),
         window: "live",
@@ -142,6 +152,8 @@ export async function readSpl(
         asset: { symbol: "SOL", address: "native", decimals: 9 },
         receipt: { symbol: p.symbol, address: p.mint },
         stable: false,
+        ilRisk: "none",
+        tokens: [{ symbol: p.symbol, address: p.mint }],
         method: "epoch",
         apy: epochsPerYearN ? epochApy(rate, prev, epochsPerYearN) : null,
         window: "epoch",
@@ -203,6 +215,8 @@ export async function readRates(rpc: Rpc, prices: Prices, now: number, assets: R
         asset: r.asset,
         receipt: { symbol: r.symbol, address: r.address },
         stable: r.tvl.base === "USD",
+        ilRisk: "none",
+        tokens: [...(r.asset.address === "native" ? [] : [{ symbol: r.asset.symbol, address: r.asset.address }]), { symbol: r.symbol, address: r.address }],
         method: "growth",
         apy: null,
         window: null,
@@ -255,11 +269,68 @@ export async function readSolanaNetwork(rpc: Rpc): Promise<SolanaNetwork> {
   return { solanaEpochsPerYear: epy, solanaInflation: inflation, solanaStakedShare: stakedShare };
 }
 
-/** Current gas price per EVM chain, with the USD price of the coin gas is paid in. */
+/**
+ * JustLend markets on Tron (Compound v2 fork): live supply rate per block, cash and borrows. Calls run one at a
+ * time — TronGrid's free tier drops bursts. An empty answer fails the source; it never becomes a 0% APY.
+ */
+export async function readJustLend(rpc: Rpc, prices: Prices, now: number, markets = JUSTLEND, pauseMs = 300): Promise<YieldOpportunity[]> {
+  const out: YieldOpportunity[] = [];
+  for (const m of markets) {
+    const read = async (data: string) => {
+      const w = words(await rpc.evmCall("tron", m.hex, data));
+      if (!w.length) throw new Error(`justlend ${m.symbol}: empty answer`);
+      if (pauseMs) await new Promise((r) => setTimeout(r, pauseMs));
+      return w[0]; // delegator views append padding after the value
+    };
+    const rate = await read(SEL.supplyRatePerBlock);
+    const cash = await read(SEL.getCash);
+    const borrows = await read(SEL.totalBorrows);
+    const reserves = await read(SEL.totalReserves);
+    const total = scaled(cash + borrows - reserves, m.decimals);
+    out.push({
+      id: opportunityId("tron", "justlend", m.symbol),
+      chain: "tron",
+      protocol: "justlend",
+      kind: "lending",
+      symbol: m.symbol,
+      asset: { symbol: m.symbol, address: m.underlying, decimals: m.decimals },
+      receipt: { symbol: `j${m.symbol}`, address: m.market },
+      stable: true,
+      ilRisk: "none",
+      tokens: [{ symbol: m.symbol, address: m.underlying }],
+      method: "rate",
+      apy: Math.pow(1 + (Number(rate) / 1e18) * TRON_BLOCKS_PER_DAY, 365) - 1,
+      window: "live",
+      measuredSinceMs: null,
+      tvlUsd: prices.USDC && total > 0 ? total * prices.USDC : null,
+      idleShare: total > 0 ? scaled(cash, m.decimals) / total : null,
+      feePct: null,
+      rate: null,
+      inputs: {
+        jToken: m.market,
+        supplyRatePerBlock: rate.toString(),
+        cash: cash.toString(),
+        totalBorrows: borrows.toString(),
+        totalReserves: reserves.toString(),
+        price: "USDC/USD Chainlink (stablecoin proxy)",
+      },
+      verify: {
+        rpc: rpcUrlFor("tron"),
+        body: rpcBody("eth_call", [{ to: m.hex, data: SEL.supplyRatePerBlock }, "latest"]),
+        read: `Word 0 is supplyRatePerBlock (1e18 = 100%). Tron makes a block every 3 s, so APY = (1 + rate × 28,800)^365 − 1. The address is the jToken ${m.market} in hex.`,
+      },
+      stale: false,
+      updatedAt: now,
+    });
+  }
+  return out;
+}
+
+/** Current gas price per EVM chain, with the USD price of the coin gas is paid in. Tron prices fees in energy, not gas. */
 export async function readGas(rpc: Rpc, prices: Prices): Promise<Gas> {
   const out: Gas = {};
   await Promise.allSettled(
-    (Object.keys(EVM_RPC) as EvmChain[]).map(async (chain) => {
+    (Object.keys(EVM_RPC) as EvmChain[]).filter((c) => c !== "tron").map(async (chain) => {
       const hex = (await rpc.evmRaw(chain, "eth_gasPrice", [])) as string;
       out[chain] = { gwei: Number(BigInt(hex)) / 1e9, nativeUsd: (chain === "bsc" ? prices.BNB : prices.ETH) ?? null };
     })

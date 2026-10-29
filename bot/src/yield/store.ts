@@ -13,6 +13,8 @@ export interface YieldPoint {
   apy: number | null;
   tvlUsd: number | null;
   rate: string | null;
+  /** DEX pools: the cumulative fee counters [fee0, fee1] at this time. */
+  aux?: string[];
 }
 
 const VOLUME = process.env.RAILWAY_VOLUME_MOUNT_PATH;
@@ -89,3 +91,6 @@ export class YieldStore {
     return best;
   }
 }
+
+/** The bot-wide store: the collector writes it, the bridge and Telegram commands read it. */
+export const yieldStore = new YieldStore();

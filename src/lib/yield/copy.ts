@@ -56,6 +56,26 @@ export const PROTOCOLS: Record<string, ProtocolCopy> = {
     income: "The Sky Savings Rate: interest set by Sky governance and funded by the protocol's lending and real-world-asset income.",
     exit: "Withdraw to USDS at any time. Governance can change the rate.",
   },
+  orca: {
+    name: "Orca",
+    url: "https://www.orca.so",
+    income: "Traders pay a fee on every swap through this pool and liquidity providers share it. The number here is what a full-range position earned in fees, measured from the pool's own fee counter.",
+    exit: "Withdraw any time. You get back both tokens in whatever mix the pool holds by then, which is where impermanent loss shows up.",
+    note: "Concentrated positions earn more while the price stays in their range and nothing outside it, and they lose more to impermanent loss than a full-range position.",
+  },
+  "uniswap-v3": {
+    name: "Uniswap v3",
+    url: "https://app.uniswap.org",
+    income: "Traders pay a fee on every swap through this pool and liquidity providers share it (after Uniswap's protocol fee). The number here is what a full-range position earned in fees, measured from the pool's own fee counters.",
+    exit: "Withdraw any time. You get back both tokens in whatever mix the pool holds by then, which is where impermanent loss shows up.",
+    note: "Concentrated positions earn more while the price stays in their range and nothing outside it, and they lose more to impermanent loss than a full-range position.",
+  },
+  justlend: {
+    name: "JustLend",
+    url: "https://justlend.org",
+    income: "Borrowers on Tron pay interest to borrow USDT and suppliers share it, minus the market's reserve cut. The rate moves with how much of the pool is borrowed.",
+    exit: "Withdraw any time while the market holds idle USDT. When almost everything is borrowed, withdrawals wait for repayments.",
+  },
   morpho: {
     name: "Morpho vault",
     url: "https://app.morpho.org",
@@ -79,6 +99,7 @@ export const CHAIN_LABEL: Record<YieldChain, string> = {
   arbitrum: "Arbitrum",
   bsc: "BNB Chain",
   robinhood: "Robinhood Chain",
+  tron: "Tron",
   solana: "Solana",
 };
 
@@ -86,6 +107,7 @@ export const KIND_LABEL: Record<YieldKind, string> = {
   lending: "Lending",
   "liquid-staking": "Liquid staking",
   vault: "Vault",
+  "dex-lp": "DEX pool",
 };
 
 export const METHOD_TEXT: Record<ApyMethod, string> = {
@@ -93,6 +115,10 @@ export const METHOD_TEXT: Record<ApyMethod, string> = {
   epoch: "Measured from the pool's growth over the last Solana epoch.",
   growth: "Measured by GL1TCH from the share price's growth between our own hourly snapshots.",
 };
+
+/** DEX pools are measured differently from every other kind. */
+export const DEX_METHOD_TEXT =
+  "Measured by GL1TCH from the pool's own fee counters between our hourly snapshots. The headline is the pool average (all LPs' fees ÷ everything in the pool), the number DEX sites show; the full-range figure is what a set-and-forget position across the whole price range earned.";
 
 export const WINDOW_TEXT: Record<string, string> = {
   live: "live rate",

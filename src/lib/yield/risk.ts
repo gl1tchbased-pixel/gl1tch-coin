@@ -11,7 +11,8 @@ export const RISK_WEIGHTS = {
   exit: { idleUnder5: 20, idleUnder15: 8, liquidStaking: 5, vault: 10 },
   maturity: { measuring: 10, oneDay: 8, oneEpoch: 3 },
   outlier: { stableOver15: 25, otherOver20: 20 },
-  structure: { vault: 10, liquidStaking: 5, lending: 5 },
+  structure: { vault: 10, liquidStaking: 5, lending: 5, dex: 10 },
+  impermanentLoss: { high: 20, low: 5 },
   youngChain: 5,
   stale: 10,
 } as const;
@@ -53,12 +54,15 @@ export function riskOf(o: YieldOpportunity): Risk {
 
   // Yields far above what the activity usually pays need a payer you can name.
   if (o.apy != null && o.stable && o.apy > 0.15) add(W.outlier.stableOver15, "Far above what lending stablecoins usually pays: find out who pays it.");
-  else if (o.apy != null && !o.stable && o.apy > 0.2) add(W.outlier.otherOver20, "Far above typical staking or lending yields: find out who pays it.");
+  else if (o.apy != null && !o.stable && o.apy > 0.2 && o.kind !== "dex-lp") add(W.outlier.otherOver20, "Far above typical staking or lending yields: find out who pays it.");
 
   // What can go wrong by construction.
   if (o.kind === "vault") add(W.structure.vault, "A curator decides where the money goes; their choices are part of the risk.");
   if (o.kind === "liquid-staking") add(W.structure.liquidStaking, "Smart-contract risk, and the token can trade below its backing.");
   if (o.kind === "lending") add(W.structure.lending, "Smart-contract and bad-debt risk if borrowers' collateral crashes.");
+  if (o.kind === "dex-lp") add(W.structure.dex, "Fee income depends on your range: a concentrated position earns more while the price stays in it and nothing outside it.");
+  if (o.ilRisk === "high") add(W.impermanentLoss.high, "The two tokens' prices move independently: impermanent loss can exceed the fees.");
+  if (o.ilRisk === "low") add(W.impermanentLoss.low, "The two tokens track each other, so impermanent loss stays small unless one breaks its link.");
 
   if (o.chain === "robinhood") add(W.youngChain, "Young chain with a short track record.");
   if (o.stale) add(W.stale, "This row is from an earlier reading: the latest read failed.");

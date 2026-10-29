@@ -3,13 +3,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { shareMeta } from "@/lib/share-meta";
 import { findOpportunity, getYieldHistory, getYieldSnapshot } from "@/lib/yield/client";
-import { CHAIN_LABEL, KIND_LABEL, METHOD_TEXT, PROTOCOLS, WINDOW_TEXT } from "@/lib/yield/copy";
+import { CHAIN_LABEL, DEX_METHOD_TEXT, KIND_LABEL, METHOD_TEXT, PROTOCOLS, WINDOW_TEXT } from "@/lib/yield/copy";
 import { ago, pct, usd } from "@/lib/yield/format";
-import { gasCostUsd } from "@/lib/yield/math";
+import { gasCostUsd, ilBreakEvenRatio } from "@/lib/yield/math";
 import { riskOf } from "@/lib/yield/risk";
-import { displayName, protocolName, scanLinks } from "@/lib/yield/view";
+import { cardUrl, displayName, protocolName, scanLinks, shareText, telegramLink } from "@/lib/yield/view";
 import type { YieldOpportunity, YieldSnapshot } from "@/lib/yield/types";
 import { YieldCalculator } from "@/components/yield/YieldCalculator";
+import { LpCalculator } from "@/components/yield/LpCalculator";
+import { CardActions } from "@/components/yield/CardActions";
 import { RiskPanel } from "@/components/yield/RiskPanel";
 import { VerifyBlock } from "@/components/yield/VerifyBlock";
 import { Sparkline } from "@/components/yield/Sparkline";
@@ -25,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const o = findOpportunity(await getYieldSnapshot(), id);
   if (!o) return { title: "Yield X-Ray | GL1TCH", alternates: { canonical: `/yield/${id}` } };
   const name = `${displayName(o)} on ${CHAIN_LABEL[o.chain]}`;
-  const apy = o.apy == null ? "still measuring" : `${pct(o.apy)} APY`;
+  const apy = o.apy == null ? "still measuring" : `${pct(o.apy)} ${o.kind === "dex-lp" ? "fee APR" : "APY"}`;
   return shareMeta({
     title: `${name}: ${apy} — Yield X-Ray | GL1TCH`,
     description: `Where the ${displayName(o)} yield on ${protocolName(o)} comes from, how you get out, its risk score and the on-chain request to verify it. Not financial advice.`,
@@ -37,6 +39,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 function defaultCost(o: YieldOpportunity, snap: YieldSnapshot): { usd: number; note: string } {
   if (o.chain === "solana") {
     return { usd: 0.01, note: "Solana network fees are a fraction of a cent per transaction; priority fees can add a little. Change it if you pay more." };
+  }
+  if (o.chain === "tron") {
+    return { usd: 0, note: "Tron charges fees in energy and bandwidth, which depends on what your account has staked. Enter your own cost." };
   }
   const g = snap.gas[o.chain];
   if (!g || g.nativeUsd == null) return { usd: 0, note: "Gas price unavailable right now; enter your own cost." };
@@ -73,6 +78,9 @@ export default async function YieldCardPage({ params }: Props) {
   const copy = PROTOCOLS[o.protocol];
   const cost = defaultCost(o, snap);
   const links = scanLinks(o);
+  const isDex = o.kind === "dex-lp";
+  const breakEven = isDex && o.fullRangeApr != null ? ilBreakEvenRatio(o.fullRangeApr) : null;
+  const pair = (o.tokens.length === 2 ? [o.tokens[0].symbol, o.tokens[1].symbol] : [o.symbol, "the other token"]) as [string, string];
 
   return (
     <section className="container" style={{ paddingBlock: "var(--space-16)", maxWidth: 960 }}>
@@ -89,9 +97,17 @@ export default async function YieldCardPage({ params }: Props) {
         </div>
       </div>
 
+      <CardActions
+        telegram={telegramLink(o.id)}
+        url={cardUrl(o.id)}
+        share={shareText(o)}
+        scans={links}
+        protocol={copy ? { name: copy.name, url: copy.url } : null}
+      />
+
       <div className={styles.stats}>
         <div className={styles.stat}>
-          <div className={styles.statLabel}>APY</div>
+          <div className={styles.statLabel}>{isDex ? "Fee APR (pool average)" : "APY"}</div>
           <div className={styles.statValue}>{o.apy == null ? "measuring…" : pct(o.apy)}</div>
           <div className={styles.statNote}>{apyNote(o)}</div>
         </div>
@@ -100,6 +116,13 @@ export default async function YieldCardPage({ params }: Props) {
           <div className={styles.statValue}>{usd(o.tvlUsd)}</div>
           <div className={styles.statNote}>priced with Chainlink / the protocol&apos;s oracle</div>
         </div>
+        {isDex && (
+          <div className={styles.stat}>
+            <div className={styles.statLabel}>Full-range position</div>
+            <div className={styles.statValue}>{o.fullRangeApr == null ? "measuring…" : pct(o.fullRangeApr)}</div>
+            <div className={styles.statNote}>set-and-forget across the whole price range</div>
+          </div>
+        )}
         {o.idleShare != null && (
           <div className={styles.stat}>
             <div className={styles.statLabel}>Can leave right now</div>
@@ -120,7 +143,7 @@ export default async function YieldCardPage({ params }: Props) {
         <h2 className={styles.h2}>Where the yield comes from</h2>
         <p className={styles.p}>{copy?.income ?? "Not described yet."}</p>
         {copy?.note && <p className={styles.p}>{copy.note}</p>}
-        <p className={styles.p}>{METHOD_TEXT[o.method]}</p>
+        <p className={styles.p}>{isDex ? DEX_METHOD_TEXT : METHOD_TEXT[o.method]}</p>
       </div>
 
       <div className={styles.section}>
@@ -133,9 +156,38 @@ export default async function YieldCardPage({ params }: Props) {
         <RiskPanel risk={risk} />
       </div>
 
+      {isDex && (
+        <div className={styles.section}>
+          <h2 className={styles.h2}>Fees vs impermanent loss</h2>
+          {o.apy != null && o.fullRangeApr != null && o.fullRangeApr > 0 && (
+            <p className={styles.p}>
+              Pool average <strong>{pct(o.apy)}</strong> vs full range <strong>{pct(o.fullRangeApr)}</strong>: most of this pool&apos;s
+              liquidity sits in narrow ranges around the current price, so those positions collect about {Math.round(o.apy / o.fullRangeApr)}× the
+              fees of a set-and-forget one, as long as the price stays in their range, and they take more impermanent loss when it moves.
+            </p>
+          )}
+          {breakEven ? (
+            <p className={styles.p}>
+              At this fee rate, a year of fees is wiped out by impermanent loss if {pair[0]}&apos;s price moves past{" "}
+              <strong>{breakEven.up.toFixed(2)}×</strong> or below <strong>{breakEven.down.toFixed(2)}×</strong> of{" "}
+              {pair[1]}&apos;s over that year (full-range position; concentrated ranges hit this sooner).
+            </p>
+          ) : (
+            <p className={styles.p}>The break-even price move appears once the fee rate has been measured.</p>
+          )}
+          <p className={styles.p}>
+            <Link href="/yield/il" style={{ color: "var(--color-signal)" }}>Try the impermanent-loss playground →</Link>
+          </p>
+        </div>
+      )}
+
       <div className={styles.section}>
         <h2 className={styles.h2}>What it means for your money</h2>
-        <YieldCalculator apy={o.apy} stable={o.stable} symbol={o.asset.symbol} defaultCostUsd={cost.usd} costNote={cost.note} />
+        {isDex ? (
+          <LpCalculator apr={o.fullRangeApr ?? null} pair={pair} />
+        ) : (
+          <YieldCalculator apy={o.apy} stable={o.stable} symbol={o.asset.symbol} defaultCostUsd={cost.usd} costNote={cost.note} />
+        )}
       </div>
 
       {history.length >= 2 && (
@@ -151,14 +203,18 @@ export default async function YieldCardPage({ params }: Props) {
       </div>
 
       <div className={styles.section}>
-        <h2 className={styles.h2}>Check the tokens</h2>
-        <div className={styles.links}>
+        <h2 className={styles.h2}>Get a ping if it changes</h2>
+        <p className={styles.p}>
+          Tap the button and the GL1TCH Telegram bot watches this yield for you: it messages you if the APY halves, deposits fall 30%,
+          or withdrawals get stuck. No wallet, no sign-up. Or send <code>/yieldwatch {o.id}</code> to the bot yourself.
+        </p>
+        <div className={styles.actions}>
+          <a className={`${styles.btn} ${styles.btnPrimary}`} href={telegramLink(o.id)} target="_blank" rel="noopener noreferrer">
+            🔔 Alert me on Telegram
+          </a>
           {links.map((l) => (
-            <Link key={l.href} href={l.href}>{l.label} with the GL1TCH scanner →</Link>
+            <Link key={l.href} className={styles.btn} href={l.href}>{l.label} with the scanner</Link>
           ))}
-          {copy && (
-            <a href={copy.url} target="_blank" rel="noopener noreferrer">{copy.name} official site ↗</a>
-          )}
         </div>
       </div>
 
