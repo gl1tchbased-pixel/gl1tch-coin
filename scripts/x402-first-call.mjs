@@ -9,8 +9,8 @@
  *       Creates e2e/x402/test-wallet.json (gitignored) if missing and prints ONLY the pubkey.
  *   node scripts/x402-first-call.mjs where
  *       Prints where the wallet file lives.
- *   node scripts/x402-first-call.mjs run --pay-to <revenue Solana address> [--base https://gl1tchbased.xyz]
- *       Pays each paid endpoint once (total $0.025 USDC on Solana; the facilitator pays the SOL fee).
+ *   node scripts/x402-first-call.mjs run --pay-to <revenue Solana address> [--base https://gl1tchbased.xyz] [--routes scan,radar]
+ *       Pays each paid endpoint once (all six: $0.036 USDC on Solana; the facilitator pays the SOL fee).
  *
  * Guards: pays only on Solana mainnet, only to --pay-to, at most $0.01 per call; refuses to run if the
  * wallet holds more than 1 USDC or the revenue wallet has no USDC token account yet. Every call is
@@ -39,7 +39,19 @@ const MAX_WALLET_MICRO = 1_000_000; // refuse to run with more than 1 USDC in th
 
 const BONK = "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263";
 const ATTESTER = "BSq18aJBhxYJgeEbcA3jGQNU1vmwZdo2PQkkpVsK7W6o";
-const CALLS = [`/api/x402/scan?mint=${BONK}&chain=solana`, `/api/x402/agent?address=${ATTESTER}`, `/api/x402/deployer?address=${ATTESTER}`];
+/** One call per paid route. A Bazaar listing refreshes its metadata only when a payment settles, so
+ *  after a description change every route is paid once. `--routes scan,radar` limits the run. */
+const ALL_CALLS = {
+  scan: `/api/x402/scan?mint=${BONK}&chain=solana`,
+  agent: `/api/x402/agent?address=${ATTESTER}`,
+  deployer: `/api/x402/deployer?address=${ATTESTER}`,
+  verdict: `/api/x402/verdict?mint=${BONK}&chain=solana`,
+  radar: `/api/x402/radar`,
+  random: `/api/x402/random?min=1&max=100`,
+};
+const ROUTES = (arg("--routes") || Object.keys(ALL_CALLS).join(",")).split(",").map((r) => r.trim()).filter(Boolean);
+for (const r of ROUTES) if (!(r in ALL_CALLS)) throw new Error(`unknown route "${r}" (known: ${Object.keys(ALL_CALLS).join(", ")})`);
+const CALLS = ROUTES.map((r) => ALL_CALLS[r]);
 
 function arg(name) {
   const i = process.argv.indexOf(name);
@@ -101,7 +113,14 @@ async function run() {
     const header = res.headers.get("payment-response");
     const settle = header ? decodePaymentResponseHeader(header) : null;
     const body = await res.json().catch(() => ({}));
-    const summary = body.verdict ?? body.level ?? body.reputation?.level ?? body.error ?? "";
+    const summary =
+      body.verdict ??
+      body.level ??
+      body.reputation?.level ??
+      (Array.isArray(body.values) ? `values ${body.values.join(",")}` : undefined) ??
+      (typeof body.scanned === "number" ? `${body.scanned} scanned` : undefined) ??
+      body.error ??
+      "";
     console.log(`${res.status} ${path.split("?")[0]} → ${summary} | tx: ${settle?.transaction ?? "none"}`);
   }
   console.log(`done. Check ${base}/revenue — these rows must show as "self-test · not counted".`);

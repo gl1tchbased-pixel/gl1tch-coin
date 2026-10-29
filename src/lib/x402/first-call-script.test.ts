@@ -25,7 +25,7 @@ beforeAll(async () => {
       req.on("end", () => {
         const owner = JSON.parse(raw).params[0];
         const holds = owner !== PAY_TO || payToHasUsdcAccount;
-        const value = holds ? [{ account: { data: { parsed: { info: { tokenAmount: { amount: owner === PAY_TO ? "0" : "50000" } } } } } }] : [];
+        const value = holds ? [{ account: { data: { parsed: { info: { tokenAmount: { amount: owner === PAY_TO ? "0" : "100000" } } } } } }] : [];
         res.writeHead(200, { "content-type": "application/json" });
         res.end(JSON.stringify({ jsonrpc: "2.0", id: 1, result: { value } }));
       });
@@ -78,6 +78,19 @@ describe("scripts/x402-first-call.mjs", () => {
     seenSelfTestHeaders.length = 0;
     const r = await runAsync(["run", "--pay-to", PAY_TO, "--base", base], env, dir);
     expect(r.status).toBe(0);
-    expect(seenSelfTestHeaders).toEqual(["1", "1", "1"]);
+    expect(seenSelfTestHeaders).toEqual(["1", "1", "1", "1", "1", "1"]); // one call per paid route
+  }, 30_000);
+
+  it("limits the run to --routes, and refuses an unknown route before paying", async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "x402-first-call-"));
+    const env = { X402_TEST_WALLET: path.join(dir, "w.json"), SOLANA_RPC: base };
+    expect((await runAsync(["init"], env, dir)).status).toBe(0);
+    payToHasUsdcAccount = true;
+    seenSelfTestHeaders.length = 0;
+    expect((await runAsync(["run", "--pay-to", PAY_TO, "--base", base, "--routes", "scan,radar"], env, dir)).status).toBe(0);
+    expect(seenSelfTestHeaders).toEqual(["1", "1"]);
+    seenSelfTestHeaders.length = 0;
+    expect((await runAsync(["run", "--pay-to", PAY_TO, "--base", base, "--routes", "nope"], env, dir)).status).toBe(1);
+    expect(seenSelfTestHeaders).toEqual([]);
   }, 30_000);
 });
