@@ -22,6 +22,8 @@ const row = (over: Partial<YieldOpportunity>): YieldOpportunity => ({
   asset: { symbol: "ETH", address: "native", decimals: 18 },
   receipt: null,
   stable: false,
+  ilRisk: "none",
+  tokens: [],
   method: "growth",
   apy: null,
   window: null,
@@ -44,6 +46,7 @@ const deps = (over: Partial<CollectorDeps> = {}): CollectorDeps => ({
   readAave: async () => [],
   readSpl: async () => [],
   readRates: async () => [row({})],
+  readDex: async () => [],
   ...over,
 });
 
@@ -92,5 +95,29 @@ describe("collect", () => {
     expect(carried?.stale).toBe(true);
     expect(carried?.apy).toBe(0.05);
     expect(s.snapshot()?.updatedAt).toBe(NOW);
+  });
+});
+
+describe("collect — DEX fee APR", () => {
+  const Q64 = 1n << 64n;
+  const dexRow = (fee0: bigint, fee1: bigint) =>
+    row({ id: "solana-orca-sol-usdc", chain: "solana", protocol: "orca", kind: "dex-lp", symbol: "SOL-USDC", ilRisk: "high", rate: null, inputs: { fee0: fee0.toString(), fee1: fee1.toString(), sqrtPrice: Q64.toString(), q: "64/64" } });
+
+  it("turns two fee-counter snapshots a day apart into a fee APR and stores the counters", async () => {
+    const s = store();
+    s.append("solana-orca-sol-usdc", { t: NOW - D, apy: null, tvlUsd: 1e6, rate: null, aux: ["0", "0"] }, NOW);
+    const fee = Q64 / 1000n;
+    const snap = await collect(rpc, s, NOW, deps({ readRates: async () => [], readDex: async () => [dexRow(fee, fee)] }));
+    const o = snap.opportunities.find((x) => x.id === "solana-orca-sol-usdc")!;
+    expect(o.window).toBe("24h");
+    expect(o.apy).toBeCloseTo(0.365, 3);
+    expect(s.history("solana-orca-sol-usdc").at(-1)?.aux).toEqual([fee.toString(), fee.toString()]);
+  });
+
+  it("stays measuring on the first snapshot", async () => {
+    const s = store();
+    const snap = await collect(rpc, s, NOW, deps({ readRates: async () => [], readDex: async () => [dexRow(1n, 1n)] }));
+    expect(snap.opportunities[0].apy).toBeNull();
+    expect(snap.sources.find((x) => x.id === "dex")?.ok).toBe(true);
   });
 });

@@ -136,3 +136,32 @@ export function opportunityId(chain: YieldChain, protocol: string, symbol: strin
 export function rpcUrlFor(chain: YieldChain): string {
   return chain === "solana" ? SOLANA_PUBLIC_RPC : EVM_RPC[chain][0];
 }
+
+export interface DexToken {
+  symbol: string;
+  address: string;
+  decimals: number;
+}
+
+/** Concentrated-liquidity pools whose fee APR GL1TCH measures from the pools' own cumulative fee counters.
+ *  tokenA/tokenB follow the pool's own order (Orca mint_a/mint_b, Uniswap token0/token1). */
+export interface DexPool {
+  chain: YieldChain;
+  protocol: "orca" | "uniswap-v3";
+  symbol: string;
+  pool: string;
+  tokenA: DexToken;
+  tokenB: DexToken;
+  /** Which side has a Chainlink USD price. */
+  price: { side: "a" | "b"; key: "ETH" | "SOL" | "USDC" };
+  /** Tokens that track each other (e.g. an LST and its coin): low impermanent-loss exposure. */
+  correlated: boolean;
+}
+
+const WSOL = { symbol: "SOL", address: "So11111111111111111111111111111111111111112", decimals: 9 };
+export const DEX_POOLS: DexPool[] = [
+  { chain: "solana", protocol: "orca", symbol: "JitoSOL-SOL", pool: "Hp53XEtt4S8SvPCXarsLSdGfZBuUr5mMmZmX2DRNXQKp", tokenA: WSOL, tokenB: { symbol: "JitoSOL", address: "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn", decimals: 9 }, price: { side: "a", key: "SOL" }, correlated: true },
+  { chain: "solana", protocol: "orca", symbol: "SOL-USDC", pool: "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE", tokenA: WSOL, tokenB: { symbol: "USDC", address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", decimals: 6 }, price: { side: "b", key: "USDC" }, correlated: false },
+  { chain: "ethereum", protocol: "uniswap-v3", symbol: "USDC-WETH", pool: "0x88e6A0c2dDD26FEEb64F039a2c41296FcB3f5640", tokenA: { symbol: "USDC", address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", decimals: 6 }, tokenB: { symbol: "WETH", address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", decimals: 18 }, price: { side: "a", key: "USDC" }, correlated: false },
+  { chain: "base", protocol: "uniswap-v3", symbol: "WETH-USDC", pool: "0xd0b53D9277642d899DF5C87A3966A349A798F224", tokenA: { symbol: "WETH", address: "0x4200000000000000000000000000000000000006", decimals: 18 }, tokenB: { symbol: "USDC", address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", decimals: 6 }, price: { side: "b", key: "USDC" }, correlated: false },
+];

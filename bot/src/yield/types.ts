@@ -5,7 +5,7 @@ import type { YieldChain } from "./registry.js";
  * change both together. APYs are fractions; unknown values are null, never 0.
  */
 
-export type YieldKind = "lending" | "liquid-staking" | "vault";
+export type YieldKind = "lending" | "liquid-staking" | "vault" | "dex-lp";
 /** rate: the protocol's live on-chain rate · epoch: one Solana epoch of pool growth · growth: GL1TCH's own snapshots */
 export type ApyMethod = "rate" | "epoch" | "growth";
 export type PriceKey = "ETH" | "SOL" | "BTC" | "BNB" | "USDC";
@@ -21,6 +21,10 @@ export interface YieldOpportunity {
   /** What you hold afterwards (aToken, LST mint, vault share). */
   receipt: { symbol: string; address: string } | null;
   stable: boolean;
+  /** Impermanent-loss exposure: none for single-asset products; DEX pools low (correlated pair) or high. */
+  ilRisk: "none" | "low" | "high";
+  /** Every token involved, for scanner links (DEX pools list both sides). */
+  tokens: { symbol: string; address: string }[];
   method: ApyMethod;
   apy: number | null;
   window: "live" | "epoch" | "24h" | "7d" | null;
