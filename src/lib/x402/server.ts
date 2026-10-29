@@ -7,6 +7,8 @@
 
 import { x402ResourceServer } from "@x402/next";
 import { HTTPFacilitatorClient } from "@x402/core/server";
+import type { SupportedResponse } from "@x402/core/types";
+import { pinSvmFeePayer } from "./fee-payer";
 import { ExactSvmScheme } from "@x402/svm/exact/server";
 import { ExactEvmScheme } from "@x402/evm/exact/server";
 import { bazaarResourceServerExtension } from "@x402/extensions/bazaar";
@@ -15,12 +17,19 @@ import { readSelfPayers } from "./config";
 import { settleInputFromContext } from "./settle";
 import { recordRevenue, revenueEntryFromSettle } from "@/lib/revenue";
 
+/** A facilitator client whose Solana fee payer is the same on every instance (see fee-payer.ts). */
+class PinnedFeePayerFacilitator extends HTTPFacilitatorClient {
+  override async getSupported(): Promise<SupportedResponse> {
+    return pinSvmFeePayer(await super.getSupported());
+  }
+}
+
 let server: x402ResourceServer | null = null;
 
 export function getX402Server(): x402ResourceServer {
   if (server) return server;
   const selfPayers = readSelfPayers(process.env);
-  const s = new x402ResourceServer(facilitatorConfigs(process.env).map((c) => new HTTPFacilitatorClient(c)))
+  const s = new x402ResourceServer(facilitatorConfigs(process.env).map((c) => new PinnedFeePayerFacilitator(c)))
     .register("solana:*", new ExactSvmScheme())
     .register("eip155:*", new ExactEvmScheme());
   s.registerExtension(bazaarResourceServerExtension);
