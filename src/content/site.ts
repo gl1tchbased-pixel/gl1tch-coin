@@ -18,6 +18,7 @@ export const META_DESCRIPTION =
 export const NAV_PRODUCTS = [
   { id: "nav-scan", label: "Scanner", href: "/scan", blurb: "Any token, any chain. Safe, sus, or rug-shaped." },
   { id: "nav-radar", label: "Rug Radar", href: "/radar", blurb: "The riskiest fresh launches, swept hourly." },
+  { id: "nav-yield", label: "Yield X-Ray", href: "/yield", blurb: "Where an APY comes from, read from the chain." },
   { id: "nav-agents", label: "Agent Trust", href: "/agents", blurb: "Know Your Agent: verify an AI agent's wallet." },
   { id: "nav-quantum", label: "Quantum Core", href: "/quantum-core", blurb: "Verifiable randomness and post-quantum tools." },
   { id: "nav-network", label: "Network", href: "/network", blurb: "Live engine metrics and the Signal Graph." },
@@ -43,6 +44,7 @@ export const FOOTER_LINKS = [
   { id: "foot-network", label: "Network Stats", href: "/network" },
   { id: "foot-quantum", label: "Quantum Core", href: "/quantum-core" },
   { id: "foot-radar", label: "Rug Radar", href: "/radar" },
+  { id: "foot-yield", label: "Yield X-Ray", href: "/yield" },
   { id: "foot-embed", label: "Embed Badge", href: "/embed" },
   { id: "foot-learn", label: "Learn", href: "/learn" },
   { id: "foot-lore", label: "Lore", href: "/lore" },
