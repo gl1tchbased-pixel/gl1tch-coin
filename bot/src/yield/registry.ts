@@ -24,7 +24,8 @@ export interface AaveAsset {
   stable: boolean;
 }
 
-/** Aave v3 Pool per chain; the price oracle is discovered on-chain through ADDRESSES_PROVIDER(). */
+/** Aave v3 Pool per chain; the price oracle is discovered on-chain through ADDRESSES_PROVIDER(). BTC/BNB markets are
+ *  left out: they are collateral markets paying ~0% to suppliers, not yield. */
 export const AAVE: { chain: EvmChain; pool: string; assets: AaveAsset[] }[] = [
   {
     chain: "ethereum",
@@ -33,7 +34,6 @@ export const AAVE: { chain: EvmChain; pool: string; assets: AaveAsset[] }[] = [
       { symbol: "USDC", address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", stable: true },
       { symbol: "USDT", address: "0xdAC17F958D2ee523a2206206994597C13D831ec7", stable: true },
       { symbol: "WETH", address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", stable: false },
-      { symbol: "WBTC", address: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599", stable: false },
     ],
   },
   {
@@ -42,7 +42,6 @@ export const AAVE: { chain: EvmChain; pool: string; assets: AaveAsset[] }[] = [
     assets: [
       { symbol: "USDC", address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", stable: true },
       { symbol: "WETH", address: "0x4200000000000000000000000000000000000006", stable: false },
-      { symbol: "cbBTC", address: "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf", stable: false },
     ],
   },
   {
@@ -52,7 +51,6 @@ export const AAVE: { chain: EvmChain; pool: string; assets: AaveAsset[] }[] = [
       { symbol: "USDC", address: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831", stable: true },
       { symbol: "USDT", address: "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9", stable: true },
       { symbol: "WETH", address: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1", stable: false },
-      { symbol: "WBTC", address: "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f", stable: false },
     ],
   },
   {
@@ -61,9 +59,6 @@ export const AAVE: { chain: EvmChain; pool: string; assets: AaveAsset[] }[] = [
     assets: [
       { symbol: "USDC", address: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d", stable: true },
       { symbol: "USDT", address: "0x55d398326f99059fF775485246999027B3197955", stable: true },
-      { symbol: "WBNB", address: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", stable: false },
-      { symbol: "BTCB", address: "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c", stable: false },
-      { symbol: "ETH", address: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8", stable: false },
     ],
   },
 ];

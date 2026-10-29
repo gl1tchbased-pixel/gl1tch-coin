@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { pct, usd, ago } from "./format";
+import { pct, usd, ago, money } from "./format";
 
 describe("yield formatting", () => {
   it("formats fractions as percentages", () => {
@@ -16,6 +16,13 @@ describe("yield formatting", () => {
     expect(usd(62_360)).toBe("$62.4K");
     expect(usd(412.5)).toBe("$412.50");
     expect(usd(null)).toBe("—");
+  });
+
+  it("formats calculator amounts to the cent", () => {
+    expect(money(1049.054)).toBe("$1,049.05");
+    expect(money(-12.5)).toBe("-$12.50");
+    expect(money(0)).toBe("$0.00");
+    expect(money(Number.NaN)).toBe("—");
   });
 
   it("says how long ago", () => {

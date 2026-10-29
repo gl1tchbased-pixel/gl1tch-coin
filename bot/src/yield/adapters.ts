@@ -216,7 +216,7 @@ export async function readRates(rpc: Rpc, prices: Prices, now: number, assets: R
           r.chain,
           r.address,
           r.rateCall,
-          `The result is the exchange rate: underlying per 1 ${r.symbol}, with ${r.rateDecimals} decimals. The yield is the growth of this rate between GL1TCH's hourly snapshots, annualized.`
+          `The result is the underlying amount for the share amount in the call; divided by 10^${r.rateDecimals} it is the exchange rate (underlying per 1 ${r.symbol}). The yield is the growth of this rate between GL1TCH's hourly snapshots, annualized.`
         ),
         stale: false,
         updatedAt: now,

@@ -13,6 +13,13 @@ export function usd(x: number | null | undefined): string {
   return `$${x.toFixed(2)}`;
 }
 
+/** Exact dollars for calculator results ("$1,049.05"), where compact K/M rounding would hide the yield. */
+export function money(x: number | null | undefined): string {
+  if (x == null || !Number.isFinite(x)) return "—";
+  const s = Math.abs(x).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return `${x < 0 ? "-" : ""}$${s}`;
+}
+
 export function ago(ms: number, now: number = Date.now()): string {
   const s = Math.max(0, now - ms) / 1000;
   if (s < 60) return "just now";
