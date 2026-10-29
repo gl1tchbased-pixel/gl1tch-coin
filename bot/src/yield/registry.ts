@@ -93,7 +93,10 @@ export interface RateAsset {
 }
 
 const ONE_SHARE = "0xde0b6b3a7640000"; // 1e18
+const MILLION_SHARES = "0xd3c21bcecceda1000000"; // 1e24
 const convertToAssets1e18 = encodeCall("0x07a2d13a", ONE_SHARE);
+// A 6-decimal asset quotes one share to only 1e-6, too coarse for a daily growth reading; a million shares gives 1e-12.
+const convertToAssets1e24 = encodeCall("0x07a2d13a", MILLION_SHARES);
 const ETH_NATIVE = { symbol: "ETH", address: "native", decimals: 18 };
 const USDG = { symbol: "USDG", address: "0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168", decimals: 6 };
 const morphoUsdg = (symbol: string, address: string): RateAsset => ({
@@ -102,8 +105,8 @@ const morphoUsdg = (symbol: string, address: string): RateAsset => ({
   kind: "vault",
   symbol,
   address,
-  rateCall: convertToAssets1e18,
-  rateDecimals: 6,
+  rateCall: convertToAssets1e24,
+  rateDecimals: 12,
   tvl: { kind: "total-assets", assetDecimals: 6, base: "USD" },
   asset: USDG,
 });
