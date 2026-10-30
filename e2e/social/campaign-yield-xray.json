@@ -25,6 +25,24 @@
       "platform": "telegram",
       "at": "2026-10-30T23:55",
       "text": "🤖 <b>YIELD X-RAY FOR AI AGENTS (x402 + MCP)</b>\n\nAI agents and trading bots can now query GL1TCH Yield X-Ray directly:\n\n• <b>Free MCP Tool:</b> <code>xray_yield</code> on <code>gl1tchbased.xyz/api/mcp</code> (Claude, Cursor, LangChain)\n• <b>Pay-per-call x402 API:</b> <code>GET /api/x402/yield</code> ($0.003 USDC on Solana &amp; Base — free for $GL1TCH holder keys)\n• Ranked <b>#2 on Coinbase x402 Bazaar</b> for Solana Yield &amp; Agent Wallet Trust\n\nDocs: gl1tchbased.xyz/agents/docs\nOn-chain revenue ledger: gl1tchbased.xyz/revenue"
+    },
+    {
+      "id": "phase1-tg-1",
+      "platform": "telegram",
+      "at": "2026-10-31T01:05",
+      "text": "🛡 <b>NEW ON GL1TCH: GROUP GUARDIAN, QUANTUM GIVEAWAYS &amp; LIVE ON-CHAIN TREASURY</b>\n\n4 new upgrades are now live across Telegram and the web:\n\n1️⃣ <b>GL1TCH Guardian (<code>/guardian</code>):</b> Add @gl1tch_infected_bot to any Solana/EVM group. It auto-scans pasted contracts (15/day free; <b>unlimited</b> when a group admin verifies a $GL1TCH holding via <code>/verify</code> + <code>/guardian unlock</code>).\n\n2️⃣ <b>Quantum Giveaways (<code>/giveaway</code>):</b> Run <code>/giveaway @alice @bob @charlie</code> or <code>/giveaway 100</code> right here in chat — committed to a future League-of-Entropy drand round (~60s ahead) with in-browser BLS verification.\n\n3️⃣ <b>Agent Toolkit &amp; Apify Actor:</b> Drop-in Solana Agent Kit, ElizaOS &amp; Apify Store integrations → gl1tchbased.xyz/api/agents/integrations\n\n4️⃣ <b>Live On-Chain Treasury &amp; Revenue:</b> Every x402 USDC payment, treasury balance, and claimed creator fee on-chain → gl1tchbased.xyz/revenue"
+    },
+    {
+      "id": "phase1-x-1",
+      "platform": "x",
+      "at": "2026-10-31T01:08",
+      "media": ["e2e/screenshots/revenue-live.png"],
+      "tweets": [
+        "New on GL1TCH: Group Guardian, Telegram Quantum Giveaways, Agent Toolkit & Live On-Chain Treasury.\n\nEverything we ship is non-custodial, open-source, and verifiable on-chain.\n\nHere is what just went live across @gl1tch_infected_bot and gl1tchbased.xyz 🧵👇",
+        "1/ GL1TCH Guardian (/guardian) + Quantum Giveaways (/giveaway) in Telegram:\n\n• Add @gl1tch_infected_bot to any group: it auto-scans pasted contracts (15/day free; unlimited when an admin verifies a $GL1TCH holding).\n• Run /giveaway @a @b @c for a provably-fair drand BLS draw.",
+        "2/ Built for AI Agents (@gl1tch/agent-toolkit + MCP + x402):\n\n• 11 free MCP tools on gl1tchbased.xyz/api/mcp\n• 9 x402 endpoints on Solana & Base (free for $GL1TCH holders)\n• Drop-in Solana Agent Kit, ElizaOS & Apify Actor\n\ngl1tchbased.xyz/api/agents/integrations",
+        "3/ Every dollar & SOL on-chain (/revenue):\n\nOur public revenue page now reads live Solana & Base treasury balances, protocol creator fee claims, and settled x402 USDC calls straight from the chain — with Solscan & Basescan receipts.\n\ngl1tchbased.xyz/revenue"
+      ]
     }
   ]
 }
