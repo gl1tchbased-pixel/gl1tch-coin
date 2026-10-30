@@ -5,6 +5,9 @@ import { publicCommands } from "./commands.js";
 import { scanCommands, autoScan } from "./scan.js";
 import { guardianCommands } from "./guardian/commands.js";
 import { guardianStore } from "./guardian/store.js";
+import { sentinelCommands } from "./sentinel/commands.js";
+import { sentinelStore } from "./sentinel/store.js";
+import { startSentinelEngine } from "./sentinel/engine.js";
 import { giveawayCommands } from "./random/telegram.js";
 import { watchCommands, startWatchtower } from "./watch/index.js";
 import { yieldCommands } from "./yield/telegram.js";
@@ -59,6 +62,7 @@ bot.use(watchCommands);
 // Yield X-Ray & Guardian before publicCommands: they answer /start yield_<id> & /start guardian deep links.
 bot.use(yieldCommands);
 bot.use(guardianCommands);
+bot.use(sentinelCommands);
 bot.use(giveawayCommands);
 bot.use(walletCommands);
 bot.use(publicCommands);
@@ -83,6 +87,7 @@ async function main() {
     { command: "start", description: "Enter The Infected" },
     { command: "scan", description: "🔍 Safety-scan any token (any chain)" },
     { command: "guardian", description: "🛡 Group auto-scan protection & $GL1TCH holder unlock" },
+    { command: "sentinel", description: "💎 VIP Autonomous Alpha Gem Feed & Blinks" },
     { command: "giveaway", description: "🎲 Provably-fair quantum giveaway (drand BLS)" },
     { command: "proof", description: "🛡 Why $GL1TCH is safe — live self-scan + receipts" },
     { command: "watch", description: "👁 Watch a token — alert me if its safety changes" },
@@ -113,9 +118,11 @@ async function main() {
   referralStore.load();
   proofOfSignal.load();
   guardianStore.load();
+  sentinelStore.load();
   startVerification(bot);
   startAgent(bot);
   startWatchtower(bot);
+  startSentinelEngine(bot);
   startRadarPing();
   console.log("GL1TCH bot online. The signal is live.");
   await bot.start({ allowed_updates: ["message", "chat_member", "callback_query"] });

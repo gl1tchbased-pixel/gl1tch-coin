@@ -60,6 +60,39 @@ export function GET() {
           x402Endpoint: `${OFFICIAL.SITE_URL}/api/x402/random`,
           freeQuota: "1 verifiable drand draw/day (25/day for verified $GL1TCH holders)",
         },
+        virtualsAcp: {
+          name: "GL1TCH Virtuals ACP Seller Worker",
+          protocol: "ERC-8183",
+          path: "packages/gl1tch-virtuals-acp",
+          settlementNetwork: "eip155:8453",
+          services: [
+            "gl1tch.token_safety_scan",
+            "gl1tch.yield_xray",
+            "gl1tch.wallet_trust_check",
+            "gl1tch.rug_radar",
+          ],
+        },
+        solanaActionsAndBlinks: {
+          actionsJson: `${OFFICIAL.SITE_URL}/actions.json`,
+          specVersion: "2.4",
+          endpoints: [
+            `${OFFICIAL.SITE_URL}/api/actions/scan`,
+            `${OFFICIAL.SITE_URL}/api/actions/safe-swap`,
+          ],
+          blinkSafeSwap: `https://dial.to/?action=solana-action:${OFFICIAL.SITE_URL}/api/actions/safe-swap`,
+          platformFeeBps: 50,
+        },
+        telegramSentinel: {
+          bot: "https://t.me/gl1tch_infected_bot",
+          command: "/sentinel",
+          feedCommand: "/sentinel feed",
+          vipAlphaFilter: "Score ≥ 90, CLEAN/LOW RISK, LP 100% locked, mint revoked, clean deployer",
+          monetization: "250 Telegram Stars / $15 USDC x402 / Free for ≥250k $GL1TCH holders",
+        },
+        defiYieldSpikes: {
+          endpoint: `${OFFICIAL.SITE_URL}/api/yield/spikes`,
+          model: "Autonomous 7-chain yield spike, volatility alert and cross-chain rebalance arbitrage feed",
+        },
       },
     },
     {

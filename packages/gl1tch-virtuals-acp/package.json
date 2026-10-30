@@ -1,0 +1,28 @@
+{
+  "name": "@gl1tch/virtuals-acp",
+  "version": "1.1.0",
+  "description": "GL1TCH Autonomous Seller Agent for Virtuals Protocol Agent Commerce Protocol (ACP / ERC-8183). Exposes autonomous token safety scans, insider audits, and DeFi yield evaluations to buyer agents.",
+  "type": "module",
+  "main": "src/acp-worker.mjs",
+  "types": "src/acp-worker.d.ts",
+  "scripts": {
+    "start": "node src/cli.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "keywords": [
+    "virtuals-protocol",
+    "acp",
+    "erc-8183",
+    "agentic-commerce",
+    "ai-agent",
+    "solana-security",
+    "defi-yield"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gl1tchbased-pixel/gl1tch-coin.git",
+    "directory": "packages/gl1tch-virtuals-acp"
+  }
+}
+
