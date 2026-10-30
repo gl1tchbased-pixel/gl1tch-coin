@@ -19,6 +19,8 @@ const QUERIES = [
   "deployer reputation",
   "agent wallet trust",
   "token verdict",
+  "defi yield",
+  "solana yield",
 ];
 
 for (const q of QUERIES) {

@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.gl1tchbased-pixel/gl1tch",
-  "title": "GL1TCH Token Safety",
-  "description": "Token rug-risk scans, Know Your Agent wallet checks and deployer reputation for AI agents.",
-  "version": "1.0.0",
+  "title": "GL1TCH Token Safety & Yield X-Ray",
+  "description": "Token rug-risk scans, Know Your Agent wallet checks, deployer reputation and DeFi Yield X-Ray for AI agents.",
+  "version": "1.1.0",
   "repository": {
     "url": "https://github.com/gl1tchbased-pixel/gl1tch-coin",
     "source": "github"
