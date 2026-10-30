@@ -3,6 +3,9 @@ import { config } from "./config.js";
 import { antiSpam, scamFilter, logging } from "./middleware.js";
 import { publicCommands } from "./commands.js";
 import { scanCommands, autoScan } from "./scan.js";
+import { guardianCommands } from "./guardian/commands.js";
+import { guardianStore } from "./guardian/store.js";
+import { giveawayCommands } from "./random/telegram.js";
 import { watchCommands, startWatchtower } from "./watch/index.js";
 import { yieldCommands } from "./yield/telegram.js";
 import { walletCommands } from "./watch/wallet.js";
@@ -53,8 +56,10 @@ bot.use(xCallbacks);
 bot.use(adminCommands);
 bot.use(scanCommands);
 bot.use(watchCommands);
-// Yield X-Ray before publicCommands: it answers /start yield_<id> deep links and passes every other /start on.
+// Yield X-Ray & Guardian before publicCommands: they answer /start yield_<id> & /start guardian deep links.
 bot.use(yieldCommands);
+bot.use(guardianCommands);
+bot.use(giveawayCommands);
 bot.use(walletCommands);
 bot.use(publicCommands);
 
@@ -77,6 +82,8 @@ async function main() {
   await bot.api.setMyCommands([
     { command: "start", description: "Enter The Infected" },
     { command: "scan", description: "🔍 Safety-scan any token (any chain)" },
+    { command: "guardian", description: "🛡 Group auto-scan protection & $GL1TCH holder unlock" },
+    { command: "giveaway", description: "🎲 Provably-fair quantum giveaway (drand BLS)" },
     { command: "proof", description: "🛡 Why $GL1TCH is safe — live self-scan + receipts" },
     { command: "watch", description: "👁 Watch a token — alert me if its safety changes" },
     { command: "watching", description: "👁 Your Watchtower list" },
@@ -105,6 +112,7 @@ async function main() {
   ]);
   referralStore.load();
   proofOfSignal.load();
+  guardianStore.load();
   startVerification(bot);
   startAgent(bot);
   startWatchtower(bot);

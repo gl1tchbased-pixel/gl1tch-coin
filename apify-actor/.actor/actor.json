@@ -1,0 +1,30 @@
+{
+  "actorSpecification": 1,
+  "name": "gl1tch-solana-token-safety-yield-xray",
+  "title": "Solana & EVM Token Safety Scanner, Insider Graph & DeFi Yield X-Ray",
+  "description": "Scan any Solana or EVM token for rug-pull risks (mint/freeze authority, LP lock, honeypot tax, insider wallet clusters, serial deployers) or query live on-chain DeFi yields across 7 chains via GL1TCH.",
+  "version": "1.1",
+  "meta": {
+    "templateId": "js-start"
+  },
+  "input": "./input_schema.json",
+  "dockerfile": "../Dockerfile",
+  "storages": {
+    "dataset": {
+      "actorSpecification": 1,
+      "title": "GL1TCH Scan & Yield Results",
+      "views": {
+        "overview": {
+          "title": "Overview",
+          "transformation": {
+            "fields": ["action", "chain", "mint", "symbol", "verdict", "score", "apyPct", "riskScore"]
+          },
+          "display": {
+            "component": "table"
+          }
+        }
+      }
+    }
+  }
+}
+

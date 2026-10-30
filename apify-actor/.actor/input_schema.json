@@ -1,0 +1,56 @@
+{
+  "title": "GL1TCH Token Safety & Yield X-Ray Input",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "action": {
+      "title": "Action",
+      "type": "string",
+      "description": "Select the GL1TCH operation to run.",
+      "enum": ["scan", "batch", "yield", "deployer", "radar"],
+      "default": "scan",
+      "editor": "select"
+    },
+    "mint": {
+      "title": "Token Mint / Contract Address (or Deployer Wallet)",
+      "type": "string",
+      "description": "Solana token mint, EVM contract address, or deployer wallet address (for action=deployer).",
+      "default": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+      "editor": "textfield"
+    },
+    "mints": {
+      "title": "Batch Token Addresses (up to 10)",
+      "type": "array",
+      "description": "Used when action=batch: list of up to 10 Solana or EVM token addresses.",
+      "editor": "stringList"
+    },
+    "chain": {
+      "title": "Chain",
+      "type": "string",
+      "description": "Optional chain filter (solana, ethereum, base, bsc, arbitrum, polygon, tron, robinhood).",
+      "default": "solana",
+      "editor": "textfield"
+    },
+    "yieldKind": {
+      "title": "Yield Pool Kind (when action=yield)",
+      "type": "string",
+      "description": "Optional pool kind filter: lending, liquid-staking, vault, dex-lp.",
+      "editor": "textfield"
+    },
+    "stableOnly": {
+      "title": "Stablecoin Pools Only (when action=yield)",
+      "type": "boolean",
+      "description": "Filter Yield X-Ray to stablecoin pools only.",
+      "default": false
+    },
+    "apiKey": {
+      "title": "Optional $GL1TCH Holder API Key",
+      "type": "string",
+      "description": "Optional gk_... or gl1tch_zkap_... key for priority holder access.",
+      "editor": "textfield",
+      "isSecret": true
+    }
+  },
+  "required": ["action"]
+}
+

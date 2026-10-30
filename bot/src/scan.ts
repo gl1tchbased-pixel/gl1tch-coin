@@ -1,5 +1,7 @@
 import { Composer, type Context } from "grammy";
 import { OFFICIAL } from "./content.js";
+import { guardianStore } from "./guardian/store.js";
+import { officialGroups } from "./guardian/commands.js";
 
 /**
  * The GL1TCH Scanner inside Telegram. Calls the live web API (the same multi-chain
@@ -172,11 +174,38 @@ autoScan.on("message:text", async (ctx, next) => {
   recent.set(key, now);
   lastChatScan.set(chatId, now);
 
+  const isGroup = type === "group" || type === "supergroup";
+  if (isGroup) {
+    const pre = guardianStore.getStatus(chatId, officialGroups(), now);
+    if (!pre.unlimited && pre.usedToday >= pre.limit) {
+      const check = guardianStore.checkAndRecordAutoScan(chatId, officialGroups(), now);
+      if (check.shouldNotifyLimit) {
+        await ctx
+          .reply(
+            `🛡 <b>GL1TCH Guardian:</b> Daily free auto-scan limit (${check.limit}/${check.limit}) reached for this group.\n` +
+              `Any group admin holding <b>$GL1TCH</b> can unlock <b>Unlimited Guardian Protection</b> for free: verify in DM (<code>/verify</code>) and run <code>/guardian unlock</code> here.`,
+            { ...HTML, reply_parameters: { message_id: ctx.message.message_id } }
+          )
+          .catch(() => {});
+      }
+      return next();
+    }
+  }
+
   await ctx.replyWithChatAction("typing").catch(() => {});
   try {
     const out = await runScan(addr);
     if (!out) return next(); // stay quiet on no-data — don't spam non-tokens
-    await ctx.reply(`🛰 <i>Auto-scanned the contract above:</i>\n\n${out}`, {
+    let guardianFooter = "";
+    if (isGroup) {
+      const g = guardianStore.checkAndRecordAutoScan(chatId, officialGroups(), now);
+      if (!g.official) {
+        guardianFooter = g.unlimited
+          ? `\n🛡 <i>GL1TCH Guardian Unlimited · Unlocked by ${esc(g.unlockedByUsername || "Holder Admin")} · /guardian</i>`
+          : `\n🛡 <i>GL1TCH Guardian (${g.usedToday}/${g.limit} free today) · $GL1TCH holder admins unlock unlimited: /guardian</i>`;
+      }
+    }
+    await ctx.reply(`🛰 <i>Auto-scanned the contract above:</i>\n\n${out}${guardianFooter}`, {
       ...HTML,
       reply_parameters: { message_id: ctx.message.message_id },
     });

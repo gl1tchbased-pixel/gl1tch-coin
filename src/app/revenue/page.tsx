@@ -2,14 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { shareMeta } from "@/lib/share-meta";
 import { getRevenue, type RevenueEntry } from "@/lib/revenue";
+import { getTreasurySnapshot } from "@/lib/treasury-revenue";
 import { PAID_ROUTES, readPayTo, type PaidRouteId } from "@/lib/x402/config";
 import { DEPLOYER_WALLET } from "@/lib/official";
 import styles from "../buyback/buyback.module.css";
 
 export const metadata: Metadata = shareMeta({
-  title: "Revenue — GL1TCH",
+  title: "Revenue & Treasury — GL1TCH",
   description:
-    "GL1TCH's public revenue ledger. AI agents pay per call in USDC through x402; settled payments are recorded with their on-chain transaction. Our own test payments are shown but never counted.",
+    "GL1TCH's public revenue ledger and live on-chain treasury. AI agents pay per call in USDC through x402; creator fee claims and wallet balances are read straight from Solana and Base.",
   alternates: { canonical: "/revenue" },
 });
 
@@ -27,9 +28,10 @@ function txUrl(e: RevenueEntry): string | null {
 }
 
 const when = (ms: number) => new Date(ms).toISOString().slice(0, 16).replace("T", " ") + " UTC";
+const shortAddr = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
 export default async function RevenuePage() {
-  const rev = await getRevenue();
+  const [rev, treasury] = await Promise.all([getRevenue(), getTreasurySnapshot()]);
   const routes = Object.keys(PAID_ROUTES) as PaidRouteId[];
   // Grant reviewers ask where income lands: say it plainly when it is the disclosed deployer wallet.
   const paysDeployer = readPayTo(process.env).solana === DEPLOYER_WALLET;
@@ -37,30 +39,122 @@ export default async function RevenuePage() {
   return (
     <main className={styles.page}>
       <header className={styles.hero}>
-        <span className={styles.eyebrow}>Paid agent API · on-chain receipts</span>
+        <span className={styles.eyebrow}>Paid agent API · Creator fees · On-chain receipts</span>
         <h1 className={styles.title}>
           Revenue. Every dollar, <span className={styles.signal}>on-chain</span>.
         </h1>
         <p className={styles.lede}>
           AI agents pay GL1TCH per call in USDC through x402: no signup, no invoice. Each payment settles
           on-chain straight to a GL1TCH wallet and is recorded here with its transaction (the latest 50 are
-          listed), so you can check it yourself. Our own test payments are listed too, marked, and never counted.
+          listed), alongside live Solana and Base treasury balances and claimed protocol creator rewards.
+          Our own test payments are listed too, marked, and never counted.
         </p>
         {paysDeployer && (
           <p className={styles.lede}>
-            Solana payments currently go to the deployer wallet ({DEPLOYER_WALLET.slice(0, 4)}…{DEPLOYER_WALLET.slice(-4)}),
+            Solana payments and creator fee claims land in the disclosed deployer treasury ({DEPLOYER_WALLET.slice(0, 4)}…{DEPLOYER_WALLET.slice(-4)}),
             the same wallet whose $GL1TCH balance and history are on the{" "}
             <Link href="/proof">proof page</Link>.
           </p>
         )}
       </header>
 
+      <section className={styles.totals}>
+        <div className={styles.stat}>
+          <span className={styles.statV}>${treasury.totalUsdc.toFixed(2)}</span>
+          <span className={styles.statK}>treasury USDC (Solana + Base)</span>
+        </div>
+        <div className={styles.stat}>
+          <span className={styles.statV}>{treasury.solanaSol.toFixed(4)} SOL</span>
+          <span className={styles.statK}>treasury SOL balance</span>
+        </div>
+        <div className={styles.stat}>
+          <span className={styles.statV}>+{treasury.creatorClaimedSol.toFixed(4)} SOL</span>
+          <span className={styles.statK}>creator rewards claimed</span>
+        </div>
+        <div className={styles.stat}>
+          <span className={styles.statV}>
+            {rev ? `${rev.paid.count.toLocaleString("en-US")} (${usd(rev.paid.usdMicro)})` : "—"}
+          </span>
+          <span className={styles.statK}>external paid x402 calls</span>
+        </div>
+      </section>
+
+      <section className={styles.how}>
+        <span className={styles.kicker}>Live on-chain treasury &amp; creator rewards</span>
+        <p className={styles.note}>
+          Read directly from Solana Mainnet and Base Mainnet RPCs. Every wallet and claim transaction links
+          to its block explorer so anyone can verify the exact lamports and USDC balances independently.
+        </p>
+        <div className={styles.ledger}>
+          <div className={`${styles.row} ${styles.head}`}>
+            <span>Source / Wallet</span><span>Network</span><span>Live Balance / Claimed</span><span>Explorer</span>
+          </div>
+          <div className={styles.row}>
+            <span>Deployer Treasury ({shortAddr(treasury.solanaWallet)})</span>
+            <span>Solana</span>
+            <span>{treasury.solanaSol.toFixed(6)} SOL · ${treasury.solanaUsdc.toFixed(3)} USDC</span>
+            <span className={styles.proof}>
+              <a href={`https://solscan.io/account/${treasury.solanaWallet}`} target="_blank" rel="noreferrer">Solscan ↗</a>
+            </span>
+          </div>
+          <div className={styles.row}>
+            <span>x402 Base Treasury ({shortAddr(treasury.baseWallet)})</span>
+            <span>Base</span>
+            <span>${treasury.baseUsdc.toFixed(3)} USDC</span>
+            <span className={styles.proof}>
+              <a href={`https://basescan.org/address/${treasury.baseWallet}`} target="_blank" rel="noreferrer">Basescan ↗</a>
+            </span>
+          </div>
+          <div className={styles.row}>
+            <span>Pump.fun Creator Vault PDA ({shortAddr(treasury.creatorVaultPda)})</span>
+            <span>Solana</span>
+            <span>{treasury.creatorVaultClaimableSol.toFixed(6)} SOL claimable ({treasury.creatorVaultRawSol.toFixed(6)} SOL raw)</span>
+            <span className={styles.proof}>
+              <a href={`https://solscan.io/account/${treasury.creatorVaultPda}`} target="_blank" rel="noreferrer">Vault ↗</a>
+            </span>
+          </div>
+          {treasury.creatorClaims.map((c) => (
+            <div key={c.tx} className={styles.row}>
+              <span>Creator Fee Claim ({when(c.at)})</span>
+              <span>Solana</span>
+              <span>+{c.amountSol.toFixed(6)} SOL ({c.lamports.toLocaleString("en-US")} lamports)</span>
+              <span className={styles.proof}>
+                <a href={`https://solscan.io/tx/${c.tx}`} target="_blank" rel="noreferrer">tx ↗</a>
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.how}>
+        <span className={styles.kicker}>Active revenue &amp; holder-demand channels</span>
+        <div className={styles.ledger}>
+          <div className={`${styles.row} ${styles.head}`}>
+            <span>Channel</span><span>Status</span><span>Pricing / Holder Model</span><span>Link</span>
+          </div>
+          {treasury.channels.map((ch) => (
+            <div key={ch.id} className={styles.row}>
+              <span>{ch.name}</span>
+              <span>{ch.status.toUpperCase()}</span>
+              <span>{ch.model}</span>
+              <span className={styles.proof}>
+                {ch.verifyHref.startsWith("http") ? (
+                  <a href={ch.verifyHref} target="_blank" rel="noreferrer">Open ↗</a>
+                ) : (
+                  <Link href={ch.verifyHref}>Open →</Link>
+                )}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {!rev ? (
         <section className={styles.empty}>
           <span className={styles.emptyTag}>ledger unreachable</span>
-          <h2 className={styles.emptyH}>The ledger can&apos;t be reached right now.</h2>
+          <h2 className={styles.emptyH}>The x402 call ledger can&apos;t be reached right now.</h2>
           <p className={styles.emptyP}>
-            The revenue ledger lives on the GL1TCH bot server and didn&apos;t answer. This page shows no
+            The x402 call ledger lives on the GL1TCH bot server and didn&apos;t answer. This section shows no
             number rather than a wrong one. Try again in a minute.
           </p>
         </section>
@@ -75,24 +169,26 @@ export default async function RevenuePage() {
         </section>
       ) : (
         <>
-          <section className={styles.totals}>
-            <div className={styles.stat}><span className={styles.statV}>{rev.paid.count.toLocaleString("en-US")}</span><span className={styles.statK}>paid calls</span></div>
-            <div className={styles.stat}><span className={styles.statV}>{usd(rev.paid.usdMicro)}</span><span className={styles.statK}>earned (USDC)</span></div>
-            <div className={styles.stat}><span className={styles.statV}>{rev.since ? new Date(rev.since).toISOString().slice(0, 10) : "—"}</span><span className={styles.statK}>first payment</span></div>
-          </section>
-
-          <section className={styles.ledger}>
-            <div className={`${styles.row} ${styles.head}`}>
-              <span>Endpoint</span><span>Price</span><span>Calls</span><span>Earned</span>
-            </div>
-            {routes.map((id) => (
-              <div key={id} className={styles.row}>
-                <span>{PAID_ROUTES[id].path}</span>
-                <span>{PAID_ROUTES[id].price}</span>
-                <span>{(rev.byRoute[id]?.count ?? 0).toLocaleString("en-US")}</span>
-                <span>{usd(rev.byRoute[id]?.usdMicro ?? 0)}</span>
+          <section className={styles.how}>
+            <span className={styles.kicker}>x402 Paid Agent API · by endpoint</span>
+            <p className={styles.note}>
+              {rev.paid.count.toLocaleString("en-US")} external paid calls ({usd(rev.paid.usdMicro)} USDC) since{" "}
+              {rev.since ? new Date(rev.since).toISOString().slice(0, 10) : "launch"}, plus{" "}
+              {rev.self.count.toLocaleString("en-US")} self-test settlements ({usd(rev.self.usdMicro)} USDC, excluded from revenue totals).
+            </p>
+            <div className={styles.ledger}>
+              <div className={`${styles.row} ${styles.head}`}>
+                <span>Endpoint</span><span>Price</span><span>Calls</span><span>Earned</span>
               </div>
-            ))}
+              {routes.map((id) => (
+                <div key={id} className={styles.row}>
+                  <span>{PAID_ROUTES[id].path}</span>
+                  <span>{PAID_ROUTES[id].price}</span>
+                  <span>{(rev.byRoute[id]?.count ?? 0).toLocaleString("en-US")}</span>
+                  <span>{usd(rev.byRoute[id]?.usdMicro ?? 0)}</span>
+                </div>
+              ))}
+            </div>
           </section>
         </>
       )}
@@ -123,7 +219,7 @@ export default async function RevenuePage() {
 
       {rev && rev.recent.length > 0 && (
         <section className={styles.how}>
-          <span className={styles.kicker}>Latest payments</span>
+          <span className={styles.kicker}>Latest x402 payments</span>
           <div className={styles.ledger}>
             <div className={`${styles.row} ${styles.head}`}>
               <span>Time</span><span>Endpoint</span><span>Amount</span><span>Proof</span>
