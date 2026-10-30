@@ -47,7 +47,37 @@ const nextConfig: NextConfig = {
   // Share cards pick their image (Risk Orb still, Glitchy pose) at runtime, which the tracer can't follow.
   outputFileTracingIncludes: { "/scan/**": ["./assets/orb/*.png"], "/play/**": ["./assets/play/*.png"] },
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      {
+        source: "/actions.json",
+        headers: [
+          ...securityHeaders,
+          { key: "Access-Control-Allow-Origin", value: "*" },
+          { key: "Access-Control-Allow-Methods", value: "GET, POST, PUT, OPTIONS" },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization, Content-Encoding, Accept-Encoding, X-Action-Version, X-Blockchain-Ids",
+          },
+          { key: "X-Action-Version", value: "2.4" },
+          { key: "X-Blockchain-Ids", value: "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp" },
+        ],
+      },
+      {
+        source: "/api/actions/:path*",
+        headers: [
+          ...securityHeaders,
+          { key: "Access-Control-Allow-Origin", value: "*" },
+          { key: "Access-Control-Allow-Methods", value: "GET, POST, PUT, OPTIONS" },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization, Content-Encoding, Accept-Encoding, X-Action-Version, X-Blockchain-Ids",
+          },
+          { key: "X-Action-Version", value: "2.4" },
+          { key: "X-Blockchain-Ids", value: "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp" },
+        ],
+      },
+      { source: "/:path*", headers: securityHeaders },
+    ];
   },
   // The old pre-launch founder dashboard is retired; the public network page replaces it.
   async redirects() {
@@ -60,6 +90,7 @@ const nextConfig: NextConfig = {
   // resource list for paid-API discovery.
   async rewrites() {
     return [
+      { source: "/.well-known/actions.json", destination: "/actions.json" },
       { source: "/.well-known/security.txt", destination: "/api/security-txt" },
       { source: "/.well-known/x402", destination: "/api/well-known-x402" },
     ];

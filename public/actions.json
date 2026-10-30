@@ -1,0 +1,17 @@
+{
+  "rules": [
+    {
+      "pathPattern": "/api/actions/**",
+      "apiPath": "/api/actions/**"
+    },
+    {
+      "pathPattern": "/scan/**",
+      "apiPath": "/api/actions/scan"
+    },
+    {
+      "pathPattern": "/swap/**",
+      "apiPath": "/api/actions/safe-swap"
+    }
+  ]
+}
+
