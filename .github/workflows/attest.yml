@@ -40,4 +40,7 @@ jobs:
           ATTESTER_PUBKEY: ${{ vars.ATTESTER_PUBKEY }}
           ATTEST_CLUSTER: ${{ vars.ATTEST_CLUSTER }}
           ATTEST_SOURCE: ${{ vars.ATTEST_SOURCE }}
+          ATTEST_MAX_FEE_LAMPORTS: ${{ vars.ATTEST_MAX_FEE_LAMPORTS }}
+          ATTEST_MAX_PER_RUN: ${{ vars.ATTEST_MAX_PER_RUN }}
+          ATTEST_MAX_PER_DAY: ${{ vars.ATTEST_MAX_PER_DAY }}
         run: npx tsx src/attest/run.ts

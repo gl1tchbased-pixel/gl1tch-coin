@@ -5,7 +5,9 @@ and get a 0–100 risk score with a plain-language reason for every check, in se
 it never asks for a signature, never touches a wallet, and costs nothing to use.
 
 - Scanner: <https://gl1tchbased.xyz/scan>
+- Yield X-Ray (multi-chain APY & risk analysis across 7 chains): <https://gl1tchbased.xyz/yield>
 - Rug Radar (risky new launches, swept every 30 minutes): <https://gl1tchbased.xyz/radar>
+- Verdict Anchoring (sealed on Solana via SPL Memo): <https://gl1tchbased.xyz/verify-scan>
 - Proof page (we run the scanner on our own token): <https://gl1tchbased.xyz/proof>
 - Telegram bot: scan from chat, plus Watchtower alerts — <https://t.me/gl1tch_infected>
 - License: [MIT](./LICENSE)
@@ -90,6 +92,15 @@ flowchart LR
 | `mobile/` | Android prototype (Expo / React Native): share-to-scan, read-only wallet scan over Mobile Wallet Adapter, Sign in with Solana ([demo video](https://youtu.be/HubNomvZ7_k)) |
 | `docs/` | Threat model, risk register, scoring changelog, Signal Graph schema, specs |
 | `remotion/`, `e2e/` | Video pipeline and browser automation (not needed to run the scanner) |
+
+## Mobile Experience & Solana Seeker (Android Prototype)
+
+A working mobile-first Android prototype (`mobile/`, MIT) built for Solana Seeker and Android devices:
+- **Share to Scan:** Share a token link from Telegram, X, or Pump.fun straight to GL1TCH for an instant verdict before buying.
+- **Mobile Wallet Adapter (MWA):** Connect read-only (Phantom, Solflare, Seed Vault) to inspect all tokens you hold in one tap with **zero transaction signatures**.
+- **Sign in with Solana (SIWS):** Proof of wallet ownership via message signature (never a transaction).
+- 📹 **Demo Video (52s, real device):** [Watch on YouTube](https://youtu.be/HubNomvZ7_k)
+- 📦 **Source & Build Steps:** See [`mobile/README.md`](./mobile/README.md).
 
 ## Run it locally
 

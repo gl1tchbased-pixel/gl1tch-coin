@@ -174,7 +174,7 @@ export function VerdictVerifier({ initialMint = "", initialChain = "solana" }: {
                     {result.verified
                       ? "✅ Verified on your device: GL1TCH recorded this verdict at that time, and it hasn't changed since."
                       : result.pendingSeal
-                        ? "The proof checks out. The Solana seal isn't there yet."
+                        ? "The Merkle proof checks out on your device. The on-chain Solana seal is queued for the next attester cycle."
                         : result.rpcUnreachable
                           ? "Not checked yet: this Solana RPC didn't answer. Try another one under “Use your own Solana RPC”."
                           : "✗ This record did not verify. Don't rely on it."}

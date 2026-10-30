@@ -1,5 +1,5 @@
-import fs from "node:fs";
 import path from "node:path";
+import { safeWriteJsonPretty, safeReadJson } from "../lib/safe-io.js";
 
 /**
  * Watchtower store — durable list of tokens users asked to be alerted about, plus
@@ -38,20 +38,16 @@ export class WatchStore {
   load(): void {
     if (this.loaded) return;
     this.loaded = true;
-    try {
-      const raw = fs.readFileSync(STORE_PATH, "utf-8");
-      const parsed = JSON.parse(raw) as { watches?: WatchEntry[] };
+    const parsed = safeReadJson<{ watches?: WatchEntry[] }>(STORE_PATH, "watch");
+    if (parsed) {
       for (const w of parsed.watches ?? []) this.watches.set(key(w.userId, w.chain, w.address), w);
       console.log(`[watch] loaded ${this.watches.size} watches from ${STORE_PATH}`);
-    } catch {
-      console.log(`[watch] no existing store at ${STORE_PATH} (starting empty)`);
     }
   }
 
   private save(): void {
     try {
-      fs.mkdirSync(path.dirname(STORE_PATH), { recursive: true });
-      fs.writeFileSync(STORE_PATH, JSON.stringify({ watches: [...this.watches.values()] }, null, 2));
+      safeWriteJsonPretty(STORE_PATH, { watches: [...this.watches.values()] });
     } catch (e) {
       console.error("[watch] save failed:", (e as Error).message);
     }

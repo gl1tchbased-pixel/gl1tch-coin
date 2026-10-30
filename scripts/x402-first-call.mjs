@@ -10,7 +10,7 @@
  *   node scripts/x402-first-call.mjs where
  *       Prints where the wallet file lives.
  *   node scripts/x402-first-call.mjs run --pay-to <revenue Solana address> [--base https://gl1tchbased.xyz] [--routes scan,radar]
- *       Pays each paid endpoint once (all eight: $0.042 USDC on Solana; the facilitator pays the SOL fee).
+ *       Pays each paid endpoint once (all nine: $0.045 USDC on Solana; the facilitator pays the SOL fee).
  *
  * Guards: pays only on Solana mainnet, only to --pay-to, at most $0.01 per call; refuses to run if the
  * wallet holds more than 1 USDC or the revenue wallet has no USDC token account yet. Every call is
@@ -51,6 +51,7 @@ const ALL_CALLS = {
   random: `/api/x402/random?min=1&max=100`,
   quick: `/api/x402/quick?mint=${BONK}&chain=solana`,
   batch: `/api/x402/batch?mints=${BONK},${JUP}&chain=solana`,
+  yield: `/api/x402/yield?chain=solana`,
 };
 const ROUTES = (arg("--routes") || Object.keys(ALL_CALLS).join(",")).split(",").map((r) => r.trim()).filter(Boolean);
 for (const r of ROUTES) if (!(r in ALL_CALLS)) throw new Error(`unknown route "${r}" (known: ${Object.keys(ALL_CALLS).join(", ")})`);
@@ -122,6 +123,7 @@ async function run() {
       body.reputation?.level ??
       (Array.isArray(body.values) ? `values ${body.values.join(",")}` : undefined) ??
       (typeof body.scanned === "number" ? `${body.scanned} scanned` : undefined) ??
+      (typeof body.count === "number" ? `${body.count} pools` : undefined) ??
       body.error ??
       "";
     console.log(`${res.status} ${path.split("?")[0]} → ${summary} | tx: ${settle?.transaction ?? "none"}`);

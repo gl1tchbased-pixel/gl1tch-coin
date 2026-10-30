@@ -29,6 +29,10 @@ const product = [
     text: "Sweeps freshly promoted tokens every 30 minutes and ranks them by risk, so the flagged ones are visible before people buy.",
   },
   {
+    title: "Yield X-Ray (multi-chain)",
+    text: "Direct smart-contract reading of yields, reserve health and impermanent loss across 7 chains (Solana, Ethereum, Base, Tron, Arbitrum, BSC, Robinhood Chain).",
+  },
+  {
     title: "Public API + badge",
     text: "Free JSON API (no key, no token) and an embeddable “Scanned by GL1TCH” badge that auto-updates, so wallets, launchpads and communities can show a live risk check.",
   },
@@ -51,6 +55,7 @@ const checks = [
   "Deployer holdings: how much of the supply the launching wallet holds right now (dump risk, or exited)",
   "Market integrity: bot-driven volume and holder counts inflated by linked wallets, which cap a token at CAUTION",
   "RugCheck as an independent second source; GoPlus for 15 EVM chains (honeypot, sell tax, mintable, ownership, pausable)",
+  "Verdict anchoring: Rug Radar sweeps are Merkle-hashed and sealed on Solana (SPL Memo) for zero-trust browser verification",
 ];
 
 type Item = { what: string; amount: string; detail?: string[] };
@@ -202,7 +207,7 @@ export default async function DeckPage() {
             )}
           </li>
           <li>The bot&apos;s hosting lapsed from late July to 17 October 2026, so there is no reliable figure for that period.</li>
-          <li>Solana natively, plus 15 EVM chains through GoPlus (Ethereum, Base, BNB Chain, Arbitrum, Polygon and more).</li>
+          <li>Solana natively, plus 15 EVM chains through GoPlus (Ethereum, Base, BNB Chain, Arbitrum, Polygon and more), and on-chain yield metrics across 7 ecosystems.</li>
         </ul>
       </article>
 
@@ -228,8 +233,8 @@ export default async function DeckPage() {
           <div className={styles.card}>
             <span className={styles.cardTitle}>Quality gates</span>
             <span className={styles.cardText}>
-              TypeScript for the scanner, API and bot, and more than 250 unit tests across the site
-              and the bot, run in CI on every push alongside type checks.
+              TypeScript for the scanner, API and bot, and more than 650 automated unit tests (315+ on the site
+              and 350+ on the bot), run in CI on every push alongside type checks.
             </span>
           </div>
           <div className={styles.card}>

@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { buildMcpHandler, withRateLimit, type McpDeps } from "./server";
 import type { AgentAssessment } from "@/lib/agent-trust";
 import type { DeployerReputation } from "@/lib/signal-graph";
+import type { YieldSnapshot } from "@/lib/yield/types";
 
 /** One JSON-RPC call over Streamable HTTP; reads a JSON or SSE answer. */
 async function call(handler: (req: Request) => Promise<Response>, method: string, params: unknown = {}, ip = "1.2.3.4") {
@@ -30,6 +31,39 @@ function fakeDeps(over: Partial<McpDeps> = {}): McpDeps {
     })),
     agent: vi.fn(async (): Promise<AgentAssessment> => ({ address: "A", chain: "solana", score: 30, level: "unknown", reasons: ["Not registered"], registered: false, verified: false })),
     deployer: vi.fn(async (): Promise<DeployerReputation> => ({ deployer: "D", chain: "solana", tokensSeen: 3, flaggedCount: 2, worstScore: 5, level: "serial", note: "2 of 3 flagged", recent: [] })),
+    yieldSnap: vi.fn(async (): Promise<YieldSnapshot> => ({
+      updatedAt: 1793265333485,
+      opportunities: [
+        {
+          id: "solana-kamino-usdc",
+          chain: "solana",
+          protocol: "Kamino",
+          kind: "lending",
+          symbol: "USDC",
+          asset: { symbol: "USDC", address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v", decimals: 6 },
+          receipt: null,
+          stable: true,
+          ilRisk: "none",
+          tokens: [{ symbol: "USDC", address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" }],
+          method: "rate",
+          apy: 0.0542,
+          window: "live",
+          measuredSinceMs: null,
+          tvlUsd: 185_000_000,
+          idleShare: 0.142,
+          feePct: null,
+          rate: "1.0",
+          inputs: {},
+          verify: { rpc: "solana", body: "{}", read: "rate" },
+          stale: false,
+          updatedAt: 1793265333485,
+        },
+      ],
+      sources: [],
+      prices: {},
+      gas: {},
+      network: { solanaEpochsPerYear: null, solanaInflation: null, solanaStakedShare: null },
+    })),
     ...over,
   };
 }
@@ -47,10 +81,10 @@ describe("withRateLimit", () => {
 });
 
 describe("GL1TCH MCP server", () => {
-  it("lists the three tools", async () => {
+  it("lists the four tools including xray_yield", async () => {
     const { body } = await call(buildMcpHandler(fakeDeps()), "tools/list");
     const names = ((body.result?.tools as { name: string }[]) ?? []).map((t) => t.name).sort();
-    expect(names).toEqual(["check_agent_wallet", "deployer_reputation", "scan_token"]);
+    expect(names).toEqual(["check_agent_wallet", "deployer_reputation", "scan_token", "xray_yield"]);
   });
 
   it("scan_token returns the verdict, the score and a link to the full report", async () => {
@@ -87,5 +121,15 @@ describe("GL1TCH MCP server", () => {
     const d = await call(h, "tools/call", { name: "deployer_reputation", arguments: { address: MINT, chain: "base" } });
     expect(text(d.body)).toContain("2 of 3");
     expect(deps.deployer).toHaveBeenCalledWith(MINT, "base");
+  });
+
+  it("xray_yield returns filtered on-chain yield pools and risk scores", async () => {
+    const deps = fakeDeps();
+    const h = buildMcpHandler(deps);
+    const y = await call(h, "tools/call", { name: "xray_yield", arguments: { chain: "solana", stableOnly: true } });
+    const t = text(y.body);
+    expect(t).toContain("Kamino USDC");
+    expect(t).toContain("5.42%");
+    expect(t).toContain("https://gl1tchbased.xyz/yield/solana-kamino-usdc");
   });
 });

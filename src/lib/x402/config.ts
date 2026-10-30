@@ -13,7 +13,7 @@ export type Caip2 = `${string}:${string}`;
 export const SOLANA_MAINNET: Caip2 = "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp";
 export const BASE_MAINNET: Caip2 = "eip155:8453";
 
-export type PaidRouteId = "scan" | "agent" | "deployer" | "verdict" | "radar" | "random" | "quick" | "batch";
+export type PaidRouteId = "scan" | "agent" | "deployer" | "verdict" | "radar" | "random" | "quick" | "batch" | "yield";
 
 /** Catalogs keep only the first few tags (the Coinbase Bazaar keeps five), so the most specific come first. */
 export const PAID_ROUTES: Record<PaidRouteId, { path: string; price: string; priceMicro: number; description: string; tags: string[] }> = {
@@ -81,6 +81,14 @@ export const PAID_ROUTES: Record<PaidRouteId, { path: string; price: string; pri
     description:
       "Batch token safety check: up to 10 Solana or EVM tokens in one call (mints=a,b,c). Each gets the verdict (CLEAN to RUG-SHAPED), the 0-100 safety score and the checks that failed or warned; a token that cannot be read comes back with an error. Use it to screen a watchlist, a wallet's holdings or a list of new launches with one payment. Charged once per call; not charged when no token can be read.",
     tags: ["token-safety", "batch", "rug-check", "watchlist", "solana", "crypto", "base"],
+  },
+  yield: {
+    path: "/api/x402/yield",
+    price: "$0.003",
+    priceMicro: 3_000,
+    description:
+      "Yield X-Ray: on-chain DeFi yields across 7 chains (Solana, Ethereum, Base, Arbitrum, BSC, Tron, Robinhood), read directly from protocol contracts (Aave v3, Morpho, Sky, Kamino, Jito, Lido, Uniswap v3, Raydium, JustLend). Returns real APY, TVL, withdrawable idle share, impermanent-loss exposure and an explainable 0-100 risk score with reasons. Filter by chain, kind or stablecoin. Use it before an agent deposits, routes or rebalances funds into a yield pool. Not charged on failure.",
+    tags: ["defi-yield", "apy", "lending", "liquid-staking", "solana", "base", "ethereum", "agents"],
   },
 };
 

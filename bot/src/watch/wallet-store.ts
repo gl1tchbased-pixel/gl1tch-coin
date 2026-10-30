@@ -1,5 +1,5 @@
-import fs from "node:fs";
 import path from "node:path";
+import { safeWriteJsonPretty, safeReadJson } from "../lib/safe-io.js";
 
 /**
  * Wallet-watch store — wallets a user asked to monitor (a whale, a dev, or their own
@@ -32,19 +32,16 @@ export class WalletStore {
   load(): void {
     if (this.loaded) return;
     this.loaded = true;
-    try {
-      const parsed = JSON.parse(fs.readFileSync(STORE_PATH, "utf-8")) as { wallets?: WalletEntry[] };
+    const parsed = safeReadJson<{ wallets?: WalletEntry[] }>(STORE_PATH, "wallet");
+    if (parsed) {
       for (const w of parsed.wallets ?? []) this.wallets.set(key(w.userId, w.address), w);
       console.log(`[wallet] loaded ${this.wallets.size} watched wallets from ${STORE_PATH}`);
-    } catch {
-      console.log(`[wallet] no existing store at ${STORE_PATH} (starting empty)`);
     }
   }
 
   private save(): void {
     try {
-      fs.mkdirSync(path.dirname(STORE_PATH), { recursive: true });
-      fs.writeFileSync(STORE_PATH, JSON.stringify({ wallets: [...this.wallets.values()] }, null, 2));
+      safeWriteJsonPretty(STORE_PATH, { wallets: [...this.wallets.values()] });
     } catch (e) {
       console.error("[wallet] save failed:", (e as Error).message);
     }

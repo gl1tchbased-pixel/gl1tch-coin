@@ -179,7 +179,8 @@ GET ${BASE}/api/x402/radar?since=1793217500000`}</Code>
         <h2 className={styles.h2}>6 · Use it from Claude, Cursor or any MCP client</h2>
         <p className={styles.cardD} style={{ marginBottom: "var(--space-3)" }}>
           GL1TCH is also an MCP server, so an assistant can check a token before you trade it. Free, 60 requests a
-          minute per IP. Tools: <code>scan_token</code>, <code>check_agent_wallet</code>, <code>deployer_reputation</code>.
+          minute per IP. Tools: <code>scan_token</code>, <code>check_agent_wallet</code>, <code>deployer_reputation</code>,{" "}
+          <code>xray_yield</code>.
         </p>
         <Code head="MCP client config (Streamable HTTP)">{`{
   "mcpServers": {

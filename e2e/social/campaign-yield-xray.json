@@ -1,0 +1,24 @@
+{
+  "name": "Yield X-Ray launch",
+  "timezone": "Europe/Istanbul",
+  "slots": [
+    {
+      "id": "yx-tg-1",
+      "platform": "telegram",
+      "at": "2026-10-30T10:00",
+      "text": "📈 <b>NEW: YIELD X-RAY</b>\nWhere does an APY actually come from?\n\nGL1TCH now reads 30 yields on 7 chains straight from the chain: Aave, Solana staking, ETH staking, Orca &amp; Uniswap pools, JustLend on Tron and Robinhood Chain vaults.\n\nEvery card shows:\n• who pays the yield\n• how you get your money out\n• a risk score with every point explained\n• the exact request to verify the number yourself\n\nTry it right here:\n<code>/yield</code> · <code>/yield usdc</code> · <code>/yield solana</code>\n<code>/yieldwatch &lt;id&gt;</code>: I ping you if a yield halves, deposits leave or withdrawals get stuck.\n\nFree · read-only · never asks for a wallet.\ngl1tchbased.xyz/yield"
+    },
+    {
+      "id": "yx-x-1",
+      "platform": "x",
+      "at": "2026-10-30T12:00",
+      "media": ["pump-pack/yield-xray/yield-xray-og.png"],
+      "tweets": [
+        "New on GL1TCH: Yield X-Ray.\n\nEvery APY is read straight from the chain: Aave, Solana stake pools, ETH staking, Orca and Uniswap fees, JustLend on Tron, Robinhood Chain vaults.\n\nWho pays it, how you get out, a risk score, and the request to verify it yourself.",
+        "Same pool, two different numbers.\n\nA DEX shows the pool average. A set-and-forget full-range position earns far less, because most liquidity sits in narrow ranges near the price. On Orca SOL-USDC our first reading put the gap at about 19x.\n\nYield X-Ray shows both.",
+        "Tap 🔔 on any card and the GL1TCH Telegram bot pings you if the APY halves, deposits leave or withdrawals get stuck.\n\nFree. Read-only. No wallet.\n\ngl1tchbased.xyz/yield"
+      ]
+    }
+  ]
+}
+

@@ -1,6 +1,6 @@
 ---
 name: gl1tch-token-safety
-description: "Check a Solana or EVM token for rug-pull and honeypot risk with GL1TCH before buying, swapping into, listing or recommending it; screen new Solana launches (Rug Radar); look up who deployed a token and what else they launched; check an AI-agent wallet's trust. Free endpoints need no key; pay-per-call x402 endpoints (USDC on Solana or Base) skip the shared rate limit. Use when the user asks whether a token is safe, a rug, a honeypot, or who launched it."
+description: "Check a Solana or EVM token for rug-pull and honeypot risk with GL1TCH before buying, swapping into, listing or recommending it; screen new Solana launches (Rug Radar); look up who deployed a token and what else they launched; check an AI-agent wallet's trust; X-Ray DeFi yield pools (real yield vs emissions). Free endpoints need no key; pay-per-call x402 endpoints (USDC on Solana or Base) skip the shared rate limit. Use when the user asks whether a token or DeFi yield pool is safe, a rug, a honeypot, or who launched it."
 ---
 
 # GL1TCH token safety
@@ -31,6 +31,9 @@ curl -s "https://gl1tchbased.xyz/api/radar"
 
 # Trust check for an agent wallet
 curl -s "https://gl1tchbased.xyz/api/agent/check?address=<wallet>&chain=solana"
+
+# Yield X-Ray: real yield vs emissions across top DeFi pools
+curl -s "https://gl1tchbased.xyz/api/yield"
 ```
 
 ## Pay per call (x402, no signup)
@@ -47,6 +50,8 @@ fails or can't read its sources returns an error and costs nothing.
 | `/api/x402/radar?since=<cursor>` | $0.002 | new Solana launches ranked riskiest first; pass back `cursor` as `since` |
 | `/api/x402/deployer?address=<wallet>` | $0.003 | a creator wallet's launches and how many scanned as high risk |
 | `/api/x402/agent?address=<wallet>` | $0.01 | Know Your Agent trust score for a wallet |
+| `/api/x402/yield?chain=solana` | $0.003 | DeFi Yield X-Ray: real yield vs emissions, sustainability score & risk flags |
+| `/api/x402/random?min=1&max=100` | $0.003 | verifiable random integers seeded by a future drand threshold-BLS round |
 
 With the Coinbase agentic wallet (`awal`), cap the payment with `--max-amount` (USDC atomic
 units, 1000 = $0.001):

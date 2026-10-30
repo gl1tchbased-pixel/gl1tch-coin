@@ -1,0 +1,26 @@
+{
+  "name": "GL1TCH — Crypto Safety Scanner & Yield X-Ray",
+  "short_name": "GL1TCH",
+  "description": "Free, non-custodial token risk scanner, live Rug Radar, multi-chain Yield X-Ray, and verifiable randomness on Solana.",
+  "start_url": "/scan",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050505",
+  "theme_color": "#00ff66",
+  "categories": ["finance", "security", "utilities"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/brand/gl1tch-logo-256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ]
+}
+

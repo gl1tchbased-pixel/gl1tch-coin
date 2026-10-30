@@ -1,5 +1,5 @@
-import fs from "node:fs";
 import path from "node:path";
+import { safeWriteJson, safeReadJson } from "../lib/safe-io.js";
 
 /**
  * Yield watches: who wants a Telegram ping when a yield they follow changes. Same rule as Watchtower — the
@@ -31,18 +31,13 @@ export class YieldWatchStore {
   constructor(private readonly file = DEFAULT_PATH) {}
 
   load(): void {
-    try {
-      const parsed = JSON.parse(fs.readFileSync(this.file, "utf-8")) as { watches?: YieldWatch[] };
-      this.watches = Array.isArray(parsed.watches) ? parsed.watches : [];
-    } catch {
-      this.watches = [];
-    }
+    const parsed = safeReadJson<{ watches?: YieldWatch[] }>(this.file, "yield-watch");
+    this.watches = parsed && Array.isArray(parsed.watches) ? parsed.watches : [];
   }
 
   private save(): void {
     try {
-      fs.mkdirSync(path.dirname(this.file), { recursive: true });
-      fs.writeFileSync(this.file, JSON.stringify({ watches: this.watches }));
+      safeWriteJson(this.file, { watches: this.watches });
     } catch (e) {
       console.error("[yield-watch] save failed:", (e as Error).message);
     }

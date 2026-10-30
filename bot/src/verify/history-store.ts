@@ -1,5 +1,5 @@
-import fs from "node:fs";
 import path from "node:path";
+import { safeWriteJsonPretty, safeReadJson } from "../lib/safe-io.js";
 import { recordSnapshot, type BalanceSnapshot } from "./sustained.js";
 
 /**
@@ -23,23 +23,18 @@ export class BalanceHistoryStore {
   load(): void {
     if (this.loaded) return;
     this.loaded = true;
-    try {
-      const parsed = JSON.parse(fs.readFileSync(STORE_PATH, "utf-8")) as {
-        wallets?: Record<string, BalanceSnapshot[]>;
-      };
+    const parsed = safeReadJson<{ wallets?: Record<string, BalanceSnapshot[]> }>(STORE_PATH, "verify");
+    if (parsed) {
       for (const [w, snaps] of Object.entries(parsed.wallets ?? {})) this.byWallet.set(w, snaps);
       console.log(`[verify] loaded balance history for ${this.byWallet.size} wallets from ${STORE_PATH}`);
-    } catch {
-      console.log(`[verify] no balance history at ${STORE_PATH} (starting empty)`);
     }
   }
 
   private save(): void {
     try {
-      fs.mkdirSync(path.dirname(STORE_PATH), { recursive: true });
       const wallets: Record<string, BalanceSnapshot[]> = {};
       for (const [w, snaps] of this.byWallet) wallets[w] = snaps;
-      fs.writeFileSync(STORE_PATH, JSON.stringify({ wallets }, null, 2));
+      safeWriteJsonPretty(STORE_PATH, { wallets });
     } catch (e) {
       console.error("[verify] balance-history save failed:", (e as Error).message);
     }

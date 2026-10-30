@@ -1,5 +1,4 @@
-import fs from "node:fs";
-import path from "node:path";
+import { safeWriteJson, safeReadJson } from "./lib/safe-io.js";
 
 /**
  * Global scan counters — "X tokens scanned · Y rugs caught" — persisted in the bot's data
@@ -34,8 +33,8 @@ export class StatsStore {
   load(): void {
     if (this.loaded) return;
     this.loaded = true;
-    try {
-      const p = JSON.parse(fs.readFileSync(STORE_PATH, "utf-8")) as Partial<Stats>;
+    const p = safeReadJson<Partial<Stats> & { splitRev?: number }>(STORE_PATH, "stats");
+    if (p) {
       this.s = {
         scanned: Number(p.scanned) || 0,
         flagged: Number(p.flagged) || 0,
@@ -43,10 +42,8 @@ export class StatsStore {
         auto: Number(p.auto) || 0,
         splitSince: Number(p.splitSince) || null,
       };
-      this.rev = Number((p as { splitRev?: number }).splitRev) || 1;
+      this.rev = Number(p.splitRev) || 1;
       console.log(`[stats] loaded ${this.s.scanned} scanned (${this.s.user} user / ${this.s.auto} auto) / ${this.s.flagged} flagged from ${STORE_PATH}`);
-    } catch {
-      console.log(`[stats] no existing store at ${STORE_PATH} (starting at 0)`);
     }
     // Debounced flush so a burst of bumps writes at most ~once/5s.
     setInterval(() => this.flush(), 5000).unref?.();
@@ -56,8 +53,7 @@ export class StatsStore {
     if (!this.dirty) return;
     this.dirty = false;
     try {
-      fs.mkdirSync(path.dirname(STORE_PATH), { recursive: true });
-      fs.writeFileSync(STORE_PATH, JSON.stringify({ ...this.s, splitRev: this.rev }));
+      safeWriteJson(STORE_PATH, { ...this.s, splitRev: this.rev });
     } catch (e) {
       console.error("[stats] save failed:", (e as Error).message);
     }

@@ -1,8 +1,8 @@
 /**
- * GL1TCH as an MCP server (Streamable HTTP at /api/mcp): token rug-risk scans, Know Your Agent checks and deployer
- * reputation as tools any MCP client (Claude, Cursor, agent frameworks) can call. Free, like the scanner itself,
- * with a per-IP limit; agents that need volume or no limit can pay per call through the x402 endpoints.
- * The data sources are injected so the tools can be tested without the network.
+ * GL1TCH as an MCP server (Streamable HTTP at /api/mcp): token rug-risk scans, Know Your Agent checks, deployer
+ * reputation and Multi-Chain Yield X-Ray as tools any MCP client (Claude, Cursor, agent frameworks) can call. Free,
+ * like the scanner itself, with a per-IP limit; agents that need volume or no limit can pay per call through the
+ * x402 endpoints. The data sources are injected so the tools can be tested without the network.
  */
 
 import { createMcpHandler } from "mcp-handler";
@@ -10,6 +10,9 @@ import { z } from "zod";
 import type { ScanReport } from "@/lib/scan-report";
 import type { AgentAssessment } from "@/lib/agent-trust";
 import type { DeployerReputation } from "@/lib/signal-graph";
+import type { YieldSnapshot } from "@/lib/yield/types";
+import { riskOf } from "@/lib/yield/risk";
+import { pct, usd } from "@/lib/yield/format";
 import { isAddress, isChain, parseScanInput } from "@/lib/validate";
 import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 import { OFFICIAL } from "@/lib/official";
@@ -18,6 +21,7 @@ export interface McpDeps {
   scan: (mint: string, chain: string | undefined) => Promise<ScanReport>;
   agent: (address: string, chain: string) => Promise<AgentAssessment | null>;
   deployer: (address: string, chain: string) => Promise<DeployerReputation | null>;
+  yieldSnap?: () => Promise<YieldSnapshot | null>;
 }
 
 const SITE = OFFICIAL.SITE_URL;
@@ -101,6 +105,39 @@ export function buildMcpHandler(deps: McpDeps): (req: Request) => Promise<Respon
           return reply(
             [`Deployer ${a} on ${ch}: ${r.level}. ${r.note}.`, `Tokens seen: ${r.tokensSeen}; flagged: ${r.flaggedCount}.`, NOT_ADVICE].join("\n")
           );
+        }
+      );
+
+      server.registerTool(
+        "xray_yield",
+        {
+          title: "Yield X-Ray: on-chain DeFi yields & risk across 7 chains",
+          description:
+            "Read verified on-chain APY, TVL, withdrawable idle liquidity and explainable risk scores (0-100) for 30 DeFi pools across Solana, Ethereum, Base, Arbitrum, BSC, Tron and Robinhood Chain.",
+          inputSchema: z.object({
+            chain: z.string().max(16).optional().describe("Optional chain filter: solana, ethereum, base, arbitrum, bsc, tron, robinhood"),
+            kind: z.string().max(20).optional().describe("Optional kind filter: lending, liquid-staking, vault, dex-lp"),
+            stableOnly: z.boolean().optional().describe("When true, only USD stablecoin pools are returned"),
+          }),
+        },
+        async ({ chain: ch, kind, stableOnly }) => {
+          if (!deps.yieldSnap) return failure("Yield X-Ray unavailable right now.");
+          const snap = await deps.yieldSnap();
+          if (!snap) return failure("Yield X-Ray snapshot unavailable right now. Try again shortly.");
+          const cFilter = ch?.trim().toLowerCase() || null;
+          const kFilter = kind?.trim().toLowerCase() || null;
+          const rows = snap.opportunities.filter((o) => {
+            if (cFilter && o.chain !== cFilter) return false;
+            if (kFilter && o.kind !== kFilter) return false;
+            if (stableOnly && !o.stable) return false;
+            return true;
+          });
+          if (rows.length === 0) return reply("No yield pools matched the filter.");
+          const lines = rows.slice(0, 12).map((o) => {
+            const r = riskOf(o);
+            return `• [${o.chain}] ${o.protocol} ${o.symbol} (${o.kind}): APY ${pct(o.apy, 2)} · TVL ${usd(o.tvlUsd)} · risk ${r.score}/100 (${r.level}) → ${SITE}/yield/${o.id}`;
+          });
+          return reply([`Yield X-Ray (${rows.length} pools):`, ...lines, `Full table & paid x402 feed: ${SITE}/yield · ${SITE}/api/x402/yield`, NOT_ADVICE].join("\n"));
         }
       );
     },

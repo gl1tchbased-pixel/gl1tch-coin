@@ -1,5 +1,5 @@
-import fs from "node:fs";
 import path from "node:path";
+import { safeWriteJson, safeReadJson } from "../lib/safe-io.js";
 
 /**
  * Durable API-key store (Railway-volume JSON, same pattern as the Signal Graph — no DB).
@@ -29,22 +29,19 @@ export class ApiKeyStore {
   load(): void {
     if (this.loaded) return;
     this.loaded = true;
-    try {
-      const parsed = JSON.parse(fs.readFileSync(STORE_PATH, "utf-8")) as { keys?: ApiKeyRecord[] };
+    const parsed = safeReadJson<{ keys?: ApiKeyRecord[] }>(STORE_PATH, "apikeys");
+    if (parsed) {
       for (const r of parsed.keys ?? []) {
         this.byKey.set(r.key, r);
         this.byWallet.set(r.wallet, r.key);
       }
       console.log(`[apikeys] loaded ${this.byKey.size} keys`);
-    } catch {
-      console.log(`[apikeys] no store at ${STORE_PATH} (starting empty)`);
     }
   }
 
   private save(): void {
     try {
-      fs.mkdirSync(path.dirname(STORE_PATH), { recursive: true });
-      fs.writeFileSync(STORE_PATH, JSON.stringify({ keys: [...this.byKey.values()] }));
+      safeWriteJson(STORE_PATH, { keys: [...this.byKey.values()] });
     } catch (e) {
       console.error("[apikeys] save failed:", (e as Error).message);
     }

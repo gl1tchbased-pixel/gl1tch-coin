@@ -1,5 +1,5 @@
-import fs from "node:fs";
 import path from "node:path";
+import { safeWriteJson, safeReadJson } from "../lib/safe-io.js";
 import { beaconHash, BEACON_GENESIS, type Draw, type BeaconEntry } from "./logic.js";
 
 /**
@@ -23,17 +23,12 @@ export class QuantumCoreStore {
   load(): void {
     if (this.loaded) return;
     this.loaded = true;
-    try {
-      const parsed = JSON.parse(fs.readFileSync(STORE_PATH, "utf-8")) as {
-        draws?: Draw[];
-        beacon?: BeaconEntry[];
-      };
+    const parsed = safeReadJson<{ draws?: Draw[]; beacon?: BeaconEntry[] }>(STORE_PATH, "quantum");
+    if (parsed) {
       for (const d of parsed.draws ?? []) this.draws.set(d.id, d);
       this.beacon = parsed.beacon ?? [];
       if (this.ensureChain()) this.save(); // backfill hash-chain for any pre-chain entries
       console.log(`[quantum] loaded ${this.draws.size} draws, ${this.beacon.length} beacon entries`);
-    } catch {
-      console.log(`[quantum] no store at ${STORE_PATH} (starting empty)`);
     }
   }
 
@@ -60,8 +55,7 @@ export class QuantumCoreStore {
 
   private save(): void {
     try {
-      fs.mkdirSync(path.dirname(STORE_PATH), { recursive: true });
-      fs.writeFileSync(STORE_PATH, JSON.stringify({ draws: [...this.draws.values()], beacon: this.beacon }));
+      safeWriteJson(STORE_PATH, { draws: [...this.draws.values()], beacon: this.beacon });
     } catch (e) {
       console.error("[quantum] save failed:", (e as Error).message);
     }

@@ -10,6 +10,9 @@ import { agentCheck } from "@/lib/agent-trust";
 import { deployerReputation } from "@/lib/signal-graph";
 import { parseScanInput, isAddress, isChain } from "@/lib/validate";
 import { sweepOnce, lastSweep, type RadarSweep } from "@/lib/radar";
+import { getYieldSnapshot } from "@/lib/yield/client";
+import { riskOf } from "@/lib/yield/risk";
+import type { YieldChain, YieldKind, YieldSnapshot } from "@/lib/yield/types";
 import { OFFICIAL } from "@/lib/official";
 import { verdictCard } from "./verdict";
 import { parseRandomQuery, randomCall } from "./random-call";
@@ -188,4 +191,96 @@ export async function deployerHandler(req: NextRequest): Promise<NextResponse> {
   const reputation = await deployerReputation(input.address, input.chain);
   if (!reputation) return NextResponse.json({ error: `reputation unavailable — retry; ${NOT_CHARGED}` }, { status: 503 });
   return NextResponse.json({ address: input.address, chain: input.chain, reputation });
+}
+
+const YIELD_CHAINS = new Set<YieldChain>(["solana", "ethereum", "base", "arbitrum", "bsc", "tron", "robinhood"]);
+const YIELD_KINDS = new Set<YieldKind>(["lending", "liquid-staking", "vault", "dex-lp"]);
+const YIELD_ID_RE = /^[a-z0-9-]{3,80}$/;
+
+export interface YieldFilter {
+  chain: YieldChain | null;
+  kind: YieldKind | null;
+  stable: boolean | null;
+  id: string | null;
+}
+
+export function parseYieldInput(sp: URLSearchParams): YieldFilter | { error: string } {
+  const chainRaw = (sp.get("chain") ?? "").trim().toLowerCase();
+  const kindRaw = (sp.get("kind") ?? "").trim().toLowerCase();
+  const stableRaw = (sp.get("stable") ?? "").trim().toLowerCase();
+  const idRaw = (sp.get("id") ?? "").trim().toLowerCase();
+
+  if (chainRaw && !YIELD_CHAINS.has(chainRaw as YieldChain)) {
+    return { error: "invalid chain: use solana, ethereum, base, arbitrum, bsc, tron or robinhood" };
+  }
+  if (kindRaw && !YIELD_KINDS.has(kindRaw as YieldKind)) {
+    return { error: "invalid kind: use lending, liquid-staking, vault or dex-lp" };
+  }
+  if (stableRaw && stableRaw !== "true" && stableRaw !== "false" && stableRaw !== "1" && stableRaw !== "0") {
+    return { error: "invalid stable: use true or false" };
+  }
+  if (idRaw && !YIELD_ID_RE.test(idRaw)) {
+    return { error: "invalid pool id" };
+  }
+  return {
+    chain: (chainRaw as YieldChain) || null,
+    kind: (kindRaw as YieldKind) || null,
+    stable: !stableRaw ? null : stableRaw === "true" || stableRaw === "1",
+    id: idRaw || null,
+  };
+}
+
+export function yieldView(snap: YieldSnapshot, filter: YieldFilter, siteUrl = OFFICIAL.SITE_URL) {
+  const filtered = snap.opportunities.filter((o) => {
+    if (filter.id && o.id !== filter.id) return false;
+    if (filter.chain && o.chain !== filter.chain) return false;
+    if (filter.kind && o.kind !== filter.kind) return false;
+    if (filter.stable !== null && o.stable !== filter.stable) return false;
+    return true;
+  });
+
+  const opportunities = filtered.map((o) => {
+    const risk = riskOf(o);
+    return {
+      id: o.id,
+      chain: o.chain,
+      protocol: o.protocol,
+      kind: o.kind,
+      symbol: o.symbol,
+      stable: o.stable,
+      ilRisk: o.ilRisk,
+      apy: o.apy,
+      fullRangeApr: o.fullRangeApr ?? null,
+      window: o.window,
+      tvlUsd: o.tvlUsd,
+      idleShare: o.idleShare,
+      feePct: o.feePct,
+      stale: o.stale,
+      risk: {
+        score: risk.score,
+        level: risk.level,
+        reasons: risk.reasons,
+        warnings: risk.warnings,
+      },
+      cardUrl: `${siteUrl}/yield/${o.id}`,
+    };
+  });
+
+  return {
+    updatedAt: snap.updatedAt,
+    count: opportunities.length,
+    opportunities,
+  };
+}
+
+export async function yieldHandler(req: NextRequest): Promise<NextResponse> {
+  const parsed = parseYieldInput(req.nextUrl.searchParams);
+  if ("error" in parsed) {
+    return NextResponse.json({ error: `${parsed.error}; ${NOT_CHARGED}` }, { status: 400 });
+  }
+  const snap = await getYieldSnapshot();
+  if (!snap) {
+    return NextResponse.json({ error: `yield snapshot unavailable — retry; ${NOT_CHARGED}` }, { status: 503 });
+  }
+  return NextResponse.json(yieldView(snap, parsed));
 }

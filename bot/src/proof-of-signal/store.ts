@@ -1,5 +1,5 @@
-import fs from "node:fs";
 import path from "node:path";
+import { safeWriteJson, safeReadJson } from "../lib/safe-io.js";
 import { computeXp, signalBadge, type SignalBadge } from "./xp.js";
 
 /**
@@ -42,12 +42,10 @@ export class ProofOfSignalStore {
   load(): void {
     if (this.loaded) return;
     this.loaded = true;
-    try {
-      const parsed = JSON.parse(fs.readFileSync(STORE_PATH, "utf-8")) as { users?: PoSRecord[] };
+    const parsed = safeReadJson<{ users?: PoSRecord[] }>(STORE_PATH, "pos");
+    if (parsed) {
       for (const u of parsed.users ?? []) this.byUser.set(u.userId, u);
       console.log(`[pos] loaded ${this.byUser.size} signal reputations from ${STORE_PATH}`);
-    } catch {
-      console.log(`[pos] no proof-of-signal store at ${STORE_PATH} (starting empty)`);
     }
     setInterval(() => this.flush(), 5000).unref?.();
   }
@@ -56,8 +54,7 @@ export class ProofOfSignalStore {
     if (!this.dirty) return;
     this.dirty = false;
     try {
-      fs.mkdirSync(path.dirname(STORE_PATH), { recursive: true });
-      fs.writeFileSync(STORE_PATH, JSON.stringify({ users: [...this.byUser.values()] }));
+      safeWriteJson(STORE_PATH, { users: [...this.byUser.values()] });
     } catch (e) {
       console.error("[pos] save failed:", (e as Error).message);
     }

@@ -10,7 +10,7 @@ import path from "node:path";
  */
 
 /** Must list every paid route the site has (src/lib/x402/config.ts PaidRouteId); unknown routes are refused. */
-export type RevenueRoute = "scan" | "agent" | "deployer" | "verdict" | "radar" | "random" | "quick" | "batch";
+export type RevenueRoute = "scan" | "agent" | "deployer" | "verdict" | "radar" | "random" | "quick" | "batch" | "yield";
 
 export interface RevenueEntry {
   tx: string;
@@ -45,7 +45,7 @@ export interface RevenueSummary {
   quotes: QuoteSummary;
 }
 
-const ROUTES: readonly RevenueRoute[] = ["scan", "agent", "deployer", "verdict", "radar", "random", "quick", "batch"];
+const ROUTES: readonly RevenueRoute[] = ["scan", "agent", "deployer", "verdict", "radar", "random", "quick", "batch", "yield"];
 const NETWORK = /^(solana|eip155):[A-Za-z0-9]{1,64}$/;
 const TX = /^([1-9A-HJ-NP-Za-km-z]{64,88}|0x[0-9a-fA-F]{64})$/;
 const MAX_MICRO = 1e9; // $1,000 per call: far above any price we charge

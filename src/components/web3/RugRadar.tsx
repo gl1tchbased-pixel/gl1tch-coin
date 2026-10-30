@@ -8,10 +8,13 @@ import styles from "./RugRadar.module.css";
  * RugRadar — live "Hall of Shame": tokens the GL1TCH scanner just flagged as risky,
  * pulled from freshly-promoted tokens. Proof the scanner works, on real targets, and a
  * stream of shareable cards. Each links to its full report.
+ *
+ * Includes a "Live Feed" toggle that connects via Server-Sent Events (`/api/radar/stream`)
+ * for real-time sweep and pool-launch updates without manual page reloads.
  */
 
 type Caught = { chain: string; mint: string; name: string; symbol: string; verdict: string; score: number; reason: string; flagged: boolean };
-type Radar = { scanned: number; flagged: number; caught: Caught[] };
+type Radar = { scanned: number; flagged: number; caught: Caught[]; updatedAt?: number };
 
 function vtone(v: string): "good" | "ok" | "warn" | "bad" {
   const u = v.toUpperCase();
@@ -26,6 +29,8 @@ const short = (a: string) => `${a.slice(0, 4)}…${a.slice(-4)}`;
 export function RugRadar({ limit }: { limit?: number } = {}) {
   const [data, setData] = useState<Radar | null>(null);
   const [err, setErr] = useState(false);
+  const [live, setLive] = useState(false);
+  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -35,6 +40,28 @@ export function RugRadar({ limit }: { limit?: number } = {}) {
       .catch(() => { if (alive) setErr(true); });
     return () => { alive = false; };
   }, []);
+
+  useEffect(() => {
+    if (!live || typeof EventSource === "undefined") {
+      setConnected(false);
+      return;
+    }
+    const es = new EventSource("/api/radar/stream");
+    es.onopen = () => setConnected(true);
+    es.addEventListener("radar", (ev) => {
+      try {
+        const next = JSON.parse((ev as MessageEvent).data) as Radar;
+        if (next && Array.isArray(next.caught)) setData(next);
+      } catch {
+        /* ignore malformed frame */
+      }
+    });
+    es.onerror = () => setConnected(false);
+    return () => {
+      es.close();
+      setConnected(false);
+    };
+  }, [live]);
 
   if (err) return <p className={styles.note}>Radar is recharging — try again shortly, or <Link href="/scan" className={styles.link}>scan a token yourself →</Link></p>;
 
@@ -49,16 +76,28 @@ export function RugRadar({ limit }: { limit?: number } = {}) {
 
   return (
     <>
-      <div className={styles.counter}>
-        <div className={styles.stat}>
-          <span className={styles.num}>{data.scanned}</span>
-          <span className={styles.lbl}>scanned this sweep</span>
+      <div className={styles.topBar}>
+        <div className={styles.counter}>
+          <div className={styles.stat}>
+            <span className={styles.num}>{data.scanned}</span>
+            <span className={styles.lbl}>scanned this sweep</span>
+          </div>
+          <div className={styles.statSep} />
+          <div className={styles.stat}>
+            <span className={`${styles.num} ${styles.bad}`}>{data.flagged}</span>
+            <span className={styles.lbl}>flagged HIGH RISK+</span>
+          </div>
         </div>
-        <div className={styles.statSep} />
-        <div className={styles.stat}>
-          <span className={`${styles.num} ${styles.bad}`}>{data.flagged}</span>
-          <span className={styles.lbl}>flagged HIGH RISK+</span>
-        </div>
+
+        <button
+          type="button"
+          onClick={() => setLive((v) => !v)}
+          className={`${styles.liveToggle} ${live ? styles.liveActive : ""}`}
+          aria-pressed={live}
+        >
+          <span className={`${styles.liveDot} ${live && connected ? styles.liveDotPulse : ""}`} />
+          {live ? (connected ? "Live Feed · ON" : "Connecting SSE…") : "Live Feed · OFF"}
+        </button>
       </div>
 
       {data.caught.length === 0 ? (

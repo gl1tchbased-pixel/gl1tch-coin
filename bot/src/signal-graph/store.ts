@@ -1,5 +1,5 @@
-import fs from "node:fs";
 import path from "node:path";
+import { safeWriteJson, safeReadJson } from "../lib/safe-io.js";
 import {
   applyObservation,
   reputation,
@@ -28,24 +28,16 @@ export class SignalGraphStore {
   load(): void {
     if (this.loaded) return;
     this.loaded = true;
-    try {
-      const parsed = JSON.parse(fs.readFileSync(STORE_PATH, "utf-8")) as {
-        deployers?: DeployerRecord[];
-      };
+    const parsed = safeReadJson<{ deployers?: DeployerRecord[] }>(STORE_PATH, "signal");
+    if (parsed) {
       for (const d of parsed.deployers ?? []) this.byDeployer.set(deployerKey(d.deployer, d.chain), d);
       console.log(`[signal] loaded ${this.byDeployer.size} deployers from ${STORE_PATH}`);
-    } catch {
-      console.log(`[signal] no signal graph at ${STORE_PATH} (starting empty)`);
     }
   }
 
   private save(): void {
     try {
-      fs.mkdirSync(path.dirname(STORE_PATH), { recursive: true });
-      fs.writeFileSync(
-        STORE_PATH,
-        JSON.stringify({ deployers: [...this.byDeployer.values()] })
-      );
+      safeWriteJson(STORE_PATH, { deployers: [...this.byDeployer.values()] });
       this.dirty = false;
     } catch (e) {
       console.error("[signal] save failed:", (e as Error).message);

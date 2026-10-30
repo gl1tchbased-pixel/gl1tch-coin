@@ -2,6 +2,7 @@ import { buildMcpHandler, withRateLimit } from "@/lib/mcp/server";
 import { runScanReport } from "@/lib/scan-report";
 import { agentCheck } from "@/lib/agent-trust";
 import { deployerReputation } from "@/lib/signal-graph";
+import { getYieldSnapshot } from "@/lib/yield/client";
 
 /** GL1TCH MCP server (Streamable HTTP): connect any MCP client to https://gl1tchbased.xyz/api/mcp. */
 export const runtime = "nodejs";
@@ -14,6 +15,7 @@ const handler = withRateLimit(
     scan: (mint, chain) => runScanReport(mint, chain, "auto"),
     agent: agentCheck,
     deployer: deployerReputation,
+    yieldSnap: () => getYieldSnapshot(),
   }),
   60
 );

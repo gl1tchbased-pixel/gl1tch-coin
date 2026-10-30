@@ -32,6 +32,7 @@ const FREE_ALTERNATIVE: Record<PaidRouteId, string> = {
   random: "/quantum-core/random", // $GL1TCH holders' key-gated Randomness API
   quick: "/api/scan", // the quick check is a condensed scan
   batch: "/api/scan", // one free scan per token
+  yield: "/api/yield", // the free Yield X-Ray snapshot
 };
 
 type Handler = (req: NextRequest) => Promise<NextResponse>;

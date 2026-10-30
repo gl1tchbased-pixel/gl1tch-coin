@@ -1,5 +1,5 @@
-import fs from "node:fs";
 import path from "node:path";
+import { safeWriteJson, safeReadJson } from "../lib/safe-io.js";
 import type { YieldSnapshot } from "./types.js";
 
 /**
@@ -31,22 +31,20 @@ export class YieldStore {
   constructor(private readonly file = DEFAULT_PATH) {}
 
   load(): void {
-    try {
-      const parsed = JSON.parse(fs.readFileSync(this.file, "utf-8")) as { snapshot?: YieldSnapshot | null; history?: Record<string, YieldPoint[]> };
+    const parsed = safeReadJson<{ snapshot?: YieldSnapshot | null; history?: Record<string, YieldPoint[]> }>(this.file, "yield");
+    if (parsed) {
       this.snap = parsed.snapshot ?? null;
       this.points = new Map(Object.entries(parsed.history ?? {}));
       console.log(`[yield] loaded ${this.points.size} histories from ${this.file}`);
-    } catch {
+    } else {
       this.snap = null;
       this.points = new Map();
-      console.log(`[yield] no yield store at ${this.file} (starting empty)`);
     }
   }
 
   save(): void {
     try {
-      fs.mkdirSync(path.dirname(this.file), { recursive: true });
-      fs.writeFileSync(this.file, JSON.stringify({ snapshot: this.snap, history: Object.fromEntries(this.points) }));
+      safeWriteJson(this.file, { snapshot: this.snap, history: Object.fromEntries(this.points) });
     } catch (e) {
       console.error("[yield] save failed:", (e as Error).message);
     }

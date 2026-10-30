@@ -94,7 +94,10 @@ export async function anchorBatch(
       { err: sim.value.err, preLamports: pre, postLamports: sim.value.accounts?.[0]?.lamports ?? null },
       policy
     );
-    if (badSim) return refuse("simulate", badSim);
+    if (badSim) {
+      const logs = sim.value.logs?.length ? ` (logs: ${sim.value.logs.slice(-3).join(" | ")})` : "";
+      return refuse("simulate", `${badSim}${logs}`);
+    }
 
     const sig = await conn.sendRawTransaction(tx.serialize(), { skipPreflight: false, preflightCommitment: "confirmed", maxRetries: 3 });
     audit({ step: "sent", ok: true, root, sig, detail: `fee ${fee} lamports` });

@@ -1,5 +1,5 @@
-import fs from "node:fs";
 import path from "node:path";
+import { safeWriteJson, safeReadJson } from "../lib/safe-io.js";
 import { createHash } from "node:crypto";
 import type { Commitment, RandomResult } from "./logic.js";
 
@@ -65,22 +65,16 @@ export class RandomStore {
   load(): void {
     if (this.loaded) return;
     this.loaded = true;
-    try {
-      const parsed = JSON.parse(fs.readFileSync(STORE_PATH, "utf-8")) as {
-        records?: RandomRecord[];
-        log?: RandomEvent[];
-      };
+    const parsed = safeReadJson<{ records?: RandomRecord[]; log?: RandomEvent[] }>(STORE_PATH, "random");
+    if (parsed) {
       for (const r of parsed.records ?? []) this.records.set(r.id, r);
       this.log = parsed.log ?? [];
       console.log(`[random] loaded ${this.records.size} requests, ${this.log.length} events`);
-    } catch {
-      console.log(`[random] no store at ${STORE_PATH} (starting empty)`);
     }
   }
 
   private save(): void {
     try {
-      fs.mkdirSync(path.dirname(STORE_PATH), { recursive: true });
       // Trim oldest records/events to keep the file bounded.
       const recs = [...this.records.values()];
       const trimmedRecs = recs.length > RECORD_CAP ? recs.slice(-RECORD_CAP) : recs;
@@ -88,7 +82,7 @@ export class RandomStore {
         this.records = new Map(trimmedRecs.map((r) => [r.id, r]));
       }
       if (this.log.length > LOG_CAP) this.log = this.log.slice(-LOG_CAP);
-      fs.writeFileSync(STORE_PATH, JSON.stringify({ records: [...this.records.values()], log: this.log }));
+      safeWriteJson(STORE_PATH, { records: [...this.records.values()], log: this.log });
     } catch (e) {
       console.error("[random] save failed:", (e as Error).message);
     }

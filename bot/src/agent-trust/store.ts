@@ -1,5 +1,5 @@
-import fs from "node:fs";
 import path from "node:path";
+import { safeWriteJson, safeReadJson } from "../lib/safe-io.js";
 
 /**
  * Agent registry (Agent Trust Layer v0). Holds agent-specific trust data — verified identity,
@@ -33,19 +33,16 @@ export class AgentTrustStore {
   load(): void {
     if (this.loaded) return;
     this.loaded = true;
-    try {
-      const parsed = JSON.parse(fs.readFileSync(STORE_PATH, "utf-8")) as { agents?: AgentRecord[] };
+    const parsed = safeReadJson<{ agents?: AgentRecord[] }>(STORE_PATH, "agent-trust");
+    if (parsed) {
       for (const a of parsed.agents ?? []) this.byAgent.set(key(a.chain, a.agentId), a);
       console.log(`[agent-trust] loaded ${this.byAgent.size} agents from ${STORE_PATH}`);
-    } catch {
-      console.log(`[agent-trust] no registry at ${STORE_PATH} (starting empty)`);
     }
   }
 
   private save(): void {
     try {
-      fs.mkdirSync(path.dirname(STORE_PATH), { recursive: true });
-      fs.writeFileSync(STORE_PATH, JSON.stringify({ agents: [...this.byAgent.values()] }));
+      safeWriteJson(STORE_PATH, { agents: [...this.byAgent.values()] });
     } catch (e) {
       console.error("[agent-trust] save failed:", (e as Error).message);
     }

@@ -1,5 +1,4 @@
-import fs from "node:fs";
-import path from "node:path";
+import { safeWriteJson, safeReadJson } from "./lib/safe-io.js";
 
 /**
  * "Infect a friend" referrals. Each user has a deep link t.me/<bot>?start=ref_<id>;
@@ -25,14 +24,12 @@ class ReferralStore {
   load(): void {
     if (this.loaded) return;
     this.loaded = true;
-    try {
-      const d = JSON.parse(fs.readFileSync(STORE_PATH, "utf-8")) as Partial<Data>;
+    const d = safeReadJson<Partial<Data>>(STORE_PATH, "ref");
+    if (d) {
       for (const [k, v] of Object.entries(d.counts ?? {})) this.counts.set(k, Number(v) || 0);
       for (const [k, v] of Object.entries(d.names ?? {})) this.names.set(k, String(v));
       for (const u of d.credited ?? []) this.credited.add(String(u));
       console.log(`[ref] loaded ${this.counts.size} referrers from ${STORE_PATH}`);
-    } catch {
-      console.log(`[ref] no existing store at ${STORE_PATH} (starting empty)`);
     }
     setInterval(() => this.flush(), 5000).unref?.();
   }
@@ -41,9 +38,8 @@ class ReferralStore {
     if (!this.dirty) return;
     this.dirty = false;
     try {
-      fs.mkdirSync(path.dirname(STORE_PATH), { recursive: true });
       const d: Data = { counts: Object.fromEntries(this.counts), names: Object.fromEntries(this.names), credited: [...this.credited] };
-      fs.writeFileSync(STORE_PATH, JSON.stringify(d));
+      safeWriteJson(STORE_PATH, d);
     } catch (e) {
       console.error("[ref] save failed:", (e as Error).message);
     }

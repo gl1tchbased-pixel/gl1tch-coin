@@ -19,6 +19,7 @@ describe("paid routes without a receiving wallet", () => {
     ["random", "/api/x402/random?min=1&max=6"],
     ["quick", `/api/x402/quick?mint=${BONK}`],
     ["batch", `/api/x402/batch?mints=${BONK}`],
+    ["yield", "/api/x402/yield?chain=solana"],
   ])("%s answers 503 'paid API not configured', never an empty 402", async (id, path) => {
     vi.stubEnv("X402_PAY_TO_SOLANA", "");
     vi.stubEnv("X402_PAY_TO_BASE", "");
@@ -88,6 +89,14 @@ describe("paid handlers validate their own input (after the challenge; a 400 is 
     expect((await agentHandler(req("/api/x402/agent?address=bad"))).status).toBe(400);
     expect((await agentHandler(req(`/api/x402/agent?address=${BONK}&chain=nope`))).status).toBe(400);
     expect((await deployerHandler(req("/api/x402/deployer"))).status).toBe(400);
+  });
+
+  it("yield refuses an unknown chain, kind or malformed id without charging", async () => {
+    const { yieldHandler } = await import("./handlers");
+    expect((await yieldHandler(req("/api/x402/yield?chain=avalanche"))).status).toBe(400);
+    expect((await yieldHandler(req("/api/x402/yield?kind=farming"))).status).toBe(400);
+    expect((await yieldHandler(req("/api/x402/yield?stable=maybe"))).status).toBe(400);
+    expect((await yieldHandler(req("/api/x402/yield?id=BAD_ID!"))).status).toBe(400);
   });
 });
 

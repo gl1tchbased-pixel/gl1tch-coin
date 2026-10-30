@@ -49,6 +49,12 @@ const PARAMS: Record<PaidRouteId, Param[]> = {
     { name: "address", required: true, description: "The deployer wallet address", example: SAMPLE_WALLET },
     { name: "chain", required: false, description: "Chain of the wallet (default solana)", example: "solana" },
   ],
+  yield: [
+    { name: "chain", required: false, description: "Filter by chain: solana, ethereum, base, arbitrum, bsc, tron, robinhood", example: "solana", inExample: true },
+    { name: "kind", required: false, description: "Filter by product kind: lending, liquid-staking, vault, dex-lp", example: "lending" },
+    { name: "stable", required: false, description: "Filter stablecoin pools only: true or false", example: "true" },
+    { name: "id", required: false, description: "Single pool id, e.g. ethereum-aave-v3-usdc or solana-kamino-usdc", example: "solana-kamino-usdc" },
+  ],
 };
 
 const QUICK_BONK = {
@@ -101,15 +107,11 @@ const OUTPUT_EXAMPLES: Record<PaidRouteId, unknown> = {
     verdict: "CLEAN",
     score: 95,
     confidence: 93,
-    // Values from a real BONK scan (2026-10-28); the prose is kept flat and descriptive. The Coinbase
-    // Bazaar screens metadata for text that could steer an agent, and dropped the scan while this
-    // example read "Verified blue-chip … not rug risk".
     bottomLine: "Established token. No rug-pull flags in this scan.",
     risks: [],
     checks: [{ key: "mint_authority", label: "Mint authority", status: "pass", value: "REVOKED", explain: "Mint authority is revoked; the supply cannot grow." }],
     meta: { deployer: "…", deployerReputation: { level: "clean", tokensSeen: 1, flaggedCount: 0 } },
   },
-  // The sample wallet is GL1TCH's own attester, so its examples state only what is true of it.
   agent: { address: SAMPLE_WALLET, chain: "solana", score: 30, level: "unknown", reasons: ["Not registered; no on-chain track record in GL1TCH scans"], registered: false, verified: false },
   deployer: {
     address: SAMPLE_WALLET,
@@ -132,7 +134,6 @@ const OUTPUT_EXAMPLES: Record<PaidRouteId, unknown> = {
     quip: verdictQuip("CLEAN", BONK),
     disclaimer: VERDICT_DISCLAIMER,
   },
-  // The shape of a sweep; the token entry is a placeholder, not a real token.
   radar: {
     scanned: 40,
     flagged: 6,
@@ -144,7 +145,6 @@ const OUTPUT_EXAMPLES: Record<PaidRouteId, unknown> = {
       { chain: "solana", mint: "<token mint>", name: "<name>", symbol: "<symbol>", verdict: "HIGH RISK", score: 22, reason: "Mint authority: ACTIVE", flagged: true, listedAt: 1793217500000 },
     ],
   },
-  // Values from real scans (2026-10-29).
   quick: QUICK_BONK,
   batch: { count: 2, ok: 2, results: [QUICK_BONK, QUICK_JUP] },
   random: {
@@ -161,6 +161,38 @@ const OUTPUT_EXAMPLES: Record<PaidRouteId, unknown> = {
       commitment: "v=1|keyHash=…|spec=ints:1:100:1|salt=raffle-42|source=drand-quicknet|chainHash=…|targetRound=18421907|committedAt=…",
       verify: "randomness = sha256(signature); …",
     },
+  },
+  yield: {
+    updatedAt: 1793265333485,
+    count: 1,
+    opportunities: [
+      {
+        id: "solana-kamino-usdc",
+        chain: "solana",
+        protocol: "Kamino",
+        kind: "lending",
+        symbol: "USDC",
+        stable: true,
+        ilRisk: "none",
+        apy: 0.0542,
+        fullRangeApr: null,
+        window: "live",
+        tvlUsd: 185000000,
+        idleShare: 0.142,
+        feePct: null,
+        stale: false,
+        risk: {
+          score: 13,
+          level: "low",
+          reasons: [
+            { points: 8, text: "14.2% of deposits can be withdrawn right now; the rest is lent out." },
+            { points: 5, text: "Smart-contract and bad-debt risk if borrowers' collateral crashes." },
+          ],
+          warnings: [],
+        },
+        cardUrl: "https://gl1tchbased.xyz/yield/solana-kamino-usdc",
+      },
+    ],
   },
 };
 
@@ -209,11 +241,6 @@ const QUICK_SCHEMA: Schema = obj(
   ["mint", "chain", "verdict", "score", "flags", "cached"]
 );
 
-/**
- * JSON Schema of each 200 body. The Coinbase Bazaar weighs output-schema completeness when it ranks
- * search results, and agents build parsers from it. Loose on purpose (no additionalProperties: false),
- * so a field added later doesn't break a caller. The tests check every example against its schema.
- */
 const OUTPUT_SCHEMAS: Record<PaidRouteId, Schema> = {
   scan: obj(
     {
@@ -369,6 +396,48 @@ const OUTPUT_SCHEMAS: Record<PaidRouteId, Schema> = {
     },
     ["kind", "values", "spec", "proof"]
   ),
+  yield: obj(
+    {
+      updatedAt: num("Time of the on-chain yield snapshot, Unix milliseconds"),
+      count: int("Number of yield opportunities returned"),
+      opportunities: list(
+        obj(
+          {
+            id: text("Stable pool id, e.g. solana-kamino-usdc"),
+            chain: { type: "string", enum: ["solana", "ethereum", "base", "arbitrum", "bsc", "tron", "robinhood"], description: "Chain of the pool" },
+            protocol: text("Protocol name, e.g. Aave v3, Kamino, Morpho, Jito"),
+            kind: { type: "string", enum: ["lending", "liquid-staking", "vault", "dex-lp"], description: "Yield structure" },
+            symbol: text("Deposited asset or LP pair symbol"),
+            stable: bool("True when all underlying tokens are USD stablecoins"),
+            ilRisk: { type: "string", enum: ["none", "low", "high"], description: "Impermanent-loss exposure" },
+            apy: numOrNull("Measured on-chain APY as a fraction (0.0542 = 5.42% APY)"),
+            fullRangeApr: numOrNull("DEX LP only: passive full-range fee APR as a fraction"),
+            window: textOrNull("Measurement window: live, epoch, 24h or 7d"),
+            tvlUsd: numOrNull("Total deposits in USD"),
+            idleShare: numOrNull("Lending only: fraction of deposits currently idle and immediately withdrawable"),
+            feePct: numOrNull("Protocol or pool fee fraction"),
+            stale: bool("True if the latest hourly read failed and an earlier reading is served"),
+            risk: obj(
+              {
+                score: num("Risk score, 0 (safest) to 100 (riskiest)"),
+                level: { type: "string", enum: ["low", "moderate", "elevated", "high"], description: "Risk tier" },
+                reasons: list(
+                  obj({ points: int("Risk points added"), text: text("Plain-language explanation") }, ["points", "text"]),
+                  "Explainable risk factors behind the score"
+                ),
+                warnings: list({ type: "string" }, "Hard warnings (e.g. >100% APY, <2% withdrawable idle liquidity)"),
+              },
+              ["score", "level", "reasons", "warnings"]
+            ),
+            cardUrl: text("Shareable Yield X-Ray page URL"),
+          },
+          ["id", "chain", "protocol", "kind", "symbol", "stable", "ilRisk", "apy", "tvlUsd", "stale", "risk", "cardUrl"]
+        ),
+        "Matched on-chain yield opportunities"
+      ),
+    },
+    ["updatedAt", "count", "opportunities"]
+  ),
 };
 
 export interface BazaarQueryDiscovery {
@@ -428,7 +497,7 @@ export function buildOpenApi(origin: string): Record<string, unknown> {
       version: "1.0.0",
       contact: { name: "GL1TCH", email: "founder@gl1tchbased.xyz", url: "https://gl1tchbased.xyz" },
       description:
-        "Token rug-risk scans and verdict cards, the Rug Radar feed of new Solana launches, Know Your Agent checks, deployer reputation and verifiable random numbers, paid per call in USDC (Solana or Base). Free versions of the checks: /api/scan, /api/radar and /api/agent/check. Docs: /agents/docs#x402",
+        "Token rug-risk scans and verdict cards, the Rug Radar feed of new Solana launches, Multi-Chain Yield X-Ray across 7 chains, Know Your Agent checks, deployer reputation and verifiable random numbers, paid per call in USDC (Solana or Base). Free versions of the checks: /api/scan, /api/radar, /yield and /api/agent/check. Docs: /agents/docs#x402",
     },
     servers: [{ url: origin }],
     paths,
