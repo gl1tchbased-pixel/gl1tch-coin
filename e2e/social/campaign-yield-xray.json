@@ -16,9 +16,15 @@
       "tweets": [
         "New on GL1TCH: Yield X-Ray.\n\nEvery APY is read straight from the chain: Aave, Solana stake pools, ETH staking, Orca and Uniswap fees, JustLend on Tron, Robinhood Chain vaults.\n\nWho pays it, how you get out, a risk score, and the request to verify it yourself.",
         "Same pool, two different numbers.\n\nA DEX shows the pool average. A set-and-forget full-range position earns far less, because most liquidity sits in narrow ranges near the price. On Orca SOL-USDC our first reading put the gap at about 19x.\n\nYield X-Ray shows both.",
-        "Tap 🔔 on any card and the GL1TCH Telegram bot pings you if the APY halves, deposits leave or withdrawals get stuck.\n\nFree. Read-only. No wallet.\n\ngl1tchbased.xyz/yield"
+        "Tap 🔔 on any card and the GL1TCH Telegram bot pings you if the APY halves, deposits leave or withdrawals get stuck.\n\nFree. Read-only. No wallet.\n\ngl1tchbased.xyz/yield",
+        "Built for AI agents too:\n\n• Free MCP tool: xray_yield on gl1tchbased.xyz/api/mcp\n• x402 endpoint: /api/x402/yield ($0.003 USDC on Solana & Base)\n• Ranked #2 on Coinbase x402 Bazaar for Solana Yield\n\ngl1tchbased.xyz/agents/docs"
       ]
+    },
+    {
+      "id": "yx-tg-2",
+      "platform": "telegram",
+      "at": "2026-10-30T23:55",
+      "text": "🤖 <b>YIELD X-RAY FOR AI AGENTS (x402 + MCP)</b>\n\nAI agents and trading bots can now query GL1TCH Yield X-Ray directly:\n\n• <b>Free MCP Tool:</b> <code>xray_yield</code> on <code>gl1tchbased.xyz/api/mcp</code> (Claude, Cursor, LangChain)\n• <b>Pay-per-call x402 API:</b> <code>GET /api/x402/yield</code> ($0.003 USDC on Solana &amp; Base — free for $GL1TCH holder keys)\n• Ranked <b>#2 on Coinbase x402 Bazaar</b> for Solana Yield &amp; Agent Wallet Trust\n\nDocs: gl1tchbased.xyz/agents/docs\nOn-chain revenue ledger: gl1tchbased.xyz/revenue"
     }
   ]
 }
-
