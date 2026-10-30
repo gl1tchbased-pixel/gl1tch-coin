@@ -3,6 +3,7 @@ import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { OFFICIAL } from "@/lib/official";
 import { getStats } from "@/lib/stats";
+import { getRevenue } from "@/lib/revenue";
 import { deployerStatus, deployerCopy, DEPLOYER_EVENTS } from "@/lib/deployer-status";
 import styles from "./deck.module.css";
 
@@ -16,7 +17,7 @@ export const metadata: Metadata = shareMeta({
   robots: { index: false, follow: false },
 });
 
-// Live numbers (scan counter split, deployer balance) refresh hourly.
+// Live numbers (scan counter split, deployer balance, revenue ledger) refresh hourly.
 export const revalidate = 3600;
 
 const product = [
@@ -25,12 +26,12 @@ const product = [
     text: "Paste any token address or search by name. Returns a 0–100 score and a verdict (CLEAN → RUG-SHAPED) with a plain-language reason for every check.",
   },
   {
-    title: "Rug Radar",
-    text: "Sweeps freshly promoted tokens every 30 minutes and ranks them by risk, so the flagged ones are visible before people buy.",
+    title: "Rug Radar (Sweeps + Live SSE)",
+    text: "Sweeps freshly promoted tokens every 30 minutes and streams real-time Solana pool creations (Pump.fun, Raydium) via RPC logsSubscribe so flagged launches are visible before people buy.",
   },
   {
     title: "Yield X-Ray (multi-chain)",
-    text: "Direct smart-contract reading of yields, reserve health and impermanent loss across 7 chains (Solana, Ethereum, Base, Tron, Arbitrum, BSC, Robinhood Chain).",
+    text: "Direct smart-contract reading of yields, real-yield vs emissions breakdown, reserve health and impermanent loss across 7 chains (Solana, Ethereum, Base, Tron, Arbitrum, BSC, Robinhood Chain).",
   },
   {
     title: "Public API + badge",
@@ -42,7 +43,7 @@ const product = [
   },
   {
     title: "For AI agents: MCP + x402",
-    text: "The same checks as tools for AI agents: a free MCP server at /api/mcp (rate-limited per IP) and pay-per-call endpoints in USDC through x402 (no signup). Listed in the official MCP Registry, x402scan and the PayAI catalog. Payments are public at /revenue; the free JSON API stays free.",
+    text: "The same checks as tools for AI agents: a free 4-tool MCP server at /api/mcp (rate-limited per IP) and 9 pay-per-call endpoints in USDC through x402 (no signup). Listed in the official MCP Registry, Coinbase x402 Bazaar and the PayAI catalog. Payments are public at /revenue; the free JSON API stays free.",
   },
 ];
 
@@ -107,7 +108,7 @@ const funding: { track: string; items: Item[] }[] = [
 const fmtDate = (ms: number) => new Date(ms).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 
 export default async function DeckPage() {
-  const [stats, dep] = await Promise.all([getStats(), deployerStatus()]);
+  const [stats, dep, rev] = await Promise.all([getStats(), deployerStatus(), getRevenue()]);
   const deployer = deployerCopy(dep);
 
   return (
@@ -206,6 +207,17 @@ export default async function DeckPage() {
               "."
             )}
           </li>
+          {rev && (
+            <li>
+              <strong>AI-agent adoption (x402 + MCP, live since 28 October 2026):</strong>{" "}
+              <strong>{rev.paid.count.toLocaleString("en-US")} settled external paid calls</strong> in USDC on Solana and Base
+              {rev.quotes ? ` alongside ${rev.quotes.last30.total.toLocaleString("en-US")} price quotes` : ""}, with every on-chain
+              transaction published at <Link className={styles.link} href="/revenue">/revenue</Link> (our own test calls are listed
+              separately and excluded from totals). Ranked in the top 5 on the Coinbase x402 Bazaar for{" "}
+              <em>agent wallet trust</em> (#2), <em>solana yield</em> (#2), <em>deployer reputation</em> (#3) and{" "}
+              <em>verifiable random number</em> (#5).
+            </li>
+          )}
           <li>The bot&apos;s hosting lapsed from late July to 17 October 2026, so there is no reliable figure for that period.</li>
           <li>Solana natively, plus 15 EVM chains through GoPlus (Ethereum, Base, BNB Chain, Arbitrum, Polygon and more), and on-chain yield metrics across 7 ecosystems.</li>
         </ul>
@@ -226,15 +238,15 @@ export default async function DeckPage() {
           <div className={styles.card}>
             <span className={styles.cardTitle}>Bot + Signal Graph</span>
             <span className={styles.cardText}>
-              TypeScript Telegram bot on an Oracle Cloud VM with on-disk state and daily snapshots (no database): the
-              deployer reputation graph, Watchtower sweeps and the public counters.
+              TypeScript Telegram bot on an Oracle Cloud VM with atomic temp+rename on-disk state and daily snapshots:
+              the deployer reputation graph, Watchtower sweeps, real-time RPC pool listener and the public counters.
             </span>
           </div>
           <div className={styles.card}>
             <span className={styles.cardTitle}>Quality gates</span>
             <span className={styles.cardText}>
-              TypeScript for the scanner, API and bot, and more than 650 automated unit tests (315+ on the site
-              and 350+ on the bot), run in CI on every push alongside type checks.
+              TypeScript for the scanner, API and bot, and more than 680 automated unit tests (323 on the site
+              and 358 on the bot), run in CI on every push alongside type checks.
             </span>
           </div>
           <div className={styles.card}>
@@ -306,9 +318,9 @@ export default async function DeckPage() {
           <li>Running costs are small and itemized above: about $1,100 a year of infrastructure at list prices.</li>
           <li>Grants cover the first 12 months and the open-source work.</li>
           <li>
-            After that, paid B2B services on top of the free tools carry the hosting: custom risk
-            feeds with an uptime SLA for wallets and launchpads, and verifiable randomness for
-            mints and giveaways. The public scanner, API and badge stay free.
+            After that, pay-per-call AI-agent endpoints over x402 (9 routes in USDC on Solana and Base, live today
+            at <Link className={styles.link} href="/revenue">/revenue</Link>) and B2B services on top of the free
+            tools carry the hosting. The public scanner, JSON API, MCP server, Watchtower and badge stay 100% free.
           </li>
         </ul>
       </article>
