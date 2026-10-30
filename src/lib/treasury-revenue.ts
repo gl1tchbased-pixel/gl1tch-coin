@@ -39,7 +39,17 @@ export const VERIFIED_CREATOR_CLAIMS: CreatorFeeClaim[] = [
 ];
 
 export interface RevenueChannelStatus {
-  id: "x402" | "creator-fees" | "guardian" | "giveaway" | "agent-kit" | "apify";
+  id:
+    | "x402"
+    | "creator-fees"
+    | "guardian"
+    | "giveaway"
+    | "agent-kit"
+    | "apify"
+    | "virtuals-acp"
+    | "blinks"
+    | "sentinel"
+    | "yield-spikes";
   name: string;
   model: string;
   status: "live" | "ready";
@@ -88,6 +98,34 @@ export const REVENUE_CHANNELS: RevenueChannelStatus[] = [
     model: "Web2 credit-card billing ($0.005/event, 80% creator share) for token safety & Yield X-Ray",
     status: "live",
     verifyHref: "/api/agents/integrations",
+  },
+  {
+    id: "virtuals-acp",
+    name: "Virtuals Protocol ACP (ERC-8183)",
+    model: "Autonomous AI agent commerce · Escrow USDC settlement to Base treasury upon task completion",
+    status: "live",
+    verifyHref: "/api/agents/integrations",
+  },
+  {
+    id: "blinks",
+    name: "Solana Actions & Blinks (Jupiter Safe Swap)",
+    model: "50 bps (0.5%) platform swap fee routed to deployer treasury per trade · Safety-gated",
+    status: "live",
+    verifyHref: "https://dial.to/?action=solana-action:https://gl1tchbased.xyz/api/actions/safe-swap",
+  },
+  {
+    id: "sentinel",
+    name: "Autonomous Rug Radar Sentinel (Telegram VIP)",
+    model: "250 Telegram Stars / $15 USDC x402 / Free for ≥250k $GL1TCH holders",
+    status: "live",
+    verifyHref: "https://t.me/gl1tch_infected_bot",
+  },
+  {
+    id: "yield-spikes",
+    name: "DeFi Yield Spikes & Cross-Chain Arbitrage",
+    model: "Autonomous 7-chain spread & APY volatility feed for algorithmic bots and funds",
+    status: "live",
+    verifyHref: "/api/yield/spikes",
   },
 ];
 
