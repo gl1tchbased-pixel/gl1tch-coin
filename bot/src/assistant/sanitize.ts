@@ -35,6 +35,7 @@ const HANDLE_RE = /(^|[^\w@])@([A-Za-z0-9_]{4,32})/g;
 
 function linkAllowed(url: string): boolean {
   const bare = url.replace(/^https?:\/\//i, "").replace(/^www\./i, "").toLowerCase();
+  if (bare === "pump.fun") return true; // the platform's name, with no path to a token
   const m = /^([^/?#]+)(.*)$/.exec(bare);
   if (!m) return false;
   const [, host, rest] = m;

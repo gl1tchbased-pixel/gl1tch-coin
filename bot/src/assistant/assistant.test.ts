@@ -3,6 +3,7 @@ import { OFFICIAL } from "../content.js";
 import { looksLikeScam } from "../middleware.js";
 import { AMBIENT_GAP_MS, Budget, USER_PER_DAY } from "./budget.js";
 import { numbersAreFromFacts } from "./digest.js";
+import { stripReasoning } from "./llm.js";
 import { allowedAddresses, isSkip, sanitizeReply } from "./sanitize.js";
 import { classify, looksLikeQuestion, type MessageFacts } from "./trigger.js";
 
@@ -95,6 +96,10 @@ describe("sanitizeReply", () => {
   ])("is not fooled by %s", (u) => {
     expect(sanitizeReply(u, none)).toBe("[link removed]");
   });
+  it("treats the word Pump.fun as a name, but still checks its links", () => {
+    expect(sanitizeReply("the Pump.fun bonding curve", none)).toBe("the Pump.fun bonding curve");
+    expect(sanitizeReply("https://pump.fun/coin/FakeMint", none)).toBe("[link removed]");
+  });
   it("unmasks markdown links before checking them", () => {
     expect(sanitizeReply("[official site](https://evil.com)", none)).toBe("official site [link removed]");
   });
@@ -137,4 +142,12 @@ describe("numbersAreFromFacts", () => {
   const facts = "Scans run by people: 12\nFlagged: 1,204";
   it("accepts numbers from the facts", () => expect(numbersAreFromFacts("12 scans and 1204 flagged", facts)).toBe(true));
   it("rejects invented numbers", () => expect(numbersAreFromFacts("12 scans, 5000 flagged", facts)).toBe(false));
+});
+
+describe("stripReasoning", () => {
+  it("removes reasoning, closed or cut off", () => {
+    expect(stripReasoning("<think>plan</think> Answer")).toBe("Answer");
+    expect(stripReasoning("<think>never finished")).toBe("");
+    expect(stripReasoning("Answer")).toBe("Answer");
+  });
 });
