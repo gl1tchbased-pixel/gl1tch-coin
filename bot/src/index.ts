@@ -21,7 +21,7 @@ import { messages, OFFICIAL } from "./content.js";
 import { startKb } from "./keyboards.js";
 import { startVerification } from "./verify/index.js";
 import { startAgent, activity } from "./agent/index.js";
-import { assistant } from "./assistant/index.js";
+import { announceOnce, assistant, ownGroups, welcomeFor } from "./assistant/index.js";
 
 const bot = new Bot(config.botToken);
 
@@ -44,10 +44,13 @@ bot.use(async (ctx, next) => {
 // Greet new members.
 bot.on("chat_member", async (ctx) => {
   const status = ctx.chatMember?.new_chat_member?.status;
-  if (status === "member") {
+  // Only in our own groups: in someone else's group the bot is a guest and greeting their members is spam.
+  if (status === "member" && ownGroups().includes(String(ctx.chat.id))) {
     activity.recordJoin();
     try {
-      await ctx.reply(messages.welcome, { ...HTML, reply_markup: startKb() });
+      const welcome = await welcomeFor(ctx.chat.id, ctx.chatMember.new_chat_member.user.first_name);
+      if (welcome) await ctx.reply(welcome, { link_preview_options: { is_disabled: true } });
+      else await ctx.reply(messages.welcome, { ...HTML, reply_markup: startKb() });
     } catch {
       /* ignore */
     }
@@ -130,6 +133,7 @@ async function main() {
   startWatchtower(bot);
   startSentinelEngine(bot);
   startRadarPing();
+  void announceOnce(bot.api);
   console.log("GL1TCH bot online. The signal is live.");
   await bot.start({ allowed_updates: ["message", "chat_member", "callback_query"] });
 }

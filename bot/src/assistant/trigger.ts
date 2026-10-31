@@ -1,6 +1,6 @@
 /** Decides whether a message deserves an answer. Pure, so the "don't be a noisy bot" rules are testable. */
 
-export type Trigger = "private" | "mention" | "reply" | "admin" | "ambient";
+export type Trigger = "private" | "mention" | "reply" | "admin" | "ambient" | "chat";
 
 export interface MessageFacts {
   text: string;
@@ -25,8 +25,9 @@ export function looksLikeQuestion(text: string): boolean {
 }
 
 /**
- * Being addressed always gets an answer. In our own groups a question gets one too, unless two people are
- * talking to each other. In other people's groups the bot is a guest, so it speaks only when spoken to.
+ * Being addressed always gets an answer. In our own groups the bot takes part: it answers questions and may join in
+ * on anything else, unless two people are talking to each other. In other people's groups it's a guest, so it speaks
+ * only when spoken to.
  */
 export function classify(m: MessageFacts): Trigger | null {
   const text = m.text.trim();
@@ -39,9 +40,6 @@ export function classify(m: MessageFacts): Trigger | null {
   if (m.mentionsBot) return "mention";
   if (m.repliesToBot) return "reply";
   if (!m.officialGroup || m.repliesToOther || m.hasAddress) return null;
-  if (!looksLikeQuestion(text)) return null;
+  if (!looksLikeQuestion(text)) return "chat";
   return m.fromAdmin ? "admin" : "ambient";
 }
-
-/** Ambient and admin questions may turn out to be chat between people; the model can pass on those. */
-export const maySkip = (t: Trigger): boolean => t === "ambient" || t === "admin";

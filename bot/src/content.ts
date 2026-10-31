@@ -83,7 +83,7 @@ export const messages = {
     "② Official links only.\n" +
     "③ No fake contract addresses. The only real one is in /links.\n" +
     "④ No spam, no shilling, no fud raids.\n" +
-    (CAN_ANSWER ? "⑤ An AI bot answers questions here. The questions it answers are sent to our AI provider (Groq), so don't post anything private.\n" : "") +
+    (CAN_ANSWER ? "⑤ An AI bot reads this group, answers questions and may join in. To reply, it sends recent messages to our AI provider (Groq), so don't post anything private.\n" : "") +
     "\n<i>" + TICKER + " is high-risk and not financial advice.</i>",
   fallback: CAN_ANSWER ? "I don't know that command. /menu lists them, or just ask me in plain words." : "I don't know that command. /menu lists them.",
   submitPrompt:
