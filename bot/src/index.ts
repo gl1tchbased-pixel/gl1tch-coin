@@ -21,6 +21,7 @@ import { messages, OFFICIAL } from "./content.js";
 import { startKb } from "./keyboards.js";
 import { startVerification } from "./verify/index.js";
 import { startAgent, activity } from "./agent/index.js";
+import { assistant } from "./assistant/index.js";
 
 const bot = new Bot(config.botToken);
 
@@ -71,9 +72,14 @@ bot.use(publicCommands);
 // still run). Needs group privacy mode OFF to see non-command messages in groups.
 bot.use(autoScan);
 
-// Unknown command fallback.
+// Plain-language questions. After the auto-scanner, so a pasted contract gets its verdict first.
+bot.use(assistant);
+
+// Unknown command fallback. In a group, a bare /command may belong to another bot, so only answer our own.
 bot.on("message:text", async (ctx) => {
-  if (ctx.message.text.startsWith("/")) {
+  const [command] = ctx.message.text.split(/\s/);
+  if (!command.startsWith("/")) return;
+  if (ctx.chat.type === "private" || command.toLowerCase().endsWith(`@${ctx.me.username.toLowerCase()}`)) {
     await ctx.reply(messages.fallback, HTML);
   }
 });

@@ -1,3 +1,5 @@
+import { isLlmConfigured } from "./assistant/llm.js";
+
 /** GL1TCH bot content — premium HTML-formatted. Mirrors Founder OS v3 / official.ts.
  *  Keep official links in sync with src/lib/official.ts on the website.
  *  All strings use Telegram HTML parse mode (<b>, <i>, <code>, <a>). */
@@ -57,32 +59,37 @@ export const loreFragments: LoreFragment[] = [
 ];
 
 export const faq: { q: string; a: string }[] = [
-  { q: "What is GL1TCH?", a: "A premium Solana-native meme brand and token with one utility: holder-gated content and ranks." },
+  { q: "What is GL1TCH?", a: "A free, open-source token safety scanner (site and this bot) with a Solana token, $GL1TCH. Safety tools are free for everyone. Holding unlocks ranks, the randomness API and free use of the paid agent API." },
   { q: "Is there a tax?", a: "No. Zero buy/sell tax — Token-2022 mint with no transfer-fee extension. Verifiable on Solscan." },
-  { q: "Is it safe?", a: "Mint and freeze authorities are revoked, supply is fixed at 1B, RugCheck risk score = 1 (Low) with 0 risks flagged. Verify yourself via RugCheck and SolSniffer." },
+  { q: "Is it safe?", a: "Mint and freeze authorities are revoked and supply is fixed at 1B. But liquidity is very thin, and the deployer sold its whole position on 2026-08-20, then bought back about 3.1% of supply in October 2026. Treat it as high risk. /proof shows the live self-scan." },
   { q: "How do I buy?", a: "Get a Solana wallet (Phantom), fund SOL, and buy via the official Pump.fun link only. Open the menu → Official Links." },
   { q: "Where does the give-back go?", a: "Public on-chain Solana wallet. Every disbursement is a transaction you can read on Solscan — no PDFs, no screenshots." },
 ];
 
+// Without an LLM key the bot can't answer questions, so its messages must not offer to.
+const CAN_ANSWER = isLlmConfigured();
+
 export const messages = {
   welcome:
-    "<b>SIGNAL DETECTED.</b>\n\nYou found <b>GL1TCH</b>. You are now an <b>Observer</b>.\n\nHold " +
-    TICKER +
-    " and verify to rise through The Infected. Read the rules and trust only official links.\n\n<i>The signal spreads through you.</i>",
+    "<b>Welcome to GL1TCH.</b>\n\n" +
+    (CAN_ANSWER
+      ? "Ask me anything about token safety, in any language, or paste a contract and I'll scan it. I'm an AI bot and I can be wrong, so double-check what matters."
+      : "Paste a contract and I'll scan it, or use /scan with a token's name.") +
+    "\n\nAdmins <b>never</b> DM first. Official links: /links",
   menu: "<b>GL1TCH // CONTROL</b>\n\nSelect a transmission:",
   rules:
     "<b>THE INFECTED — RULES</b>\n\n" +
     "① Admins <b>never</b> DM first. Anyone DMing you is a scam.\n" +
     "② Official links only.\n" +
-    "③ No fake contract addresses. Before launch, no contract exists.\n" +
+    "③ No fake contract addresses. The only real one is in /links.\n" +
     "④ No spam, no shilling, no fud raids.\n" +
-    "⑤ Carry the signal. Respect the network.\n\n" +
-    "<i>" + TICKER + " is high-risk and not financial advice.</i>",
-  fallback: "Unknown signal. Open /menu or check official links for verified guidance.",
+    (CAN_ANSWER ? "⑤ An AI bot answers questions here. The questions it answers are sent to our AI provider (Groq), so don't post anything private.\n" : "") +
+    "\n<i>" + TICKER + " is high-risk and not financial advice.</i>",
+  fallback: CAN_ANSWER ? "I don't know that command. /menu lists them, or just ask me in plain words." : "I don't know that command. /menu lists them.",
   submitPrompt:
     "<b>SUBMIT // SIGNAL</b>\n\nReply to your meme or content with /submit. Signal Bearers carry the spread.",
   support:
-    "<b>SUPPORT</b>\n\nUse /menu for verified guidance. Admins <b>never</b> DM first — anyone who does is an impersonator. Ask in the group; a Core Node will respond.",
+    `<b>SUPPORT</b>\n\n${CAN_ANSWER ? "Just ask me here in plain words, or ask in the group." : "Ask in the group, or see /faq."} Admins <b>never</b> DM first — anyone who does is an impersonator.`,
 };
 
 export function rankText(): string {
@@ -137,7 +144,7 @@ export function linksText(): string {
   const trustBlock =
     LAUNCH_STATUS === "LIVE"
       ? "\n\n<b>Third-party audit:</b>\n" +
-        `• RugCheck: <a href="${OFFICIAL.RUGCHECK_URL}">risk score 1 · 0 risks</a>\n` +
+        `• RugCheck: <a href="${OFFICIAL.RUGCHECK_URL}">live report</a>\n` +
         `• SolSniffer: <a href="${OFFICIAL.SOLSNIFFER_URL}">scanner</a>\n\n` +
         "<b>Give-back wallet (on-chain, public):</b>\n" +
         `<code>${OFFICIAL.GIVEBACK_WALLET}</code>`

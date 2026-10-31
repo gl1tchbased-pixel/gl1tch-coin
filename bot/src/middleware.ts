@@ -1,5 +1,6 @@
 import type { Context, NextFunction } from "grammy";
 import { isAdmin } from "./config.js";
+import { looksLikeQuestion } from "./assistant/trigger.js";
 
 /** Basic per-user rate limiting to curb spam. */
 const lastSeen = new Map<number, number[]>();
@@ -30,10 +31,15 @@ const SCAM_PATTERNS = [
   /t\.me\/\w+_support/i,
 ];
 
+/** A pitch, not someone asking whether what they were sent is a scam: those people need an answer, not a flag. */
+export function looksLikeScam(text: string): boolean {
+  return SCAM_PATTERNS.some((re) => re.test(text)) && !looksLikeQuestion(text);
+}
+
 /** Flags likely scam/impersonation content. Logs and lets admins moderate. */
 export async function scamFilter(ctx: Context, next: NextFunction) {
   const text = ctx.message?.text ?? "";
-  if (text && SCAM_PATTERNS.some((re) => re.test(text))) {
+  if (text && looksLikeScam(text)) {
     console.warn(
       `[scam-flag] user=${ctx.from?.id} chat=${ctx.chat?.id} text=${text.slice(0, 120)}`
     );

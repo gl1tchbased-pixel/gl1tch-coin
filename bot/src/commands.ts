@@ -7,6 +7,7 @@ import { store } from "./verify/index.js";
 import { RANK_TIERS } from "./ranks.js";
 import { referralStore } from "./referrals.js";
 import { proofOfSignal } from "./proof-of-signal/store.js";
+import { checkLines, getScanData } from "./scan.js";
 
 export const publicCommands = new Composer<Context>();
 
@@ -179,25 +180,17 @@ publicCommands.command("links", async (ctx) => {
 publicCommands.command("proof", async (ctx) => {
   await ctx.replyWithChatAction("typing").catch(() => {});
   // Run OUR OWN scanner on $GL1TCH, live — then hand over the verify links.
-  let verdict = "LOW RISK";
-  let score: number | null = 78;
-  try {
-    const r = await fetch(`${OFFICIAL.SITE}/api/scan?mint=${OFFICIAL.CONTRACT}&chain=solana`, { signal: AbortSignal.timeout(12000) });
-    if (r.ok) { const d = (await r.json()) as { verdict?: string; score?: number }; if (d?.verdict) verdict = d.verdict; if (typeof d?.score === "number") score = d.score; }
-  } catch { /* fall back to last-known values */ }
+  // Only what the scan returned just now: a hardcoded tick or score here would go stale without anyone noticing.
+  const scan = await getScanData(OFFICIAL.CONTRACT, "solana", "bot").catch(() => null);
+  const live = scan
+    ? `<b>$GL1TCH → ${scan.verdict} · ${scan.score}/100</b>\n${scan.bottomLine ? `<i>${scan.bottomLine.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</i>\n` : ""}\n${checkLines(scan)}`
+    : "<i>The live self-scan is unavailable right now. Use the proof page, or check the links below yourself.</i>";
 
   const text =
     `🛡 <b>GL1TCH — PROOF, NOT PROMISES</b>\n\n` +
-    `We built the scanner that hunts rugs. So we run it on ourselves — live:\n` +
-    `<b>$GL1TCH → ${verdict}${score != null ? ` · ${score}/100` : ""}</b>\n\n` +
-    `Every rug vector is already neutralized — and you can verify each one yourself:\n` +
-    `✅ Mint authority revoked\n` +
-    `✅ Freeze authority revoked\n` +
-    `✅ Zero tax (0% buy/sell)\n` +
-    `✅ Liquidity in the Pump.fun curve — no LP token to pull\n` +
-    `✅ Metadata immutable\n` +
-    `✅ 0% insider / bundled supply\n` +
-    `✅ RugCheck score 1 (cleanest band)\n\n` +
+    `We built the scanner that hunts rugs. So we run it on ourselves, live:\n` +
+    `${live}\n\n` +
+    `<b>Also on the record:</b> the deployer wallet sold its whole position on 2026-08-20 and bought back about 3.1% of supply on 17–19 October 2026. Transactions and the live balance are on the proof page.\n\n` +
     `🔑 <b>Anonymous, but fully auditable</b> — our code is open, every wallet is public.\n` +
     `Don't trust us. <b>Verify us.</b>`;
 
