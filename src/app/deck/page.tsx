@@ -188,7 +188,7 @@ export default async function DeckPage() {
           <li>Scanner live since late June 2026, built and run by one person at no cost to users, with no paid marketing.</li>
           <li>
             The public counter (live since 4 July 2026) shows{" "}
-            <strong>{stats ? stats.scanned.toLocaleString("en-US") : "—"} tokens scanned</strong> in
+            <strong>{stats ? stats.scanned.toLocaleString("en-US") : "—"} scans counted</strong> in
             total. That total includes automated scans (Rug Radar sweeps every 30 minutes, Watchtower
             re-scans), so it overstates people&apos;s usage by a wide margin. The ~1,950 we quoted for mid-July
             included those sweeps too.
@@ -329,7 +329,7 @@ export default async function DeckPage() {
         <span className={styles.num}>09 · Token disclosure</span>
         <p className={styles.body}>
           The project also launched a community token, $GL1TCH, on Pump.fun on 29 May 2026
-          (Token-2022, mint and freeze authority revoked, 0% tax, liquidity locked). The deployer
+          (Token-2022, mint and freeze authority revoked, 0% tax, liquidity in the Pump.fun bonding curve). The deployer
           wallet sold its full position on{" "}
           <a className={styles.link} href={DEPLOYER_EVENTS.exit.tx}>{DEPLOYER_EVENTS.exit.date}</a> and{" "}
           <a className={styles.link} href={DEPLOYER_EVENTS.buyback.firstTx}>bought back on {DEPLOYER_EVENTS.buyback.dates}</a>;

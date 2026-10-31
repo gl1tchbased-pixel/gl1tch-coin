@@ -83,7 +83,7 @@ export const TRUST_REPORT = {
   // Verified 2026-10-08 via getAccountInfo (jsonParsed): tokenMetadata.updateAuthority and
   // metadataPointer.authority are both null → name, symbol and image URI can never change.
   metadataImmutable: true,
-  // Verified 2026-06-28 via RugCheck + our own scanner: LP 100% locked/burned. The dev cannot pull the pool.
+  // Verified 2026-10-31: the pool is the Pump.fun bonding curve PDA of the mint, so no LP token exists to pull.
   lpBurnedOrLocked: true,
   // RugCheck normalized risk score. Lower is better; 1 with no risks = clean.
   // Verified 2026-05-30 via api.rugcheck.xyz.
@@ -97,5 +97,5 @@ export const DISCLAIMER =
 
 export const IMPERSONATION_WARNING =
   (CURRENT_LAUNCH_STATUS as LaunchStatus) === LAUNCH_STATUS.PRE_LAUNCH
-    ? "No contract exists yet. Anyone selling $GL1TCH now is a scam. Admins never DM first."
-    : "Only trust links published on this page and in official GL1TCH channels. Admins never DM first.";
+    ? "No contract exists yet. Anyone selling $GL1TCH now is a scam. GL1TCH accounts never DM first."
+    : "Only trust links published on this page and in official GL1TCH channels. GL1TCH accounts never DM first.";

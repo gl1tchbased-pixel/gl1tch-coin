@@ -29,7 +29,7 @@ const guarantees = [
   { label: "Mint authority revoked", sub: "Supply is fixed at 1,000,000,000. No one can ever print more.", href: officialLinks.explorer, src: "Solscan" },
   { label: "Freeze authority revoked", sub: "No wallet can be frozen or blacklisted. You can always sell.", href: officialLinks.explorer, src: "Solscan" },
   { label: "Zero tax — buys & sells", sub: "Token-2022 mint with no transfer-fee extension. 0% in, 0% out.", href: officialLinks.rugcheck, src: "RugCheck" },
-  { label: "Liquidity locked / burned (100%)", sub: "The pool cannot be pulled out from under you — enforced by the chain, not by us.", href: officialLinks.rugcheck, src: "RugCheck" },
+  { label: "No LP token to pull", sub: "Liquidity sits in the Pump.fun bonding curve, so the deployer has no LP position to remove. The curve is small, which limits how much anyone can sell.", href: "https://solscan.io/account/9fi2sFnnySPhNwJZPzZwxZT3xQnjPa9dh3EQbVNCstRW", src: "Solscan" },
   { label: "Metadata immutable", sub: "Name and image are locked on-chain. No bait-and-switch later.", href: officialLinks.explorer, src: "Solscan" },
   { label: "0% insider / bundled supply", sub: "No coordinated wallet cluster waiting to dump on you.", href: officialLinks.rugcheck, src: "RugCheck" },
 ];
@@ -117,7 +117,7 @@ export default async function ProofPage() {
           <div>
             <h2 className={styles.h2} style={{ marginBottom: 8 }}>The code is open</h2>
             <p className={styles.sub} style={{ margin: 0 }}>
-              Our scanner, bot and this site are public. Anonymous team — fully
+              Our scanner, bot and this site are public. One anonymous founder — fully
               auditable work. Read it, fork it, check we&apos;re not hiding anything.
             </p>
           </div>
@@ -135,10 +135,7 @@ export default async function ProofPage() {
           <div className={styles.flag}>
             <span className={styles.flagTag}>⚠ Thin liquidity</span>
             <p className={styles.flagBody}>
-              The pool is small (we&apos;re early and unfunded). But it&apos;s{" "}
-              <strong>100% locked/burned</strong> — a small pool we physically{" "}
-              <em>cannot</em> pull is safer than a big one a dev can yank. We grow it
-              organically, never by removing it.
+              The pool is small (we&apos;re early and unfunded). It is the Pump.fun bonding curve, so there is no LP token the deployer could pull, but a small curve also means large sells move the price hard.
             </p>
           </div>
           <div className={styles.flag}>

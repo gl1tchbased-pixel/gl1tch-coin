@@ -20,10 +20,6 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     ...s,
-    allTimeScans: s.scanned,
-    rugsBlocked: s.flagged,
-    deployersMonitored: 3261,
-    ecosystemAudits: s.scanned,
     supportedChains: ["solana", "ethereum", "base", "bsc", "arbitrum", "polygon"],
     integrationStatus: {
       jupiterBlinks: "active",

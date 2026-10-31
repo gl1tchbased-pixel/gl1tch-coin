@@ -7,7 +7,7 @@ import styles from "./buyback.module.css";
 export const metadata: Metadata = shareMeta({
   title: "Buyback & Burn Ledger — GL1TCH",
   description:
-    "GL1TCH's public buyback→burn ledger. Value accrual is engineered, staged, and honest: real revenue is routed into $GL1TCH buybacks and burned, with every transaction verifiable on Solscan. Non-custodial — no user funds, no promises.",
+    "GL1TCH's public buyback→burn ledger. No buyback has run yet. The mechanism is planned and only starts after real revenue, an independent audit and a founder decision. The deployer wallet's own trades are separate and disclosed on /proof.",
   alternates: { canonical: "/buyback" },
 });
 

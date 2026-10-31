@@ -37,7 +37,7 @@ const trustRows = [
   { label: "Mint authority revoked", ok: TRUST_REPORT.mintRevoked, Icon: NoMintIcon },
   { label: "Freeze authority revoked", ok: TRUST_REPORT.freezeRevoked, Icon: ShieldCheckIcon },
   { label: "Zero tax (0% buy / 0% sell)", ok: TRUST_REPORT.zeroTax, Icon: CoinIcon },
-  { label: "Liquidity burned / locked", ok: TRUST_REPORT.lpBurnedOrLocked, Icon: LockIcon },
+  { label: "No LP token to pull (Pump.fun curve)", ok: TRUST_REPORT.lpBurnedOrLocked, Icon: LockIcon },
 ];
 
 const safety = [

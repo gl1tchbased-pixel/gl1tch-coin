@@ -23,7 +23,7 @@ export async function ProductsBento() {
       name: "Scanner",
       title: "Safe, sus, or rug-shaped. In seconds.",
       body: "Paste any token on Solana, Ethereum, Base, BNB and more. Every flag comes with a plain-language reason.",
-      stats: [live(m?.scans.total, "tokens scanned"), live(m?.signalGraph.deployers, "deployers mapped")],
+      stats: [live(m?.scans.total, "scans, mostly automated"), live(m?.signalGraph.deployers, "deployers mapped")],
       tone: "signal",
     },
     {
@@ -32,7 +32,7 @@ export async function ProductsBento() {
       name: "Rug Radar",
       title: "The riskiest fresh launches, hourly.",
       body: "It sweeps newly promoted tokens and ranks them riskiest first.",
-      stats: [live(m?.scans.flagged, "rugs flagged")],
+      stats: [live(m?.scans.flagged, "high-risk flags")],
       tone: "bad",
     },
     {

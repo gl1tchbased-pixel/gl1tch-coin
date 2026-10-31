@@ -17,7 +17,7 @@ const posture = [
   { t: "Every input is validated", d: "A central validation layer rejects any malformed address or query before it touches an RPC, database, or outbound request (SSRF-safe)." },
   { t: "Abuse-resistant", d: "Public endpoints are rate-limited; edge/WAF hardening is layered on top as traffic grows." },
   { t: "Automated security in CI", d: "Every push is scanned for leaked secrets (gitleaks) and vulnerable dependencies — a known-critical advisory blocks the build. We patch, or track it transparently." },
-  { t: "Open & auditable", d: "The scanner, bot and this site are open source. A living threat model and risk register are maintained in the repo. Anonymous team, fully verifiable code." },
+  { t: "Open & auditable", d: "The scanner, bot and this site are open source. A living threat model and risk register are maintained in the repo. One anonymous founder, fully verifiable code." },
 ];
 
 const principles = [
@@ -80,7 +80,7 @@ export default function SecurityPage() {
             <li>Apart from a swap you started, the only signature we would request is a plain-text <em>message</em> that says it
               proves ownership and moves nothing. Read what you sign.</li>
             <li>Only trust the official domain: <strong>gl1tchbased.xyz</strong> and the links on
-              our <Link href="/links">official links</Link> page. Admins never DM first.</li>
+              our <Link href="/links">official links</Link> page. GL1TCH accounts never DM first.</li>
           </ul>
         </div>
       </section>

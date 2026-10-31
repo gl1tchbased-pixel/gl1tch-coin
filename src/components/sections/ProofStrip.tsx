@@ -26,7 +26,7 @@ export function ProofStrip() {
   const facts = [
     TRUST_REPORT.mintRevoked && TRUST_REPORT.freezeRevoked ? { k: "Authorities", v: "Mint & freeze revoked" } : null,
     TRUST_REPORT.zeroTax ? { k: "Tax", v: "0% buy · 0% sell" } : null,
-    TRUST_REPORT.lpBurnedOrLocked ? { k: "Liquidity", v: "100% locked / burned" } : null,
+    TRUST_REPORT.lpBurnedOrLocked ? { k: "Liquidity", v: "Pump.fun curve, no LP to pull" } : null,
     TRUST_REPORT.rugcheckScore != null ? { k: "RugCheck", v: `${TRUST_REPORT.rugcheckScore} · ${TRUST_REPORT.rugcheckRiskLevel ?? ""}`.trim() } : null,
   ].filter(Boolean) as { k: string; v: string }[];
 

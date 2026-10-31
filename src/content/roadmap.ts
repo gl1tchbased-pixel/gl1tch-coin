@@ -26,7 +26,7 @@ export const roadmapPhases: RoadmapPhase[] = [
     title: "Launch the Signal",
     items: [
       "Fair launch on Pump.fun — LIVE since May 2026",
-      "Mint & freeze authorities revoked · Zero-tax Token-2022 · liquidity locked",
+      "Mint & freeze authorities revoked · Zero-tax Token-2022 · liquidity in the Pump.fun curve",
       "Holder-gated ranks utility — active end-to-end",
     ],
     status: "done",

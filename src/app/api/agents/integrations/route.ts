@@ -91,7 +91,7 @@ export function GET() {
         },
         defiYieldSpikes: {
           endpoint: `${OFFICIAL.SITE_URL}/api/yield/spikes`,
-          model: "Autonomous 7-chain yield spike, volatility alert and cross-chain rebalance arbitrage feed",
+          model: "Free 7-chain APY and risk feed",
         },
       },
     },
