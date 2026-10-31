@@ -28,23 +28,13 @@ Kural: gelir, anahtarı internete bağlı bir sistemde duran cüzdana inmez. Gel
 
 ## Senin yapman gerekenler
 
-### 1. Kasayı soğuk cüzdana devret (en önemlisi)
+### 1. Kasa soğuk cüzdanda (31 Ekim 2026'da yapıldı)
 
-Bugün kasanın sahibi `BSq18…`. Bu cüzdanın anahtarı GitHub Secrets'ta. GitHub hesabın ele geçirilirse biri kasayı tek işlemle kendine devredebilir. Kasa şu an boş ve ücret akmıyor, bu yüzden acil kayıp yok. Devir bitmeden ücret de açılmaz.
+Kasanın sahibi artık MetaMask cüzdanı: `AZSFHxHZaA2eqocJ1V9iwuRh6vW6Kt5ms12b6za6QrNb`. Daha önce sahibi, anahtarı GitHub'da duran `BSq18…` idi.
 
-1. **Telefona** yeni bir cüzdan kur (Phantom veya Solflare, yeni kurtarma kelimeleriyle). Mevcut Phantom'a hesap ekleme, o bilgisayarda duruyor. Ledger'ın varsa onu kullan.
-2. Kurtarma kelimelerini **kağıda** yaz. Fotoğraf çekme, buluta, nota, Telegram'a koyma.
-3. Bilgisayardaki Phantom'dan yeni adrese 0.01 SOL gönder.
-4. Telefondan bilgisayardaki deployer adresine 0.001 SOL geri gönder. Bu, adresin doğru olduğunu ve imza atabildiğini zincirde kanıtlar.
-5. Şunu çalıştır:
-   ```
-   cd Desktop\coin
-   node scripts\vault-transfer\run.mjs YENI_CUZDAN_ADRESI
-   ```
-6. Yazan `http://localhost:...` adresini aç, Phantom'da **GL1TCH bot** hesabını seç, adresi telefondakiyle karşılaştır, onayla.
-7. Çıkan "TAMAM" yazısındaki adresi Claude'a söyle. Sabit adresleri o günceller ve ücret o zaman açılır.
-
-Yeni cüzdanı hiçbir siteye bağlama, airdrop imzalama. Çekim için `referral.jup.ag` sayfasını yalnızca o adresle ve yer imine eklediğin bağlantıdan aç.
+- Kurtarma kelimeleri yalnızca kağıtta durur. Fotoğraf çekme, buluta, nota, Telegram'a koyma. Kelimeler kaybolursa birikecek ücretler de kaybolur.
+- Bu cüzdanı hiçbir siteye bağlama, airdrop imzalama. Çekim için `referral.jup.ag` sayfasını yalnızca bu adresle ve yer imine eklediğin bağlantıdan aç.
+- `scripts/vault-transfer` bir kerelikti, artık çalışmaz: sahibin attester olmasını şart koşar.
 
 ### 2. x402 gelirini de soğuk cüzdana al
 

@@ -79,7 +79,7 @@ export function GET() {
             `${OFFICIAL.SITE_URL}/api/actions/safe-swap`,
           ],
           blinkSafeSwap: `https://dial.to/?action=solana-action:${OFFICIAL.SITE_URL}/api/actions/safe-swap`,
-          platformFeeBps: "0 until the referral account is active, then 50",
+          platformFeeBps: "50 when the swap screen shows it, otherwise 0",
         },
         telegramSentinel: {
           bot: "https://t.me/gl1tch_infected_bot",

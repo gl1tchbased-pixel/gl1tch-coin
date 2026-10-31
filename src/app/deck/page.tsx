@@ -322,8 +322,8 @@ export default async function DeckPage() {
             tools carry the hosting. The public scanner, JSON API, MCP server, Watchtower and badge stay 100% free.
           </li>
           <li>
-            An optional scan-gated swap through Jupiter is also live. It charges no GL1TCH fee today; if a fee is switched on
-            (0.5% at most) the swap screen shows it before signing. It is never required to use the scanner.
+            An optional scan-gated swap through Jupiter is also live. A GL1TCH fee of 0.5% applies only when the swap
+            screen shows it, before signing. It is never required to use the scanner.
           </li>
         </ul>
       </article>

@@ -28,8 +28,7 @@ describe("feeRouteProblem", () => {
     expect(feeRouteProblem({ data: new Uint8Array(10) }, vault)).toMatch(/unreadable/);
   });
 
-  // REFERRAL_PARTNER equals the attester until the founder moves the account, so this runs only after that.
-  it.skipIf(REFERRAL_PARTNER === ATTESTER_WALLET)("passes a healthy route and catches a lowered share or missing vault", () => {
+  it("passes a healthy route and catches a lowered share or missing vault", () => {
     expect(feeRouteProblem(referral(REFERRAL_PARTNER), vault)).toBeNull();
     expect(feeRouteProblem(referral(REFERRAL_PARTNER, { shareBps: 100 }), vault)).toMatch(/share/);
     expect(feeRouteProblem(referral(REFERRAL_PARTNER), null)).toMatch(/vault/);

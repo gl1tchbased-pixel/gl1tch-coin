@@ -13,7 +13,7 @@ export interface Problem {
 
 export const PINS = {
   /** Who must own the referral accounts. Matches REFERRAL_PARTNER in src/lib/official.ts (a test keeps them equal). */
-  partner: "BSq18aJBhxYJgeEbcA3jGQNU1vmwZdo2PQkkpVsK7W6o",
+  partner: "AZSFHxHZaA2eqocJ1V9iwuRh6vW6Kt5ms12b6za6QrNb",
   referrals: [
     { label: "Ultra", address: "J4T8vmahpgiGmjkDXTaacVSAw9iQxgP7P81PCS31PsDB", project: "DkiqsTrw1u1bYFumumC7sCG2S8K25qc2vemJFHyW2wJc", shareBps: 8000 },
     { label: "Classic", address: "EFP5EHXwkBScaVwCkBHkr9sc2wYsKRathmB1zJmfhpS2", project: "45ruCyfdRkWpRNGEqWzjCiXRHkZs8WXCLQ67Pnpye7Hp", shareBps: 10000 },

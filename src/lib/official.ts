@@ -48,9 +48,8 @@ export const PAY_TO_BASE = "0xbE1e88C07a080078629f793013597E43183F6Dca";
 export const REFERRAL_NAME = "GL1TCH";
 /** Jupiter referral account for Safe Swap fees (Ultra project). */
 export const REFERRAL_ACCOUNT = "J4T8vmahpgiGmjkDXTaacVSAw9iQxgP7P81PCS31PsDB";
-/** Who owns those fees on chain. Still the attester, so no fee flows yet (referral-check.ts refuses it); it changes
- *  to the cold wallet once the founder runs scripts/vault-transfer (docs/security/treasury-runbook.md). */
-export const REFERRAL_PARTNER: string = ATTESTER_WALLET;
+/** Who owns those fees on chain: the founder's cold wallet, whose key is on no server (docs/security/treasury-runbook.md). */
+export const REFERRAL_PARTNER: string = "AZSFHxHZaA2eqocJ1V9iwuRh6vW6Kt5ms12b6za6QrNb";
 
 /** Solscan account link helper. */
 export const solscanAccount = (addr: string) =>
