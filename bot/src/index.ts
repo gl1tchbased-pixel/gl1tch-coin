@@ -92,8 +92,8 @@ async function main() {
   await bot.api.setMyCommands([
     { command: "start", description: "Enter The Infected" },
     { command: "scan", description: "🔍 Safety-scan any token (any chain)" },
-    { command: "guardian", description: "🛡 Group auto-scan protection & $GL1TCH holder unlock" },
-    { command: "sentinel", description: "💎 VIP Autonomous Alpha Gem Feed & Blinks" },
+    { command: "guardian", description: "🛡 Free group auto-scan protection" },
+    { command: "sentinel", description: "🔍 Free feed of clean scans from Rug Radar" },
     { command: "giveaway", description: "🎲 Provably-fair quantum giveaway (drand BLS)" },
     { command: "proof", description: "🛡 Why $GL1TCH is safe — live self-scan + receipts" },
     { command: "watch", description: "👁 Watch a token — alert me if its safety changes" },

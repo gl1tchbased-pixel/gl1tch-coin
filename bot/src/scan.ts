@@ -193,8 +193,7 @@ autoScan.on("message:text", async (ctx, next) => {
       if (check.shouldNotifyLimit) {
         await ctx
           .reply(
-            `🛡 <b>GL1TCH Guardian:</b> Daily free auto-scan limit (${check.limit}/${check.limit}) reached for this group.\n` +
-              `Any group admin holding <b>$GL1TCH</b> can unlock <b>Unlimited Guardian Protection</b> for free: verify in DM (<code>/verify</code>) and run <code>/guardian unlock</code> here.`,
+            `🛡 <b>GL1TCH Guardian:</b> Daily auto-scan limit (${check.limit}/${check.limit}) reached for this group. It resets at 00:00 UTC, and /scan still works.`,
             { ...HTML, reply_parameters: { message_id: ctx.message.message_id } }
           )
           .catch(() => {});
@@ -211,9 +210,7 @@ autoScan.on("message:text", async (ctx, next) => {
     if (isGroup) {
       const g = guardianStore.checkAndRecordAutoScan(chatId, officialGroups(), now);
       if (!g.official) {
-        guardianFooter = g.unlimited
-          ? `\n🛡 <i>GL1TCH Guardian Unlimited · Unlocked by ${esc(g.unlockedByUsername || "Holder Admin")} · /guardian</i>`
-          : `\n🛡 <i>GL1TCH Guardian (${g.usedToday}/${g.limit} free today) · $GL1TCH holder admins unlock unlimited: /guardian</i>`;
+        guardianFooter = `\n🛡 <i>GL1TCH Guardian (${g.usedToday}/${g.limit} free today) · /guardian</i>`;
       }
     }
     await ctx.reply(`🛰 <i>Auto-scanned the contract above:</i>\n\n${out}${guardianFooter}`, {

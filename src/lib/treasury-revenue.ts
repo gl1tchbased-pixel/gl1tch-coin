@@ -74,7 +74,7 @@ export const REVENUE_CHANNELS: RevenueChannelStatus[] = [
   {
     id: "guardian",
     name: "GL1TCH Guardian (Telegram Group Protection)",
-    model: "15 free auto-scans/day per group · Unlimited for groups with a verified $GL1TCH holder admin",
+    model: "Free for every group: 100 auto-scans a day, no token needed. No revenue",
     status: "live",
     verifyHref: "https://t.me/gl1tch_infected_bot?start=guardian",
   },
@@ -116,7 +116,7 @@ export const REVENUE_CHANNELS: RevenueChannelStatus[] = [
   {
     id: "sentinel",
     name: "Rug Radar clean-scan feed (Telegram)",
-    model: "250 Telegram Stars / $15 USDC x402 / Free for ≥250k $GL1TCH holders",
+    model: "Free for everyone. No revenue",
     status: "live",
     verifyHref: "https://t.me/gl1tch_infected_bot",
   },
