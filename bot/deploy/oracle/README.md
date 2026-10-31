@@ -8,7 +8,7 @@ The Telegram bot and its public API (`https://bot.gl1tchbased.xyz`) run on one A
 | Code | `/opt/gl1tch/app` (sparse checkout of `bot/` from `main`) |
 | Data (Signal Graph, Watchtower, stats, …) | `/var/lib/gl1tch-bot` |
 | Non-secret settings | `/etc/gl1tch-bot/settings.env` (template: `settings.env.example`) |
-| Secrets | `/etc/gl1tch-bot/secrets.env` (`BOT_TOKEN`, `SOLANA_RPC`, `STATS_TOKEN`, `X_BRIDGE_TOKEN`, …), mode 640 |
+| Secrets | `/etc/gl1tch-bot/secrets.env` (`BOT_TOKEN`, `SOLANA_RPC`, `STATS_TOKEN`, `X_BRIDGE_TOKEN`, `GROQ_API_KEY`, …), mode 640 |
 | HTTPS | Caddy, Let's Encrypt certificate, proxies to `127.0.0.1:8787` |
 | Snapshots | `/var/backups/gl1tch-bot`, daily at 03:30 UTC, 14 kept |
 

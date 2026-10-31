@@ -1,6 +1,7 @@
 import type { Api, Bot } from "grammy";
 import cron from "node-cron";
 import { config, isXConfigured } from "../config.js";
+import { buildDigest } from "../assistant/digest.js";
 import { ActivityTracker } from "./activity.js";
 import { computeDayNumber, generateDailyPost } from "./content.js";
 import { postTweet } from "./x.js";
@@ -36,11 +37,12 @@ export async function runDailyPost(api: Api, opts: { live?: boolean } = {}): Pro
   const stats = activity.snapshot();
   const day = computeDayNumber(config.agent.startDate, Date.now(), config.agent.timezone);
   const post = generateDailyPost(stats, day);
+  const digest = await buildDigest({ commit: live });
 
   if (!live) {
     await dmAdmins(
       api,
-      `<b>SIGNAL AGENT — PREVIEW (dry-run)</b>\n\n<u>X:</u>\n${post.x}\n\n<u>Telegram:</u>\n${post.telegram}\n\n<i>Nothing was posted. Set AGENT_DRY_RUN=false (or use /agentpost) to go live.</i>`
+      `<b>SIGNAL AGENT — PREVIEW (dry-run)</b>\n\n<u>X:</u>\n${post.x}\n\n<u>Telegram:</u>\n${digest ? escapeHtml(digest) : "(no post: nothing new today)"}\n\n<i>Nothing was posted. Set AGENT_DRY_RUN=false (or use /agentpost) to go live.</i>`
     );
     return;
   }
@@ -64,9 +66,11 @@ export async function runDailyPost(api: Api, opts: { live?: boolean } = {}): Pro
     results.push("⏭ X skipped (keys not configured).");
   }
 
-  if (config.agent.channelId) {
+  if (config.agent.channelId && !digest) {
+    results.push("⏭ Telegram: nothing new today, no post.");
+  } else if (config.agent.channelId && digest) {
     try {
-      await postToChannel(api, post.telegram);
+      await postToChannel(api, escapeHtml(digest));
       results.push("✅ Telegram channel posted.");
     } catch (err) {
       results.push(`❌ Telegram failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -75,7 +79,10 @@ export async function runDailyPost(api: Api, opts: { live?: boolean } = {}): Pro
     results.push("⏭ Telegram skipped (AGENT_CHANNEL_ID not set).");
   }
 
-  await dmAdmins(api, `<b>SIGNAL AGENT — DAY ${day}</b>\n\n${results.join("\n")}`);
+  // A day where everything was skipped isn't worth a message.
+  if (results.some((r) => !r.startsWith("⏭"))) {
+    await dmAdmins(api, `<b>SIGNAL AGENT — DAY ${day}</b>\n\n${results.join("\n")}`);
+  }
 
   if (manualXText) {
     await dmAdmins(

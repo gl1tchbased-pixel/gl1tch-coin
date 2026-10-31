@@ -22,6 +22,10 @@ const VERDICT_EMOJI: Record<string, string> = {
 const CHECK_EMOJI: Record<string, string> = { pass: "✅", warn: "⚠️", fail: "❌", unknown: "❔" };
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+export const checkLines = (r: { checks: Check[] }): string =>
+  r.checks.map((c) => `${CHECK_EMOJI[c.status] || "❔"} ${esc(c.label)}: <b>${esc(c.value)}</b>`).join("\n");
+
 const EVM_RE = /^0x[0-9a-fA-F]{40}$/;
 const SOL_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 const isAddr = (s: string) => EVM_RE.test(s) || SOL_RE.test(s);
@@ -55,7 +59,7 @@ function format(r: ScanData, more: number): string {
   const verdict = `\n\n<b>VERDICT: ${esc(r.verdict)}</b>  —  ${r.score}/100${conf}`;
   const bottom = r.bottomLine ? `\n<i>${esc(r.bottomLine)}</i>` : "";
   const ai = r.aiVerdict ? `\n\n◉ <b>AI READ</b>\n<i>${esc(r.aiVerdict)}</i>` : "";
-  const checks = "\n\n" + r.checks.map((c) => `${CHECK_EMOJI[c.status] || "❔"} ${esc(c.label)}: <b>${esc(c.value)}</b>`).join("\n");
+  const checks = "\n\n" + checkLines(r);
   const risks = r.risks && r.risks.length
     ? `\n\n⚑ <b>Risks:</b> ${r.risks.slice(0, 5).map((x) => esc(x.name)).join(" · ")}`
     : "";
@@ -77,14 +81,15 @@ function format(r: ScanData, more: number): string {
 }
 
 const getJson = async <T>(url: string, headers?: Record<string, string>): Promise<T> =>
-  (await fetch(url, { headers }).then((r) => r.json())) as T;
+  (await fetch(url, { headers, signal: AbortSignal.timeout(45_000) }).then((r) => r.json())) as T;
 
 /**
  * Fetch the raw scan result for a name or address (or null if nothing usable).
  * Shared by the /scan command, the auto-scanner and the Watchtower sweep. `source` tags
- * automated re-scans ("watchtower") so the public counter can keep them apart from people's scans.
+ * automated re-scans ("watchtower") and the bot's own lookups ("bot") so the public counter can keep them apart
+ * from people's scans.
  */
-export async function getScanData(query: string, chain?: string, source?: "watchtower"): Promise<(ScanData & { candidates?: Array<{ address: string; chain: string }> }) | null> {
+export async function getScanData(query: string, chain?: string, source?: "watchtower" | "bot"): Promise<(ScanData & { candidates?: Array<{ address: string; chain: string }> }) | null> {
   const q = query.trim();
   if (!q) return null;
   const headers = source ? { "x-gl1tch-source": source } : undefined;
@@ -148,7 +153,7 @@ const COOLDOWN_MS = 10 * 60_000;
 const lastChatScan = new Map<number, number>();
 const CHAT_GAP_MS = 4_000;
 
-function extractAddress(text: string): string | null {
+export function extractAddress(text: string): string | null {
   // EVM first (unambiguous), then base58 (skip obvious non-tokens).
   for (const w of text.split(/\s+/)) {
     const t = w.replace(/[.,;!?]+$/, "");
