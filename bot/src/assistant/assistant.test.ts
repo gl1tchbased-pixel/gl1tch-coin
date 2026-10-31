@@ -132,6 +132,12 @@ describe("sanitizeReply", () => {
     expect(sanitizeReply("Contact @gl1tch_support_team for help", none)).toBe("Contact [handle removed] for help");
     expect(sanitizeReply("Follow @gl1tchbased", none)).toBe("Follow @gl1tchbased");
   });
+  it("removes advice to buy a little to test a token, and keeps the rest", () => {
+    const out = sanitizeReply("Run a scan first. Also try a small test transaction on a swap. Check the sell tax.", none);
+    expect(out).toBe("Run a scan first. Check the sell tax.");
+    expect(sanitizeReply("Buy a little, then try to sell.", none)).toBe("");
+    expect(sanitizeReply("A honeypot lets you buy but not sell.", none)).toBe("A honeypot lets you buy but not sell.");
+  });
   it("strips markdown and caps length", () => {
     expect(sanitizeReply("**bold** `code`", none)).toBe("bold code");
     expect(sanitizeReply("a".repeat(3000), none).length).toBeLessThanOrEqual(1500);
