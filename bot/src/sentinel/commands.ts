@@ -62,12 +62,12 @@ sentinelCommands.callbackQuery("sentinel:feed", async (ctx) => {
     return;
   }
 
-  let text = "💎 <b>RECENT HIGH-CONVICTION GEMS (Score 90+)</b>\n\n";
+  let text = "🔍 <b>RECENT CLEAN SCANS (Score 90+)</b>\n<i>Not a recommendation. A clean scan cannot rule out losses.</i>\n\n";
   for (const g of gems) {
     text +=
       `• <b>${esc(g.symbol)}</b> (${esc(g.name)}) · <b>${g.score}/100 ${esc(g.verdict)}</b>\n` +
       `  LP Locked: <b>${g.lpLockedPct}%</b> · CA: <code>${g.mint}</code>\n` +
-      `  ⚡ <a href="${g.blinkUrl}">One-Click Safe Swap Blink →</a>\n\n`;
+      `  ⚡ <a href="${g.blinkUrl}">Safe Swap Blink →</a>\n\n`;
   }
 
   await ctx.reply(text, HTML);
@@ -96,7 +96,7 @@ sentinelCommands.callbackQuery("sentinel:sub:holder", async (ctx) => {
   await ctx.answerCallbackQuery({ text: "🎉 Holder VIP Pass Activated (30 Days)!" });
   await ctx.reply(
     `🎉 <b>SENTINEL VIP ACTIVATED</b>\n\n` +
-      `Welcome to Sentinel VIP Alpha. Your verified holding of <code>${v.balance.toLocaleString("en-US")}</code> $GL1TCH unlocked 30 days of priority alert delivery.\n\n` +
+      `Welcome to the Sentinel feed. Your verified holding of <code>${v.balance.toLocaleString("en-US")}</code> $GL1TCH unlocked 30 days of priority alert delivery.\n\n` +
       `Run <code>/sentinel</code> anytime to check the feed.`,
     HTML
   );

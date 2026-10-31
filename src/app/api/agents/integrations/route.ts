@@ -86,7 +86,7 @@ export function GET() {
           bot: "https://t.me/gl1tch_infected_bot",
           command: "/sentinel",
           feedCommand: "/sentinel feed",
-          vipAlphaFilter: "Score ≥ 90, CLEAN/LOW RISK, LP 100% locked, mint revoked, clean deployer",
+          feedFilter: "Score ≥ 90, CLEAN/LOW RISK, known LP lock. Not a recommendation",
           monetization: "250 Telegram Stars / $15 USDC x402 / Free for ≥250k $GL1TCH holders",
         },
         defiYieldSpikes: {
