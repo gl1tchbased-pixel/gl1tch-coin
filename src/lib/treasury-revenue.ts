@@ -96,9 +96,9 @@ export const REVENUE_CHANNELS: RevenueChannelStatus[] = [
   {
     id: "apify",
     name: "Apify Store Pay-Per-Event Actor",
-    model: "Not published yet. Card billing at $0.005 per result, 80% creator share, for token safety and Yield X-Ray",
-    status: "ready",
-    verifyHref: "/api/agents/integrations",
+    model: "Card billing at $0.005 per result, 80% creator share, for token safety and Yield X-Ray. No sales yet",
+    status: "live",
+    verifyHref: "https://apify.com/gl1tch-pixel/gl1tch-token-safety-scanner",
   },
   {
     id: "blinks",

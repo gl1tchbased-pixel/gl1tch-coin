@@ -44,7 +44,7 @@ export function GET() {
         },
         apifyActor: {
           name: "gl1tch-token-safety-scanner",
-          status: "not published yet",
+          store: "https://apify.com/gl1tch-pixel/gl1tch-token-safety-scanner",
           path: "apify-actor",
           pricingModel: "Pay-Per-Event ($0.005 per result · 80% creator revenue share)",
           supportedActions: ["scan", "batch", "radar", "yield"],
