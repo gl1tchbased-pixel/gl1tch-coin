@@ -42,13 +42,21 @@ Devirden sonra Claude'a söyle: `PAY_TO_SOLANA` soğuk cüzdana çevrilir, Verce
 
 ### 3. `main` dalını koru
 
-Bugün `main` korumasız. Bilgisayarındaki veya GitHub'daki bir sızıntıyla `main`'e yazan biri, bot sunucusuna kod sokabilir ve attester anahtarını alabilir. Şunu kendin çalıştır (depo güvenlik ayarı olduğu için Claude yapmaz):
+Korumayı yalnızca depo sahibi `gl1tchbased-pixel` açabilir. Bu bilgisayardaki `gh` oturumu `flookiii25` hesabında ve yetkisi yazma düzeyinde, o yüzden komut satırından çalışmaz. Claude da güvenlik ayarlarını değiştirmez.
 
-```
-gh api -X PUT repos/gl1tchbased-pixel/gl1tch-coin/branches/main/protection --input docs/security/main-protection.json
-```
+Tarayıcıda `gl1tchbased-pixel` hesabıyla `https://github.com/gl1tchbased-pixel/gl1tch-coin/settings/branches` sayfasını aç, klasik koruma kuralı ekle:
 
-Bundan sonra `main`'e doğrudan yazılamaz, her şey PR ve yeşil CI ile girer.
+- Dal adı: `main`
+- **Require a pull request before merging** işaretli, **Require approvals** işaretsiz. Tek başına çalıştığın için kendi PR'ını onaylayamazsın.
+- **Require status checks to pass before merging** işaretli, şu dört kontrol ekli: `typecheck`, `No fund/approval signature calls`, `Signing confined to the memo-only attester`, `Secret leak scan (gitleaks)`
+- **Do not allow bypassing the above settings** işaretli
+- **Allow force pushes** ve **Allow deletions** işaretsiz
+
+Aynı ayarlar `docs/security/main-protection.json` dosyasında duruyor. `Dependency audit` bilerek zorunlu değil: dışarıdan yeni bir açık yayınlanınca her birleştirmeyi kilitlemesin.
+
+Ne sağlar: `main`'e doğrudan yazılamaz, geçmiş silinemez veya ezilemez, güvenlik kontrollerinden geçmeyen kod giremez. `flookiii25` yönetici olmadığı için çalınan anahtarı korumayı kapatamaz.
+
+Ne sağlamaz: ikinci bir kişi olmadığı için kod inceleme yok. `flookiii25` anahtarını çalan biri kontrolleri geçen bir PR açıp birleştirebilir. `gl1tchbased-pixel` hesabını ele geçiren biri korumayı kapatabilir. Bu yüzden iki hesapta da güçlü 2FA gerekir.
 
 ### 4. Hesaplarda donanım seviyesi 2FA
 
