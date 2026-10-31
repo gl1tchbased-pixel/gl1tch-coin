@@ -42,8 +42,8 @@ const guarantees = [
   },
   {
     id: "tw-lp",
-    label: "Liquidity Burned / Locked",
-    sub: "Pump.fun bonding curve pre-grad · burned at Raydium migration.",
+    label: "No LP Token to Pull",
+    sub: "Liquidity sits in the Pump.fun bonding curve. The token has not migrated.",
     ok: TRUST_REPORT.lpBurnedOrLocked,
     Icon: LockIcon,
   },

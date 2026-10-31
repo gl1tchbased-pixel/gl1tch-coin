@@ -21,9 +21,9 @@ export default async function NetworkPage() {
   const [m, graph] = await Promise.all([networkMetrics(), signalGraphSnapshot()]);
 
   const stats = [
-    { v: n(m?.scans.total), l: "tokens scanned", s: "across Solana + EVM chains" },
+    { v: n(m?.scans.total), l: "scans run", s: "mostly automated sweeps, across Solana + EVM" },
     { v: n(m?.signalGraph.deployers), l: "deployers mapped", s: "the Signal Graph — our moat" },
-    { v: n(m?.scans.flagged), l: "rugs flagged", s: "high-risk / rug-shaped verdicts" },
+    { v: n(m?.scans.flagged), l: "high-risk flags", s: "high-risk / rug-shaped verdicts, not confirmed rugs" },
     { v: n(m?.signalGraph.flaggedActors), l: "flagged actors", s: "deployers with flagged tokens" },
     { v: n(m?.agents.registered), l: "agents assessed", s: "Know Your Agent registry" },
   ];

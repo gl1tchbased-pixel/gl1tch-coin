@@ -33,13 +33,13 @@ export const faqItems: FAQItem[] = [
     id: "faq-safe",
     question: "Is it safe / renounced?",
     answer:
-      "Mint and freeze authorities are revoked and liquidity is burned or locked — all verifiable on-chain via the Trust Wall, RugCheck, and SolSniffer.",
+      "Mint and freeze authorities are revoked and liquidity sits in the Pump.fun bonding curve with no LP token to pull — all verifiable on-chain.",
   },
   {
     id: "faq-team",
     question: "Is there a team allocation or presale?",
     answer:
-      "No presale, no hidden allocation. Any team buy is small, disclosed, and made on the open market at the same price as everyone.",
+      "No presale, no hidden allocation. The deployer wallet only trades on the open market, and its sale and later buys are disclosed on the proof page.",
   },
   {
     id: "faq-utility",
@@ -51,7 +51,7 @@ export const faqItems: FAQItem[] = [
     id: "faq-avoid",
     question: "What should I avoid?",
     answer:
-      "Anyone DMing you, any 'support' outside official channels, any contract address not published on the Links page. Admins never DM first.",
+      "Anyone DMing you, any 'support' outside official channels, any contract address not published on the Links page. GL1TCH accounts never DM first.",
   },
   {
     id: "faq-different",

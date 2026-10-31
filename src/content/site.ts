@@ -42,7 +42,7 @@ export const NAV_GROUPS: { id: string; label: string; items: NavItem[] }[] = [
     items: [
       { id: "nav-proof", label: "Live proof", href: "/proof", blurb: "The scanner run on $GL1TCH itself, with every receipt." },
       { id: "nav-revenue", label: "Revenue", href: "/revenue", blurb: "What the paid agent API earns, from settled payments." },
-      { id: "nav-buyback", label: "Buyback ledger", href: "/buyback", blurb: "Buybacks and burns with their transactions. None yet." },
+      { id: "nav-buyback", label: "Buyback ledger", href: "/buyback", blurb: "Revenue-funded buybacks and burns. None yet." },
       { id: "nav-security", label: "Security", href: "/security", blurb: "Read-only by design: what GL1TCH can and can't do." },
       { id: "nav-network", label: "Network stats", href: "/network", blurb: "Live engine metrics and the Signal Graph." },
       { id: "nav-verify-scan", label: "Verify a verdict", href: "/verify-scan", blurb: "Check a scan against its seal on Solana." },

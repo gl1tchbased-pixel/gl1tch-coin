@@ -143,7 +143,7 @@ approval signature.
 
 The project also has a community token, `$GL1TCH`
 (`3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump`), launched on Pump.fun on 29 May 2026:
-Token-2022, mint and freeze authority revoked, 0% tax, fixed 1B supply, liquidity locked.
+Token-2022, mint and freeze authority revoked, 0% tax, fixed 1B supply, liquidity in the Pump.fun bonding curve.
 
 - **Safety is never token-gated.** The scanner, its API, the badge, Rug Radar and Watchtower
   are free for everyone. Holding the token only unlocks community ranks and the

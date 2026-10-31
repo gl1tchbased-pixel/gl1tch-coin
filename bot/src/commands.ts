@@ -194,7 +194,7 @@ publicCommands.command("proof", async (ctx) => {
     `✅ Mint authority revoked\n` +
     `✅ Freeze authority revoked\n` +
     `✅ Zero tax (0% buy/sell)\n` +
-    `✅ Liquidity 100% locked/burned — the pool can't be pulled\n` +
+    `✅ Liquidity in the Pump.fun curve — no LP token to pull\n` +
     `✅ Metadata immutable\n` +
     `✅ 0% insider / bundled supply\n` +
     `✅ RugCheck score 1 (cleanest band)\n\n` +

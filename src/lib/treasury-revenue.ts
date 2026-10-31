@@ -96,14 +96,14 @@ export const REVENUE_CHANNELS: RevenueChannelStatus[] = [
     id: "apify",
     name: "Apify Store Pay-Per-Event Actor",
     model: "Web2 credit-card billing ($0.005/event, 80% creator share) for token safety & Yield X-Ray",
-    status: "live",
+    status: "ready",
     verifyHref: "/api/agents/integrations",
   },
   {
     id: "virtuals-acp",
     name: "Virtuals Protocol ACP (ERC-8183)",
     model: "Autonomous AI agent commerce · Escrow USDC settlement to Base treasury upon task completion",
-    status: "live",
+    status: "ready",
     verifyHref: "/api/agents/integrations",
   },
   {
@@ -122,8 +122,8 @@ export const REVENUE_CHANNELS: RevenueChannelStatus[] = [
   },
   {
     id: "yield-spikes",
-    name: "DeFi Yield Spikes & Cross-Chain Arbitrage",
-    model: "Autonomous 7-chain spread & APY volatility feed for algorithmic bots and funds",
+    name: "DeFi Yield Spikes Feed",
+    model: "Free 7-chain APY and risk feed for bots. No revenue yet",
     status: "live",
     verifyHref: "/api/yield/spikes",
   },

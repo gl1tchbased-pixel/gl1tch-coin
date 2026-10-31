@@ -440,7 +440,7 @@ export const whitepaperSections: WPSection[] = [
       },
       {
         type: "p",
-        text: "Impersonation & scam policy: the only official links are those published on the official links page. Admins never DM first. There is one $GL1TCH contract, published on the official links page — any other address, “presale” or private sale is a scam. Report impersonators through official channels.",
+        text: "Impersonation & scam policy: the only official links are those published on the official links page. GL1TCH accounts never DM first. There is one $GL1TCH contract, published on the official links page — any other address, “presale” or private sale is a scam. Report impersonators through official channels.",
       },
     ],
   },

@@ -53,7 +53,7 @@ const SCORECARD = [
   { k: "In-product utility", v: "Live — ranks + randomness API + agent API; safety stays free", s: "✓" },
   { k: "Engineered value accrual", v: "Designed — activates on real revenue (fee→buyback / stake)", s: "⏳", href: "/buyback" },
   { k: "Traction", v: "Early, but published live", s: "📈", href: "/network" },
-  { k: "Team", v: "Anonymous — substituted by verifiability + planned audit", s: "🔒" },
+  { k: "Founder", v: "One anonymous founder working with AI agents — verifiable code, no audit yet", s: "🔒" },
   { k: "Non-custodial · no fake numbers", v: "By design — never key custody, never invented metrics", s: "✓" },
 ];
 
@@ -77,7 +77,7 @@ const FAQ = [
   },
   {
     q: "What is live today versus planned?",
-    a: "Live: the multi-chain scanner, Signal Graph, Know Your Agent, the full Quantum Core (Vault, Draw, Seal, Forge), verifiable Randomness + provably-fair Allocation (holder API keys), and a tamper-evident public Beacon. Planned (founder + audit-gated): the fee-to-holder value-accrual mechanism and a third-party audit.",
+    a: "Live: the multi-chain scanner, Signal Graph, Know Your Agent, the Quantum Core (Vault, Draw, Seal, Forge; Draw reveals wait whenever the CURBy source is paused), verifiable Randomness + provably-fair Allocation (holder API keys), and a tamper-evident public Beacon. Planned (founder + audit-gated): the fee-to-holder value-accrual mechanism and a third-party audit.",
   },
   {
     q: "How is the randomness provably fair?",
