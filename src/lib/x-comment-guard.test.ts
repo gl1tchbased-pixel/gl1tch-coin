@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { checkCommentReply } from "../../e2e/social/x-llm.mjs";
+import { checkCommentReply, worthAnswering } from "../../e2e/social/x-llm.mjs";
 
 const CA = "3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump";
 const FAKE = "So11111111111111111111111111111111111111112";
@@ -31,5 +31,14 @@ describe("checkCommentReply", () => {
   });
   it("may repeat an address the commenter posted", () => {
     expect(checkCommentReply(`${FAKE} reads CAUTION on our scanner.`, `is ${FAKE} safe?`)).toBe(true);
+  });
+});
+
+describe("worthAnswering", () => {
+  it.each(["Follow back please", "Come inbox", "Can I get follow back?", "DM me", "geri takip", "Cool!", "gm", "@gl1tchbased wow"])("skips %s", (c) => {
+    expect(worthAnswering(c)).toBe(false);
+  });
+  it.each(["how is this different from rugcheck?", "dev sold everything, rug", "tarama ücretli mi?"])("keeps %s", (c) => {
+    expect(worthAnswering(c)).toBe(true);
   });
 });
