@@ -70,11 +70,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { tx, missingCount } = await buildCompleteReferralSetupTransaction({
+    const { versionedTx, missingCount } = await buildCompleteReferralSetupTransaction({
       conn,
       payer,
       name: DEFAULT_REFERRAL_NAME,
-      microLamports: 50000, // 50,000 micro-lamports priority fee
+      microLamports: 50000,
     });
 
     if (missingCount === 0) {
@@ -86,11 +86,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const serialized = tx.serialize({
-      requireAllSignatures: false,
-      verifySignatures: false,
-    });
-    const b64 = serialized.toString("base64");
+    const serialized = versionedTx.serialize();
+    const b64 = Buffer.from(serialized).toString("base64");
 
     return actionJsonResponse({
       type: "transaction",
@@ -102,4 +99,3 @@ export async function POST(req: NextRequest) {
     return actionJsonResponse({ error: `Failed to construct transaction: ${msg}` }, 500);
   }
 }
-

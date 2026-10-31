@@ -2,22 +2,33 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { Connection, PublicKey, Transaction } from "@solana/web3.js";
+import {
+  Connection,
+  PublicKey,
+  Transaction,
+  ComputeBudgetProgram,
+} from "@solana/web3.js";
+import {
+  buildInitializeReferralAccountWithNameIx,
+  buildInitializeReferralTokenAccountIx,
+  getReferralAccountPda,
+  DEFAULT_REFERRAL_NAME,
+  WSOL_MINT,
+  USDC_MINT,
+  type ReferralStatus,
+} from "@/lib/jupiter/referral";
 import { SOLANA_RPC } from "@/lib/wallet/rpc";
 import styles from "./setup.module.css";
 
-interface ReferralStatus {
-  name: string;
-  referralPda: string;
-  referralInitialized: boolean;
-  wsolAtaPda: string;
-  wsolInitialized: boolean;
-  usdcAtaPda: string;
-  usdcInitialized: boolean;
-  ready: boolean;
-}
-
 const DEPLOYER_TARGET = "H5qbtquJzLVrwYj5opedoQCy9edQQZAtiyPMTMFFaFb4";
+
+interface PhantomProvider {
+  isPhantom?: boolean;
+  publicKey: { toBase58: () => string };
+  connect: (opts?: { onlyIfTrusted?: boolean }) => Promise<{ publicKey: { toBase58: () => string } }>;
+  signTransaction: (tx: Transaction) => Promise<Transaction>;
+  signAndSendTransaction?: (tx: Transaction) => Promise<{ signature: string }>;
+}
 
 export default function ReferralSetupPage() {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
@@ -45,26 +56,33 @@ export default function ReferralSetupPage() {
     }
   }, []);
 
+  const getProvider = (): PhantomProvider | null => {
+    if (typeof window !== "undefined") {
+      const win = window as unknown as { solana?: PhantomProvider; phantom?: { solana?: PhantomProvider } };
+      return win.phantom?.solana || win.solana || null;
+    }
+    return null;
+  };
+
   const checkWallet = useCallback(async () => {
-    // Check window.solana (Phantom)
-    if (typeof window !== "undefined" && (window as unknown as { solana?: { isPhantom?: boolean; publicKey?: { toBase58: () => string } } }).solana) {
-      const solana = (window as unknown as { solana: { isPhantom?: boolean; publicKey?: { toBase58: () => string }; connect: (opts?: { onlyIfTrusted?: boolean }) => Promise<{ publicKey: { toBase58: () => string } }> } }).solana;
+    const provider = getProvider();
+    if (provider) {
       try {
-        const resp = await solana.connect({ onlyIfTrusted: true });
+        const resp = await provider.connect({ onlyIfTrusted: true });
         if (resp?.publicKey) {
           const addr = resp.publicKey.toBase58();
           setWalletAddress(addr);
           fetchBalance(addr);
         }
       } catch {
-        // Not auto-connected yet
+        // Not auto-connected
       }
     }
   }, []);
 
   const fetchBalance = async (addr: string) => {
     try {
-      const conn = new Connection(SOLANA_RPC || "https://api.mainnet-beta.solana.com", "confirmed");
+      const conn = new Connection(SOLANA_RPC || "https://solana-rpc.publicnode.com", "confirmed");
       const bal = await conn.getBalance(new PublicKey(addr));
       setBalance(bal / 1e9);
     } catch {
@@ -79,13 +97,13 @@ export default function ReferralSetupPage() {
 
   const handleConnect = async () => {
     setError(null);
-    if (typeof window === "undefined" || !(window as unknown as { solana?: unknown }).solana) {
-      setError("Phantom cüzdanı bulunamadı. Lütfen Phantom eklentisini açın.");
+    const provider = getProvider();
+    if (!provider) {
+      setError("Phantom cüzdanı bulunamadı. Lütfen tarayıcınızda Phantom eklentisini açın.");
       return;
     }
-    const solana = (window as unknown as { solana: { connect: () => Promise<{ publicKey: { toBase58: () => string } }> } }).solana;
     try {
-      const resp = await solana.connect();
+      const resp = await provider.connect();
       const addr = resp.publicKey.toBase58();
       setWalletAddress(addr);
       await fetchBalance(addr);
@@ -94,59 +112,104 @@ export default function ReferralSetupPage() {
     }
   };
 
-  const handleInitialize = async () => {
-    if (!walletAddress) {
-      await handleConnect();
-      return;
-    }
-
+  const executeSetup = async (includeVaults: boolean) => {
     setError(null);
     setTxSig(null);
     setLoading(true);
-    setStepMsg("Hazırlanıyor: Jupiter Referral işlem verisi alınıyor...");
+
+    const provider = getProvider();
+    if (!provider || !provider.publicKey) {
+      setError("Cüzdan bağlı değil. Lütfen önce Phantom'u bağlayın.");
+      setLoading(false);
+      return;
+    }
 
     try {
-      // 1. Fetch serialized transaction from API
-      const res = await fetch("/api/actions/init-referral", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ account: walletAddress }),
-      });
+      setStepMsg("Solana ağına bağlanılıyor ve işlem hazırlanıyor...");
+      const conn = new Connection(SOLANA_RPC || "https://solana-rpc.publicnode.com", "confirmed");
+      const payer = new PublicKey(provider.publicKey.toBase58());
 
-      const data = await res.json();
-      if (!res.ok || !data.transaction) {
-        throw new Error(data.error || "İşlem oluşturulamadı.");
+      // 1. Fetch fresh blockhash directly
+      const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash("confirmed");
+
+      // 2. Build transaction in memory
+      const tx = new Transaction();
+      tx.recentBlockhash = blockhash;
+      tx.feePayer = payer;
+
+      // Priority fee: 50,000 microLamports (~0.00001 SOL)
+      tx.add(ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 50000 }));
+
+      const [referralPda] = getReferralAccountPda(DEFAULT_REFERRAL_NAME);
+
+      // Base account
+      tx.add(
+        buildInitializeReferralAccountWithNameIx({
+          payer,
+          name: DEFAULT_REFERRAL_NAME,
+        })
+      );
+
+      // Token vaults if requested
+      if (includeVaults) {
+        tx.add(
+          buildInitializeReferralTokenAccountIx({
+            payer,
+            referralAccount: referralPda,
+            mint: WSOL_MINT,
+          })
+        );
+        tx.add(
+          buildInitializeReferralTokenAccountIx({
+            payer,
+            referralAccount: referralPda,
+            mint: USDC_MINT,
+          })
+        );
       }
 
-      setStepMsg("Lütfen Phantom cüzdanınızdan gelen işlemi ONAYLAYIN (Approve)...");
+      setStepMsg("Lütfen Phantom cüzdanınızdan gelen ONAY (Approve) penceresini kabul edin...");
 
-      // 2. Deserialize transaction
-      const rawTx = Buffer.from(data.transaction, "base64");
-      const tx = Transaction.from(rawTx);
+      // 3. Sign transaction
+      let signedTx: Transaction;
+      try {
+        signedTx = await provider.signTransaction(tx);
+      } catch (signErr: unknown) {
+        const msg = signErr instanceof Error ? signErr.message : String(signErr);
+        if (msg.includes("reject") || msg.includes("User rejected")) {
+          throw new Error("İşlem Phantom cüzdanından iptal edildi.");
+        }
+        throw new Error(`Phantom imzalama hatası: ${msg}`);
+      }
 
-      // 3. Prompt user's Phantom
-      const solana = (window as unknown as {
-        solana: {
-          signAndSendTransaction: (
-            tx: Transaction
-          ) => Promise<{ signature: string }>;
-        };
-      }).solana;
+      setStepMsg("İmza alındı! İşlem Solana blokzincirine yayınlanıyor...");
 
-      const { signature } = await solana.signAndSendTransaction(tx);
-      setStepMsg(`İşlem iletildi! Solana ağında onaylanıyor (Sig: ${signature.slice(0, 8)}…)...`);
+      // 4. Broadcast raw transaction to Solana RPC
+      const rawTx = signedTx.serialize();
+      const signature = await conn.sendRawTransaction(rawTx, {
+        skipPreflight: false,
+        preflightCommitment: "confirmed",
+        maxRetries: 3,
+      });
 
-      // 4. Confirm on Solana
-      const conn = new Connection(SOLANA_RPC || "https://api.mainnet-beta.solana.com", "confirmed");
-      const latestBlockhash = await conn.getLatestBlockhash("confirmed");
-      await conn.confirmTransaction({
-        signature,
-        blockhash: latestBlockhash.blockhash,
-        lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
-      }, "confirmed");
+      setStepMsg(`Solana ağında onay bekleniyor... (Tx: ${signature.slice(0, 10)}…)`);
+
+      // 5. Confirm
+      const confirmation = await conn.confirmTransaction(
+        {
+          signature,
+          blockhash,
+          lastValidBlockHeight,
+        },
+        "confirmed"
+      );
+
+      if (confirmation.value.err) {
+        throw new Error(`Solana işlem hatası: ${JSON.stringify(confirmation.value.err)}`);
+      }
 
       setTxSig(signature);
-      setStepMsg("✅ Harika! Jupiter Referral hesabı ve kasa hesapları başarıyla oluşturuldu.");
+      setStepMsg("🎉 BAŞARILI! Jupiter Referral hesabı ve kasa hesapları Solana blokzincirinde aktif edildi!");
       await fetchStatus();
       if (walletAddress) await fetchBalance(walletAddress);
     } catch (err: unknown) {
@@ -174,13 +237,13 @@ export default function ReferralSetupPage() {
           Jupiter Referral <span className={styles.accent}>Aktivasyonu</span>
         </h1>
         <p className={styles.subtitle}>
-          GL1TCH Safe Swap işlemlerinden protokol hazinesine %0.5 işlem komisyonu (50 bps) akması için Jupiter Referral hesabınızı tek tıkla başlatın.
+          GL1TCH Safe Swap alım-satımlarından protokol hazinesine %0.5 işlem komisyonu (50 bps) akması için Jupiter Referral hesabınızı tek tıkla onaylayın.
         </p>
       </header>
 
       <section className={styles.card}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>1. Cüzdan & Hesap Durumu</h2>
+          <h2 className={styles.sectionTitle}>1. Cüzdan &amp; Hesap Durumu</h2>
           {walletAddress === DEPLOYER_TARGET && (
             <span className={styles.checkStatusReady}>Yetkili Deployer Cüzdanı</span>
           )}
@@ -246,7 +309,7 @@ export default function ReferralSetupPage() {
           </div>
         )}
 
-        <div style={{ marginTop: "2rem" }}>
+        <div style={{ marginTop: "2rem", display: "flex", flexDirection: "column", gap: "10px" }}>
           {!walletAddress ? (
             <button className={styles.connectBtn} onClick={handleConnect}>
               🦊 Phantom Cüzdanını Bağla
@@ -256,13 +319,31 @@ export default function ReferralSetupPage() {
               ✅ Referral ve Komisyon Kasaları Zaten Aktif!
             </button>
           ) : (
-            <button
-              className={styles.primaryBtn}
-              onClick={handleInitialize}
-              disabled={loading}
-            >
-              {loading ? "Onay Bekleniyor..." : "🚀 Phantom ile Tek Tıkla Onayla"}
-            </button>
+            <>
+              <button
+                className={styles.primaryBtn}
+                onClick={() => executeSetup(true)}
+                disabled={loading}
+              >
+                {loading ? "Onay Bekleniyor..." : "🚀 Phantom ile Tek Tıkla Onayla (Tüm Kasalar)"}
+              </button>
+              <button
+                style={{
+                  background: "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  color: "#cbd5e1",
+                  padding: "0.75rem",
+                  borderRadius: "10px",
+                  fontSize: "0.9rem",
+                  cursor: "pointer",
+                  fontWeight: 600,
+                }}
+                onClick={() => executeSetup(false)}
+                disabled={loading}
+              >
+                ⚡ Sadece Ana Referral Hesabını Başlat (Alternatif)
+              </button>
+            </>
           )}
         </div>
 
@@ -290,11 +371,10 @@ export default function ReferralSetupPage() {
 
         <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
           <Link href="/revenue" style={{ color: "#94a3b8", fontSize: "0.9rem" }}>
-            ← Gelir & Hazine Sayfasına Dön
+            ← Gelir &amp; Hazine Sayfasına Dön
           </Link>
         </div>
       </section>
     </main>
   );
 }
-
