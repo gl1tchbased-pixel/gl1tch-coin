@@ -1,173 +1,139 @@
 import { type NextRequest } from "next/server";
 import { actionCorsResponse, actionJsonResponse } from "@/lib/actions/cors";
+import {
+  checkSwapGate,
+  feeLabel,
+  isSolanaAddress,
+  MAX_SWAP_SOL,
+  MIN_SWAP_SOL,
+  parseSwapLamports,
+  swapFee,
+} from "@/lib/actions/safe-swap-gate";
 import { runScanReport } from "@/lib/scan-report";
-import { OFFICIAL, CONTRACT_ADDRESS, DEPLOYER_WALLET } from "@/lib/official";
+import { OFFICIAL, CONTRACT_ADDRESS } from "@/lib/official";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const SOL_MINT = "So11111111111111111111111111111111111111112";
 const JUP_SWAP_ORDER_URL = "https://api.jup.ag/swap/v2/order";
+const ICON = `${OFFICIAL.SITE_URL}/brand/gl1tch-terminal-og.png`;
 
 export function OPTIONS() {
   return actionCorsResponse();
 }
 
-export async function GET(req: NextRequest) {
-  const mint = req.nextUrl.searchParams.get("mint") || CONTRACT_ADDRESS;
-
-  let score = 95;
-  let verdict = "CLEAN";
-  let symbol = "$GL1TCH";
-  let isRisky = false;
-  let reason = "";
-
+async function scan(mint: string) {
   try {
     const rep = await runScanReport(mint, "solana", "auto");
-    if (rep.status === 200 && rep.body) {
-      score = Number(rep.body.score ?? 50);
-      verdict = String(rep.body.verdict || "UNKNOWN");
-      symbol = String(rep.body.symbol || rep.body.name || "$TOKEN");
-      if (verdict === "HIGH RISK" || verdict === "RUG-SHAPED" || score < 60) {
-        isRisky = true;
-        reason = String(rep.body.bottomLine || "Token failed safety threshold; high rug risk.");
-      }
-    }
+    return { status: rep.status, body: rep.body as Record<string, unknown> };
   } catch {
-    /* fallback to safe defaults */
+    return { status: 503, body: null };
   }
+}
 
-  if (isRisky) {
+export async function GET(req: NextRequest) {
+  const mint = req.nextUrl.searchParams.get("mint") || CONTRACT_ADDRESS;
+  if (!isSolanaAddress(mint)) return actionJsonResponse({ error: "Invalid token address" }, 400);
+
+  const { status, body } = await scan(mint);
+  const gate = checkSwapGate(status, body);
+  const symbol = String(body?.symbol || body?.name || "this token");
+
+  if (!gate.ok) {
     return actionJsonResponse({
       type: "action",
-      icon: `${OFFICIAL.SITE_URL}/brand/gl1tch-terminal-og.png`,
-      title: `⚠️ GL1TCH Safety Refusal: ${symbol}`,
-      description: `GL1TCH Safe Swap refused to route a buy into this token (${verdict} · ${score}/100): ${reason}`,
-      label: "Buy Refused",
+      icon: ICON,
+      title: `GL1TCH refused: ${symbol}`,
+      description: `Safe Swap will not route a buy here. ${gate.reason}`,
+      label: "Buy refused",
       disabled: true,
       links: {
-        actions: [
-          {
-            label: "Inspect Full Risk Report ↗",
-            href: `${OFFICIAL.SITE_URL}/scan/solana-${mint}`,
-          },
-        ],
+        actions: [{ type: "external-link", label: "Full risk report", href: `${OFFICIAL.SITE_URL}/scan/solana-${mint}` }],
       },
     });
   }
 
+  const href = (amount: string) => `/api/actions/safe-swap?mint=${mint}&amount=${amount}`;
   return actionJsonResponse({
     type: "action",
-    icon: `${OFFICIAL.SITE_URL}/brand/gl1tch-terminal-og.png`,
-    title: `🛡️ GL1TCH Safe Swap: ${symbol} (${score}/100)`,
-    description: `Verified safe token (${verdict}). Authorities revoked, LP locked. 0.5% fee routed via Jupiter.`,
+    icon: ICON,
+    title: `GL1TCH Safe Swap: ${symbol}`,
+    description: `Scan: ${String(body?.verdict)} (${String(body?.score)}/100). A scan lowers risk but cannot rule out losses. ${feeLabel(swapFee()?.bps)}; check the amounts in your wallet before you sign.`,
     label: "Safe Swap",
     disabled: false,
     links: {
       actions: [
+        { type: "transaction", label: "0.1 SOL", href: href("0.1") },
+        { type: "transaction", label: "0.5 SOL", href: href("0.5") },
+        { type: "transaction", label: "1 SOL", href: href("1") },
         {
-          label: "0.1 SOL",
-          href: `/api/actions/safe-swap?mint=${mint}&amount=0.1`,
-        },
-        {
-          label: "0.5 SOL",
-          href: `/api/actions/safe-swap?mint=${mint}&amount=0.5`,
-        },
-        {
-          label: "1.0 SOL",
-          href: `/api/actions/safe-swap?mint=${mint}&amount=1.0`,
-        },
-        {
+          type: "transaction",
           label: "Buy",
-          href: `/api/actions/safe-swap?mint=${mint}&amount={amount}`,
-          parameters: [
-            {
-              name: "amount",
-              label: "SOL amount to swap (e.g. 0.25)",
-              required: true,
-            },
-          ],
+          href: href("{amount}"),
+          parameters: [{ name: "amount", label: `SOL amount (${MIN_SWAP_SOL} to ${MAX_SWAP_SOL})`, required: true }],
         },
       ],
     },
   });
 }
 
+async function jupiterOrder(params: URLSearchParams) {
+  const headers: Record<string, string> = {};
+  if (process.env.JUP_API_KEY) headers["x-api-key"] = process.env.JUP_API_KEY;
+  const res = await fetch(`${JUP_SWAP_ORDER_URL}?${params.toString()}`, { headers, signal: AbortSignal.timeout(10000) });
+  const data = await res.json();
+  return { ok: res.ok && Boolean(data.transaction), data };
+}
+
 export async function POST(req: NextRequest) {
   const mint = req.nextUrl.searchParams.get("mint") || CONTRACT_ADDRESS;
-  const rawAmount = req.nextUrl.searchParams.get("amount") || "0.1";
-  const solAmount = Math.max(0.01, Math.min(100, Number(rawAmount) || 0.1));
-  const lamports = Math.round(solAmount * 1e9);
+  if (!isSolanaAddress(mint)) return actionJsonResponse({ error: "Invalid token address" }, 400);
+
+  const lamports = parseSwapLamports(req.nextUrl.searchParams.get("amount"));
+  if (lamports === null) return actionJsonResponse({ error: `Amount must be ${MIN_SWAP_SOL} to ${MAX_SWAP_SOL} SOL` }, 400);
 
   let account = "";
   try {
     const body = await req.json();
     account = String(body.account || "").trim();
   } catch {
-    /* empty */
+    /* handled below */
   }
+  if (!isSolanaAddress(account)) return actionJsonResponse({ error: "Missing or invalid account" }, 400);
 
-  if (!account) {
-    return actionJsonResponse({ error: "Missing account in request body" }, 400);
-  }
+  const { status, body } = await scan(mint);
+  const gate = checkSwapGate(status, body);
+  if (!gate.ok) return actionJsonResponse({ error: `GL1TCH refused this buy. ${gate.reason}` }, 400);
 
-  // Safety gate: verify token is not HIGH RISK / RUG-SHAPED
+  const params = new URLSearchParams({ inputMint: SOL_MINT, outputMint: mint, amount: String(lamports), taker: account });
+  const fee = swapFee();
+
   try {
-    const rep = await runScanReport(mint, "solana", "auto");
-    const v = String(rep?.body?.verdict || "CLEAN");
-    if (v === "HIGH RISK" || v === "RUG-SHAPED") {
-      return actionJsonResponse(
-        {
-          error: `GL1TCH Safe Gate refused swap: token reads ${v}. Sells remain open on DEX.`,
-        },
-        400
-      );
+    let appliedBps: number | undefined;
+    let order = { ok: false, data: {} as Record<string, unknown> };
+    if (fee) {
+      const withFee = new URLSearchParams(params);
+      withFee.set("referralAccount", fee.account);
+      withFee.set("referralFee", String(fee.bps));
+      order = await jupiterOrder(withFee);
+      if (order.ok) appliedBps = fee.bps;
     }
-  } catch {
-    /* continue if scan network transient */
-  }
-
-  // Query Jupiter Swap API v2 order builder
-  const referralAccount = process.env.JUP_REFERRAL_ACCOUNT || DEPLOYER_WALLET;
-  const jupParams = new URLSearchParams({
-    inputMint: SOL_MINT,
-    outputMint: mint,
-    amount: String(lamports),
-    taker: account,
-    referralAccount,
-    referralFee: "50", // 50 bps = 0.5% referral platform fee to GL1TCH
-  });
-
-  const jupHeaders: Record<string, string> = {};
-  if (process.env.JUP_API_KEY) jupHeaders["x-api-key"] = process.env.JUP_API_KEY;
-
-  try {
-    const res = await fetch(`${JUP_SWAP_ORDER_URL}?${jupParams.toString()}`, {
-      headers: jupHeaders,
-      signal: AbortSignal.timeout(10000),
-    });
-    const data = await res.json();
-    if (!res.ok || !data.transaction) {
+    // A referral setup problem must not break the user's swap: run it without our fee, and say so.
+    if (!order.ok) order = await jupiterOrder(params);
+    if (!order.ok) {
       return actionJsonResponse(
-        {
-          error: String(data.errorMessage || data.error || "Jupiter could not find swap route for this token."),
-        },
+        { error: String(order.data.errorMessage || order.data.error || "Jupiter found no route for this token.") },
         400
       );
     }
 
     return actionJsonResponse({
       type: "transaction",
-      transaction: data.transaction,
-      message: `GL1TCH Safe Swap: Buying ${mint === CONTRACT_ADDRESS ? "$GL1TCH" : mint} with ${solAmount} SOL (0.5% platform fee)`,
+      transaction: order.data.transaction,
+      message: `Safe Swap via Jupiter: ${lamports / 1e9} SOL to ${String(body?.symbol || mint)}. ${feeLabel(appliedBps)}.`,
     });
-  } catch (e) {
-    return actionJsonResponse(
-      {
-        error: `Safe Swap service transient error: ${(e as Error).message}`,
-      },
-      502
-    );
+  } catch {
+    return actionJsonResponse({ error: "Could not reach Jupiter. Nothing was signed; try again." }, 502);
   }
 }
-

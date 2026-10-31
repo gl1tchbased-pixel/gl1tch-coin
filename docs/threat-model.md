@@ -27,7 +27,7 @@
 - The site itself (XSS via any user-reflected value → CSP is the mitigation).
 
 ## Core invariants (never violated)
-1. **No component ever requests a fund/approval signature** — only ownership-proving message signatures (SIWE-style nonce). Enforced by a CI forbidden-function check.
+1. **No token approvals, and no fund-moving transaction except a Safe Swap the user starts**: Jupiter builds it and the user signs it in their own wallet through Solana Actions. Otherwise only ownership-proving message signatures (SIWE-style nonce). Our code never signs for users; a CI forbidden-function check guards this.
 2. **Secrets never in code** — env/secret-manager only; gitleaks in CI.
 3. **Every public endpoint: central input validation + rate limiting.**
 4. **Scoring is free + wall-separated from any paid tier** (Phase 6).

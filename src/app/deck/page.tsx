@@ -178,7 +178,7 @@ export default async function DeckPage() {
           <li><strong>Explains, not just flags.</strong> Several sources become one verdict with a reason per check.</li>
           <li><strong>Remembers deployers.</strong> Every scan feeds a deployer history, so a serial rugger&apos;s next token is flagged.</li>
           <li><strong>Built to be reused.</strong> Public API and badge let any wallet, launchpad or community embed a risk check.</li>
-          <li><strong>Non-custodial and open source.</strong> Read-only by design, enforced in CI; MIT-licensed code.</li>
+          <li><strong>Non-custodial and open source.</strong> Scanning is read-only; the optional swap is signed only in the user&apos;s own wallet. MIT-licensed code.</li>
         </ul>
       </article>
 

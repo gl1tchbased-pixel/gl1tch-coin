@@ -12,7 +12,7 @@ export const metadata: Metadata = shareMeta({
 });
 
 const posture = [
-  { t: "We never move your funds", d: "No component ever requests a transaction, token approval, or spend signature — only a message that proves wallet ownership. This is enforced by an automated CI check, not just a promise." },
+  { t: "We never hold your funds", d: "We never hold keys and never ask for a token approval or spend allowance. Scanning needs no wallet. The one exception is the optional Safe Swap: Jupiter builds a swap, and you review and sign it in your own wallet. Nothing runs without that signature." },
   { t: "Hardened against XSS & clickjacking", d: "Strict Content-Security-Policy, HSTS, frame-ancestors DENY, COOP and a locked-down Permissions-Policy on every page." },
   { t: "Every input is validated", d: "A central validation layer rejects any malformed address or query before it touches an RPC, database, or outbound request (SSRF-safe)." },
   { t: "Abuse-resistant", d: "Public endpoints are rate-limited; edge/WAF hardening is layered on top as traffic grows." },
@@ -74,10 +74,10 @@ export default function SecurityPage() {
             The biggest risk isn&apos;t us — it&apos;s a <strong>copycat site</strong> pretending to be us.
           </p>
           <ul className={styles.list}>
-            <li><strong>GL1TCH will NEVER ask you to approve a transaction or a token spend.</strong> If a
-              &quot;GL1TCH&quot; site asks you to <em>Approve</em>, <em>Confirm</em>, or sign anything that moves
-              funds or grants an allowance — it is a scam. Close it.</li>
-            <li>The only signature we would ever request is a plain-text <em>message</em> that says it
+            <li><strong>GL1TCH will NEVER ask you to approve a token spend, and never asks for a signature to scan.</strong> A
+              transaction only appears if you choose a Safe Swap yourself, and your wallet shows it as a swap of the amount you picked.
+              Anything else that asks you to <em>Approve</em> or <em>Confirm</em> in our name is a scam. Close it.</li>
+            <li>Apart from a swap you started, the only signature we would request is a plain-text <em>message</em> that says it
               proves ownership and moves nothing. Read what you sign.</li>
             <li>Only trust the official domain: <strong>gl1tchbased.xyz</strong> and the links on
               our <Link href="/links">official links</Link> page. Admins never DM first.</li>

@@ -37,8 +37,8 @@ your own accounts and local builds.
 
 These are guarantees we enforce; a break in any of them is a valid, high-priority report:
 
-- **We never request a fund-transfer or token-approval signature.** GL1TCH only ever asks for
-  an ownership-proving *message* signature that moves nothing. A CI check blocks any such call.
+- **We never request a token approval, and the only fund-moving transaction is a Safe Swap the user starts and signs in their own wallet.** Otherwise GL1TCH only asks for
+  an ownership-proving *message* signature that moves nothing. A CI check blocks signing calls in our code.
 - **Secrets never live in code.** A secret-leak scan (gitleaks) runs on every push.
 - **Scoring is free and never gated** behind holding the token.
 
