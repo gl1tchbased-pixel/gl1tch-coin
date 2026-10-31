@@ -115,7 +115,7 @@ export const REVENUE_CHANNELS: RevenueChannelStatus[] = [
   },
   {
     id: "sentinel",
-    name: "Autonomous Rug Radar Sentinel (Telegram VIP)",
+    name: "Rug Radar clean-scan feed (Telegram)",
     model: "250 Telegram Stars / $15 USDC x402 / Free for ≥250k $GL1TCH holders",
     status: "live",
     verifyHref: "https://t.me/gl1tch_infected_bot",

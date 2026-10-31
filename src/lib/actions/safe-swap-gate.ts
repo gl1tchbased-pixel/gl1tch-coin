@@ -13,6 +13,7 @@ export type ScanBody = {
   score?: unknown;
   confidence?: unknown;
   bottomLine?: unknown;
+  verified?: unknown;
 };
 
 export type GateResult = { ok: true } | { ok: false; reason: string };
@@ -31,7 +32,8 @@ export function checkSwapGate(status: number, body: ScanBody | null | undefined)
   if (typeof body.score !== "number" || body.score < MIN_SCORE) {
     return { ok: false, reason: `Scan score is below ${MIN_SCORE}.` };
   }
-  if (typeof body.confidence === "number" && body.confidence < MIN_CONFIDENCE) {
+  // Verified blue-chips are known independently of the scan sources, so a source outage shouldn't block them.
+  if (body.verified !== true && typeof body.confidence === "number" && body.confidence < MIN_CONFIDENCE) {
     return { ok: false, reason: "Too many scan sources were unavailable to trust this result." };
   }
   return { ok: true };
