@@ -30,30 +30,6 @@ describe("GuardianStore", () => {
     expect(blocked2.shouldNotifyLimit).toBe(false);
   });
 
-  it("grants unlimited scans when unlocked by a verified $GL1TCH holder admin", () => {
-    const file = tmpFile();
-    const store = new GuardianStore(file);
-    const now = Date.UTC(2026, 9, 30, 12, 0, 0);
-
-    for (let i = 0; i < FREE_DAILY_GROUP_SCANS; i++) {
-      store.checkAndRecordAutoScan("-100888", [], now);
-    }
-    expect(store.checkAndRecordAutoScan("-100888", [], now).allowed).toBe(false);
-
-    store.unlockGroup("-100888", {
-      userId: 42,
-      username: "@holder_admin",
-      tierId: "infected",
-      balance: 250_000,
-    });
-
-    const reloaded = new GuardianStore(file);
-    const after = reloaded.checkAndRecordAutoScan("-100888", [], now);
-    expect(after.allowed).toBe(true);
-    expect(after.unlimited).toBe(true);
-    expect(after.unlockedByUsername).toBe("@holder_admin");
-  });
-
   it("always allows official GL1TCH groups without limits", () => {
     const store = new GuardianStore(tmpFile());
     const st = store.getStatus("-100111", ["-100111"]);

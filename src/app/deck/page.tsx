@@ -39,7 +39,7 @@ const product = [
   },
   {
     title: "Telegram bot + Watchtower",
-    text: "Scan from chat, and get alerted when a watched token’s risk changes or a watched wallet dumps 25%+ of a position. 25 tokens and 25 wallets per user, free for everyone.",
+    text: "Scan from chat, and get alerted when a watched token’s risk changes or a watched wallet dumps 25%+ of a position. 25 tokens and 25 wallets per user, plus 100 automatic scans a day in any group, free for everyone.",
   },
   {
     title: "For AI agents: MCP + x402",
@@ -63,7 +63,7 @@ type Item = { what: string; amount: string; detail?: string[] };
 
 const funding: { track: string; items: Item[] }[] = [
   {
-    track: "Core (Solana Foundation proposal) · $10,000",
+    track: "Core (open-source engine and hosting, not yet funded) · $10,000",
     items: [
       {
         what: "M1 · Keep the free API and Telegram bot hosted for 12 months, with a public status page",
@@ -252,8 +252,7 @@ export default async function DeckPage() {
           <div className={styles.card}>
             <span className={styles.cardTitle}>Security</span>
             <span className={styles.cardText}>
-              CI runs a secret scan, a dependency audit and a check that no code requests a
-              fund-moving or approval signature. Public threat model, risk register and
+              CI runs a secret scan, a dependency audit and a check that our code never signs for users or requests a token approval. The only transaction is the optional swap, which the user starts and signs in their own wallet. Public threat model, risk register and
               SECURITY.md disclosure policy.
             </span>
           </div>
@@ -322,6 +321,10 @@ export default async function DeckPage() {
             at <Link className={styles.link} href="/revenue">/revenue</Link>) and B2B services on top of the free
             tools carry the hosting. The public scanner, JSON API, MCP server, Watchtower and badge stay 100% free.
           </li>
+          <li>
+            An optional scan-gated swap through Jupiter is also live. It charges no GL1TCH fee today; if a fee is switched on
+            (0.5% at most) the swap screen shows it before signing. It is never required to use the scanner.
+          </li>
         </ul>
       </article>
 
@@ -346,8 +349,8 @@ export default async function DeckPage() {
       <article className={styles.slide}>
         <span className={styles.num}>10 · Team and contact</span>
         <p className={styles.body}>
-          Solo founder based in Turkey, who designed, built and operates the whole stack:
-          scanner, public API, badge, Rug Radar and the Telegram bot.
+          Solo founder based in Turkey, who designed, built and operates the whole stack with AI
+          coding agents: scanner, public API, badge, Rug Radar and the Telegram bot. There are no other team members.
         </p>
         <div className={styles.links}>
           <a className={styles.link} href="mailto:founder@gl1tchbased.xyz">founder@gl1tchbased.xyz</a>

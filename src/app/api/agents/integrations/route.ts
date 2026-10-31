@@ -51,8 +51,7 @@ export function GET() {
         telegramGuardian: {
           bot: "https://t.me/gl1tch_infected_bot?startgroup=guardian",
           command: "/guardian",
-          freeQuota: "15 automatic contract scans per group per UTC day",
-          holderUnlock: "Unlimited auto-scans for groups where an admin verifies a $GL1TCH holding (/verify + /guardian unlock)",
+          freeQuota: "100 automatic contract scans per group per UTC day, no token needed",
         },
         quantumGiveaway: {
           botCommand: "/giveaway",
@@ -87,7 +86,7 @@ export function GET() {
           command: "/sentinel",
           feedCommand: "/sentinel feed",
           feedFilter: "Score ≥ 90, CLEAN/LOW RISK, known LP lock. Not a recommendation",
-          monetization: "250 Telegram Stars / $15 USDC x402 / Free for ≥250k $GL1TCH holders",
+          pricing: "Free for everyone",
         },
         defiYieldSpikes: {
           endpoint: `${OFFICIAL.SITE_URL}/api/yield/spikes`,
