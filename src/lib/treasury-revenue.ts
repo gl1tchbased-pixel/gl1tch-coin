@@ -48,7 +48,6 @@ export interface RevenueChannelStatus {
     | "giveaway"
     | "agent-kit"
     | "apify"
-    | "virtuals-acp"
     | "blinks"
     | "sentinel"
     | "yield-spikes";
@@ -97,14 +96,7 @@ export const REVENUE_CHANNELS: RevenueChannelStatus[] = [
   {
     id: "apify",
     name: "Apify Store Pay-Per-Event Actor",
-    model: "Web2 credit-card billing ($0.005/event, 80% creator share) for token safety & Yield X-Ray",
-    status: "ready",
-    verifyHref: "/api/agents/integrations",
-  },
-  {
-    id: "virtuals-acp",
-    name: "Virtuals Protocol ACP (ERC-8183)",
-    model: "Autonomous AI agent commerce · Escrow USDC settlement to Base treasury upon task completion",
+    model: "Not published yet. Card billing at $0.005 per result, 80% creator share, for token safety and Yield X-Ray",
     status: "ready",
     verifyHref: "/api/agents/integrations",
   },

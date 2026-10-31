@@ -74,7 +74,7 @@ describe("Phase 1 Agent Toolkit & Apify Actor", () => {
     expect(body.ok).toBe(true);
     expect(body.channels.mcp.toolsCount).toBe(11);
     expect(body.channels.solanaAgentKit.package).toBe("@gl1tch/agent-toolkit");
-    expect(body.channels.apifyActor.name).toBe("gl1tch-solana-token-safety-yield-xray");
+    expect(body.channels.apifyActor.name).toBe("gl1tch-token-safety-scanner");
     expect(body.channels.telegramGuardian.command).toBe("/guardian");
     expect(body.channels.quantumGiveaway.botCommand).toBe("/giveaway");
   });
