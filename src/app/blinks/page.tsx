@@ -6,16 +6,16 @@ import styles from "./blinks.module.css";
 import { OFFICIAL } from "@/lib/official";
 
 const POPULAR_TOKENS = [
-  { symbol: "$GL1TCH", mint: "3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump" },
-  { symbol: "BONK", mint: "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263" },
   { symbol: "JUP", mint: "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN" },
+  { symbol: "BONK", mint: "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263" },
   { symbol: "WIF", mint: "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm" },
   { symbol: "USDC", mint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" },
+  { symbol: "$GL1TCH", mint: "3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump" },
 ];
 
 export default function BlinksPage() {
   const [activeType, setActiveType] = useState<"swap" | "scan">("swap");
-  const [tokenMint, setTokenMint] = useState("3HQJwwHvzy8pGkPqGQcb4thZCH88MUCHVVSNtHn6pump");
+  const [tokenMint, setTokenMint] = useState(POPULAR_TOKENS[0].mint);
   const [selectedPreset, setSelectedPreset] = useState("0.5");
   const [customAmount, setCustomAmount] = useState("");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -27,7 +27,7 @@ export default function BlinksPage() {
 
   // Action URLs
   const swapActionUrl = `${origin}/api/actions/safe-swap?mint=${tokenMint}`;
-  const scanActionUrl = `${origin}/api/actions/scan?address=${tokenMint}`;
+  const scanActionUrl = `${origin}/api/actions/scan?mint=${tokenMint}`;
   const currentActionUrl = activeType === "swap" ? swapActionUrl : scanActionUrl;
 
   // Dial.to URLs
@@ -36,7 +36,7 @@ export default function BlinksPage() {
   // Tweet Intent
   const tweetText =
     activeType === "swap"
-      ? `🛡️ Safe Swap ${tokenLabel} on Solana:\n⚡ Instant Jupiter routing with @gl1tchbased anti-rug gating.\n\nTry the Blink 👇\n${dialToUrl}`
+      ? `🛡️ Safe Swap ${tokenLabel} on Solana:\n⚡ Jupiter routing, scanned first by @gl1tchbased. A 0.5% fee may apply, shown before you sign.\n\nTry the Blink 👇\n${dialToUrl}`
       : `🔍 Instant Security Scan for ${tokenLabel}:\n⚡ Flag mint authorities, freeze risks & rugs with @gl1tchbased Solana Action.\n\nAudit token 👇\n${dialToUrl}`;
 
   const tweetIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
@@ -55,12 +55,12 @@ export default function BlinksPage() {
     <div className={styles.container}>
       {/* Hero Header */}
       <div className={styles.hero}>
-        <div className={styles.badge}>⚡ Solana Actions & Blinks v2.4 Spec</div>
+        <div className={styles.badge}>⚡ Solana Actions & Blinks</div>
         <h1 className={styles.title}>
           <span className={styles.accent}>Safe Swap</span> & Scan Blinks
         </h1>
         <p className={styles.subtitle}>
-          Turn any Solana token trade into a shareable Blink. Non-custodial Jupiter v6 routing, pre-execution anti-rug gating, and 50 bps platform fees to GL1TCH treasury.
+          Turn a Solana token swap into a shareable Blink. Non-custodial Jupiter routing, a safety scan before every buy, and a disclosed 0.5% GL1TCH fee.
         </p>
       </div>
 
@@ -190,7 +190,7 @@ export default function BlinksPage() {
 
               <p className={styles.blinkDesc}>
                 {activeType === "swap"
-                  ? `Pre-execution anti-rug analysis + non-custodial Jupiter v6 route. Zero honeypot risk. 50 bps platform fee supports GL1TCH security infrastructure.`
+                  ? `Scanned before the swap is built, then routed through Jupiter. A scan lowers risk but cannot rule out losses. 0.5% GL1TCH fee when the swap screen shows it.`
                   : `Instant multi-chain rug scan: checks freeze/mint authorities, liquidity lock, insider snipers & deployer track record on-chain.`}
               </p>
 
@@ -247,7 +247,7 @@ export default function BlinksPage() {
               <div className={styles.blinkSecurityFooter}>
                 <span>✓ Non-Custodial</span>
                 <span>•</span>
-                <span>✓ Verified Action v2.4</span>
+                <span>✓ Solana Action</span>
                 <span>•</span>
                 <span>✓ 0% Rug Risk</span>
               </div>
@@ -259,63 +259,61 @@ export default function BlinksPage() {
       {/* Feature Grid: Value Proposition & Fee Transparency */}
       <div className={styles.featureSection}>
         <h2 style={{ fontSize: "1.5rem", fontWeight: 750, textAlign: "center", margin: "0 0 1rem" }}>
-          Why GL1TCH Blinks Drive Real On-Chain Volume
+          How Safe Swap Works
         </h2>
         <div className={styles.featureGrid}>
           <div className={styles.featureCard}>
             <div className={styles.featureIcon}>🛡️</div>
-            <h3 className={styles.featureTitle}>Pre-Execution Rug Gating</h3>
+            <h3 className={styles.featureTitle}>A Scan Before Every Buy</h3>
             <p className={styles.featureText}>
-              Unlike standard DEX aggregators, GL1TCH analyzes the token before creating the swap transaction. If a token is detected as a honeypot, has active freeze authority, or score &gt; 70 risk, the Blink disables the swap button to protect retail buyers.
+              GL1TCH scans the token before it builds the swap. The buy is refused unless the verdict is CLEAN or LOW RISK with a score of at least 60, or if too many scan sources were unavailable. A passing scan is not a recommendation and cannot rule out losses.
             </p>
           </div>
 
           <div className={styles.featureCard}>
             <div className={styles.featureIcon}>⚡</div>
-            <h3 className={styles.featureTitle}>Clear Fee Flywheel</h3>
+            <h3 className={styles.featureTitle}>A Disclosed Fee</h3>
             <p className={styles.featureText}>
-              Safe Swap routes through Jupiter. When our referral account is active, GL1TCH takes a 0.5% fee and the swap screen says so before you sign. If it is not active, the swap screen says there is no GL1TCH fee.
+              GL1TCH takes 0.5% on swaps where the swap screen shows it, before you sign, and Jupiter keeps 20% of that. Otherwise the screen says there is no GL1TCH fee. The fee plays no part in a token&apos;s score, and the scoring code is public.
             </p>
           </div>
 
           <div className={styles.featureCard}>
             <div className={styles.featureIcon}>🐦</div>
-            <h3 className={styles.featureTitle}>Viral Social Distribution</h3>
+            <h3 className={styles.featureTitle}>Shareable Anywhere</h3>
             <p className={styles.featureText}>
-              Anyone can tweet any token's Safe Swap Blink link. On X, users with Phantom or Backpack extensions see a rich interactive swap interface natively in their feed, eliminating friction and driving effortless trade volume.
+              Anyone can share a token&apos;s Safe Swap link. dial.to opens it in a browser, and the same safety scan runs whoever shared it. You still review and sign in your own wallet.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Developer & Grant Reviewer Spec Section */}
+      {/* Developer spec */}
       <div className={styles.specSection}>
         <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
           <h2 style={{ fontSize: "1.25rem", fontWeight: 750, margin: 0 }}>
-            🛠️ Solana Actions Specification v2.4 Details
+            🛠️ Solana Actions Endpoints
           </h2>
-          <span style={{ fontSize: "0.85rem", color: "var(--accent, #7cf6c8)" }}>
-            Solana Foundation & Mobile Grant Invariant
-          </span>
         </div>
 
         <p style={{ fontSize: "0.9rem", color: "var(--text-secondary, #a8b0bd)", lineHeight: 1.6, margin: "10px 0 16px" }}>
-          GL1TCH implements the official Solana Actions v2.4 protocol with root registration, CORS pre-flight support, strict type checking, and non-custodial transaction generation.
+          GL1TCH serves Solana Actions with root discovery and CORS pre-flight support. Swap requests return an unsigned transaction that only the user&apos;s wallet can sign.
         </p>
 
         <div className={styles.codeBlock}>
 {`// Root Actions Discovery (actions.json & /.well-known/actions.json)
 {
   "rules": [
-    { "pathPattern": "/swap", "apiPath": "/api/actions/swap" },
-    { "pathPattern": "/scan", "apiPath": "/api/actions/scan" }
+    { "pathPattern": "/api/actions/**", "apiPath": "/api/actions/**" },
+    { "pathPattern": "/scan/**", "apiPath": "/api/actions/scan" },
+    { "pathPattern": "/swap/**", "apiPath": "/api/actions/safe-swap" }
   ]
 }
 
 // Endpoints
-GET  https://gl1tchbased.xyz/api/actions/swap?outputMint={MINT}   -> Returns ActionGetResponse
-POST https://gl1tchbased.xyz/api/actions/swap?outputMint={MINT}   -> Returns ActionPostResponse (unsigned base64 tx)
-GET  https://gl1tchbased.xyz/api/actions/scan?address={ADDRESS}   -> Returns Token Security Card
+GET  https://gl1tchbased.xyz/api/actions/safe-swap?mint={MINT}                -> Returns ActionGetResponse
+POST https://gl1tchbased.xyz/api/actions/safe-swap?mint={MINT}&amount={SOL}   -> Returns ActionPostResponse (unsigned base64 tx)
+GET  https://gl1tchbased.xyz/api/actions/scan?mint={MINT}                     -> Returns Token Security Card
 `}
         </div>
 

@@ -113,7 +113,7 @@ export const REVENUE_CHANNELS: RevenueChannelStatus[] = [
     name: "Solana Actions & Blinks (Jupiter Safe Swap)",
     model: "Optional scan-gated swaps via Jupiter. A 0.5% GL1TCH fee applies only when the swap screen shows it, before signing. Jupiter keeps 20% of the fee",
     status: "live",
-    verifyHref: "https://dial.to/?action=solana-action:https://gl1tchbased.xyz/api/actions/safe-swap",
+    verifyHref: "/blinks",
   },
   {
     id: "sentinel",

@@ -41,7 +41,6 @@ export function startSentinelEngine(bot: Bot): void {
         const lpLockedPct = t.meta?.lpLockedPct;
         if (lpLockedPct == null) continue;
 
-        const blinkUrl = `https://dial.to/?action=solana-action:${OFFICIAL.SITE}/api/actions/safe-swap?mint=${t.mint}`;
         const alert: SentinelGemAlert = {
           mint: t.mint,
           symbol: t.symbol || "TOKEN",
@@ -50,7 +49,6 @@ export function startSentinelEngine(bot: Bot): void {
           verdict: t.verdict,
           lpLockedPct,
           alertedAt: Date.now(),
-          blinkUrl,
         };
 
         const added = sentinelStore.recordAlert(alert);
@@ -60,7 +58,7 @@ export function startSentinelEngine(bot: Bot): void {
             `• <b>Safety Score:</b> <b>${alert.score}/100 (${alert.verdict})</b>\n` +
             `• <b>LP Lock:</b> <b>${alert.lpLockedPct}%</b>\n` +
             `• <b>Contract:</b> <code>${alert.mint}</code>\n\n` +
-            `<i>Not a recommendation. A clean scan cannot rule out losses.</i>\n\n⚡ <a href="${blinkUrl}">Safe Swap (Solana Blink) →</a>\n` +
+            `<i>Not a recommendation. A clean scan cannot rule out losses.</i>\n\n` +
             `🔬 <a href="${OFFICIAL.SITE}/scan/solana-${alert.mint}">Full Scan Report →</a>`;
 
           await bot.api
