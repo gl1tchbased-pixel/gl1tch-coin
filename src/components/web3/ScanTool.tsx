@@ -312,7 +312,7 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
                 <span className={styles.blinkIcon}>⚡</span>
                 <div>
                   <strong>Solana Safe Swap Blink</strong>
-                  <p>Swap via Jupiter DEX with anti-rug protection. 0.5% platform fee supports GL1TCH treasury.</p>
+                  <p>Optional swap via Jupiter, offered only after a passing scan. You sign in your own wallet. Any GL1TCH fee is shown first.</p>
                 </div>
               </div>
               <div className={styles.blinkActions}>
@@ -326,7 +326,7 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
                 </a>
                 <a
                   href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                    `Check out the safety scan for $${result.symbol || "TOKEN"} on @gl1tchbased: ${result.verdict} (${result.score}/100) 🛡️\n\nSafe Swap with anti-rug gating 👇\nhttps://dial.to/?action=solana-action:https://gl1tchbased.xyz/api/actions/safe-swap?mint=${result.mint}`
+                    `Check out the safety scan for $${result.symbol || "TOKEN"} on @gl1tchbased: ${result.verdict} (${result.score}/100) 🛡️\n\nScan-gated swap 👇\nhttps://dial.to/?action=solana-action:https://gl1tchbased.xyz/api/actions/safe-swap?mint=${result.mint}`
                   )}`}
                   target="_blank"
                   rel="noreferrer"

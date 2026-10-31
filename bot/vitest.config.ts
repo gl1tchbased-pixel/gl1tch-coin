@@ -21,6 +21,7 @@ export default defineConfig({
   plugins: [jsToTs()],
   test: {
     environment: "node",
+    env: { BOT_TOKEN: "test-token" },
     include: ["src/**/*.test.ts"],
   },
 });

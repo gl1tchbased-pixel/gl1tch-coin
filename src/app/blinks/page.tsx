@@ -272,9 +272,9 @@ export default function BlinksPage() {
 
           <div className={styles.featureCard}>
             <div className={styles.featureIcon}>⚡</div>
-            <h3 className={styles.featureTitle}>50 bps Treasury Fee Flywheel</h3>
+            <h3 className={styles.featureTitle}>Clear Fee Flywheel</h3>
             <p className={styles.featureText}>
-              Every Safe Swap routes through Jupiter with a 50 bps (0.5%) platform referral fee directly to the GL1TCH deployer treasury (<code style={{ fontSize: "0.76rem" }}>H5qbtqu...Fb4</code>). Fees fund free security infrastructure and buybacks.
+              Safe Swap routes through Jupiter. When our referral account is active, GL1TCH takes a 0.5% fee and the swap screen says so before you sign. If it is not active, the swap screen says there is no GL1TCH fee.
             </p>
           </div>
 

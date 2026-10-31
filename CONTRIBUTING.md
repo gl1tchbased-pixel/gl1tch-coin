@@ -12,7 +12,7 @@ Thanks for helping make token scams easier to spot. Issues and pull requests are
 
 ## Ground rules
 
-1. **Read-only, always.** Nothing in this repo may request a transaction or approval signature,
+1. **No hidden signing.** Apart from the user-started Safe Swap Action, nothing in this repo may request a transaction or approval signature,
    hold keys, or move funds. CI greps for forbidden calls and will fail the PR.
 2. **Safety is free.** Scanner features are never gated behind holding a token.
 3. **Every scoring change is logged.** If you add a check or change a weight or threshold, add a
