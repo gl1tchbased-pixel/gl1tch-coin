@@ -10,6 +10,7 @@ write tier is paywalled (`402 no-credits`). Uses the cached login in `.profiles/
 | `x-content.mjs` | Curated calendar of investor-grade posts (one/day, rotates through all features). |
 | `x-daily.mjs` | Posts today's tweet. Idempotent — won't double-post the same day. |
 | `x-reply.mjs` | Finds people **asking** about token safety/rugs and replies with the free scanner. Rate-limited + de-duped. |
+| `x-comments.mjs` | Answers comments on and mentions of @gl1tchbased. Scheduled task "GL1TCH X Comments". Every reply must pass `checkCommentReply` (no foreign links, handles, tickers or addresses, no price talk), or it isn't posted. |
 | `x-scheduler.mjs` | Supervisor loop: daily post + replies every few hours. Start once, leave running. |
 | `x-lib.mjs` | Shared Playwright primitives (login, post, reply, search). |
 | `x-post.mjs` | One-off thread + video poster (used for the launch announcement). |
@@ -43,8 +44,8 @@ NODE_OPTIONS=--use-system-ca LAUNCH_CHROMIUM=1 node e2e/social/x-reply.mjs
 - `MIN_FOLLOWERS` — skip accounts below this follower count (default 500 — no tiny/no-reach accounts).
 - `HANDLES="alice,bob"` — also scan these specific accounts' recent tweets for reply targets.
 
-**Replies are LLM-generated** (Cerebras `gpt-oss-120b`, key in gitignored `bot/.env` as
-`CEREBRAS_API_KEY`) — contextual, human, on-brand; falls back to templates if the LLM is down.
+**Replies are LLM-generated** (Groq `openai/gpt-oss-120b`, key in gitignored `bot/.env` as
+`GROQ_API_KEY`) — contextual, human, on-brand; falls back to templates if the LLM is down.
 - `DRY=1` — do everything except actually post/reply.
 - `FORCE=1` — let `x-daily` post again the same day.
 

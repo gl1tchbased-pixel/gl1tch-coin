@@ -11,6 +11,7 @@ import { fetchTokenMarket } from "@/lib/market-sources";
 import { deployerHoldingCheck, holdingPct } from "@/lib/deployer-holdings";
 import { capVerdictForAge, tokenAgeCheck } from "@/lib/token-age";
 import type { DeployerReputation } from "@/lib/signal-graph";
+import { fetchGoplusSolana } from "@/lib/goplus-solana";
 import { poolOwnersFrom, realHolders } from "@/lib/holders";
 import {
   biggestNetwork, capForIntegrity, fetchIntegrityExtras, integrityRisks, NO_EXTRAS, tradeActivityCheck, walletNetworkCheck,
@@ -31,7 +32,7 @@ function rpcEndpoints(): string[] {
 // Resilient JSON-RPC: tries each endpoint, skips ones that return HTML / block the
 // method / error, returns the first valid result. Some public RPCs block heavy
 // methods (getTokenLargestAccounts) — falling through keeps the scan alive.
-async function rpc<T>(method: string, params: unknown[], signal?: AbortSignal): Promise<T> {
+async function rpc<T>(method: string, params: unknown[], signal?: AbortSignal, usable: (result: T) => boolean = () => true): Promise<T> {
   let lastErr: unknown;
   for (const url of rpcEndpoints()) {
     try {
@@ -45,6 +46,7 @@ async function rpc<T>(method: string, params: unknown[], signal?: AbortSignal): 
       if (!res.ok || !ct.includes("json")) { lastErr = new Error(`rpc ${method} ${res.status}`); continue; }
       const j = await res.json();
       if (j.error) { lastErr = new Error(j.error.message || `rpc ${method} error`); continue; }
+      if (!usable(j.result as T)) { lastErr = new Error(`rpc ${method} empty`); continue; }
       return j.result as T;
     } catch (e) {
       lastErr = e;
@@ -259,6 +261,24 @@ async function getConcentration(mint: string, supply: number | null, signal?: Ab
 }
 
 // The deployer's current balance of this mint, summed over all its token accounts (0 = none).
+/** Who paid for the token's first transaction. Only reachable on tokens with a short history: a long one is left unknown. */
+async function getDeployer(mint: string, signal?: AbortSignal): Promise<string | null> {
+  try {
+    // Some public RPCs keep no history and answer with an empty list, so move on to the next one.
+    const sigs = await rpc<Array<{ signature: string }>>("getSignaturesForAddress", [mint, { limit: 1000 }], signal, (r) => r.length > 0);
+    if (sigs.length === 1000) return null;
+    const tx = await rpc<{ transaction?: { message?: { accountKeys?: Array<{ pubkey?: string }> } } } | null>(
+      "getTransaction",
+      [sigs[sigs.length - 1].signature, { encoding: "jsonParsed", maxSupportedTransactionVersion: 0 }],
+      signal,
+      (r) => r != null,
+    );
+    return tx?.transaction?.message?.accountKeys?.[0]?.pubkey ?? null;
+  } catch {
+    return null;
+  }
+}
+
 async function getOwnerBalance(owner: string, mint: string, signal?: AbortSignal): Promise<number | null> {
   try {
     const r = await rpc<{ value: Array<{ account?: { data?: { parsed?: { info?: { tokenAmount?: { uiAmount?: number | null } } } } } }> }>(
@@ -405,11 +425,16 @@ function withTimeout<T>(p: Promise<T>, ms: number, fallback: T): Promise<T> {
 export async function scanToken(mint: string, signal?: AbortSignal): Promise<ScanResult> {
   if (!isBase58Mint(mint)) throw new Error("invalid Solana mint address");
 
-  const [mintInfo, market, rug] = await Promise.all([
+  const [mintInfo, market, rugcheck] = await Promise.all([
     getMint(mint, signal), // must succeed (throws "mint not found" if invalid)
     withTimeout(getMarket(mint, signal), 9000, NO_MARKET),
     withTimeout(getRugcheck(mint, signal), 14000, EMPTY_RUG),
   ]);
+  // RugCheck has failed for every token at once before. Fill what another source can, so one outage doesn't blind the scan.
+  const rugcheckOk = rugcheck.score != null || rugcheck.holderCount != null || rugcheck.creator != null || rugcheck.risks.length > 0;
+  const goplus = rugcheckOk ? null : await withTimeout(fetchGoplusSolana(mint, market.pool, signal), 7000, null);
+  const creator = rugcheckOk ? rugcheck.creator : await withTimeout(getDeployer(mint, signal), 6000, null);
+  const rug: RugReport = goplus ? { ...rugcheck, ...goplus, creator } : { ...rugcheck, creator };
   const [conc, deployerBalance, extras] = await Promise.all([
     withTimeout(getConcentration(mint, mintInfo.supply, signal), 8000, { topHolderPct: null, top10Pct: null }),
     rug.creator ? withTimeout(getOwnerBalance(rug.creator, mint, signal), 6000, null) : Promise.resolve(null),
@@ -648,7 +673,8 @@ export async function scanToken(mint: string, signal?: AbortSignal): Promise<Sca
     sources: [
       { name: "On-chain RPC", ok: true, detail: "mint authorities, supply" },
       { name: "Market", ok: market.priceUsd != null, detail: market.priceUsd != null ? (market.priceUsd && market.volume24h != null ? "DexScreener / GeckoTerminal" : "DexScreener") : "no pair found" },
-      { name: "RugCheck", ok: (rug.score != null || rug.holderCount != null || rug.creator != null || rug.risks.length > 0), detail: "risks, LP lock, holders, deployer" },
+      { name: "RugCheck", ok: rugcheckOk, detail: "risks, LP lock, holders, deployer" },
+      ...(rugcheckOk ? [] : [{ name: "GoPlus", ok: goplus != null, detail: "holders, metadata, burned LP, token powers (RugCheck stand-in)" }]),
       { name: "Deployer balance", ok: deployerHolding != null, detail: "on-chain, live" },
       { name: "Holder index", ok: conc.topHolderPct != null || rug.top10Pct != null, detail: "concentration, insiders" },
       { name: "Trade flow", ok: trade.status !== "unknown", detail: "24h trades, wallets, price history" },
