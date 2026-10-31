@@ -1,0 +1,504 @@
+.container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: var(--space-8, 2rem) var(--space-4, 1rem) var(--space-16, 4rem);
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: var(--space-10, 2.5rem);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(124, 246, 200, 0.1);
+  border: 1px solid rgba(124, 246, 200, 0.3);
+  color: var(--accent, #7cf6c8);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-4, 1rem);
+}
+
+.title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 850;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin: 0 0 var(--space-3, 0.75rem);
+  color: var(--text-primary, #ffffff);
+}
+
+.accent {
+  color: var(--accent, #7cf6c8);
+  background: linear-gradient(135deg, #7cf6c8 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--text-secondary, #a8b0bd);
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* Two-column layout: Generator + Preview */
+.workbench {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: var(--space-6, 1.5rem);
+  margin-bottom: var(--space-12, 3rem);
+}
+
+@media (max-width: 860px) {
+  .workbench {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: var(--surface-1, rgba(255, 255, 255, 0.025));
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  border-radius: 16px;
+  padding: var(--space-6, 1.5rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4, 1rem);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: var(--space-3, 0.75rem);
+}
+
+.cardTitle {
+  font-size: 1.15rem;
+  font-weight: 750;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.typeSelector {
+  display: flex;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: var(--space-4, 1rem);
+}
+
+.typeButton {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #a8b0bd);
+  font-size: 0.88rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.typeButtonActive {
+  background: rgba(124, 246, 200, 0.15);
+  color: var(--accent, #7cf6c8);
+  border: 1px solid rgba(124, 246, 200, 0.3);
+}
+
+.label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary, #a8b0bd);
+  margin-bottom: 6px;
+}
+
+.inputGroup {
+  margin-bottom: var(--space-4, 1rem);
+}
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-family: ui-monospace, monospace;
+  font-size: 0.92rem;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.input:focus {
+  border-color: var(--accent, #7cf6c8);
+  box-shadow: 0 0 0 2px rgba(124, 246, 200, 0.2);
+}
+
+.quickTokens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.tokenChip {
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 650;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary, #a8b0bd);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tokenChip:hover,
+.tokenChipActive {
+  background: rgba(124, 246, 200, 0.15);
+  border-color: rgba(124, 246, 200, 0.35);
+  color: var(--accent, #7cf6c8);
+}
+
+.actionBoxes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+  margin-top: var(--space-4, 1rem);
+}
+
+.actionBox {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+.actionBoxHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.actionBoxTitle {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 700;
+  color: var(--text-secondary, #a8b0bd);
+}
+
+.actionBoxUrl {
+  font-family: ui-monospace, monospace;
+  font-size: 0.82rem;
+  color: #ffffff;
+  word-break: break-all;
+  white-space: pre-wrap;
+  user-select: all;
+}
+
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: var(--space-4, 1rem);
+}
+
+.ctaTweet {
+  flex: 1;
+  min-width: 140px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: #1d9bf0;
+  color: #ffffff;
+  font-weight: 750;
+  font-size: 0.92rem;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.ctaTweet:hover {
+  background: #1a8cd8;
+  transform: translateY(-1px);
+}
+
+.ctaDial {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.ctaDial:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.copyButton {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 650;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.copyButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Simulated Blink UI Card */
+.blinkMock {
+  background: #0f141c;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.blinkMockHero {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  background: linear-gradient(135deg, #09121a 0%, #15293a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.blinkLogoWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.blinkLogo {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: #000;
+  border: 2px solid var(--accent, #7cf6c8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.blinkSiteBadge {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--accent, #7cf6c8);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.blinkBody {
+  padding: 16px 18px 20px;
+}
+
+.blinkHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.blinkMockTitle {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+}
+
+.blinkPowered {
+  font-size: 0.72rem;
+  color: var(--text-secondary, #a8b0bd);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.blinkDesc {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #a8b0bd);
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+
+.blinkPresetRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.blinkPresetBtn {
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.blinkPresetBtn:hover,
+.blinkPresetActive {
+  background: rgba(124, 246, 200, 0.15);
+  border-color: rgba(124, 246, 200, 0.4);
+  color: var(--accent, #7cf6c8);
+}
+
+.blinkCustomRow {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.blinkCustomInput {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.blinkCustomInput:focus {
+  border-color: var(--accent, #7cf6c8);
+}
+
+.blinkSwapBtn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.blinkSwapBtn:hover {
+  opacity: 0.92;
+}
+
+.blinkSecurityFooter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.72rem;
+  color: #8892b0;
+  font-weight: 600;
+}
+
+/* Feature grid */
+.featureSection {
+  margin-top: var(--space-12, 3rem);
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-4, 1rem);
+  margin-top: var(--space-6, 1.5rem);
+}
+
+.featureCard {
+  background: var(--surface-1, rgba(255, 255, 255, 0.025));
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  border-radius: 14px;
+  padding: var(--space-5, 1.25rem);
+}
+
+.featureIcon {
+  font-size: 1.5rem;
+  margin-bottom: var(--space-2, 0.5rem);
+}
+
+.featureTitle {
+  font-size: 1.05rem;
+  font-weight: 750;
+  color: #ffffff;
+  margin: 0 0 var(--space-2, 0.5rem);
+}
+
+.featureText {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-secondary, #a8b0bd);
+  margin: 0;
+}
+
+/* Developer Spec Section */
+.specSection {
+  margin-top: var(--space-12, 3rem);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  padding: var(--space-6, 1.5rem);
+}
+
+.codeBlock {
+  background: #0a0e14;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 14px;
+  overflow-x: auto;
+  font-family: ui-monospace, monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #d1d5db;
+  margin: 12px 0;
+}

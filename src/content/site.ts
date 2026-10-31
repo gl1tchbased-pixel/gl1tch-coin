@@ -29,6 +29,7 @@ export const NAV_GROUPS: { id: string; label: string; items: NavItem[] }[] = [
     label: "Products",
     items: [
       { id: "nav-scan", label: "Scanner", href: "/scan", blurb: "Any token, any chain. Safe, sus, or rug-shaped." },
+      { id: "nav-blinks", label: "⚡ Safe Swap Blinks", href: "/blinks", blurb: "Anti-rug Solana Blinks with Jupiter routing & instant sharing." },
       { id: "nav-radar", label: "Rug Radar", href: "/radar", blurb: "The riskiest fresh launches, swept hourly." },
       { id: "nav-yield", label: "Yield X-Ray", href: "/yield", blurb: "Where an APY comes from, read from the chain." },
       { id: "nav-agents", label: "Agent Trust", href: "/agents", blurb: "Know Your Agent: verify an AI agent's wallet." },
@@ -51,6 +52,7 @@ export const NAV_GROUPS: { id: string; label: string; items: NavItem[] }[] = [
     id: "build",
     label: "Build",
     items: [
+      { id: "nav-blinks-build", label: "Solana Blinks & Actions", href: "/blinks", blurb: "Embed safe token swaps and scan cards anywhere on X." },
       { id: "nav-agent-api", label: "Agent API", href: "/agents/docs", blurb: "Token safety for AI agents: pay per call, MCP, docs." },
       { id: "nav-agent-directory", label: "Agent directory", href: "/agents/directory", blurb: "AI agents with a public trust record." },
       { id: "nav-random", label: "Randomness API", href: "/quantum-core/random", blurb: "Random draws anyone can verify." },
@@ -78,6 +80,7 @@ export const NAV_LINKS = [
 
 export const FOOTER_LINKS = [
   { id: "foot-scan", label: "Scanner", href: "/scan" },
+  { id: "foot-blinks", label: "Safe Swap Blinks", href: "/blinks" },
   { id: "foot-proof", label: "Proof", href: "/proof" },
   { id: "foot-play", label: "Rug or Not?", href: "/play" },
   { id: "foot-security", label: "Security", href: "/security" },
