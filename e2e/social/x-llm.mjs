@@ -145,7 +145,7 @@ Reply with exactly SKIP if the comment is spam, a shill or promo, a bot, an insu
 const OWN_LINKS = ["gl1tchbased.xyz", "t.me/gl1tch_infected", "github.com/gl1tchbased-pixel", "x.com/gl1tchbased"];
 const URLISH = /(?:https?:\/\/\S+|\b(?:[a-z0-9-]+\.)+[a-z]{2,}(?:\/\S*)?)/gi;
 const ADDRESS_G = /\b(?:0x[0-9a-fA-F]{40}|[1-9A-HJ-NP-Za-km-z]{32,44})\b/g;
-const PRICE_TALK = /\b(moon|mooning|pump(ing)?|lambo|ape in|buy now|time to buy|good buy|load(ing)? up|\d+\s?x\b|guarantee\w*|price target|financial freedom)\b|yükselece|kazandır|kaçırma|garantili|fiyat hedef/i;
+const PRICE_TALK = /\b(moon|mooning|pump(ing)?|lambo|ape in|buy now|time to buy|good buy|load(ing)? up|\d+\s?x\b|guaranteed|price target|financial freedom)\b|yükselece|kazandır|kaçırma|garantili|fiyat hedef/i;
 
 function isOwnLink(found) {
   const url = found.replace(/[.,;:!?)]+$/, "").replace(/^https?:\/\//i, "").replace(/^www\./i, "").toLowerCase();
