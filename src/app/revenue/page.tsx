@@ -56,6 +56,44 @@ export default async function RevenuePage() {
             <Link href="/proof">proof page</Link>.
           </p>
         )}
+        <div style={{ marginTop: "1.25rem", display: "flex", gap: "0.75rem", flexWrap: "wrap", justifyContent: "center" }}>
+          <Link
+            href="/revenue/setup"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              padding: "8px 16px",
+              borderRadius: "8px",
+              background: "rgba(124, 246, 200, 0.12)",
+              border: "1px solid rgba(124, 246, 200, 0.35)",
+              color: "#7cf6c8",
+              fontSize: "0.85rem",
+              fontWeight: 700,
+              textDecoration: "none",
+            }}
+          >
+            ⚡ Jupiter Referral &amp; Fee Vaults Setup →
+          </Link>
+          <Link
+            href="/blinks"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              padding: "8px 16px",
+              borderRadius: "8px",
+              background: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              color: "#e2e8f0",
+              fontSize: "0.85rem",
+              fontWeight: 600,
+              textDecoration: "none",
+            }}
+          >
+            🛡️ Safe Swap Blinks →
+          </Link>
+        </div>
       </header>
 
       <section className={styles.totals}>
