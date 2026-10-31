@@ -37,14 +37,18 @@ export function startSentinelEngine(bot: Bot): void {
         if (t.chain !== "solana" || t.score < 90 || t.flagged) continue;
         if (t.verdict !== "CLEAN" && t.verdict !== "LOW RISK") continue;
 
+        // Never fill in a lock we didn't read (e.g. during a RugCheck outage).
+        const lpLockedPct = t.meta?.lpLockedPct;
+        if (lpLockedPct == null) continue;
+
         const blinkUrl = `https://dial.to/?action=solana-action:${OFFICIAL.SITE}/api/actions/safe-swap?mint=${t.mint}`;
         const alert: SentinelGemAlert = {
           mint: t.mint,
-          symbol: t.symbol || "GEM",
-          name: t.name || "Safe Token",
+          symbol: t.symbol || "TOKEN",
+          name: t.name || "Unnamed token",
           score: t.score,
           verdict: t.verdict,
-          lpLockedPct: t.meta?.lpLockedPct ?? 100,
+          lpLockedPct,
           alertedAt: Date.now(),
           blinkUrl,
         };
@@ -52,13 +56,12 @@ export function startSentinelEngine(bot: Bot): void {
         const added = sentinelStore.recordAlert(alert);
         if (added && channelId) {
           const text =
-            `💎 <b>GL1TCH SENTINEL ALERT: $${alert.symbol}</b>\n\n` +
+            `🔍 <b>GL1TCH CLEAN SCAN: $${alert.symbol}</b>\n\n` +
             `• <b>Safety Score:</b> <b>${alert.score}/100 (${alert.verdict})</b>\n` +
             `• <b>LP Lock:</b> <b>${alert.lpLockedPct}%</b>\n` +
-            `• <b>Mint Authority:</b> REVOKED ✅\n` +
             `• <b>Contract:</b> <code>${alert.mint}</code>\n\n` +
-            `⚡ <a href="${blinkUrl}">Instant Safe Swap (Solana Blink) →</a>\n` +
-            `🔬 <a href="${OFFICIAL.SITE}/scan/solana-${alert.mint}">Full Audit Report →</a>`;
+            `<i>Not a recommendation. A clean scan cannot rule out losses.</i>\n\n⚡ <a href="${blinkUrl}">Safe Swap (Solana Blink) →</a>\n` +
+            `🔬 <a href="${OFFICIAL.SITE}/scan/solana-${alert.mint}">Full Scan Report →</a>`;
 
           await bot.api
             .sendMessage(channelId, text, {
@@ -76,6 +79,6 @@ export function startSentinelEngine(bot: Bot): void {
   // Run on start and schedule recurring sweeps
   setTimeout(sweep, 5000).unref?.();
   setInterval(sweep, intervalMinutes * 60 * 1000).unref?.();
-  console.log(`[sentinel] Autonomous alpha sentinel armed (every ${intervalMinutes}m)`);
+  console.log(`[sentinel] Clean-scan sentinel armed (every ${intervalMinutes}m)`);
 }
 

@@ -8,6 +8,10 @@ describe("checkSwapGate", () => {
     expect(checkSwapGate(200, { verdict: "CLEAN", score: 90, confidence: 90 })).toEqual({ ok: true });
   });
 
+  it("does not let a source outage block a verified blue-chip", () => {
+    expect(checkSwapGate(200, { verdict: "CLEAN", score: 90, confidence: 50, verified: true })).toEqual({ ok: true });
+  });
+
   it.each([
     ["failed scan", 503, { verdict: "CLEAN", score: 90 }],
     ["missing body", 200, null],
