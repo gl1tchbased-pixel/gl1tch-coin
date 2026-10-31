@@ -1,5 +1,5 @@
 {
-  "name": "@gl1tch/agent-toolkit",
+  "name": "gl1tch-agent-toolkit",
   "version": "1.1.0",
   "description": "Drop-in Solana Agent Kit, ElizaOS, LangChain & x402 tools for GL1TCH Token Safety, Insider Graph, Rug Radar, Verifiable Randomness, and DeFi Yield X-Ray.",
   "type": "module",

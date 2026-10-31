@@ -178,16 +178,35 @@ GET ${BASE}/api/x402/radar?since=1793217500000`}</Code>
       <section className={styles.block} id="mcp">
         <h2 className={styles.h2}>6 · Use it from Claude, Cursor or any MCP client</h2>
         <p className={styles.cardD} style={{ marginBottom: "var(--space-3)" }}>
-          GL1TCH is also an MCP server, so an assistant can check a token before you trade it. Free, 60 requests a
-          minute per IP. Tools: <code>scan_token</code>, <code>check_agent_wallet</code>, <code>deployer_reputation</code>,{" "}
-          <code>xray_yield</code>.
+          GL1TCH is an MCP server (Streamable HTTP at <code>/api/mcp</code>). Any assistant (Cursor, Claude Desktop,
+          Windsurf) can inspect token safety and DeFi yields before transacting. 60 requests/min free per IP.
+          Tools: <code>scan_token</code>, <code>check_agent_wallet</code>, <code>deployer_reputation</code>, <code>xray_yield</code>.
         </p>
-        <Code head="MCP client config (Streamable HTTP)">{`{
+        <Code head="Claude Desktop / Cursor config">{`{
   "mcpServers": {
     "gl1tch": { "url": "${BASE}/api/mcp" }
   }
-}
-// stdio-only clients: "command": "npx", "args": ["-y", "mcp-remote", "${BASE}/api/mcp"]`}</Code>
+}`}</Code>
+        <Code head="Smithery 1-Click Install">{`npx -y @smithery/cli install gl1tch --client cursor`}</Code>
+      </section>
+
+      <section className={styles.block} id="toolkit">
+        <h2 className={styles.h2}>7 · Solana Agent Kit &amp; ElizaOS toolkit</h2>
+        <p className={styles.cardD} style={{ marginBottom: "var(--space-3)" }}>
+          Drop-in tool definitions for <strong>SendAI Solana Agent Kit</strong>, <strong>ElizaOS</strong>,
+          and LangChain.
+        </p>
+        <Code head="Install">{`npm install gl1tch-agent-toolkit`}</Code>
+        <Code head="Solana Agent Kit">{`import { createSolanaAgentKitTools } from "gl1tch-agent-toolkit";
+
+const tools = createSolanaAgentKitTools();
+// Adds gl1tch_scan_token, gl1tch_yield_xray, gl1tch_deployer_reputation, gl1tch_rug_radar, gl1tch_agent_trust`}</Code>
+        <Code head="ElizaOS Plugin">{`import { gl1tchElizaPlugin } from "gl1tch-agent-toolkit";
+
+export const character = {
+  name: "SolanaGuardian",
+  plugins: [gl1tchElizaPlugin()],
+};`}</Code>
       </section>
 
       <section className={styles.block}>
