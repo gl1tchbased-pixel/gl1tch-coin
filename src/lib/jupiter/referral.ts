@@ -82,6 +82,8 @@ export function buildInitializeReferralAccountWithNameIx(params: {
   view.setUint32(8, nameBytes.length, true);
   data.set(nameBytes, 12);
 
+  const instructionData = typeof Buffer !== "undefined" ? Buffer.from(data) : (data as unknown as Buffer);
+
   return new TransactionInstruction({
     programId: JUP_REFERRAL_PROGRAM_ID,
     keys: [
@@ -91,7 +93,7 @@ export function buildInitializeReferralAccountWithNameIx(params: {
       { pubkey: referralAccount, isSigner: false, isWritable: true },
       { pubkey: SYSTEM_PROGRAM_ID, isSigner: false, isWritable: false },
     ],
-    data: Buffer.from(data),
+    data: instructionData,
   });
 }
 
@@ -104,6 +106,8 @@ export function buildInitializeReferralTokenAccountIx(params: {
   const project = params.project || JUP_SWAP_PROJECT_PUBKEY;
   const [ata] = getReferralTokenAccountPda(params.referralAccount, params.mint);
 
+  const instructionData = typeof Buffer !== "undefined" ? Buffer.from(SIGHASH_INIT_TOKEN) : (SIGHASH_INIT_TOKEN as unknown as Buffer);
+
   return new TransactionInstruction({
     programId: JUP_REFERRAL_PROGRAM_ID,
     keys: [
@@ -115,7 +119,7 @@ export function buildInitializeReferralTokenAccountIx(params: {
       { pubkey: SYSTEM_PROGRAM_ID, isSigner: false, isWritable: false },
       { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
     ],
-    data: Buffer.from(SIGHASH_INIT_TOKEN),
+    data: instructionData,
   });
 }
 

@@ -17,10 +17,28 @@ import {
   USDC_MINT,
   type ReferralStatus,
 } from "@/lib/jupiter/referral";
-import { SOLANA_RPC } from "@/lib/wallet/rpc";
 import styles from "./setup.module.css";
 
 const DEPLOYER_TARGET = "H5qbtquJzLVrwYj5opedoQCy9edQQZAtiyPMTMFFaFb4";
+
+const RPC_ENDPOINTS = [
+  "https://solana-rpc.publicnode.com",
+  "https://rpc.ankr.com/solana",
+  "https://api.mainnet-beta.solana.com",
+];
+
+async function getWorkingConnection(): Promise<{ conn: Connection; blockhash: string; lastValidBlockHeight: number }> {
+  for (const endpoint of RPC_ENDPOINTS) {
+    try {
+      const conn = new Connection(endpoint, "confirmed");
+      const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash("confirmed");
+      return { conn, blockhash, lastValidBlockHeight };
+    } catch {
+      // try next
+    }
+  }
+  throw new Error("Solana RPC sunucularına erişilemedi. Lütfen internet bağlantınızı kontrol edin.");
+}
 
 interface PhantomProvider {
   isPhantom?: boolean;
@@ -39,7 +57,6 @@ export default function ReferralSetupPage() {
   const [txSig, setTxSig] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [stepMsg, setStepMsg] = useState<string>("");
-  const [copied, setCopied] = useState(false);
 
   const fetchStatus = useCallback(async () => {
     try {
@@ -82,7 +99,7 @@ export default function ReferralSetupPage() {
 
   const fetchBalance = async (addr: string) => {
     try {
-      const conn = new Connection(SOLANA_RPC || "https://solana-rpc.publicnode.com", "confirmed");
+      const { conn } = await getWorkingConnection();
       const bal = await conn.getBalance(new PublicKey(addr));
       setBalance(bal / 1e9);
     } catch {
@@ -125,14 +142,11 @@ export default function ReferralSetupPage() {
     }
 
     try {
-      setStepMsg("Solana ağına bağlanılıyor ve işlem hazırlanıyor...");
-      const conn = new Connection(SOLANA_RPC || "https://solana-rpc.publicnode.com", "confirmed");
+      setStepMsg("Adım 1/4: Solana ağına bağlanılıyor ve taze blok verisi alınıyor...");
+      const { conn, blockhash, lastValidBlockHeight } = await getWorkingConnection();
       const payer = new PublicKey(provider.publicKey.toBase58());
 
-      // 1. Fetch fresh blockhash directly
-      const { blockhash, lastValidBlockHeight } = await conn.getLatestBlockhash("confirmed");
-
-      // 2. Build transaction in memory
+      // 2. Build pure Transaction
       const tx = new Transaction();
       tx.recentBlockhash = blockhash;
       tx.feePayer = payer;
@@ -168,33 +182,47 @@ export default function ReferralSetupPage() {
         );
       }
 
-      setStepMsg("Lütfen Phantom cüzdanınızdan gelen ONAY (Approve) penceresini kabul edin...");
+      setStepMsg("Adım 2/4: Lütfen açılan Phantom penceresinde işlemi ONAYLAYIN (Approve)...");
 
-      // 3. Sign transaction
-      let signedTx: Transaction;
-      try {
-        signedTx = await provider.signTransaction(tx);
-      } catch (signErr: unknown) {
-        const msg = signErr instanceof Error ? signErr.message : String(signErr);
-        if (msg.includes("reject") || msg.includes("User rejected")) {
-          throw new Error("İşlem Phantom cüzdanından iptal edildi.");
+      // 3. Try signing
+      let signature = "";
+      if (typeof provider.signAndSendTransaction === "function") {
+        try {
+          const res = await provider.signAndSendTransaction(tx);
+          signature = res.signature;
+        } catch (sendErr: unknown) {
+          const sendMsg = sendErr instanceof Error ? sendErr.message : String(sendErr);
+          if (sendMsg.includes("reject") || sendMsg.includes("User rejected")) {
+            throw new Error("İşlem Phantom cüzdanından iptal edildi.");
+          }
+          // If signAndSendTransaction threw unexpected error, try signTransaction
+          console.warn("signAndSendTransaction failed, trying signTransaction fallback:", sendErr);
         }
-        throw new Error(`Phantom imzalama hatası: ${msg}`);
       }
 
-      setStepMsg("İmza alındı! İşlem Solana blokzincirine yayınlanıyor...");
+      if (!signature) {
+        let signedTx: Transaction;
+        try {
+          signedTx = await provider.signTransaction(tx);
+        } catch (signErr: unknown) {
+          const msg = signErr instanceof Error ? signErr.message : String(signErr);
+          if (msg.includes("reject") || msg.includes("User rejected")) {
+            throw new Error("İşlem Phantom cüzdanından iptal edildi.");
+          }
+          throw new Error(`Phantom imzalama hatası: ${msg}`);
+        }
 
-      // 4. Broadcast raw transaction to Solana RPC
-      const rawTx = signedTx.serialize();
-      const signature = await conn.sendRawTransaction(rawTx, {
-        skipPreflight: false,
-        preflightCommitment: "confirmed",
-        maxRetries: 3,
-      });
+        setStepMsg("Adım 3/4: İmza alındı! İşlem Solana blokzincirine iletiliyor...");
+        const rawTx = signedTx.serialize();
+        signature = await conn.sendRawTransaction(rawTx, {
+          skipPreflight: false,
+          preflightCommitment: "confirmed",
+          maxRetries: 3,
+        });
+      }
 
-      setStepMsg(`Solana ağında onay bekleniyor... (Tx: ${signature.slice(0, 10)}…)`);
+      setStepMsg(`Adım 4/4: Solana ağında onay bekleniyor... (Tx: ${signature.slice(0, 10)}…)`);
 
-      // 5. Confirm
       const confirmation = await conn.confirmTransaction(
         {
           signature,
@@ -219,14 +247,6 @@ export default function ReferralSetupPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const blinkUrl = "https://dial.to/?action=solana-action:https://gl1tchbased.xyz/api/actions/init-referral";
-
-  const copyBlink = () => {
-    navigator.clipboard.writeText(blinkUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -309,7 +329,7 @@ export default function ReferralSetupPage() {
           </div>
         )}
 
-        <div style={{ marginTop: "2rem", display: "flex", flexDirection: "column", gap: "10px" }}>
+        <div style={{ marginTop: "2rem", display: "flex", flexDirection: "column", gap: "12px" }}>
           {!walletAddress ? (
             <button className={styles.connectBtn} onClick={handleConnect}>
               🦊 Phantom Cüzdanını Bağla
@@ -332,44 +352,23 @@ export default function ReferralSetupPage() {
                   background: "rgba(255, 255, 255, 0.05)",
                   border: "1px solid rgba(255, 255, 255, 0.15)",
                   color: "#cbd5e1",
-                  padding: "0.75rem",
+                  padding: "0.85rem",
                   borderRadius: "10px",
-                  fontSize: "0.9rem",
+                  fontSize: "0.95rem",
                   cursor: "pointer",
                   fontWeight: 600,
+                  transition: "all 0.2s",
                 }}
                 onClick={() => executeSetup(false)}
                 disabled={loading}
               >
-                ⚡ Sadece Ana Referral Hesabını Başlat (Alternatif)
+                ⚡ Sadece Ana Referral Hesabını Başlat (Tek Talimat)
               </button>
             </>
           )}
         </div>
 
-        <div className={styles.blinkBox}>
-          <div className={styles.blinkTitle}>Alternatif: Dialect / Phantom Blinks ile Aç</div>
-          <div className={styles.blinkDesc}>
-            Dilerseniz aşağıdaki bağlantıyı Dialect veya Blink destekleyen tarayıcınızda açıp doğrudan onaylayabilirsiniz:
-          </div>
-          <div className={styles.linkRow}>
-            <input className={styles.linkInput} readOnly value={blinkUrl} />
-            <button className={styles.copyBtn} onClick={copyBlink}>
-              {copied ? "Kopyalandı!" : "Kopyala"}
-            </button>
-            <a
-              href={blinkUrl}
-              target="_blank"
-              rel="noreferrer"
-              className={styles.copyBtn}
-              style={{ textDecoration: "none", display: "inline-flex", alignItems: "center" }}
-            >
-              Aç ↗
-            </a>
-          </div>
-        </div>
-
-        <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
+        <div style={{ marginTop: "2rem", textAlign: "center" }}>
           <Link href="/revenue" style={{ color: "#94a3b8", fontSize: "0.9rem" }}>
             ← Gelir &amp; Hazine Sayfasına Dön
           </Link>
