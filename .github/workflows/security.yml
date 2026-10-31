@@ -8,16 +8,22 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   secrets:
     name: Secret leak scan (gitleaks)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
       - name: gitleaks
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -25,8 +31,8 @@ jobs:
     name: Dependency audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
       # Fail on any NEW high/critical advisory in production deps. Two transitive
@@ -44,38 +50,23 @@ jobs:
     name: No fund/approval signature calls
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       # Core invariant: GL1TCH only ever requests ownership-proving message signatures.
       # These calls move funds or grant allowances and must never appear in the app.
-      - name: Grep for forbidden web3 calls
-        run: |
-          set -e
-          PATTERN='eth_sendTransaction|sendTransaction\(|setApprovalForAll|increaseAllowance|\.approve\(|signAndSendTransaction'
-          if grep -rEn --include=*.ts --include=*.tsx "$PATTERN" src bot/src 2>/dev/null; then
-            echo "::error::Forbidden fund-transfer/approval call found — GL1TCH must only request ownership signatures (see docs/threat-model.md)."
-            exit 1
-          fi
-          echo "OK — no fund-transfer/approval calls."
+      - name: Money guard (also runs before every build)
+        run: node scripts/money-guard.mjs
 
   attester:
     name: Signing confined to the memo-only attester
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       # A3 verdict anchoring: bot/src/attest/ is the only code allowed to sign a transaction, and it may only build
       # SPL Memo transactions. Signing anywhere else, or a transfer/approval builder inside the attester, fails the
       # build. Test tools under bot/e2e/ run on devnet only and are outside both src trees. See docs/threat-model.md.
-      - name: Signing lives only in bot/src/attest
+      - name: Message signing lives only in bot/src/attest
         run: |
           set -e
-          PATTERN='sendRawTransaction|sendAndConfirm|Keypair\.fromSecretKey|signTransaction|signAllTransactions|\.sign\(\['
-          # grep exits 2 on a bad pattern; fail loudly instead of reading that as "no matches".
-          grep -rEn --include=*.ts --include=*.tsx "$PATTERN" src bot/src > hits.txt || [ $? -eq 1 ]
-          if grep -v '^bot/src/attest/' hits.txt; then
-            echo "::error::Transaction signing outside bot/src/attest/ (the attester)."
-            exit 1
-          fi
-          echo "OK — signing lives only in the attester."
           # Message signing (ed25519) by a key the bot holds belongs in the attester too; tests sign with throwaway keys.
           grep -rEn --include=*.ts 'sign\.detached\(' bot/src > msg-hits.txt || [ $? -eq 1 ]
           if grep -v '^bot/src/attest/' msg-hits.txt | grep -v '\.test\.ts:'; then

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { checkSwapGate, feeLabel, parseSwapLamports, swapFee } from "./safe-swap-gate";
+import { appliedFeeBps, checkSwapGate, feeLabel, parseSwapLamports, safeSymbol, swapFee } from "./safe-swap-gate";
+import { REFERRAL_ACCOUNT } from "@/lib/official";
 
 const ADDRESS = "So11111111111111111111111111111111111111112";
 
@@ -39,15 +40,33 @@ describe("parseSwapLamports", () => {
 });
 
 describe("swapFee", () => {
-  it("charges nothing without a valid referral account", () => {
-    expect(swapFee({})).toBeNull();
-    expect(swapFee({ JUP_REFERRAL_ACCOUNT: "nope" })).toBeNull();
-    expect(feeLabel(undefined)).toBe("No GL1TCH fee");
+  it("always pays the pinned account at 50 bps: no setting can redirect or raise it", () => {
+    const pinned = { account: REFERRAL_ACCOUNT, bps: 50 };
+    expect(swapFee({})).toEqual(pinned);
+    expect(swapFee({ JUP_REFERRAL_ACCOUNT: ADDRESS })).toEqual(pinned);
+    expect(swapFee({ JUP_REFERRAL_ACCOUNT: ADDRESS, JUP_REFERRAL_FEE_BPS: "255" })).toEqual(pinned);
+    expect(feeLabel(50)).toBe("0.5% GL1TCH fee");
   });
 
-  it("defaults to 50 bps and rejects out-of-range values", () => {
-    expect(swapFee({ JUP_REFERRAL_ACCOUNT: ADDRESS })).toEqual({ account: ADDRESS, bps: 50 });
-    expect(swapFee({ JUP_REFERRAL_ACCOUNT: ADDRESS, JUP_REFERRAL_FEE_BPS: "999" })?.bps).toBe(50);
-    expect(feeLabel(50)).toBe("0.5% GL1TCH fee");
+  it("turns off with the kill switch", () => {
+    expect(swapFee({ JUP_REFERRAL_ACCOUNT: "off" })).toBeNull();
+    expect(feeLabel(undefined)).toBe("No GL1TCH fee");
+  });
+});
+
+describe("appliedFeeBps", () => {
+  it("claims the fee only when Jupiter reports it, not when it fell back to its own default", () => {
+    expect(appliedFeeBps(50, { feeBps: 50 })).toBe(50);
+    expect(appliedFeeBps(50, { feeBps: 62 })).toBe(50);
+    expect(appliedFeeBps(50, { feeBps: 10 })).toBeUndefined();
+    expect(appliedFeeBps(50, {})).toBeUndefined();
+  });
+});
+
+describe("safeSymbol", () => {
+  it("keeps plain tickers and drops text a launcher could use to fool a signer", () => {
+    expect(safeSymbol("BONK")).toBe("BONK");
+    expect(safeSymbol("VERIFIED SAFE, GL1TCH APPROVED")).toBe("this token");
+    expect(safeSymbol(undefined)).toBe("this token");
   });
 });

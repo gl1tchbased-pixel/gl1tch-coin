@@ -1,0 +1,15 @@
+{
+  "required_status_checks": {
+    "strict": false,
+    "contexts": [
+      "No fund/approval signature calls",
+      "Signing confined to the memo-only attester",
+      "Secret leak scan (gitleaks)"
+    ]
+  },
+  "enforce_admins": true,
+  "required_pull_request_reviews": null,
+  "restrictions": null,
+  "allow_force_pushes": false,
+  "allow_deletions": false
+}

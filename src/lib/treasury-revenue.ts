@@ -5,13 +5,13 @@
  * on Solscan and Basescan.
  */
 
-import { DEPLOYER_WALLET } from "@/lib/official";
+import { DEPLOYER_WALLET, PAY_TO_BASE } from "@/lib/official";
 
 /** Pump.fun creator-vault PDA for deployer H5qbtquJzLVrwYj5opedoQCy9edQQZAtiyPMTMFFaFb4. */
 export const PUMP_CREATOR_VAULT_PDA = "9kgnPTRVNfaJvuYKwhq6DyF7PfxVnbM91hQc7tY56r34";
 
 /** Disclosed Base receiving wallet for x402 USDC settlements. */
-export const DEFAULT_BASE_TREASURY = "0xbE1e88C07a080078629f793013597E43183F6Dca";
+export const DEFAULT_BASE_TREASURY = PAY_TO_BASE;
 
 const SOLANA_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const BASE_USDC_CONTRACT = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";

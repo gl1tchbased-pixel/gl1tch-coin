@@ -5,7 +5,7 @@
  * holds a key or funds.
  */
 
-import { ATTESTER_WALLET } from "@/lib/official";
+import { ATTESTER_WALLET, PAY_TO_BASE, PAY_TO_SOLANA } from "@/lib/official";
 
 /** CAIP-2 chain id, the form x402 uses for networks. */
 export type Caip2 = `${string}:${string}`;
@@ -105,19 +105,19 @@ const EVM_ADDR = /^0x[0-9a-fA-F]{40}$/;
 
 type Env = Record<string, string | undefined>;
 
-/** Read the receiving wallets. A set-but-invalid value is reported in `rejected` and never used.
- *  The attester wallet is refused: its key sits in CI secrets to sign memos, and revenue must never land
- *  in a wallet whose key lives there. */
+/** Read the receiving wallets. A set value that isn't the pinned wallet is reported in `rejected` and never used, so
+ *  changing a setting can turn a network off but can't send the money elsewhere. The attester wallet is refused too:
+ *  its key sits in CI secrets to sign memos, and revenue must never land in a wallet whose key lives there. */
 export function readPayTo(env: Env): { solana?: string; base?: string; rejected: string[] } {
   const out: { solana?: string; base?: string; rejected: string[] } = { rejected: [] };
   const sol = (env.X402_PAY_TO_SOLANA ?? "").trim();
   const base = (env.X402_PAY_TO_BASE ?? "").trim();
   if (sol) {
-    if (SOLANA_ADDR.test(sol) && sol !== ATTESTER_WALLET) out.solana = sol;
+    if (SOLANA_ADDR.test(sol) && sol === PAY_TO_SOLANA && sol !== ATTESTER_WALLET) out.solana = sol;
     else out.rejected.push("X402_PAY_TO_SOLANA");
   }
   if (base) {
-    if (EVM_ADDR.test(base)) out.base = base;
+    if (EVM_ADDR.test(base) && base.toLowerCase() === PAY_TO_BASE.toLowerCase()) out.base = base;
     else out.rejected.push("X402_PAY_TO_BASE");
   }
   return out;
