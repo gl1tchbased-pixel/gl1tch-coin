@@ -3,16 +3,21 @@ import {
   PublicKey,
   Transaction,
   TransactionInstruction,
-  ComputeBudgetProgram,
   TransactionMessage,
   VersionedTransaction,
+  ComputeBudgetProgram,
 } from "@solana/web3.js";
 
 export const JUP_REFERRAL_PROGRAM_ID = new PublicKey(
   "REFER4ZgmyYx9c6He5XfaTMiGfdLwRnkV4RPp9t9iF3"
 );
+// Classic Jupiter Swap Project (v6)
 export const JUP_SWAP_PROJECT_PUBKEY = new PublicKey(
   "45ruCyfdRkWpRNGEqWzjCiXRHkZs8WXCLQ67Pnpye7Hp"
+);
+// Jupiter Ultra Project (v2 Order API used by Safe Swap)
+export const JUP_ULTRA_PROJECT_PUBKEY = new PublicKey(
+  "DkiqsTrw1u1bYFumumC7sCG2S8K25qc2vemJFHyW2wJc"
 );
 export const SYSTEM_PROGRAM_ID = new PublicKey(
   "11111111111111111111111111111111"
@@ -28,13 +33,11 @@ export const USDC_MINT = new PublicKey(
 );
 export const DEFAULT_REFERRAL_NAME = "GL1TCH";
 
-// Deterministic 8-byte Anchor discriminators (zero Node crypto dependencies, safe in any browser)
-// sha256("global:initialize_referral_account_with_name")[0..8] -> f1be6b1af4ec77e5
+// Deterministic 8-byte Anchor discriminators
 export const SIGHASH_INIT_REFERRAL = new Uint8Array([
   241, 190, 107, 26, 244, 236, 119, 229,
 ]);
 
-// sha256("global:initialize_referral_token_account")[0..8] -> 7d12465f56b3ddbe
 export const SIGHASH_INIT_TOKEN = new Uint8Array([
   125, 18, 70, 95, 86, 179, 221, 190,
 ]);
@@ -123,6 +126,76 @@ export function buildInitializeReferralTokenAccountIx(params: {
   });
 }
 
+export interface DualReferralStatus {
+  classic: {
+    project: string;
+    referralPda: string;
+    referralInitialized: boolean;
+    wsolAtaPda: string;
+    wsolInitialized: boolean;
+    usdcAtaPda: string;
+    usdcInitialized: boolean;
+    ready: boolean;
+  };
+  ultra: {
+    project: string;
+    referralPda: string;
+    referralInitialized: boolean;
+    wsolAtaPda: string;
+    wsolInitialized: boolean;
+    ready: boolean;
+  };
+  ready: boolean;
+}
+
+export async function checkDualReferralStatus(
+  conn: Connection,
+  name: string = DEFAULT_REFERRAL_NAME
+): Promise<DualReferralStatus> {
+  const [classicPda] = getReferralAccountPda(name, JUP_SWAP_PROJECT_PUBKEY);
+  const [classicWsol] = getReferralTokenAccountPda(classicPda, WSOL_MINT);
+  const [classicUsdc] = getReferralTokenAccountPda(classicPda, USDC_MINT);
+
+  const [ultraPda] = getReferralAccountPda(name, JUP_ULTRA_PROJECT_PUBKEY);
+  const [ultraWsol] = getReferralTokenAccountPda(ultraPda, WSOL_MINT);
+
+  const infos = await conn.getMultipleAccountsInfo([
+    classicPda,
+    classicWsol,
+    classicUsdc,
+    ultraPda,
+    ultraWsol,
+  ]);
+
+  const classicInit = Boolean(infos[0]);
+  const classicWsolInit = Boolean(infos[1]);
+  const classicUsdcInit = Boolean(infos[2]);
+  const ultraInit = Boolean(infos[3]);
+  const ultraWsolInit = Boolean(infos[4]);
+
+  return {
+    classic: {
+      project: JUP_SWAP_PROJECT_PUBKEY.toBase58(),
+      referralPda: classicPda.toBase58(),
+      referralInitialized: classicInit,
+      wsolAtaPda: classicWsol.toBase58(),
+      wsolInitialized: classicWsolInit,
+      usdcAtaPda: classicUsdc.toBase58(),
+      usdcInitialized: classicUsdcInit,
+      ready: classicInit && classicWsolInit,
+    },
+    ultra: {
+      project: JUP_ULTRA_PROJECT_PUBKEY.toBase58(),
+      referralPda: ultraPda.toBase58(),
+      referralInitialized: ultraInit,
+      wsolAtaPda: ultraWsol.toBase58(),
+      wsolInitialized: ultraWsolInit,
+      ready: ultraInit && ultraWsolInit,
+    },
+    ready: ultraInit && ultraWsolInit,
+  };
+}
+
 export interface ReferralStatus {
   name: string;
   referralPda: string;
@@ -136,9 +209,10 @@ export interface ReferralStatus {
 
 export async function checkReferralStatus(
   conn: Connection,
-  name: string = DEFAULT_REFERRAL_NAME
+  name: string = DEFAULT_REFERRAL_NAME,
+  projectPubKey: PublicKey = JUP_ULTRA_PROJECT_PUBKEY
 ): Promise<ReferralStatus> {
-  const [referralPda] = getReferralAccountPda(name);
+  const [referralPda] = getReferralAccountPda(name, projectPubKey);
   const [wsolAtaPda] = getReferralTokenAccountPda(referralPda, WSOL_MINT);
   const [usdcAtaPda] = getReferralTokenAccountPda(referralPda, USDC_MINT);
 
@@ -168,6 +242,7 @@ export async function buildCompleteReferralSetupTransaction(params: {
   conn: Connection;
   payer: PublicKey;
   name?: string;
+  project?: PublicKey;
   microLamports?: number;
   onlyBase?: boolean;
 }): Promise<{
@@ -177,8 +252,9 @@ export async function buildCompleteReferralSetupTransaction(params: {
   missingCount: number;
 }> {
   const name = params.name || DEFAULT_REFERRAL_NAME;
-  const status = await checkReferralStatus(params.conn, name);
-  const [referralPda] = getReferralAccountPda(name);
+  const project = params.project || JUP_ULTRA_PROJECT_PUBKEY;
+  const status = await checkReferralStatus(params.conn, name, project);
+  const [referralPda] = getReferralAccountPda(name, project);
 
   const instructions: TransactionInstruction[] = [];
   let missingCount = 0;
@@ -195,6 +271,7 @@ export async function buildCompleteReferralSetupTransaction(params: {
     instructions.push(
       buildInitializeReferralAccountWithNameIx({
         payer: params.payer,
+        project,
         name,
       })
     );
@@ -208,6 +285,7 @@ export async function buildCompleteReferralSetupTransaction(params: {
           payer: params.payer,
           referralAccount: referralPda,
           mint: WSOL_MINT,
+          project,
         })
       );
       missingCount++;
@@ -219,6 +297,7 @@ export async function buildCompleteReferralSetupTransaction(params: {
           payer: params.payer,
           referralAccount: referralPda,
           mint: USDC_MINT,
+          project,
         })
       );
       missingCount++;
@@ -227,13 +306,11 @@ export async function buildCompleteReferralSetupTransaction(params: {
 
   const { blockhash } = await params.conn.getLatestBlockhash("confirmed");
 
-  // Legacy Transaction
   const tx = new Transaction();
   instructions.forEach((ix) => tx.add(ix));
   tx.recentBlockhash = blockhash;
   tx.feePayer = params.payer;
 
-  // Modern Versioned Transaction (v0)
   const messageV0 = new TransactionMessage({
     payerKey: params.payer,
     recentBlockhash: blockhash,

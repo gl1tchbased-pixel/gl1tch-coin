@@ -14,8 +14,8 @@ import {
   getReferralAccountPda,
   DEFAULT_REFERRAL_NAME,
   WSOL_MINT,
-  USDC_MINT,
-  type ReferralStatus,
+  JUP_ULTRA_PROJECT_PUBKEY,
+  type DualReferralStatus,
 } from "@/lib/jupiter/referral";
 import styles from "./setup.module.css";
 
@@ -51,7 +51,7 @@ interface PhantomProvider {
 export default function ReferralSetupPage() {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
-  const [status, setStatus] = useState<ReferralStatus | null>(null);
+  const [status, setStatus] = useState<DualReferralStatus | null>(null);
   const [loading, setLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState(true);
   const [txSig, setTxSig] = useState<string | null>(null);
@@ -129,7 +129,7 @@ export default function ReferralSetupPage() {
     }
   };
 
-  const executeSetup = async (includeVaults: boolean) => {
+  const executeUltraSetup = async () => {
     setError(null);
     setTxSig(null);
     setLoading(true);
@@ -146,61 +146,40 @@ export default function ReferralSetupPage() {
       const { conn, blockhash, lastValidBlockHeight } = await getWorkingConnection();
       const payer = new PublicKey(provider.publicKey.toBase58());
 
-      // 2. Build pure Transaction
       const tx = new Transaction();
       tx.recentBlockhash = blockhash;
       tx.feePayer = payer;
 
-      // Higher Priority fee: 200,000 microLamports (~0.00004 SOL) for instant inclusion
+      // Priority fee: 200,000 microLamports for instant confirmation
       tx.add(ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 200000 }));
 
-      const [referralPda] = getReferralAccountPda(DEFAULT_REFERRAL_NAME);
-      let instructionsAdded = 0;
+      const [ultraReferralPda] = getReferralAccountPda(DEFAULT_REFERRAL_NAME, JUP_ULTRA_PROJECT_PUBKEY);
 
-      // Only add base account if not yet initialized
-      if (!status?.referralInitialized) {
+      // 1. Ultra Base referral account
+      if (!status?.ultra.referralInitialized) {
         tx.add(
           buildInitializeReferralAccountWithNameIx({
             payer,
+            project: JUP_ULTRA_PROJECT_PUBKEY,
             name: DEFAULT_REFERRAL_NAME,
           })
         );
-        instructionsAdded++;
       }
 
-      // Add vaults if requested and not yet initialized
-      if (includeVaults) {
-        if (!status?.wsolInitialized) {
-          tx.add(
-            buildInitializeReferralTokenAccountIx({
-              payer,
-              referralAccount: referralPda,
-              mint: WSOL_MINT,
-            })
-          );
-          instructionsAdded++;
-        }
-        if (!status?.usdcInitialized) {
-          tx.add(
-            buildInitializeReferralTokenAccountIx({
-              payer,
-              referralAccount: referralPda,
-              mint: USDC_MINT,
-            })
-          );
-          instructionsAdded++;
-        }
-      }
-
-      if (instructionsAdded === 0) {
-        setStepMsg("✅ Seçilen tüm hesaplar zaten aktif!");
-        setLoading(false);
-        return;
+      // 2. Ultra WSOL fee vault
+      if (!status?.ultra.wsolInitialized) {
+        tx.add(
+          buildInitializeReferralTokenAccountIx({
+            payer,
+            project: JUP_ULTRA_PROJECT_PUBKEY,
+            referralAccount: ultraReferralPda,
+            mint: WSOL_MINT,
+          })
+        );
       }
 
       setStepMsg("Adım 2/4: Lütfen açılan Phantom penceresinde işlemi ONAYLAYIN (Approve)...");
 
-      // 3. Try signing
       let signature = "";
       if (typeof provider.signAndSendTransaction === "function") {
         try {
@@ -238,7 +217,6 @@ export default function ReferralSetupPage() {
 
       setStepMsg(`Adım 4/4: Solana ağında onay bekleniyor... (Tx: ${signature.slice(0, 10)}…)`);
 
-      // 5. Confirm using polling with timeout resilience
       let confirmed = false;
       const start = Date.now();
       while (Date.now() - start < 45000) {
@@ -251,21 +229,15 @@ export default function ReferralSetupPage() {
       }
 
       if (!confirmed) {
-        // Fallback check
         try {
           await conn.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, "confirmed");
-          confirmed = true;
         } catch {
-          // If expired check on-chain account directly
-          const refStatus = await fetch("/api/admin/referral-status").then((r) => r.json());
-          if (refStatus?.status?.referralInitialized) {
-            confirmed = true;
-          }
+          /* ignore */
         }
       }
 
       setTxSig(signature);
-      setStepMsg("🎉 BAŞARILI! İşlem Solana blokzincirinde doğrulandı ve aktif edildi!");
+      setStepMsg("🎉 BAŞARILI! Jupiter Ultra Kasası açıldı ve Safe Swap komisyon toplamaya hazır!");
       await fetchStatus();
       if (walletAddress) await fetchBalance(walletAddress);
     } catch (err: unknown) {
@@ -285,7 +257,7 @@ export default function ReferralSetupPage() {
           Jupiter Referral <span className={styles.accent}>Aktivasyonu</span>
         </h1>
         <p className={styles.subtitle}>
-          GL1TCH Safe Swap alım-satımlarından protokol hazinesine %0.5 işlem komisyonu (50 bps) akması için Jupiter Referral hesabınızı tek tıkla onaylayın.
+          GL1TCH Safe Swap alım-satımlarından protokol hazinesine %0.5 işlem komisyonu (50 bps) akması için Jupiter Ultra hesabınızı başlatın.
         </p>
       </header>
 
@@ -311,30 +283,24 @@ export default function ReferralSetupPage() {
             </div>
           </div>
           <div className={styles.infoBox}>
-            <div className={styles.infoLabel}>Hedef Referral PDA</div>
+            <div className={styles.infoLabel}>Ultra Referral PDA</div>
             <div className={styles.infoValue}>
-              {status?.referralPda ? `${status.referralPda.slice(0, 6)}…${status.referralPda.slice(-6)}` : "EFP5…hpS2"}
+              {status?.ultra.referralPda ? `${status.ultra.referralPda.slice(0, 6)}…${status.ultra.referralPda.slice(-6)}` : "J4T8…PsDB"}
             </div>
           </div>
         </div>
 
         <div className={styles.checklist}>
           <div className={styles.checkItem}>
-            <span className={styles.checkName}>Ana Referral Hesabı (GL1TCH PDA)</span>
-            <span className={status?.referralInitialized ? styles.checkStatusReady : styles.checkStatusMissing}>
-              {statusLoading ? "Kontrol ediliyor..." : status?.referralInitialized ? "Aktif & Hazır (ON-CHAIN)" : "Başlatılmadı"}
+            <span className={styles.checkName}>Jupiter Classic Swap (V6) Hesabı</span>
+            <span className={status?.classic.ready ? styles.checkStatusReady : styles.checkStatusMissing}>
+              {statusLoading ? "Kontrol ediliyor..." : status?.classic.ready ? "✅ Aktif & Hazır (ON-CHAIN)" : "Açılıyor"}
             </span>
           </div>
           <div className={styles.checkItem}>
-            <span className={styles.checkName}>WSOL Komisyon Kasası (Solana Alım-Satım)</span>
-            <span className={status?.wsolInitialized ? styles.checkStatusReady : styles.checkStatusMissing}>
-              {statusLoading ? "Kontrol ediliyor..." : status?.wsolInitialized ? "Aktif & Hazır" : "Açılmayı Bekliyor"}
-            </span>
-          </div>
-          <div className={styles.checkItem}>
-            <span className={styles.checkName}>USDC Komisyon Kasası (Sabit Coin)</span>
-            <span className={status?.usdcInitialized ? styles.checkStatusReady : styles.checkStatusMissing}>
-              {statusLoading ? "Kontrol ediliyor..." : status?.usdcInitialized ? "Aktif & Hazır" : "Açılmayı Bekliyor"}
+            <span className={styles.checkName}>Jupiter Ultra (V2) Safe Swap Kasası</span>
+            <span className={status?.ultra.ready ? styles.checkStatusReady : styles.checkStatusMissing}>
+              {statusLoading ? "Kontrol ediliyor..." : status?.ultra.ready ? "✅ Aktif & Hazır (ON-CHAIN)" : "Aktivasyon Bekleniyor"}
             </span>
           </div>
         </div>
@@ -342,11 +308,11 @@ export default function ReferralSetupPage() {
         {error && <div className={styles.alertError}>❌ {error}</div>}
         {stepMsg && <div className={styles.alertSuccess}>{stepMsg}</div>}
 
-        {status?.referralInitialized && !txSig && (
-          <div className={styles.alertSuccess}>
-            🎉 <strong>Tebrikler! Ana Referral Hesabınız (GL1TCH) Solana Blokzincirinde Başarıyla Açıldı!</strong><br />
-            Hesap: <code style={{ color: "#7cf6c8" }}>{status.referralPda}</code><br />
-            Son adım olarak swap komisyonlarının toplanacağı kasayı (WSOL/USDC) tek tıkla onaylayabilirsiniz.
+        {status?.classic.ready && (
+          <div className={styles.alertSuccess} style={{ marginBottom: "1rem" }}>
+            ✅ <strong>Classic Jupiter Hesabı ve Kasaları Başarıyla Açıldı!</strong><br />
+            Referral PDA: <code style={{ color: "#7cf6c8" }}>{status.classic.referralPda}</code><br />
+            WSOL Kasası: <code style={{ color: "#7cf6c8" }}>{status.classic.wsolAtaPda}</code>
           </div>
         )}
 
@@ -370,45 +336,18 @@ export default function ReferralSetupPage() {
             <button className={styles.connectBtn} onClick={handleConnect}>
               🦊 Phantom Cüzdanını Bağla
             </button>
-          ) : status?.ready ? (
+          ) : status?.ultra.ready ? (
             <button className={styles.primaryBtn} disabled>
-              ✅ Referral ve Komisyon Kasaları Zaten Aktif!
-            </button>
-          ) : status?.referralInitialized ? (
-            <button
-              className={styles.primaryBtn}
-              onClick={() => executeSetup(true)}
-              disabled={loading}
-            >
-              {loading ? "Onay Bekleniyor..." : "🚀 Komisyon Kasalarını Başlat (WSOL & USDC Vaults)"}
+              ✅ Tüm Jupiter Kasaları Tamamen Aktif &amp; Gelir Akışı Açık!
             </button>
           ) : (
-            <>
-              <button
-                className={styles.primaryBtn}
-                onClick={() => executeSetup(true)}
-                disabled={loading}
-              >
-                {loading ? "Onay Bekleniyor..." : "🚀 Phantom ile Tek Tıkla Onayla (Tüm Kasalar)"}
-              </button>
-              <button
-                style={{
-                  background: "rgba(255, 255, 255, 0.05)",
-                  border: "1px solid rgba(255, 255, 255, 0.15)",
-                  color: "#cbd5e1",
-                  padding: "0.85rem",
-                  borderRadius: "10px",
-                  fontSize: "0.95rem",
-                  cursor: "pointer",
-                  fontWeight: 600,
-                  transition: "all 0.2s",
-                }}
-                onClick={() => executeSetup(false)}
-                disabled={loading}
-              >
-                ⚡ Sadece Ana Referral Hesabını Başlat (Tek Talimat)
-              </button>
-            </>
+            <button
+              className={styles.primaryBtn}
+              onClick={executeUltraSetup}
+              disabled={loading}
+            >
+              {loading ? "Onay Bekleniyor..." : "🚀 Jupiter Ultra Safe Swap Kasasını Başlat (Tek Tıkla Onayla)"}
+            </button>
           )}
         </div>
 

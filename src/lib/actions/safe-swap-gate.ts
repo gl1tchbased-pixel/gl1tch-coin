@@ -46,9 +46,10 @@ export function parseSwapLamports(raw: string | null): number | null {
   return Math.round(sol * 1e9);
 }
 
-export const JUP_REFERRAL_ACCOUNT_DEFAULT = "EFP5EHXwkBScaVwCkBHkr9sc2wYsKRathmB1zJmfhpS2";
+// Jupiter Ultra Referral PDA for GL1TCH (project DkiqsTrw1u1bYFumumC7sCG2S8K25qc2vemJFHyW2wJc)
+export const JUP_REFERRAL_ACCOUNT_DEFAULT = "J4T8vmahpgiGmjkDXTaacVSAw9iQxgP7P81PCS31PsDB";
 
-/** The fee defaults to the initialized GL1TCH on-chain referral account (50 bps = 0.5%). */
+/** The fee defaults to the GL1TCH on-chain referral account (50 bps = 0.5%). */
 export function swapFee(env: Record<string, string | undefined> = process.env): { account: string; bps: number } | null {
   const account = env.JUP_REFERRAL_ACCOUNT ?? (env === process.env ? JUP_REFERRAL_ACCOUNT_DEFAULT : undefined);
   if (!account || !isSolanaAddress(account)) return null;
