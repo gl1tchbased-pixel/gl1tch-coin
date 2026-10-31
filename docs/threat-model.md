@@ -39,7 +39,7 @@ Full map and incident steps: `docs/security/treasury-runbook.md`.
 - **The fee is conditional on chain state.** Before asking Jupiter for a fee, the site reads the referral account. Owner not the pinned wallet, owner is the attester, lowered share, no vault, or a failed read: no fee, and the swap still runs.
 - **Jupiter's answer isn't trusted blindly.** `swapTxProblem` reads the transaction before it reaches a wallet: the taker is the only signer, top-level programs are on a list, no top-level approve, authority change or token transfer, SOL moved and priority fee are capped. It doesn't look inside Jupiter's own programs.
 - **Money watch** (`bot/src/money-watch`) reads the chain and the live site every 5 minutes from outside Vercel and messages the admins. It holds no key.
-- **Known gap until the founder acts:** the referral accounts are owned by the attester, whose key is in CI. The transfer takes one signature and the program has no accept step. No fee flows until they move (`scripts/vault-transfer`).
+- **Owner moved off CI:** the referral accounts belong to a cold wallet (`REFERRAL_PARTNER`) whose key is on no server. They used to belong to the attester. Fees can't be redirected without that wallet's signature; the program has no accept step, so the watch also alerts on any owner change.
 - **Accepted trust:** Jupiter can upgrade the referral program and change our share, so accumulated fees should be claimed regularly. A hijacked Vercel account can ship any code; the watch detects it but can't stop it.
 
 ## Abuse limits in force
@@ -75,4 +75,5 @@ Agents pay per call in USDC. We hold no key: `payTo` is a founder-owned receive 
 - 2026-10-22 — per-IP limits on every public route and the bot server, constant-time token checks, radar sweep made non-triggerable; attester-key rules written before A3 step 2.
 - 2026-10-22 — A3 step 2 built to those rules (runner, linker, proof endpoints, CI confinement); the review added the genesis-hash check and signer verification on every memo hint.
 - 2026-10-28 — paid agent API (x402) added: entry points, no-charge-on-failure, private caching, payTo guard, ledger token risk.
+- 2026-10-31 — referral accounts moved from the attester to a cold wallet; Safe Swap fee switched on behind the on-chain check.
 - 2026-10-28 — attester griefing hardened over two security reviews: signer pinned in code (runner and linker); token accounts no longer read (a dust or token-account gift can't halt sealing); SOL refuses only above 2 SOL; history paged with a per-run verify budget (120, 3 per root) and a two-anchor mode that keeps up when the last 24 h can't be read or counted; the runner reports each anchor to the bot, which verifies and links it directly, so copied memos can't hold a sweep unlinked. Halting sealing now takes gifting the attester more than 2 SOL, or controlling the attester's RPC or GitHub environment.
