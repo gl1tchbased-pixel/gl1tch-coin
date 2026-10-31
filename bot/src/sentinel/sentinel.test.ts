@@ -46,7 +46,6 @@ describe("SentinelStore", () => {
       verdict: "CLEAN",
       lpLockedPct: 100,
       alertedAt: Date.now(),
-      blinkUrl: "https://dial.to/?action=...",
     };
 
     expect(store.recordAlert(a1)).toBe(true);

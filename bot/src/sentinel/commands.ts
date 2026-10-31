@@ -14,9 +14,7 @@ const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
 function buildSentinelKb(): InlineKeyboard {
   const kb = new InlineKeyboard();
   kb.text("🔍 View Latest Clean Scans", "sentinel:feed")
-    .url("🌐 Web Radar ↗", `${OFFICIAL.SITE}/radar`)
-    .row()
-    .url("⚡ Solana Blink ↗", `https://dial.to/?action=solana-action:${OFFICIAL.SITE}/api/actions/safe-swap`);
+    .url("🌐 Web Radar ↗", `${OFFICIAL.SITE}/radar`);
   return kb;
 }
 
@@ -48,7 +46,7 @@ sentinelCommands.callbackQuery("sentinel:feed", async (ctx) => {
     text +=
       `• <b>${esc(g.symbol)}</b> (${esc(g.name)}) · <b>${g.score}/100 ${esc(g.verdict)}</b>\n` +
       `  LP Locked: <b>${g.lpLockedPct}%</b> · CA: <code>${g.mint}</code>\n` +
-      `  ⚡ <a href="${g.blinkUrl}">Safe Swap Blink →</a>\n\n`;
+      `  🔬 <a href="${OFFICIAL.SITE}/scan/solana-${g.mint}">Full scan report →</a>\n\n`;
   }
 
   await ctx.reply(text, HTML);

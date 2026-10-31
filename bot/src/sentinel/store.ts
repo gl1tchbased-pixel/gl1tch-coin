@@ -17,7 +17,6 @@ export interface SentinelGemAlert {
   verdict: string;
   lpLockedPct: number;
   alertedAt: number;
-  blinkUrl: string;
 }
 
 interface PersistedSentinel {

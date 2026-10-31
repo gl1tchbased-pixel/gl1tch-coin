@@ -6,6 +6,8 @@ import type { TokenCandidate } from "@/lib/scan-multichain";
 import { CHAIN_LABEL } from "@/lib/scan-multichain";
 import { formatHoldingPct } from "@/lib/deployer-holdings";
 import { fmtPrice } from "@/lib/market";
+import { checkSwapGate } from "@/lib/actions/safe-swap-gate";
+import { CONTRACT_ADDRESS } from "@/lib/official";
 import { RiskOrb } from "./RiskOrb";
 import { unlock } from "@/lib/fun/achievements";
 import styles from "./ScanTool.module.css";
@@ -306,13 +308,14 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
             </div>
           )}
 
-          {result.chain === "solana" && result.mint && result.verdict !== "HIGH RISK" && result.verdict !== "RUG-SHAPED" && (
+          {/* Same gate as the swap itself, and never on our own token: a scanner shouldn't offer a paid buy of what it just graded for itself. */}
+          {result.chain === "solana" && result.mint && result.mint !== CONTRACT_ADDRESS && checkSwapGate(200, result).ok && (
             <div className={styles.blinkCard}>
               <div className={styles.blinkHead}>
                 <span className={styles.blinkIcon}>⚡</span>
                 <div>
                   <strong>Solana Safe Swap Blink</strong>
-                  <p>Optional swap via Jupiter, offered only after a passing scan. You sign in your own wallet. Any GL1TCH fee is shown first.</p>
+                  <p>Optional swap via Jupiter, offered only after a passing scan. A passing scan is not a recommendation and cannot rule out losses. You sign in your own wallet. GL1TCH earns a 0.5% fee on swaps where the swap screen shows it; the fee plays no part in the score.</p>
                 </div>
               </div>
               <div className={styles.blinkActions}>

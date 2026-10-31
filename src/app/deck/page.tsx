@@ -323,7 +323,7 @@ export default async function DeckPage() {
           </li>
           <li>
             An optional scan-gated swap through Jupiter is also live. A GL1TCH fee of 0.5% applies only when the swap
-            screen shows it, before signing. It is never required to use the scanner.
+            screen shows it, before signing, and plays no part in a token&apos;s score. It is never required to use the scanner.
           </li>
         </ul>
       </article>

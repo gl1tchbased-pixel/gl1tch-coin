@@ -40,6 +40,7 @@ Full map and incident steps: `docs/security/treasury-runbook.md`.
 - **Jupiter's answer isn't trusted blindly.** `swapTxProblem` reads the transaction before it reaches a wallet: the taker is the only signer, top-level programs are on a list, no top-level approve, authority change or token transfer, SOL moved and priority fee are capped. It doesn't look inside Jupiter's own programs.
 - **Money watch** (`bot/src/money-watch`) reads the chain and the live site every 5 minutes from outside Vercel and messages the admins. It holds no key.
 - **Owner moved off CI:** the referral accounts belong to a cold wallet (`REFERRAL_PARTNER`) whose key is on no server. They used to belong to the attester. Fees can't be redirected without that wallet's signature; the program has no accept step, so the watch also alerts on any owner change.
+- **Conflict of interest:** we earn when someone swaps, so a generous verdict could pay. The fee isn't an input to scoring and the scoring code is public. The swap link appears only after the same gate the swap enforces, never on our own token and never in automated feeds, so a person always asks first.
 - **Accepted trust:** Jupiter can upgrade the referral program and change our share, so accumulated fees should be claimed regularly. A hijacked Vercel account can ship any code; the watch detects it but can't stop it.
 
 ## Abuse limits in force
