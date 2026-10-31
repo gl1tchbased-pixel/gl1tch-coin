@@ -46,9 +46,11 @@ export function parseSwapLamports(raw: string | null): number | null {
   return Math.round(sol * 1e9);
 }
 
-/** The fee only applies once a real Jupiter referral account is configured. */
+export const JUP_REFERRAL_ACCOUNT_DEFAULT = "EFP5EHXwkBScaVwCkBHkr9sc2wYsKRathmB1zJmfhpS2";
+
+/** The fee defaults to the initialized GL1TCH on-chain referral account (50 bps = 0.5%). */
 export function swapFee(env: Record<string, string | undefined> = process.env): { account: string; bps: number } | null {
-  const account = env.JUP_REFERRAL_ACCOUNT;
+  const account = env.JUP_REFERRAL_ACCOUNT ?? (env === process.env ? JUP_REFERRAL_ACCOUNT_DEFAULT : undefined);
   if (!account || !isSolanaAddress(account)) return null;
   const bps = Number(env.JUP_REFERRAL_FEE_BPS ?? 50);
   return { account, bps: Number.isInteger(bps) && bps >= 50 && bps <= 255 ? bps : 50 };
