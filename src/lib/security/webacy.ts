@@ -103,3 +103,4 @@ export class WebacyClient {
 }
 
 export const webacy = new WebacyClient();
+

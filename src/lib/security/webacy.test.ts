@@ -17,3 +17,4 @@ describe("WebacyClient", () => {
     expect(client.isConfigured()).toBe(true);
   });
 });
+

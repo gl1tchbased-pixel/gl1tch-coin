@@ -33,7 +33,7 @@ async function scan(mint: string) {
 }
 
 export async function GET(req: NextRequest) {
-  const mint = req.nextUrl.searchParams.get("mint") || CONTRACT_ADDRESS;
+  const mint = req.nextUrl.searchParams.get("mint") || req.nextUrl.searchParams.get("outputMint") || CONTRACT_ADDRESS;
   if (!isSolanaAddress(mint)) return actionJsonResponse({ error: "Invalid token address" }, 400);
 
   const { status, body } = await scan(mint);
@@ -87,7 +87,7 @@ async function jupiterOrder(params: URLSearchParams) {
 }
 
 export async function POST(req: NextRequest) {
-  const mint = req.nextUrl.searchParams.get("mint") || CONTRACT_ADDRESS;
+  const mint = req.nextUrl.searchParams.get("mint") || req.nextUrl.searchParams.get("outputMint") || CONTRACT_ADDRESS;
   if (!isSolanaAddress(mint)) return actionJsonResponse({ error: "Invalid token address" }, 400);
 
   const lamports = parseSwapLamports(req.nextUrl.searchParams.get("amount"));

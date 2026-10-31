@@ -26,7 +26,7 @@ export default function BlinksPage() {
   const origin = "https://gl1tchbased.xyz";
 
   // Action URLs
-  const swapActionUrl = `${origin}/api/actions/swap?outputMint=${tokenMint}`;
+  const swapActionUrl = `${origin}/api/actions/safe-swap?mint=${tokenMint}`;
   const scanActionUrl = `${origin}/api/actions/scan?address=${tokenMint}`;
   const currentActionUrl = activeType === "swap" ? swapActionUrl : scanActionUrl;
 
@@ -340,3 +340,4 @@ GET  https://gl1tchbased.xyz/api/actions/scan?address={ADDRESS}   -> Returns Tok
     </div>
   );
 }
+
