@@ -10,7 +10,7 @@ import styles from "./network.module.css";
 export const metadata: Metadata = shareMeta({
   title: "Signal Network — live GL1TCH engine, market and trust | GL1TCH",
   description:
-    "GL1TCH is crypto risk-intelligence infrastructure: a multi-chain safety scanner + the Signal Graph (a growing deployer-reputation database) + a Know Your Agent trust layer. Live numbers — tokens scanned, deployers mapped, rugs caught, agents assessed.",
+    "GL1TCH is crypto risk-intelligence infrastructure: a multi-chain safety scanner + the Signal Graph (a growing deployer-reputation database) + a Know Your Agent trust layer. Live numbers: scans run (mostly automated), deployers mapped, high-risk flags, agents assessed.",
   alternates: { canonical: "/network" },
 });
 
