@@ -10,7 +10,7 @@ import styles from "../buyback/buyback.module.css";
 export const metadata: Metadata = shareMeta({
   title: "Revenue & Treasury — GL1TCH",
   description:
-    "GL1TCH's public revenue ledger and live on-chain treasury. AI agents pay per call in USDC through x402; creator fee claims and wallet balances are read straight from Solana and Base.",
+    "GL1TCH's public revenue ledger and live on-chain treasury. AI agents pay per call in USDC through x402, Safe Swap takes a disclosed 0.5% fee, and balances are read straight from Solana and Base.",
   alternates: { canonical: "/revenue" },
 });
 
@@ -29,6 +29,10 @@ function txUrl(e: RevenueEntry): string | null {
 
 const when = (ms: number) => new Date(ms).toISOString().slice(0, 16).replace("T", " ") + " UTC";
 const shortAddr = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
+/** A failed chain read shows no number rather than a wrong one. */
+const shown = (v: number | null, format: (n: number) => string) => (v === null ? "—" : format(v));
+const solAmount = (digits: number) => (n: number) => `${n.toFixed(digits)} SOL`;
+const usdc = (digits: number) => (n: number) => `$${n.toFixed(digits)}`;
 
 export default async function RevenuePage() {
   const [rev, treasury] = await Promise.all([getRevenue(), getTreasurySnapshot()]);
@@ -39,7 +43,7 @@ export default async function RevenuePage() {
   return (
     <main className={styles.page}>
       <header className={styles.hero}>
-        <span className={styles.eyebrow}>Paid agent API · Creator fees · On-chain receipts</span>
+        <span className={styles.eyebrow}>Paid agent API · Safe Swap fee · Creator fees · On-chain receipts</span>
         <h1 className={styles.title}>
           Revenue. Every dollar, <span className={styles.signal}>on-chain</span>.
         </h1>
@@ -48,6 +52,11 @@ export default async function RevenuePage() {
           on-chain straight to a GL1TCH wallet and is recorded here with its transaction (the latest 50 are
           listed), alongside live Solana and Base treasury balances and claimed protocol creator rewards.
           Our own test payments are listed too, marked, and never counted.
+        </p>
+        <p className={styles.lede}>
+          Safe Swap takes a 0.5% fee on swaps where the swap screen shows it, before you sign. Jupiter keeps 20%
+          of that fee. The rest collects in a public vault owned by a separate wallet ({shortAddr(treasury.feeVaultOwner)})
+          whose key is on none of our servers.
         </p>
         {paysDeployer && (
           <p className={styles.lede}>
@@ -80,12 +89,16 @@ export default async function RevenuePage() {
 
       <section className={styles.totals}>
         <div className={styles.stat}>
-          <span className={styles.statV}>${treasury.totalUsdc.toFixed(2)}</span>
+          <span className={styles.statV}>{shown(treasury.totalUsdc, usdc(2))}</span>
           <span className={styles.statK}>treasury USDC (Solana + Base)</span>
         </div>
         <div className={styles.stat}>
-          <span className={styles.statV}>{treasury.solanaSol.toFixed(4)} SOL</span>
+          <span className={styles.statV}>{shown(treasury.solanaSol, solAmount(4))}</span>
           <span className={styles.statK}>treasury SOL balance</span>
+        </div>
+        <div className={styles.stat}>
+          <span className={styles.statV}>{shown(treasury.feeVaultSol, solAmount(4))}</span>
+          <span className={styles.statK}>Safe Swap fees in the vault</span>
         </div>
         <div className={styles.stat}>
           <span className={styles.statV}>+{treasury.creatorClaimedSol.toFixed(4)} SOL</span>
@@ -104,6 +117,8 @@ export default async function RevenuePage() {
         <p className={styles.note}>
           Read directly from Solana Mainnet and Base Mainnet RPCs. Every wallet and claim transaction links
           to its block explorer so anyone can verify the exact lamports and USDC balances independently.
+          These are what the wallets hold right now, not lifetime earnings: money moved or claimed out leaves
+          these numbers. Earnings are in the ledger below.
         </p>
         <div className={styles.ledger}>
           <div className={`${styles.row} ${styles.head}`}>
@@ -112,7 +127,7 @@ export default async function RevenuePage() {
           <div className={styles.row}>
             <span>Deployer Treasury ({shortAddr(treasury.solanaWallet)})</span>
             <span>Solana</span>
-            <span>{treasury.solanaSol.toFixed(6)} SOL · ${treasury.solanaUsdc.toFixed(3)} USDC</span>
+            <span>{shown(treasury.solanaSol, solAmount(6))} · {shown(treasury.solanaUsdc, usdc(3))} USDC</span>
             <span className={styles.proof}>
               <a href={`https://solscan.io/account/${treasury.solanaWallet}`} target="_blank" rel="noreferrer">Solscan ↗</a>
             </span>
@@ -120,15 +135,23 @@ export default async function RevenuePage() {
           <div className={styles.row}>
             <span>x402 Base Treasury ({shortAddr(treasury.baseWallet)})</span>
             <span>Base</span>
-            <span>${treasury.baseUsdc.toFixed(3)} USDC</span>
+            <span>{shown(treasury.baseUsdc, usdc(3))} USDC</span>
             <span className={styles.proof}>
               <a href={`https://basescan.org/address/${treasury.baseWallet}`} target="_blank" rel="noreferrer">Basescan ↗</a>
             </span>
           </div>
           <div className={styles.row}>
+            <span>Safe Swap Fee Vault ({shortAddr(treasury.feeVault)})</span>
+            <span>Solana</span>
+            <span>{shown(treasury.feeVaultSol, solAmount(6))} unclaimed, before Jupiter&apos;s 20%</span>
+            <span className={styles.proof}>
+              <a href={`https://solscan.io/account/${treasury.feeVault}`} target="_blank" rel="noreferrer">Vault ↗</a>
+            </span>
+          </div>
+          <div className={styles.row}>
             <span>Pump.fun Creator Vault PDA ({shortAddr(treasury.creatorVaultPda)})</span>
             <span>Solana</span>
-            <span>{treasury.creatorVaultClaimableSol.toFixed(6)} SOL claimable ({treasury.creatorVaultRawSol.toFixed(6)} SOL raw)</span>
+            <span>{shown(treasury.creatorVaultClaimableSol, solAmount(6))} claimable ({shown(treasury.creatorVaultRawSol, solAmount(6))} raw)</span>
             <span className={styles.proof}>
               <a href={`https://solscan.io/account/${treasury.creatorVaultPda}`} target="_blank" rel="noreferrer">Vault ↗</a>
             </span>

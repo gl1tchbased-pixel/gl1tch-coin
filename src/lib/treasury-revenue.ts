@@ -2,10 +2,12 @@
  * Live on-chain treasury & creator-fee snapshot for the /revenue page and /revenue.json.
  * Reads directly from Solana Mainnet RPC and Base Mainnet RPC (read-only JSON-RPC calls,
  * cached for 60s) so every balance and creator-reward claim shown on /revenue is verifiable
- * on Solscan and Basescan.
+ * on Solscan and Basescan. A failed read is null, so the page shows no number rather than a wrong one.
  */
 
-import { DEPLOYER_WALLET, PAY_TO_BASE } from "@/lib/official";
+import { PublicKey } from "@solana/web3.js";
+import { referralVaultAddress } from "@/lib/jupiter/referral";
+import { DEPLOYER_WALLET, PAY_TO_BASE, REFERRAL_ACCOUNT, REFERRAL_PARTNER } from "@/lib/official";
 
 /** Pump.fun creator-vault PDA for deployer H5qbtquJzLVrwYj5opedoQCy9edQQZAtiyPMTMFFaFb4. */
 export const PUMP_CREATOR_VAULT_PDA = "9kgnPTRVNfaJvuYKwhq6DyF7PfxVnbM91hQc7tY56r34";
@@ -109,7 +111,7 @@ export const REVENUE_CHANNELS: RevenueChannelStatus[] = [
   {
     id: "blinks",
     name: "Solana Actions & Blinks (Jupiter Safe Swap)",
-    model: "Optional scan-gated swaps via Jupiter. A 0.5% GL1TCH fee applies only when the swap screen shows it, before signing",
+    model: "Optional scan-gated swaps via Jupiter. A 0.5% GL1TCH fee applies only when the swap screen shows it, before signing. Jupiter keeps 20% of the fee",
     status: "live",
     verifyHref: "https://dial.to/?action=solana-action:https://gl1tchbased.xyz/api/actions/safe-swap",
   },
@@ -133,12 +135,16 @@ export interface TreasurySnapshot {
   solanaWallet: string;
   baseWallet: string;
   creatorVaultPda: string;
-  solanaSol: number;
-  solanaUsdc: number;
-  baseUsdc: number;
-  totalUsdc: number;
-  creatorVaultRawSol: number;
-  creatorVaultClaimableSol: number;
+  solanaSol: number | null;
+  solanaUsdc: number | null;
+  baseUsdc: number | null;
+  totalUsdc: number | null;
+  creatorVaultRawSol: number | null;
+  creatorVaultClaimableSol: number | null;
+  /** Safe Swap's fee vault: wrapped SOL waiting to be claimed, before Jupiter's share. */
+  feeVault: string;
+  feeVaultOwner: string;
+  feeVaultSol: number | null;
   creatorClaimedSol: number;
   creatorClaims: CreatorFeeClaim[];
   channels: RevenueChannelStatus[];
@@ -162,10 +168,10 @@ async function fetchSolanaRpc<T>(method: string, params: unknown[], rpcUrl: stri
   }
 }
 
-async function fetchBaseUsdcBalance(wallet: string, baseRpcUrl: string): Promise<number> {
+async function fetchBaseUsdcBalance(wallet: string, baseRpcUrl: string): Promise<number | null> {
   try {
     const clean = wallet.replace(/^0x/i, "").toLowerCase();
-    if (!/^[0-9a-f]{40}$/.test(clean)) return 0;
+    if (!/^[0-9a-f]{40}$/.test(clean)) return null;
     const data = "0x70a08231" + clean.padStart(64, "0");
     const res = await fetch(baseRpcUrl, {
       method: "POST",
@@ -179,12 +185,12 @@ async function fetchBaseUsdcBalance(wallet: string, baseRpcUrl: string): Promise
       signal: AbortSignal.timeout(5000),
       next: { revalidate: 60 },
     });
-    if (!res.ok) return 0;
+    if (!res.ok) return null;
     const json = (await res.json()) as { result?: string };
-    if (!json.result || json.result === "0x") return 0;
+    if (!json.result || json.result === "0x") return null;
     return Number(BigInt(json.result)) / 1e6;
   } catch {
-    return 0;
+    return null;
   }
 }
 
@@ -204,7 +210,9 @@ export async function getTreasurySnapshot(opts?: {
   const solanaRpc = opts?.solanaRpc || process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
   const baseRpc = opts?.baseRpc || "https://mainnet.base.org";
 
-  const [solBal, vaultBal, solUsdcAccs, baseUsdc] = await Promise.all([
+  const feeVault = referralVaultAddress(new PublicKey(REFERRAL_ACCOUNT)).toBase58();
+
+  const [solBal, vaultBal, solUsdcAccs, baseUsdc, feeVaultBal] = await Promise.all([
     fetchSolanaRpc<{ value: number }>("getBalance", [solanaWallet], solanaRpc),
     fetchSolanaRpc<{ value: number }>("getBalance", [PUMP_CREATOR_VAULT_PDA], solanaRpc),
     fetchSolanaRpc<{
@@ -217,16 +225,14 @@ export async function getTreasurySnapshot(opts?: {
       solanaRpc
     ),
     fetchBaseUsdcBalance(baseWallet, baseRpc),
+    fetchSolanaRpc<{ value: { uiAmount: number | null } }>("getTokenAccountBalance", [feeVault], solanaRpc),
   ]);
 
-  const solLamports = solBal?.value ?? 40_613_528;
-  const vaultLamports = vaultBal?.value ?? 650_240;
   const solanaUsdc =
     solUsdcAccs?.value?.reduce(
       (sum, acc) => sum + (acc.account?.data?.parsed?.info?.tokenAmount?.uiAmount ?? 0),
       0
-    ) ?? 5.631186;
-  const effectiveBaseUsdc = baseUsdc > 0 ? baseUsdc : 0.008;
+    ) ?? null;
 
   const creatorClaimedSol = VERIFIED_CREATOR_CLAIMS.reduce((s, c) => s + c.amountSol, 0);
 
@@ -234,12 +240,15 @@ export async function getTreasurySnapshot(opts?: {
     solanaWallet,
     baseWallet,
     creatorVaultPda: PUMP_CREATOR_VAULT_PDA,
-    solanaSol: solLamports / 1e9,
+    solanaSol: solBal ? solBal.value / 1e9 : null,
     solanaUsdc,
-    baseUsdc: effectiveBaseUsdc,
-    totalUsdc: Number((solanaUsdc + effectiveBaseUsdc).toFixed(6)),
-    creatorVaultRawSol: vaultLamports / 1e9,
-    creatorVaultClaimableSol: computeClaimableVaultSol(vaultLamports),
+    baseUsdc,
+    totalUsdc: solanaUsdc !== null && baseUsdc !== null ? Number((solanaUsdc + baseUsdc).toFixed(6)) : null,
+    creatorVaultRawSol: vaultBal ? vaultBal.value / 1e9 : null,
+    creatorVaultClaimableSol: vaultBal ? computeClaimableVaultSol(vaultBal.value) : null,
+    feeVault,
+    feeVaultOwner: REFERRAL_PARTNER,
+    feeVaultSol: feeVaultBal?.value.uiAmount ?? null,
     creatorClaimedSol,
     creatorClaims: VERIFIED_CREATOR_CLAIMS,
     channels: REVENUE_CHANNELS,
