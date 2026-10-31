@@ -43,10 +43,11 @@ export function GET() {
           exports: ["Gl1tchClient", "createSolanaAgentKitTools", "gl1tchElizaPlugin"],
         },
         apifyActor: {
-          name: "gl1tch-solana-token-safety-yield-xray",
+          name: "gl1tch-token-safety-scanner",
+          status: "not published yet",
           path: "apify-actor",
-          pricingModel: "Pay-Per-Event ($0.005/event · 80% creator revenue share)",
-          supportedActions: ["scan", "batch", "yield", "deployer", "radar"],
+          pricingModel: "Pay-Per-Event ($0.005 per result · 80% creator revenue share)",
+          supportedActions: ["scan", "batch", "radar", "yield"],
         },
         telegramGuardian: {
           bot: "https://t.me/gl1tch_infected_bot?startgroup=guardian",
@@ -58,18 +59,6 @@ export function GET() {
           webConsole: `${OFFICIAL.SITE_URL}/quantum-core/random`,
           x402Endpoint: `${OFFICIAL.SITE_URL}/api/x402/random`,
           freeQuota: "1 verifiable drand draw/day (25/day for verified $GL1TCH holders)",
-        },
-        virtualsAcp: {
-          name: "GL1TCH Virtuals ACP Seller Worker",
-          protocol: "ERC-8183",
-          path: "packages/gl1tch-virtuals-acp",
-          settlementNetwork: "eip155:8453",
-          services: [
-            "gl1tch.token_safety_scan",
-            "gl1tch.yield_xray",
-            "gl1tch.wallet_trust_check",
-            "gl1tch.rug_radar",
-          ],
         },
         solanaActionsAndBlinks: {
           actionsJson: `${OFFICIAL.SITE_URL}/actions.json`,

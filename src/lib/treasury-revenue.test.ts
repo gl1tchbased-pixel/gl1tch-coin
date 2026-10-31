@@ -14,7 +14,7 @@ describe("treasury-revenue", () => {
     expect(computeClaimableVaultSol(22_177_311)).toBeCloseTo(0.021286431, 8);
   });
 
-  it("includes verified CollectCreatorFee claims and 10 live revenue channels", () => {
+  it("includes verified CollectCreatorFee claims and the revenue channels", () => {
     expect(VERIFIED_CREATOR_CLAIMS.length).toBeGreaterThanOrEqual(1);
     expect(VERIFIED_CREATOR_CLAIMS[0].tx).toBe(
       "3LN23qxyutDXXLjTKczRYUzjfazs1BvoL6CHmwXnzaz7ydzixFY1rKQxmFiUuwhYTY6VwWwCxQAhdTVYxR1LrQBo"
@@ -27,7 +27,6 @@ describe("treasury-revenue", () => {
       "giveaway",
       "agent-kit",
       "apify",
-      "virtuals-acp",
       "blinks",
       "sentinel",
       "yield-spikes",
@@ -46,7 +45,7 @@ describe("treasury-revenue", () => {
       expect(snap.creatorVaultClaimableSol).toBeNull();
       expect(snap.feeVaultSol).toBeNull();
       expect(snap.creatorClaimedSol).toBeCloseTo(0.021286431, 6);
-      expect(snap.channels).toHaveLength(10);
+      expect(snap.channels).toHaveLength(9);
     } finally {
       globalThis.fetch = origFetch;
     }

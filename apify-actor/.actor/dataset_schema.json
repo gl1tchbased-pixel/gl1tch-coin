@@ -1,0 +1,41 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "type": "object",
+    "properties": {
+      "action": { "type": "string", "description": "Which action produced this item: scan, batch, yield or radar." },
+      "chain": { "type": "string", "description": "The chain the result is about." },
+      "mint": { "type": "string", "description": "Token address." },
+      "symbol": { "type": ["string", "null"], "description": "Token symbol. Token creators choose it, so don't rely on it alone." },
+      "verdict": { "type": "string", "description": "CLEAN, LOW RISK, CAUTION, HIGH RISK, RUG-SHAPED or UNKNOWN." },
+      "score": { "type": "number", "description": "Safety score from 0 to 100. Higher is safer." },
+      "confidence": { "type": "number", "description": "How much of the check could be read, from 0 to 100." },
+      "bottomLine": { "type": "string", "description": "One plain-language sentence on the result." },
+      "degraded": { "type": "boolean", "description": "True when too many data sources were unavailable. Not charged." },
+      "error": { "type": "string", "description": "Why this item failed. Not charged." }
+    },
+    "additionalProperties": true
+  },
+  "views": {
+    "overview": {
+      "title": "Overview",
+      "transformation": {
+        "fields": ["action", "chain", "mint", "symbol", "verdict", "score", "confidence", "bottomLine", "error"]
+      },
+      "display": {
+        "component": "table",
+        "properties": {
+          "action": { "label": "Action", "format": "text" },
+          "chain": { "label": "Chain", "format": "text" },
+          "mint": { "label": "Token", "format": "text" },
+          "symbol": { "label": "Symbol", "format": "text" },
+          "verdict": { "label": "Verdict", "format": "text" },
+          "score": { "label": "Score", "format": "number" },
+          "confidence": { "label": "Confidence", "format": "number" },
+          "bottomLine": { "label": "Bottom line", "format": "text" },
+          "error": { "label": "Error", "format": "text" }
+        }
+      }
+    }
+  }
+}
