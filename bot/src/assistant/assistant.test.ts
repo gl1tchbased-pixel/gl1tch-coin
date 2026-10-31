@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { OFFICIAL } from "../content.js";
 import { looksLikeScam } from "../middleware.js";
-import { AMBIENT_GAP_MS, Budget, USER_PER_DAY } from "./budget.js";
+import { Budget, CHAT_GAP_MS, QUESTION_GAP_MS, USER_PER_DAY } from "./budget.js";
 import { numbersAreFromFacts } from "./digest.js";
 import { stripReasoning } from "./llm.js";
 import { allowedAddresses, isSkip, sanitizeReply } from "./sanitize.js";
@@ -31,10 +31,11 @@ describe("looksLikeQuestion", () => {
 describe("classify", () => {
   it("answers questions in our own groups", () => expect(classify(base)).toBe("ambient"));
   it("marks the admin's questions", () => expect(classify({ ...base, fromAdmin: true })).toBe("admin"));
-  it("stays out of statements", () => expect(classify({ ...base, text: "harika proje" })).toBeNull());
+  it("may join in on anything else in our own groups", () => expect(classify({ ...base, text: "Yo" })).toBe("chat"));
   it("stays out of people talking to each other", () => expect(classify({ ...base, repliesToOther: true })).toBeNull());
   it("is a guest in other groups: silent unless addressed", () => {
     expect(classify({ ...base, officialGroup: false })).toBeNull();
+    expect(classify({ ...base, officialGroup: false, text: "Yo" })).toBeNull();
     expect(classify({ ...base, officialGroup: false, mentionsBot: true })).toBe("mention");
     expect(classify({ ...base, officialGroup: false, repliesToBot: true })).toBe("reply");
   });
@@ -59,14 +60,18 @@ describe("looksLikeScam", () => {
 });
 
 describe("Budget", () => {
-  const o = { chatId: 1, userId: 2, exempt: false, ambient: false };
-  it("spaces out unprompted answers per chat only", () => {
+  const o = { chatId: 1, userId: 2, exempt: false, gapMs: 0 };
+  it("spaces out unprompted replies per chat, counted from when the bot last spoke", () => {
     const b = new Budget();
-    expect(b.take({ ...o, ambient: true, now: 1000 })).toBe(true);
-    expect(b.take({ ...o, ambient: true, now: 1000 + AMBIENT_GAP_MS - 1 })).toBe(false);
-    expect(b.take({ ...o, chatId: 9, ambient: true, now: 1000 })).toBe(true);
-    expect(b.take({ ...o, now: 1001 })).toBe(true);
-    expect(b.take({ ...o, ambient: true, now: 1000 + AMBIENT_GAP_MS })).toBe(true);
+    expect(b.take({ ...o, gapMs: CHAT_GAP_MS, now: 1000 })).toBe(true);
+    expect(b.take({ ...o, gapMs: CHAT_GAP_MS, now: 1001 })).toBe(true); // it passed on the first, so nothing to wait for
+    b.spoke(1, 1001);
+    expect(b.take({ ...o, gapMs: CHAT_GAP_MS, now: 1002 })).toBe(false);
+    expect(b.take({ ...o, gapMs: QUESTION_GAP_MS, now: 1002 })).toBe(false);
+    expect(b.take({ ...o, gapMs: QUESTION_GAP_MS, now: 1001 + QUESTION_GAP_MS })).toBe(true);
+    expect(b.take({ ...o, gapMs: CHAT_GAP_MS, now: 1001 + CHAT_GAP_MS })).toBe(true);
+    expect(b.take({ ...o, gapMs: CHAT_GAP_MS, chatId: 9, now: 1002 })).toBe(true);
+    expect(b.take({ ...o, now: 1002 })).toBe(true); // asked directly: no gap
   });
   it("caps a user per day, exempts the admin, and resets tomorrow", () => {
     const b = new Budget();
