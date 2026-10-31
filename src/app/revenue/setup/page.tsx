@@ -309,10 +309,24 @@ export default function ReferralSetupPage() {
         {stepMsg && <div className={styles.alertSuccess}>{stepMsg}</div>}
 
         {status?.classic.ready && (
-          <div className={styles.alertSuccess} style={{ marginBottom: "1rem" }}>
-            ✅ <strong>Classic Jupiter Hesabı ve Kasaları Başarıyla Açıldı!</strong><br />
+          <div className={styles.alertSuccess} style={{ marginBottom: "0.75rem" }}>
+            ✅ <strong>Classic Jupiter Hesabı ve Kasaları Aktif:</strong><br />
             Referral PDA: <code style={{ color: "#7cf6c8" }}>{status.classic.referralPda}</code><br />
             WSOL Kasası: <code style={{ color: "#7cf6c8" }}>{status.classic.wsolAtaPda}</code>
+          </div>
+        )}
+
+        {status?.ultra.ready && (
+          <div className={styles.alertSuccess} style={{ marginBottom: "1rem" }}>
+            🚀 <strong>Jupiter Ultra Safe Swap Kasası Aktif &amp; Gelir Akışı Açık:</strong><br />
+            Ultra Referral PDA: <code style={{ color: "#7cf6c8" }}>{status.ultra.referralPda}</code><br />
+            Ultra WSOL Kasası: <code style={{ color: "#7cf6c8" }}>{status.ultra.wsolAtaPda}</code><br />
+            <span style={{ fontSize: "0.85rem", color: "#94a3b8", display: "inline-block", marginTop: "6px" }}>
+              💡 Biriken %0.5 işlem ücretlerini dilediğiniz zaman Jupiter Referral Dashboard üzerinden tek tıkla çekebilirsiniz:&nbsp;
+              <a href="https://referral.jup.ag" target="_blank" rel="noreferrer" style={{ color: "#7cf6c8", textDecoration: "underline" }}>
+                referral.jup.ag ↗
+              </a>
+            </span>
           </div>
         )}
 
