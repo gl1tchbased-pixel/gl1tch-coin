@@ -129,13 +129,14 @@ FACTS
 - If you quote our own token's scan score, say in the same reply that the market is very thin. A good score on its own would mislead.
 
 HOW TO ANSWER
-- Reply in the language of the comment. One or two sentences, under 240 characters. Sound like a sharp person, not a brand. No hashtags, at most one emoji, no slogans or lore.
+- Always write in English, whatever language the comment is in. One or two sentences, under 240 characters. Sound like a sharp person, not a brand. No hashtags, at most one emoji, no slogans or lore.
 - Answer what they actually said. A question gets the real answer. Criticism gets a calm, specific reply with the facts, including ones that don't flatter us. Specific feedback gets a short, warm thanks that shows you read it.
 - Mention the scanner or a page only when it helps. Mention $GL1TCH only if they brought it up.
 - If they ask about a specific token, use only the SCAN FACTS you are given. With none, tell them to paste it at gl1tchbased.xyz/scan. A scan is a risk reading, not a guarantee.
 - If asked, say replies here are automated and can be wrong. Never claim to be a person.
 
 NEVER
+- Suggest a test buy or test transaction: that is how people lose money to honeypots.
 - Tell anyone to buy, sell or hold. Predict or hint at price. Promise returns. Say "moon", "pump", "next 100x", or anything like it, even as a joke. If asked about price, say plainly that you don't do price calls, and point to the on-chain facts.
 - State anything not in FACTS or SCAN FACTS about GL1TCH.
 - Post a link other than gl1tchbased.xyz or the ones above, an address not given to you, or another account's handle.
@@ -146,7 +147,7 @@ Reply with exactly SKIP unless the comment is one of these: a real question, a s
 const OWN_LINKS = ["gl1tchbased.xyz", "t.me/gl1tch_infected", "github.com/gl1tchbased-pixel", "x.com/gl1tchbased"];
 const URLISH = /(?:https?:\/\/\S+|\b(?:[a-z0-9-]+\.)+[a-z]{2,}(?:\/\S*)?)/gi;
 const ADDRESS_G = /\b(?:0x[0-9a-fA-F]{40}|[1-9A-HJ-NP-Za-km-z]{32,44})\b/g;
-const PRICE_TALK = /\b(moon|mooning|pump(ing)?|lambo|ape in|buy now|time to buy|good buy|load(ing)? up|\d+\s?x\b|guaranteed|price target|financial freedom)\b|yükselece|kazandır|kaçırma|garantili|fiyat hedef/i;
+const PRICE_TALK = /\b(moon|mooning|pump(ing)?|lambo|ape in|buy now|time to buy|good buy|load(ing)? up|\d+\s?x\b|guaranteed|price target|financial freedom|test (transaction|buy|trade|swap)|small (test|buy|trade|swap|amount)|try (buying|selling|to sell|to buy))\b|yükselece|kazandır|kaçırma|garantili|fiyat hedef/i;
 
 function isOwnLink(found) {
   const url = found.replace(/[.,;:!?)]+$/, "").replace(/^https?:\/\//i, "").replace(/^www\./i, "").toLowerCase();

@@ -60,8 +60,17 @@ export function allowedAddresses(...sources: string[]): Set<string> {
   return out;
 }
 
+// The prompt forbids this and the model still says it, so it's enforced here. Buying to test a token is how a honeypot takes your money.
+export const TEST_BUY = /\b(test (transaction|buy|trade|swap|purchase|sell)|small (test|buy|trade|swap|purchase|amount)|tiny (buy|amount)|(buy|buying|purchase) (just )?(a )?(little|small|tiny)|try (buying|selling|to sell|to buy)|buy .{0,20}then (try to )?sell)\b/i;
+
+const dropTestBuyAdvice = (text: string): string =>
+  text
+    .split(/(?<=[.!?])\s+/)
+    .filter((sentence) => !TEST_BUY.test(sentence))
+    .join(" ");
+
 export function sanitizeReply(raw: string, addresses: Set<string>): string {
-  const text = raw
+  const text = dropTestBuyAdvice(raw)
     .replace(/\[([^\]]*)\]\(([^)]*)\)/g, "$1 $2") // markdown link -> visible text + visible url
     .replace(/\*\*|__|`/g, "")
     .replace(/^#{1,6}\s+/gm, "")

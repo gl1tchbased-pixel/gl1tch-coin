@@ -56,10 +56,7 @@ function note(chatId: number, name: string, text: string, now: number): void {
   recent.set(chatId, kept.slice(-RECENT_MESSAGES));
 }
 
-const failureText = (text: string): string =>
-  /[çğıöşüÇĞİÖŞÜ]|\b(ne|mi|bu|bir|var|yok)\b/i.test(text)
-    ? "Şu an cevap üretemiyorum, biraz sonra tekrar dener misin? Bu arada /scan ve /faq çalışıyor."
-    : "I can't answer right now, please try again shortly. /scan and /faq still work.";
+const FAILURE_TEXT = "I can't answer right now, please try again shortly. /scan and /faq still work.";
 
 assistant.on("message:text", async (ctx, next) => {
   if (!isLlmConfigured()) return next();
@@ -121,7 +118,7 @@ assistant.on("message:text", async (ctx, next) => {
       .catch((e: unknown) => console.error("[assistant] send failed:", (e as Error).message));
   } else if (direct) {
     // Silence is right when the bot wasn't asked. When it was, say so instead of ignoring the person.
-    await ctx.reply(failureText(question), { reply_parameters: { message_id: msg.message_id } }).catch(() => {});
+    await ctx.reply(FAILURE_TEXT, { reply_parameters: { message_id: msg.message_id } }).catch(() => {});
   }
   return next();
 });
@@ -139,9 +136,7 @@ export async function welcomeFor(chatId: number, name: string): Promise<string |
 
 const NOTICE =
   "Hi, I'm this group's AI bot. I now read the messages here and may join in, and you can ask me anything about token safety. " +
-  "To reply, I send recent messages to our AI provider (Groq), so please don't post anything private. I can be wrong, and I never give buy or sell advice.\n\n" +
-  "Merhaba, ben bu grubun yapay zekâ botuyum. Artık buradaki mesajları okuyorum, sohbete katılabilirim, token güvenliğiyle ilgili her şeyi sorabilirsin. " +
-  "Cevap verirken son mesajları yapay zekâ sağlayıcımıza (Groq) gönderiyorum, o yüzden özel bilgi paylaşma. Yanılabilirim, al-sat tavsiyesi vermem.";
+  "To reply, I send recent messages to our AI provider (Groq), so please don't post anything private. I can be wrong, and I never give buy or sell advice.";
 
 /** People who were already here deserve to be told, once per group, that the bot now reads along. */
 export async function announceOnce(api: Api): Promise<void> {
