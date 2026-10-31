@@ -1,6 +1,9 @@
-# `@gl1tch/agent-toolkit`
+# `gl1tch-agent-toolkit`
 
-**Not on npm yet.** To use it now, copy this folder into your project.
+Install via npm:
+```bash
+npm install gl1tch-agent-toolkit
+```
 
 **Solana Agent Kit**, **ElizaOS**, **LangChain / Vercel AI SDK** and **Coinbase x402** tools for GL1TCH:
 - Token Safety & Honeypot Scanner (`gl1tch_scan_token`)
@@ -14,7 +17,7 @@ Without a key or x402 payment, the scan, yield, radar and agent tools use GL1TCH
 ## Usage with SendAI Solana Agent Kit / LangChain
 
 ```js
-import { createSolanaAgentKitTools } from "@gl1tch/agent-toolkit";
+import { createSolanaAgentKitTools } from "gl1tch-agent-toolkit";
 
 // Mode A: $GL1TCH Holder Key (Free unlimited x402 access)
 const tools = createSolanaAgentKitTools({ apiKey: process.env.GL1TCH_API_KEY });
@@ -30,11 +33,10 @@ const paidTools = createSolanaAgentKitTools({
 ## Usage with ElizaOS (`@elizaos/core`)
 
 ```js
-import { gl1tchElizaPlugin } from "@gl1tch/agent-toolkit";
+import { gl1tchElizaPlugin } from "gl1tch-agent-toolkit";
 
 export const character = {
   name: "SolanaTrader",
   plugins: [gl1tchElizaPlugin({ apiKey: process.env.GL1TCH_API_KEY })],
 };
 ```
-

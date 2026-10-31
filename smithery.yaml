@@ -1,0 +1,6 @@
+name: "gl1tch"
+version: "1.0.0"
+description: "Pre-trade token safety & honeypot scanner, serial rugger reputation graph, KYA wallet trust, and 7-chain DeFi Yield X-Ray for Solana & EVM."
+startCommand:
+  type: http
+  url: "https://gl1tchbased.xyz/api/mcp"
