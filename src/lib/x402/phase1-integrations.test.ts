@@ -16,7 +16,7 @@ describe("Phase 1 Agent Toolkit & Apify Actor", () => {
 
     const freeClient = new Gl1tchClient({ fetch: mockFetch });
     await freeClient.scanToken({ mint: "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263", chain: "solana" });
-    expect(mockFetch.mock.calls[0][0]).toContain("/api/v1/scan?mint=DezX");
+    expect(mockFetch.mock.calls[0][0]).toContain("/api/scan?mint=DezX");
 
     const holderClient = new Gl1tchClient({ apiKey: "gk_test_holder", fetch: mockFetch });
     await holderClient.yieldXRay({ chain: "solana", stable: true });

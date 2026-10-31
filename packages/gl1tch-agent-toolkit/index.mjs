@@ -44,12 +44,12 @@ export class Gl1tchClient {
 
   /** Full token safety scan (mint/freeze authority, LP lock, honeypot tax, top holders, insider graph). */
   async scanToken({ mint, chain }) {
-    return this._get("/api/v1/scan", "/api/x402/scan", { mint, chain });
+    return this._get("/api/scan", "/api/x402/scan", { mint, chain });
   }
 
   /** Fast compact token safety screen ($0.001 on x402). */
   async quickCheck({ mint, chain }) {
-    return this._get("/api/v1/scan", "/api/x402/quick", { mint, chain });
+    return this._get("/api/scan", "/api/x402/quick", { mint, chain });
   }
 
   /** Batch safety check for up to 10 token addresses in one call ($0.008 on x402). */
@@ -65,12 +65,12 @@ export class Gl1tchClient {
 
   /** Serial rugger & deployer reputation from the GL1TCH Signal Graph. */
   async deployerReputation({ address, chain = "solana" }) {
-    return this._get("/api/v1/deployer", "/api/x402/deployer", { address, chain });
+    return this._get("/api/x402/deployer", "/api/x402/deployer", { address, chain });
   }
 
   /** Know Your Agent (KYA) wallet trust score. */
   async agentTrust({ address, chain = "solana" }) {
-    return this._get("/api/v1/agent/trust", "/api/x402/agent", { address, chain });
+    return this._get("/api/agent/check", "/api/x402/agent", { address, chain });
   }
 
   /** Rug Radar: freshly launched Solana tokens ranked riskiest first. */
