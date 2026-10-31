@@ -89,7 +89,7 @@ export const REVENUE_CHANNELS: RevenueChannelStatus[] = [
   {
     id: "agent-kit",
     name: "Solana Agent Kit, ElizaOS & MCP Integrations",
-    model: "11 MCP tools + drop-in agent toolkit routing autonomous bots to GL1TCH x402 endpoints",
+    model: "4 MCP tools at /api/mcp. The agent toolkit is in the repo, not on npm yet",
     status: "live",
     verifyHref: "/agents/docs",
   },
