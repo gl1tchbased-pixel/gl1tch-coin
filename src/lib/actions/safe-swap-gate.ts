@@ -1,3 +1,5 @@
+import { REFERRAL_ACCOUNT } from "@/lib/official";
+
 /** Who Safe Swap will route a buy into. Fails closed: no scan or a weak scan means no swap. */
 const PASSING_VERDICTS = new Set(["CLEAN", "LOW RISK"]);
 const MIN_SCORE = 60;
@@ -7,6 +9,7 @@ const BASE58_ADDRESS = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 
 export const MIN_SWAP_SOL = 0.01;
 export const MAX_SWAP_SOL = 100;
+const SWAP_FEE_BPS = 50;
 
 export type ScanBody = {
   verdict?: unknown;
@@ -46,15 +49,22 @@ export function parseSwapLamports(raw: string | null): number | null {
   return Math.round(sol * 1e9);
 }
 
-// Jupiter Ultra Referral PDA for GL1TCH (project DkiqsTrw1u1bYFumumC7sCG2S8K25qc2vemJFHyW2wJc)
-export const JUP_REFERRAL_ACCOUNT_DEFAULT = "J4T8vmahpgiGmjkDXTaacVSAw9iQxgP7P81PCS31PsDB";
-
-/** The fee defaults to the GL1TCH on-chain referral account (50 bps = 0.5%). */
+/** The fee goes to the pinned referral account or nowhere. JUP_REFERRAL_ACCOUNT=off is the kill switch; no setting can
+ *  redirect the fee or raise it. Whether it's safe to use right now is referral-check.ts's call. */
 export function swapFee(env: Record<string, string | undefined> = process.env): { account: string; bps: number } | null {
-  const account = env.JUP_REFERRAL_ACCOUNT ?? (env === process.env ? JUP_REFERRAL_ACCOUNT_DEFAULT : undefined);
-  if (!account || !isSolanaAddress(account)) return null;
-  const bps = Number(env.JUP_REFERRAL_FEE_BPS ?? 50);
-  return { account, bps: Number.isInteger(bps) && bps >= 50 && bps <= 255 ? bps : 50 };
+  if (env.JUP_REFERRAL_ACCOUNT?.trim().toLowerCase() === "off") return null;
+  return { account: REFERRAL_ACCOUNT, bps: SWAP_FEE_BPS };
+}
+
+/** Token names are written by whoever launched the token: keep them out of our wallet prompts unless they're plain. */
+export function safeSymbol(raw: unknown): string {
+  const symbol = String(raw ?? "");
+  return /^[A-Za-z0-9$._-]{1,16}$/.test(symbol) ? symbol : "this token";
+}
+
+/** Jupiter returns the order even when it dropped our fee, and reports the rate it really applied. */
+export function appliedFeeBps(requestedBps: number, order: { feeBps?: unknown }): number | undefined {
+  return typeof order.feeBps === "number" && order.feeBps >= requestedBps ? requestedBps : undefined;
 }
 
 export function feeLabel(bps: number | undefined): string {

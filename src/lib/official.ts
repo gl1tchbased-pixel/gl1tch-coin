@@ -40,6 +40,18 @@ export const DEPLOYER_WALLET = "H5qbtquJzLVrwYj5opedoQCy9edQQZAtiyPMTMFFaFb4";
  *  repo, so changing it shows in git history. A fee-only wallet: a little SOL for fees, never any tokens. */
 export const ATTESTER_WALLET = "BSq18aJBhxYJgeEbcA3jGQNU1vmwZdo2PQkkpVsK7W6o";
 
+/** Where money flows. Pinned in the public repo for the same reason as the attester: changing a destination takes a
+ *  reviewed commit, not a changed setting, and the bot's money watch (bot/src/money-watch) compares the live site and
+ *  the chain against its own copy of these. Env can turn a flow off, never point it elsewhere. */
+export const PAY_TO_SOLANA: string = DEPLOYER_WALLET;
+export const PAY_TO_BASE = "0xbE1e88C07a080078629f793013597E43183F6Dca";
+export const REFERRAL_NAME = "GL1TCH";
+/** Jupiter referral account for Safe Swap fees (Ultra project). */
+export const REFERRAL_ACCOUNT = "J4T8vmahpgiGmjkDXTaacVSAw9iQxgP7P81PCS31PsDB";
+/** Who owns those fees on chain. Still the attester, so no fee flows yet (referral-check.ts refuses it); it changes
+ *  to the cold wallet once the founder runs scripts/vault-transfer (docs/security/treasury-runbook.md). */
+export const REFERRAL_PARTNER: string = ATTESTER_WALLET;
+
 /** Solscan account link helper. */
 export const solscanAccount = (addr: string) =>
   addr ? `https://solscan.io/account/${addr}` : "";

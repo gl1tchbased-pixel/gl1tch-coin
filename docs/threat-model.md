@@ -27,11 +27,20 @@
 - The site itself (XSS via any user-reflected value → CSP is the mitigation).
 
 ## Core invariants (never violated)
-1. **No token approvals, and no fund-moving transaction except a Safe Swap the user starts**: Jupiter builds it and the user signs it in their own wallet through Solana Actions. Otherwise only ownership-proving message signatures (SIWE-style nonce). Our code never signs for users; a CI forbidden-function check guards this.
+1. **No token approvals, and no fund-moving transaction except a Safe Swap the user starts** (enforced by `scripts/money-guard.mjs` before every build, not only in CI): Jupiter builds it and the user signs it in their own wallet through Solana Actions. Otherwise only ownership-proving message signatures (SIWE-style nonce). Our code never signs for users; a CI forbidden-function check guards this.
 2. **Secrets never in code** — env/secret-manager only; gitleaks in CI.
 3. **Every public endpoint: central input validation + rate limiting.**
 4. **Scoring is free + wall-separated from any paid tier** (Phase 6).
 5. **Language is probabilistic, never accusatory** (legal/defamation).
+
+## GL1TCH's own revenue (fee vault, x402 receipts)
+Full map and incident steps: `docs/security/treasury-runbook.md`.
+- **Destinations are pinned in code** (`src/lib/official.ts`). Env can switch a flow off, never point it elsewhere: `readPayTo` rejects any other wallet and `swapFee` ignores any other account.
+- **The fee is conditional on chain state.** Before asking Jupiter for a fee, the site reads the referral account. Owner not the pinned wallet, owner is the attester, lowered share, no vault, or a failed read: no fee, and the swap still runs.
+- **Jupiter's answer isn't trusted blindly.** `swapTxProblem` reads the transaction before it reaches a wallet: the taker is the only signer, top-level programs are on a list, no top-level approve, authority change or token transfer, SOL moved and priority fee are capped. It doesn't look inside Jupiter's own programs.
+- **Money watch** (`bot/src/money-watch`) reads the chain and the live site every 5 minutes from outside Vercel and messages the admins. It holds no key.
+- **Known gap until the founder acts:** the referral accounts are owned by the attester, whose key is in CI. The transfer takes one signature and the program has no accept step. No fee flows until they move (`scripts/vault-transfer`).
+- **Accepted trust:** Jupiter can upgrade the referral program and change our share, so accumulated fees should be claimed regularly. A hijacked Vercel account can ship any code; the watch detects it but can't stop it.
 
 ## Abuse limits in force
 - **Site** — per-IP sliding-window limits on every public API route (per instance; `src/lib/ratelimit.ts`). Badges answer a limited caller with the generic badge instead of an error, so embeds never break.

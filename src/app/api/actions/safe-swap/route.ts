@@ -1,14 +1,19 @@
 import { type NextRequest } from "next/server";
 import { actionCorsResponse, actionJsonResponse } from "@/lib/actions/cors";
 import {
+  appliedFeeBps,
   checkSwapGate,
   feeLabel,
   isSolanaAddress,
   MAX_SWAP_SOL,
   MIN_SWAP_SOL,
   parseSwapLamports,
+  safeSymbol,
   swapFee,
 } from "@/lib/actions/safe-swap-gate";
+import { referralFeeProblem } from "@/lib/actions/referral-check";
+import { swapTxProblem } from "@/lib/actions/swap-tx-check";
+import { clientIp, rateLimit } from "@/lib/ratelimit";
 import { runScanReport } from "@/lib/scan-report";
 import { OFFICIAL, CONTRACT_ADDRESS } from "@/lib/official";
 
@@ -18,6 +23,10 @@ export const dynamic = "force-dynamic";
 const SOL_MINT = "So11111111111111111111111111111111111111112";
 const JUP_SWAP_ORDER_URL = "https://api.jup.ag/swap/v2/order";
 const ICON = `${OFFICIAL.SITE_URL}/brand/gl1tch-terminal-og.png`;
+const RATE_PER_MIN = 20;
+
+const limited = (req: NextRequest) =>
+  rateLimit(`safe-swap:${clientIp(req)}`, RATE_PER_MIN, 60_000).ok ? null : actionJsonResponse({ error: "Too many requests, try again in a minute." }, 429);
 
 export function OPTIONS() {
   return actionCorsResponse();
@@ -33,12 +42,15 @@ async function scan(mint: string) {
 }
 
 export async function GET(req: NextRequest) {
+  const tooMany = limited(req);
+  if (tooMany) return tooMany;
+
   const mint = req.nextUrl.searchParams.get("mint") || req.nextUrl.searchParams.get("outputMint") || CONTRACT_ADDRESS;
   if (!isSolanaAddress(mint)) return actionJsonResponse({ error: "Invalid token address" }, 400);
 
   const { status, body } = await scan(mint);
   const gate = checkSwapGate(status, body);
-  const symbol = String(body?.symbol || body?.name || "this token");
+  const symbol = safeSymbol(body?.symbol);
 
   if (!gate.ok) {
     return actionJsonResponse({
@@ -87,6 +99,9 @@ async function jupiterOrder(params: URLSearchParams) {
 }
 
 export async function POST(req: NextRequest) {
+  const tooMany = limited(req);
+  if (tooMany) return tooMany;
+
   const mint = req.nextUrl.searchParams.get("mint") || req.nextUrl.searchParams.get("outputMint") || CONTRACT_ADDRESS;
   if (!isSolanaAddress(mint)) return actionJsonResponse({ error: "Invalid token address" }, 400);
 
@@ -106,8 +121,10 @@ export async function POST(req: NextRequest) {
   const gate = checkSwapGate(status, body);
   if (!gate.ok) return actionJsonResponse({ error: `GL1TCH refused this buy. ${gate.reason}` }, 400);
 
-  const params = new URLSearchParams({ inputMint: SOL_MINT, outputMint: mint, amount: String(lamports), taker: account });
-  const fee = swapFee();
+  // JupiterZ adds a market maker's signature only in /execute, which a wallet signing through an Action never reaches.
+  const params = new URLSearchParams({ inputMint: SOL_MINT, outputMint: mint, amount: String(lamports), taker: account, excludeRouters: "jupiterz" });
+  const configuredFee = swapFee();
+  const fee = configuredFee && !(await referralFeeProblem()) ? configuredFee : null;
 
   try {
     let appliedBps: number | undefined;
@@ -117,7 +134,7 @@ export async function POST(req: NextRequest) {
       withFee.set("referralAccount", fee.account);
       withFee.set("referralFee", String(fee.bps));
       order = await jupiterOrder(withFee);
-      if (order.ok) appliedBps = fee.bps;
+      if (order.ok) appliedBps = appliedFeeBps(fee.bps, order.data);
     }
     // A referral setup problem must not break the user's swap: run it without our fee, and say so.
     if (!order.ok) order = await jupiterOrder(params);
@@ -128,10 +145,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const problem = swapTxProblem(String(order.data.transaction), { taker: account, lamports });
+    if (problem) {
+      console.error(`[safe-swap] refused Jupiter's transaction: ${problem}`);
+      return actionJsonResponse({ error: "GL1TCH could not verify this route, so it was not sent to your wallet. Try another amount." }, 502);
+    }
+
     return actionJsonResponse({
       type: "transaction",
       transaction: order.data.transaction,
-      message: `Safe Swap via Jupiter: ${lamports / 1e9} SOL to ${String(body?.symbol || mint)}. ${feeLabel(appliedBps)}.`,
+      message: `Safe Swap via Jupiter: ${lamports / 1e9} SOL to ${safeSymbol(body?.symbol)}. ${feeLabel(appliedBps)}.`,
     });
   } catch {
     return actionJsonResponse({ error: "Could not reach Jupiter. Nothing was signed; try again." }, 502);

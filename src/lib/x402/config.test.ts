@@ -8,13 +8,20 @@ import {
   readSelfPayers,
   routeIdFromUrl,
 } from "./config";
-import { ATTESTER_WALLET } from "@/lib/official";
+import { ATTESTER_WALLET, PAY_TO_BASE, PAY_TO_SOLANA } from "@/lib/official";
 
-const SOL = "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU";
-const EVM = "0x" + "ab".repeat(20);
+const SOL = PAY_TO_SOLANA;
+const EVM = PAY_TO_BASE;
 
 describe("readPayTo", () => {
-  it("accepts a valid Solana and Base address", () => {
+  it("refuses a valid address that isn't the pinned wallet", () => {
+    const r = readPayTo({ X402_PAY_TO_SOLANA: "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU", X402_PAY_TO_BASE: "0x" + "ab".repeat(20) });
+    expect(r.solana).toBeUndefined();
+    expect(r.base).toBeUndefined();
+    expect(r.rejected).toEqual(["X402_PAY_TO_SOLANA", "X402_PAY_TO_BASE"]);
+  });
+
+  it("accepts the pinned Solana and Base wallets", () => {
     expect(readPayTo({ X402_PAY_TO_SOLANA: SOL, X402_PAY_TO_BASE: EVM })).toEqual({ solana: SOL, base: EVM, rejected: [] });
   });
 

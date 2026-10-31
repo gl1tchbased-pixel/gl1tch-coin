@@ -22,6 +22,7 @@ import { startKb } from "./keyboards.js";
 import { startVerification } from "./verify/index.js";
 import { startAgent, activity } from "./agent/index.js";
 import { announceOnce, assistant, ownGroups, welcomeFor } from "./assistant/index.js";
+import { startMoneyWatch } from "./money-watch/index.js";
 
 const bot = new Bot(config.botToken);
 
@@ -133,6 +134,7 @@ async function main() {
   startWatchtower(bot);
   startSentinelEngine(bot);
   startRadarPing();
+  startMoneyWatch(bot.api);
   void announceOnce(bot.api);
   console.log("GL1TCH bot online. The signal is live.");
   await bot.start({ allowed_updates: ["message", "chat_member", "callback_query"] });
