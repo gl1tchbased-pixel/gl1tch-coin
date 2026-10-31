@@ -306,6 +306,38 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
             </div>
           )}
 
+          {result.chain === "solana" && result.mint && result.verdict !== "HIGH RISK" && result.verdict !== "RUG-SHAPED" && (
+            <div className={styles.blinkCard}>
+              <div className={styles.blinkHead}>
+                <span className={styles.blinkIcon}>⚡</span>
+                <div>
+                  <strong>Solana Safe Swap Blink</strong>
+                  <p>Swap via Jupiter DEX with anti-rug protection. 0.5% platform fee supports GL1TCH treasury.</p>
+                </div>
+              </div>
+              <div className={styles.blinkActions}>
+                <a
+                  href={`https://dial.to/?action=solana-action:https://gl1tchbased.xyz/api/actions/safe-swap?mint=${encodeURIComponent(result.mint)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={styles.blinkSwapBtn}
+                >
+                  ⚡ Open Safe Swap Blink ↗
+                </a>
+                <a
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                    `Check out the safety scan for $${result.symbol || "TOKEN"} on @gl1tchbased: ${result.verdict} (${result.score}/100) 🛡️\n\nSafe Swap with anti-rug gating 👇\nhttps://dial.to/?action=solana-action:https://gl1tchbased.xyz/api/actions/safe-swap?mint=${result.mint}`
+                  )}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={styles.blinkTweetBtn}
+                >
+                  🐦 Share Blink on X
+                </a>
+              </div>
+            </div>
+          )}
+
           <div className={styles.resultFoot}>
             <button type="button" className={styles.shareBtn} onClick={share}>
               {copied ? "✓ link copied" : "⤴ share this scan"}

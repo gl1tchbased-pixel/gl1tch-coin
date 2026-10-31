@@ -416,3 +416,77 @@
   .verdict { align-items: flex-start; align-self: stretch; }
   .resultFoot { flex-direction: column; align-items: flex-start; }
 }
+
+
+/* ---- Solana Actions & Blinks Safe Swap Callout ---- */
+.blinkCard {
+  margin: 0 26px 18px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(124, 255, 79, 0.35);
+  background: linear-gradient(180deg, rgba(124, 255, 79, 0.08), rgba(0, 0, 0, 0.4));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.blinkHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.blinkIcon {
+  font-size: 24px;
+  line-height: 1;
+}
+.blinkHead strong {
+  display: block;
+  font-size: 14px;
+  color: #7cff4f;
+  margin-bottom: 2px;
+}
+.blinkHead p {
+  margin: 0;
+  font-size: 12.5px;
+  color: rgba(245, 247, 248, 0.7);
+  line-height: 1.4;
+}
+.blinkActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.blinkSwapBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: #7cff4f;
+  color: #050605;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+.blinkSwapBtn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+.blinkTweetBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #f5f7f8;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.blinkTweetBtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
