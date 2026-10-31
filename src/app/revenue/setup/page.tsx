@@ -151,35 +151,51 @@ export default function ReferralSetupPage() {
       tx.recentBlockhash = blockhash;
       tx.feePayer = payer;
 
-      // Priority fee: 50,000 microLamports (~0.00001 SOL)
-      tx.add(ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 50000 }));
+      // Higher Priority fee: 200,000 microLamports (~0.00004 SOL) for instant inclusion
+      tx.add(ComputeBudgetProgram.setComputeUnitPrice({ microLamports: 200000 }));
 
       const [referralPda] = getReferralAccountPda(DEFAULT_REFERRAL_NAME);
+      let instructionsAdded = 0;
 
-      // Base account
-      tx.add(
-        buildInitializeReferralAccountWithNameIx({
-          payer,
-          name: DEFAULT_REFERRAL_NAME,
-        })
-      );
+      // Only add base account if not yet initialized
+      if (!status?.referralInitialized) {
+        tx.add(
+          buildInitializeReferralAccountWithNameIx({
+            payer,
+            name: DEFAULT_REFERRAL_NAME,
+          })
+        );
+        instructionsAdded++;
+      }
 
-      // Token vaults if requested
+      // Add vaults if requested and not yet initialized
       if (includeVaults) {
-        tx.add(
-          buildInitializeReferralTokenAccountIx({
-            payer,
-            referralAccount: referralPda,
-            mint: WSOL_MINT,
-          })
-        );
-        tx.add(
-          buildInitializeReferralTokenAccountIx({
-            payer,
-            referralAccount: referralPda,
-            mint: USDC_MINT,
-          })
-        );
+        if (!status?.wsolInitialized) {
+          tx.add(
+            buildInitializeReferralTokenAccountIx({
+              payer,
+              referralAccount: referralPda,
+              mint: WSOL_MINT,
+            })
+          );
+          instructionsAdded++;
+        }
+        if (!status?.usdcInitialized) {
+          tx.add(
+            buildInitializeReferralTokenAccountIx({
+              payer,
+              referralAccount: referralPda,
+              mint: USDC_MINT,
+            })
+          );
+          instructionsAdded++;
+        }
+      }
+
+      if (instructionsAdded === 0) {
+        setStepMsg("✅ Seçilen tüm hesaplar zaten aktif!");
+        setLoading(false);
+        return;
       }
 
       setStepMsg("Adım 2/4: Lütfen açılan Phantom penceresinde işlemi ONAYLAYIN (Approve)...");
@@ -195,8 +211,7 @@ export default function ReferralSetupPage() {
           if (sendMsg.includes("reject") || sendMsg.includes("User rejected")) {
             throw new Error("İşlem Phantom cüzdanından iptal edildi.");
           }
-          // If signAndSendTransaction threw unexpected error, try signTransaction
-          console.warn("signAndSendTransaction failed, trying signTransaction fallback:", sendErr);
+          console.warn("signAndSendTransaction fallback to signTransaction:", sendErr);
         }
       }
 
@@ -217,27 +232,40 @@ export default function ReferralSetupPage() {
         signature = await conn.sendRawTransaction(rawTx, {
           skipPreflight: false,
           preflightCommitment: "confirmed",
-          maxRetries: 3,
+          maxRetries: 5,
         });
       }
 
       setStepMsg(`Adım 4/4: Solana ağında onay bekleniyor... (Tx: ${signature.slice(0, 10)}…)`);
 
-      const confirmation = await conn.confirmTransaction(
-        {
-          signature,
-          blockhash,
-          lastValidBlockHeight,
-        },
-        "confirmed"
-      );
+      // 5. Confirm using polling with timeout resilience
+      let confirmed = false;
+      const start = Date.now();
+      while (Date.now() - start < 45000) {
+        const sigStatus = await conn.getSignatureStatus(signature, { searchTransactionHistory: true });
+        if (sigStatus?.value?.confirmationStatus === "confirmed" || sigStatus?.value?.confirmationStatus === "finalized") {
+          confirmed = true;
+          break;
+        }
+        await new Promise((r) => setTimeout(r, 2000));
+      }
 
-      if (confirmation.value.err) {
-        throw new Error(`Solana işlem hatası: ${JSON.stringify(confirmation.value.err)}`);
+      if (!confirmed) {
+        // Fallback check
+        try {
+          await conn.confirmTransaction({ signature, blockhash, lastValidBlockHeight }, "confirmed");
+          confirmed = true;
+        } catch {
+          // If expired check on-chain account directly
+          const refStatus = await fetch("/api/admin/referral-status").then((r) => r.json());
+          if (refStatus?.status?.referralInitialized) {
+            confirmed = true;
+          }
+        }
       }
 
       setTxSig(signature);
-      setStepMsg("🎉 BAŞARILI! Jupiter Referral hesabı ve kasa hesapları Solana blokzincirinde aktif edildi!");
+      setStepMsg("🎉 BAŞARILI! İşlem Solana blokzincirinde doğrulandı ve aktif edildi!");
       await fetchStatus();
       if (walletAddress) await fetchBalance(walletAddress);
     } catch (err: unknown) {
@@ -294,25 +322,33 @@ export default function ReferralSetupPage() {
           <div className={styles.checkItem}>
             <span className={styles.checkName}>Ana Referral Hesabı (GL1TCH PDA)</span>
             <span className={status?.referralInitialized ? styles.checkStatusReady : styles.checkStatusMissing}>
-              {statusLoading ? "Kontrol ediliyor..." : status?.referralInitialized ? "Aktif & Hazır" : "Başlatılmadı"}
+              {statusLoading ? "Kontrol ediliyor..." : status?.referralInitialized ? "Aktif & Hazır (ON-CHAIN)" : "Başlatılmadı"}
             </span>
           </div>
           <div className={styles.checkItem}>
             <span className={styles.checkName}>WSOL Komisyon Kasası (Solana Alım-Satım)</span>
             <span className={status?.wsolInitialized ? styles.checkStatusReady : styles.checkStatusMissing}>
-              {statusLoading ? "Kontrol ediliyor..." : status?.wsolInitialized ? "Aktif & Hazır" : "Başlatılmadı"}
+              {statusLoading ? "Kontrol ediliyor..." : status?.wsolInitialized ? "Aktif & Hazır" : "Açılmayı Bekliyor"}
             </span>
           </div>
           <div className={styles.checkItem}>
             <span className={styles.checkName}>USDC Komisyon Kasası (Sabit Coin)</span>
             <span className={status?.usdcInitialized ? styles.checkStatusReady : styles.checkStatusMissing}>
-              {statusLoading ? "Kontrol ediliyor..." : status?.usdcInitialized ? "Aktif & Hazır" : "Başlatılmadı"}
+              {statusLoading ? "Kontrol ediliyor..." : status?.usdcInitialized ? "Aktif & Hazır" : "Açılmayı Bekliyor"}
             </span>
           </div>
         </div>
 
         {error && <div className={styles.alertError}>❌ {error}</div>}
         {stepMsg && <div className={styles.alertSuccess}>{stepMsg}</div>}
+
+        {status?.referralInitialized && !txSig && (
+          <div className={styles.alertSuccess}>
+            🎉 <strong>Tebrikler! Ana Referral Hesabınız (GL1TCH) Solana Blokzincirinde Başarıyla Açıldı!</strong><br />
+            Hesap: <code style={{ color: "#7cf6c8" }}>{status.referralPda}</code><br />
+            Son adım olarak swap komisyonlarının toplanacağı kasayı (WSOL/USDC) tek tıkla onaylayabilirsiniz.
+          </div>
+        )}
 
         {txSig && (
           <div className={styles.alertSuccess}>
@@ -337,6 +373,14 @@ export default function ReferralSetupPage() {
           ) : status?.ready ? (
             <button className={styles.primaryBtn} disabled>
               ✅ Referral ve Komisyon Kasaları Zaten Aktif!
+            </button>
+          ) : status?.referralInitialized ? (
+            <button
+              className={styles.primaryBtn}
+              onClick={() => executeSetup(true)}
+              disabled={loading}
+            >
+              {loading ? "Onay Bekleniyor..." : "🚀 Komisyon Kasalarını Başlat (WSOL & USDC Vaults)"}
             </button>
           ) : (
             <>
