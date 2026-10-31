@@ -21,7 +21,7 @@ function buildSentinelKb(userId?: number): InlineKeyboard {
       .text("💳 Pay with x402 USDC ($15/mo)", "sentinel:sub:usdc")
       .row();
   }
-  kb.text("💎 View Latest Gems", "sentinel:feed")
+  kb.text("🔍 View Latest Clean Scans", "sentinel:feed")
     .url("🌐 Web Radar ↗", `${OFFICIAL.SITE}/radar`)
     .row()
     .url("⚡ Solana Blink ↗", `https://dial.to/?action=solana-action:${OFFICIAL.SITE}/api/actions/safe-swap`);
@@ -36,10 +36,10 @@ sentinelCommands.command("sentinel", async (ctx) => {
     : `⚪ <b>FREE TIER</b> (Public feed access)`;
 
   await ctx.reply(
-    `🛡️ <b>GL1TCH SENTINEL — AUTONOMOUS VIP ALPHA FEED</b>\n\n` +
-      `24/7 autonomous scanning across thousands of fresh Solana launches. The Sentinel AI filters out 99.8% of noise, honeypots, and rug-pulls, broadcasting only **verified gems (Score 90+, LP 100% locked, mint revoked, clean deployers)** with one-click Safe Swap Blinks.\n\n` +
+    `🛡️ <b>GL1TCH SENTINEL — CLEAN-SCAN FEED</b>\n\n` +
+      `A convenience feed of Solana tokens from Rug Radar that scored 90+ with a known LP lock. A clean scan is not a recommendation and cannot rule out losses. Anyone can run the same scan for free with /scan.\n\n` +
       `• <b>Your Status:</b> ${statusLine}\n` +
-      `• <b>Recent Gems Detected:</b> ${sentinelStore.getRecentGems().length} tokens\n\n` +
+      `• <b>Recent Clean Scans:</b> ${sentinelStore.getRecentGems().length} tokens\n\n` +
       `<b>Membership Options:</b>\n` +
       `1️⃣ <b>$GL1TCH Holder Pass:</b> 100% Free if holding ≥250k $GL1TCH (verify in DM with <code>/verify</code>)\n` +
       `2️⃣ <b>x402 Agent USDC:</b> $15 USDC / month\n` +
@@ -56,7 +56,7 @@ sentinelCommands.callbackQuery("sentinel:feed", async (ctx) => {
   const gems = sentinelStore.getRecentGems(3);
   if (!gems.length) {
     await ctx.reply(
-      "🔍 <i>No high-conviction gems detected in the last scan window. The Sentinel only pings tokens meeting strict 90+ safety standards. Check back shortly or browse /radar.</i>",
+      "🔍 <i>No clean scans in the last window. The feed only lists tokens scoring 90+. Check back shortly or browse /radar.</i>",
       HTML
     );
     return;
