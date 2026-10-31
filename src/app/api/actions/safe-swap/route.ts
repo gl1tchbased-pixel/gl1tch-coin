@@ -122,7 +122,8 @@ export async function POST(req: NextRequest) {
   if (!gate.ok) return actionJsonResponse({ error: `GL1TCH refused this buy. ${gate.reason}` }, 400);
 
   // JupiterZ adds a market maker's signature only in /execute, which a wallet signing through an Action never reaches.
-  const params = new URLSearchParams({ inputMint: SOL_MINT, outputMint: mint, amount: String(lamports), taker: account, excludeRouters: "jupiterz" });
+  // DFlow's program is not on the list swap-tx-check trusts; without this those routes fail with a 502.
+  const params = new URLSearchParams({ inputMint: SOL_MINT, outputMint: mint, amount: String(lamports), taker: account, excludeRouters: "jupiterz,dflow" });
   const configuredFee = swapFee();
   const fee = configuredFee && !(await referralFeeProblem()) ? configuredFee : null;
 

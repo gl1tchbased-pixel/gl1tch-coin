@@ -29,7 +29,7 @@ export const NAV_GROUPS: { id: string; label: string; items: NavItem[] }[] = [
     label: "Products",
     items: [
       { id: "nav-scan", label: "Scanner", href: "/scan", blurb: "Any token, any chain. Safe, sus, or rug-shaped." },
-      { id: "nav-blinks", label: "⚡ Safe Swap Blinks", href: "/blinks", blurb: "Anti-rug Solana Blinks with Jupiter routing & instant sharing." },
+      { id: "nav-blinks", label: "⚡ Safe Swap Blinks", href: "/blinks", blurb: "Solana Blinks with a safety scan before every buy, routed through Jupiter." },
       { id: "nav-radar", label: "Rug Radar", href: "/radar", blurb: "The riskiest fresh launches, swept hourly." },
       { id: "nav-yield", label: "Yield X-Ray", href: "/yield", blurb: "Where an APY comes from, read from the chain." },
       { id: "nav-agents", label: "Agent Trust", href: "/agents", blurb: "Know Your Agent: verify an AI agent's wallet." },
