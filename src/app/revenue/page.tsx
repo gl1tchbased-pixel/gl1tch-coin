@@ -5,6 +5,7 @@ import { getRevenue, type RevenueEntry } from "@/lib/revenue";
 import { getTreasurySnapshot } from "@/lib/treasury-revenue";
 import { PAID_ROUTES, readPayTo, type PaidRouteId } from "@/lib/x402/config";
 import { DEPLOYER_WALLET } from "@/lib/official";
+import { RevenueAutoRefresher } from "@/components/web3/RevenueAutoRefresher";
 import styles from "../buyback/buyback.module.css";
 
 export const metadata: Metadata = shareMeta({
@@ -43,7 +44,10 @@ export default async function RevenuePage() {
   return (
     <main className={styles.page}>
       <header className={styles.hero}>
-        <span className={styles.eyebrow}>Paid agent API · Safe Swap fee · Creator fees · On-chain receipts</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
+          <span className={styles.eyebrow}>Paid agent API · Safe Swap fee · Creator fees · On-chain receipts</span>
+          <RevenueAutoRefresher />
+        </div>
         <h1 className={styles.title}>
           Revenue. Every dollar, <span className={styles.signal}>on-chain</span>.
         </h1>
