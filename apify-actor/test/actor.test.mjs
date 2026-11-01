@@ -116,3 +116,4 @@ describe("gl1tch-apify-actor (Pay-Per-Event)", () => {
     assert.strictEqual(chargedEvents[0].eventName, CHARGE_EVENT);
   });
 });
+
