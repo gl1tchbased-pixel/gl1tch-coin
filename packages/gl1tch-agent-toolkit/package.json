@@ -22,10 +22,11 @@
     "gl1tch"
   ],
   "license": "MIT",
+  "author": "gl1tchbased-pixel",
   "homepage": "https://gl1tchbased.xyz/agents/docs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gl1tchbased-pixel/gl1tch-coin.git",
+    "url": "git+https://github.com/gl1tchbased-pixel/gl1tch-coin.git",
     "directory": "packages/gl1tch-agent-toolkit"
   }
 }

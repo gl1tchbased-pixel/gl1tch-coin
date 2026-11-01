@@ -96,5 +96,8 @@ audit.json
 !.env.example
 !bot/.env.example
 
+# git forks for external PRs
+.git-forks/
+
 # x402 first-call test wallet (secret key)
 e2e/x402/

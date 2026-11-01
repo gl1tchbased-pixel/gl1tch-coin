@@ -488,6 +488,39 @@ export function buildOpenApi(origin: string): Record<string, unknown> {
           "503": { description: "Sources degraded or route not configured (not charged)" },
         },
       },
+      post: {
+        operationId: `x402_${id}_post`,
+        summary: r.description,
+        parameters: PARAMS[id].map((p) => ({
+          name: p.name,
+          in: "query",
+          required: false,
+          description: p.description,
+          schema: { type: "string", example: p.example },
+        })),
+        requestBody: {
+          required: false,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: Object.fromEntries(PARAMS[id].map((p) => [p.name, { type: "string", description: p.description }])),
+                required: PARAMS[id].filter((p) => p.required).map((p) => p.name),
+              },
+            },
+          },
+        },
+        "x-payment-info": { protocols: ["x402"], price: { mode: "fixed", currency: "USD", amount: priceAmount(r.price) } },
+        responses: {
+          "200": {
+            description: "Success (the payment settles only now)",
+            content: { "application/json": { schema: OUTPUT_SCHEMAS[id], example: OUTPUT_EXAMPLES[id] } },
+          },
+          "400": { description: "Invalid input (not charged)" },
+          "402": { description: "Payment Required (x402 challenge in the PAYMENT-REQUIRED header)" },
+          "503": { description: "Sources degraded or route not configured (not charged)" },
+        },
+      },
     };
   }
   return {

@@ -110,3 +110,21 @@ describe("the bot's revenue ledger accepts every paid route", () => {
     }
   });
 });
+
+describe("POST requests on paid routes", () => {
+  it("exports POST for all paid routes and merges JSON body into parameters", async () => {
+    const { POST } = await import("../../app/api/x402/scan/route");
+    expect(POST).toBeTypeOf("function");
+
+    const postReq = new NextRequest("http://localhost/api/x402/scan", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ mint: BONK }),
+    });
+    vi.stubEnv("X402_PAY_TO_SOLANA", "");
+    vi.stubEnv("X402_PAY_TO_BASE", "");
+    const res = await POST(postReq);
+    expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ error: "paid API not configured" });
+  });
+});
