@@ -12,7 +12,7 @@ export const metadata: Metadata = shareMeta({
 });
 
 const posture = [
-  { t: "We never hold your funds", d: "We never hold keys and never ask for a token approval or spend allowance. Scanning needs no wallet. The one exception is the optional Safe Swap: Jupiter builds a swap, and you review and sign it in your own wallet. Nothing runs without that signature. GL1TCH earns a 0.5% fee on swaps where the swap screen shows it; the fee plays no part in a token's score." },
+  { t: "We never hold your funds", d: "We never hold keys and never ask for a token approval or spend allowance. Scanning needs no wallet. The one exception is the optional Safe Swap: Jupiter builds a swap, and you review and sign it in your own wallet. Nothing runs without that signature. GL1TCH earns a 0.5% fee on swaps where the swap screen shows it; the fee plays no part in a token's score. On the Safe Swap page the form is Jupiter's own code, loaded only on that page." },
   { t: "Hardened against XSS & clickjacking", d: "Strict Content-Security-Policy, HSTS, frame-ancestors DENY, COOP and a locked-down Permissions-Policy on every page." },
   { t: "Every input is validated", d: "A central validation layer rejects any malformed address or query before it touches an RPC, database, or outbound request (SSRF-safe)." },
   { t: "Abuse-resistant", d: "Public endpoints are rate-limited; edge/WAF hardening is layered on top as traffic grows." },

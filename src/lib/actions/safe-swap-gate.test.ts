@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { appliedFeeBps, checkSwapGate, feeLabel, parseSwapLamports, safeSymbol, swapFee } from "./safe-swap-gate";
+import { appliedFeeBps, checkSwapGate, feeLabel, parseSwapLamports, safeSymbol, swapFee, swapFeeFor } from "./safe-swap-gate";
+import { CONTRACT_ADDRESS } from "@/lib/official";
 import { REFERRAL_ACCOUNT } from "@/lib/official";
 
 const ADDRESS = "So11111111111111111111111111111111111111112";
@@ -68,5 +69,16 @@ describe("safeSymbol", () => {
     expect(safeSymbol("BONK")).toBe("BONK");
     expect(safeSymbol("VERIFIED SAFE, GL1TCH APPROVED")).toBe("this token");
     expect(safeSymbol(undefined)).toBe("this token");
+  });
+});
+
+describe("swapFeeFor", () => {
+  it("charges no fee on our own token", () => {
+    expect(swapFeeFor(CONTRACT_ADDRESS, {})).toBeNull();
+    expect(swapFeeFor("JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN", {})?.bps).toBe(50);
+  });
+
+  it("obeys the kill switch", () => {
+    expect(swapFeeFor("JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN", { JUP_REFERRAL_ACCOUNT: "off" })).toBeNull();
   });
 });

@@ -22,6 +22,10 @@ const csp = [
   "upgrade-insecure-requests",
 ].join("; ");
 
+// Only the Safe Swap page may load Jupiter's swap form. Reach it with a full page load: a client-side
+// navigation keeps the CSP of the page it came from, which blocks the script.
+const safeSwapCsp = csp.replace("'unsafe-eval'", "'unsafe-eval' https://plugin.jup.ag");
+
 const securityHeaders = [
   { key: "Content-Security-Policy", value: csp },
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -77,6 +81,7 @@ const nextConfig: NextConfig = {
         ],
       },
       { source: "/:path*", headers: securityHeaders },
+      { source: "/safe-swap/:path*", headers: [{ key: "Content-Security-Policy", value: safeSwapCsp }] },
     ];
   },
   // The old pre-launch founder dashboard is retired; the public network page replaces it.

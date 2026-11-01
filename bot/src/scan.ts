@@ -73,9 +73,9 @@ function format(r: ScanData, more: number): string {
   let blinkLine = "";
   // Same floor as the swap's own gate, and never on our own token.
   if (r.chain === "solana" && (r.verdict === "CLEAN" || r.verdict === "LOW RISK") && r.score >= 60 && r.mint !== OFFICIAL.CONTRACT) {
-    const blinkUrl = `https://dial.to/?action=solana-action:${OFFICIAL.SITE}/api/actions/safe-swap?mint=${encodeURIComponent(r.mint)}`;
-    const tweetText = encodeURIComponent(`Safety-checked $${r.symbol || "TOKEN"} on @gl1tchbased (${r.score}/100 · ${r.verdict}). Safe Swap via Blink 👇\n${blinkUrl}`);
-    blinkLine = ` · <a href="${blinkUrl}"><b>⚡ Safe Swap Blink (0.5% GL1TCH fee) →</b></a> · <a href="https://twitter.com/intent/tweet?text=${tweetText}">🐦 Tweet Blink</a>`;
+    const swapUrl = `${OFFICIAL.SITE}/safe-swap/${encodeURIComponent(r.mint)}`;
+    const tweetText = encodeURIComponent(`Safety-checked $${r.symbol || "TOKEN"} on @gl1tchbased (${r.score}/100 · ${r.verdict}). Safe Swap 👇\n${swapUrl}`);
+    blinkLine = ` · <a href="${swapUrl}"><b>⚡ Safe Swap (0.5% GL1TCH fee) →</b></a> · <a href="https://twitter.com/intent/tweet?text=${tweetText}">🐦 Share on X</a>`;
   }
   const foot = `\n\n<i>GL1TCH read the chain — it never touched your wallet. Not financial advice.</i>`;
   return head + verdict + bottom + ai + checks + risks + meta + moreLine + link + blinkLine + foot;

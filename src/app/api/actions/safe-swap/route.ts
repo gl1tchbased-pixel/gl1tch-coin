@@ -9,7 +9,7 @@ import {
   MIN_SWAP_SOL,
   parseSwapLamports,
   safeSymbol,
-  swapFee,
+  swapFeeFor,
 } from "@/lib/actions/safe-swap-gate";
 import { referralFeeProblem } from "@/lib/actions/referral-check";
 import { swapTxProblem } from "@/lib/actions/swap-tx-check";
@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
     type: "action",
     icon: ICON,
     title: `GL1TCH Safe Swap: ${symbol}`,
-    description: `Scan: ${String(body?.verdict)} (${String(body?.score)}/100). A scan lowers risk but cannot rule out losses. ${feeLabel(swapFee()?.bps)}; check the amounts in your wallet before you sign.`,
+    description: `Scan: ${String(body?.verdict)} (${String(body?.score)}/100). A scan lowers risk but cannot rule out losses. ${feeLabel(swapFeeFor(mint)?.bps)}; check the amounts in your wallet before you sign.`,
     label: "Safe Swap",
     disabled: false,
     links: {
@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
   // JupiterZ adds a market maker's signature only in /execute, which a wallet signing through an Action never reaches.
   // DFlow's program is not on the list swap-tx-check trusts; without this those routes fail with a 502.
   const params = new URLSearchParams({ inputMint: SOL_MINT, outputMint: mint, amount: String(lamports), taker: account, excludeRouters: "jupiterz,dflow" });
-  const configuredFee = swapFee();
+  const configuredFee = swapFeeFor(mint);
   const fee = configuredFee && !(await referralFeeProblem()) ? configuredFee : null;
 
   try {

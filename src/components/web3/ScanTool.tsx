@@ -314,37 +314,26 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
               <div className={styles.blinkHead}>
                 <span className={styles.blinkIcon}>⚡</span>
                 <div>
-                  <strong>Solana Safe Swap Blink</strong>
+                  <strong>Solana Safe Swap</strong>
                   <p>Optional swap via Jupiter, offered only after a passing scan. A passing scan is not a recommendation and cannot rule out losses. You sign in your own wallet. GL1TCH earns a 0.5% fee on swaps where the swap screen shows it; the fee plays no part in the score.</p>
                 </div>
               </div>
               <div className={styles.blinkActions}>
-                <a
-                  href={`https://dial.to/?action=solana-action:https://gl1tchbased.xyz/api/actions/safe-swap?mint=${encodeURIComponent(result.mint)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={styles.blinkSwapBtn}
-                >
-                  ⚡ Open Safe Swap Blink ↗
+                {/* A plain <a>: the swap page needs a full page load for its CSP. */}
+                <a href={`/safe-swap/${encodeURIComponent(result.mint)}`} className={styles.blinkSwapBtn}>
+                  ⚡ Open Safe Swap
                 </a>
                 <a
                   href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                    `Check out the safety scan for $${result.symbol || "TOKEN"} on @gl1tchbased: ${result.verdict} (${result.score}/100) 🛡️\n\nScan-gated swap 👇\nhttps://dial.to/?action=solana-action:https://gl1tchbased.xyz/api/actions/safe-swap?mint=${result.mint}`
+                    `Check out the safety scan for $${result.symbol || "TOKEN"} on @gl1tchbased: ${result.verdict} (${result.score}/100) 🛡️\n\nScan-gated swap 👇\nhttps://gl1tchbased.xyz/safe-swap/${result.mint}`
                   )}`}
                   target="_blank"
                   rel="noreferrer"
                   className={styles.blinkTweetBtn}
                 >
-                  🐦 Share Blink on X
+                  🐦 Share on X
                 </a>
               </div>
-              <p className={styles.blinkFallback}>
-                Blink page won&apos;t open on your network?{" "}
-                <a href={`https://jup.ag/swap/SOL-${encodeURIComponent(result.mint)}`} target="_blank" rel="noreferrer">
-                  Swap directly on Jupiter ↗
-                </a>{" "}
-                (no GL1TCH fee, no gate at swap time).
-              </p>
             </div>
           )}
 

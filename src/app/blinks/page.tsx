@@ -28,14 +28,16 @@ export default function BlinksPage() {
   const scanActionUrl = `${origin}/api/actions/scan?mint=${tokenMint}`;
   const currentActionUrl = activeType === "swap" ? swapActionUrl : scanActionUrl;
 
-  // Dial.to URLs
-  const dialToUrl = `https://dial.to/?action=solana-action:${encodeURIComponent(currentActionUrl)}`;
+  // What people open and share. These are plain <a> links: the swap page needs a full page load for its CSP.
+  const swapPagePath = `/safe-swap/${tokenMint}`;
+  const scanPagePath = `/scan/solana-${tokenMint}`;
+  const shareUrl = `${origin}${activeType === "swap" ? swapPagePath : scanPagePath}`;
 
   // Tweet Intent
   const tweetText =
     activeType === "swap"
-      ? `🛡️ Safe Swap ${tokenLabel} on Solana:\n⚡ Jupiter routing, scanned first by @gl1tchbased. A 0.5% fee may apply, shown before you sign.\n\nTry the Blink 👇\n${dialToUrl}`
-      : `🔍 Instant Security Scan for ${tokenLabel}:\n⚡ Flag mint authorities, freeze risks & rugs with @gl1tchbased Solana Action.\n\nAudit token 👇\n${dialToUrl}`;
+      ? `🛡️ Safe Swap ${tokenLabel} on Solana:\n⚡ Jupiter routing, scanned first by @gl1tchbased. A 0.5% fee may apply, shown before you sign.\n\nTry it 👇\n${shareUrl}`
+      : `🔍 Instant Security Scan for ${tokenLabel}:\n⚡ Flag mint authorities, freeze risks & rugs with @gl1tchbased.\n\nAudit token 👇\n${shareUrl}`;
 
   const tweetIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
 
@@ -127,15 +129,15 @@ export default function BlinksPage() {
 
             <div className={styles.actionBox}>
               <div className={styles.actionBoxHeader}>
-                <span className={styles.actionBoxTitle}>Dial.to Inspector Link</span>
+                <span className={styles.actionBoxTitle}>Share Link</span>
                 <button
                   className={styles.copyButton}
-                  onClick={() => copyToClipboard(dialToUrl, "dialUrl")}
+                  onClick={() => copyToClipboard(shareUrl, "shareUrl")}
                 >
-                  {copiedKey === "dialUrl" ? "✓ Copied" : "Copy"}
+                  {copiedKey === "shareUrl" ? "✓ Copied" : "Copy"}
                 </button>
               </div>
-              <div className={styles.actionBoxUrl}>{dialToUrl}</div>
+              <div className={styles.actionBoxUrl}>{shareUrl}</div>
             </div>
           </div>
 
@@ -150,15 +152,13 @@ export default function BlinksPage() {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
               </svg>
-              Tweet Blink on X
+              Share on X
             </a>
             <a
-              href={dialToUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={shareUrl}
               className={styles.ctaDial}
             >
-              Test in Dial.to ↗
+              Open →
             </a>
           </div>
         </div>
@@ -166,8 +166,8 @@ export default function BlinksPage() {
         {/* Right: Live Blink Preview Mockup */}
         <div className={styles.card}>
           <div className={styles.cardHeader}>
-            <h2 className={styles.cardTitle}>📱 Live Blink Preview</h2>
-            <span style={{ fontSize: "0.78rem", color: "#a8b0bd" }}>X / Phantom Native</span>
+            <h2 className={styles.cardTitle}>📱 Preview</h2>
+            <span style={{ fontSize: "0.78rem", color: "#a8b0bd" }}>Scanned before every buy</span>
           </div>
 
           <div className={styles.blinkMock}>
@@ -194,26 +194,15 @@ export default function BlinksPage() {
 
               {activeType === "swap" ? (
                 <>
-                  <a
-                    href={dialToUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.blinkSwapBtn}
-                  >
-                    ⚡ Open Safe Swap ↗
+                  <a href={swapPagePath} className={styles.blinkSwapBtn}>
+                    ⚡ Open Safe Swap
                   </a>
                   <p className={styles.blinkNote}>
-                    You choose the amount on the next screen, on dial.to, a third-party Blink page. Won&apos;t open on your network?{" "}
-                    <Link href={`/scan/solana-${tokenMint}`}>Scan this token</Link> for a direct Jupiter link.
+                    You choose the amount on the next screen, in Jupiter&apos;s swap form, after the token passes the scan.
                   </p>
                 </>
               ) : (
-                <a
-                  href={dialToUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.blinkSwapBtn}
-                >
+                <a href={scanPagePath} className={styles.blinkSwapBtn}>
                   🔍 Run Full Security Scan
                 </a>
               )}
@@ -221,9 +210,7 @@ export default function BlinksPage() {
               <div className={styles.blinkSecurityFooter}>
                 <span>✓ Non-Custodial</span>
                 <span>•</span>
-                <span>✓ Solana Action</span>
-                <span>•</span>
-                <span>✓ 0% Rug Risk</span>
+                <span>✓ Scan first</span>
               </div>
             </div>
           </div>
@@ -256,7 +243,7 @@ export default function BlinksPage() {
             <div className={styles.featureIcon}>🐦</div>
             <h3 className={styles.featureTitle}>Shareable Anywhere</h3>
             <p className={styles.featureText}>
-              Anyone can share a token&apos;s Safe Swap link. dial.to opens it in a browser, and the same safety scan runs whoever shared it. You still review and sign in your own wallet.
+              Anyone can share a token&apos;s Safe Swap link. The same safety scan runs whoever shared it, and you still review and sign in your own wallet.
             </p>
           </div>
         </div>
@@ -271,7 +258,7 @@ export default function BlinksPage() {
         </div>
 
         <p style={{ fontSize: "0.9rem", color: "var(--text-secondary, #a8b0bd)", lineHeight: 1.6, margin: "10px 0 16px" }}>
-          GL1TCH serves Solana Actions with root discovery and CORS pre-flight support. Swap requests return an unsigned transaction that only the user&apos;s wallet can sign.
+          GL1TCH serves Solana Actions with root discovery and CORS pre-flight support. Swap requests return an unsigned transaction that only the user&apos;s wallet can sign. Clients that render Actions can use these directly. The dial.to page that many Blink links point to is currently paused by its owner, so GL1TCH&apos;s own links open the Safe Swap page instead.
         </p>
 
         <div className={styles.codeBlock}>

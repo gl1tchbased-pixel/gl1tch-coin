@@ -5,7 +5,7 @@ and get a 0–100 risk score with a plain-language reason for every check, in se
 it never asks for a signature, never touches a wallet, and costs nothing to use.
 
 - Scanner: <https://gl1tchbased.xyz/scan>
-- Solana Actions & Blinks (Spec v2.4): <https://gl1tchbased.xyz/actions.json> · [Safe Swap Blink](https://dial.to/?action=solana-action:https://gl1tchbased.xyz/api/actions/safe-swap)
+- Solana Actions & Blinks (Spec v2.4): <https://gl1tchbased.xyz/actions.json> · [Safe Swap](https://gl1tchbased.xyz/blinks)
 - Live On-Chain Treasury & Revenue: <https://gl1tchbased.xyz/revenue> (reads Solana & Base Mainnet RPCs directly)
 - Mobile Prototype (Solana Mobile Wallet Adapter · Android): [52s YouTube Demo](https://youtu.be/HubNomvZ7_k) · [`mobile/`](./mobile)
 - Yield X-Ray (multi-chain APY & risk analysis across 7 chains): <https://gl1tchbased.xyz/yield>
