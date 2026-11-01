@@ -15,6 +15,7 @@
       "title": "Token address (action=scan)",
       "type": "string",
       "description": "Solana token mint or EVM contract address.",
+      "default": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
       "prefill": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
       "editor": "textfield"
     },

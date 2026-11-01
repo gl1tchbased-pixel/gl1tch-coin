@@ -9,6 +9,7 @@ export const DEFAULT_SITE = "https://gl1tchbased.xyz";
 export const CHARGE_EVENT = "gl1tch-query";
 const MIN_CONFIDENCE = 60;
 const MAX_BATCH = 10;
+export const DEFAULT_PREFILL_MINT = "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263";
 
 /**
  * Fetch one query's results as dataset items.
@@ -40,8 +41,7 @@ export async function executeActorInput(input = {}, opts = {}) {
   };
 
   if (action === "scan") {
-    const mint = String(input.mint || "").trim();
-    if (!mint) throw new Error("mint is required when action=scan");
+    const mint = String(input.mint || DEFAULT_PREFILL_MINT).trim();
     return [markScan({ action, ...(await scan(mint)) })];
   }
 
@@ -116,7 +116,7 @@ async function runCli() {
   }
 
   if (!Actor) {
-    const input = process.env.APIFY_INPUT ? JSON.parse(process.env.APIFY_INPUT) : { action: "scan", mint: "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263" };
+    const input = process.env.APIFY_INPUT ? JSON.parse(process.env.APIFY_INPUT) : { action: "scan", mint: DEFAULT_PREFILL_MINT };
     console.log(JSON.stringify(await executeActorInput(input), null, 2));
     return;
   }
