@@ -4,3 +4,4 @@ description: "Pre-trade token safety & honeypot scanner, serial rugger reputatio
 startCommand:
   type: http
   url: "https://gl1tchbased.xyz/api/mcp"
+

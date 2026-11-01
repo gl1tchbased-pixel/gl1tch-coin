@@ -51,7 +51,32 @@ export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest)
   const route = PAID_ROUTES[id];
   let paid: Handler | null = null;
 
-  return async function GET(req: NextRequest): Promise<Response> {
+  return async function handle(req: NextRequest): Promise<Response> {
+    let effectiveReq = req;
+    if (req.method === "POST") {
+      try {
+        const ct = req.headers.get("content-type") || "";
+        if (ct.includes("application/json")) {
+          const json = await req.clone().json().catch(() => null);
+          if (json && typeof json === "object") {
+            const url = new URL(req.url);
+            let modified = false;
+            for (const [k, v] of Object.entries(json)) {
+              if (v !== undefined && v !== null && !url.searchParams.has(k)) {
+                url.searchParams.set(k, Array.isArray(v) ? v.join(",") : String(v));
+                modified = true;
+              }
+            }
+            if (modified) {
+              effectiveReq = new NextRequest(url, req);
+            }
+          }
+        }
+      } catch {
+        // ignore parse error, let downstream handler handle validation
+      }
+    }
+
     const payTo = readPayTo(process.env);
     if (payTo.rejected.length > 0) {
       // Fail closed: a mistyped wallet must not quietly drop a network (or route money elsewhere).
@@ -64,11 +89,11 @@ export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest)
     const accepts = buildAccepts(route.price, payTo);
 
     sweepBuckets();
-    const key = req.headers.get("x-gl1tch-key") ?? "";
+    const key = effectiveReq.headers.get("x-gl1tch-key") ?? "";
     const keyInfo = accepts.length > 0 && key ? await checkApiKey(key) : null;
     const rl = keyInfo
       ? rateLimit(`x402:k:${key}`, keyInfo.ratePerMin, 60_000)
-      : rateLimit(`x402:${clientIp(req)}`, PAID_RATE_PER_MIN, 60_000);
+      : rateLimit(`x402:${clientIp(effectiveReq)}`, PAID_RATE_PER_MIN, 60_000);
 
     switch (accessMode({ configured: accepts.length > 0, limited: !rl.ok, holder: !!keyInfo })) {
       case "unconfigured":
@@ -79,7 +104,7 @@ export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest)
           { status: 429, headers: { "retry-after": String(rl.retryAfter), "cache-control": NO_STORE } }
         );
       case "holder": {
-        const res = await noStore(handler)(req);
+        const res = await noStore(handler)(effectiveReq);
         res.headers.set("x-gl1tch-access", "holder");
         return res;
       }
@@ -115,9 +140,9 @@ export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest)
           },
           getX402Server()
         );
-        const res = await paid(req);
+        const res = await paid(effectiveReq);
         // A 402 is a price quote: counted so the ledger shows found-versus-bought (our own test client excluded).
-        if (res.status === 402 && req.headers.get(SELF_TEST_HEADER) !== "1") recordQuote(id, req.headers.get("user-agent"));
+        if (res.status === 402 && effectiveReq.headers.get(SELF_TEST_HEADER) !== "1") recordQuote(id, effectiveReq.headers.get("user-agent"));
         return res;
     }
   };

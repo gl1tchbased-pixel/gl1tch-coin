@@ -6,3 +6,4 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export const GET = paidRoute("agent", agentHandler);
+export const POST = GET;

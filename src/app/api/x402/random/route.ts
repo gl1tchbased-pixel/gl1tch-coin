@@ -8,3 +8,4 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
 export const GET = paidRoute("random", randomHandler);
+export const POST = GET;
