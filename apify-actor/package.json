@@ -5,11 +5,11 @@
   "description": "Apify Store Pay-Per-Event Actor for GL1TCH Solana/EVM Token Safety, Insider Graph, Rug Radar & 7-Chain DeFi Yield X-Ray.",
   "main": "src/main.mjs",
   "scripts": {
-    "start": "node src/main.mjs"
+    "start": "node src/main.mjs",
+    "test": "node --test test/actor.test.mjs"
   },
   "dependencies": {
     "apify": "^3.2.0"
   },
   "license": "MIT"
 }
-

@@ -1,7 +1,7 @@
 {
   "name": "gl1tch-agent-toolkit",
-  "version": "1.1.0",
-  "description": "Drop-in Solana Agent Kit, ElizaOS, LangChain & x402 tools for GL1TCH Token Safety, Insider Graph, Rug Radar, Verifiable Randomness, and DeFi Yield X-Ray.",
+  "version": "1.2.0",
+  "description": "Drop-in Solana Agent Kit, ElizaOS, LangChain & x402 tools for GL1TCH Token Safety, Insider Graph, Rug Radar, Verifiable Drand Randomness, and DeFi Yield X-Ray.",
   "type": "module",
   "main": "./index.mjs",
   "types": "./index.d.ts",
@@ -11,6 +11,9 @@
       "import": "./index.mjs"
     }
   },
+  "scripts": {
+    "test": "node --test test/toolkit.test.mjs"
+  },
   "keywords": [
     "solana",
     "solana-agent-kit",
@@ -18,6 +21,9 @@
     "x402",
     "mcp",
     "token-safety",
+    "pre-trade-guard",
+    "drand",
+    "randomness",
     "defi-yield",
     "gl1tch"
   ],
@@ -30,4 +36,3 @@
     "directory": "packages/gl1tch-agent-toolkit"
   }
 }
-

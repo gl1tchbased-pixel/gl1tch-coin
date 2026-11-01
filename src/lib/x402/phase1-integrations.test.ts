@@ -32,15 +32,20 @@ describe("Phase 1 Agent Toolkit & Apify Actor", () => {
     const tools = createSolanaAgentKitTools({ fetch: mockFetch });
     expect(tools.map((t) => t.name)).toEqual([
       "gl1tch_scan_token",
+      "gl1tch_quick_check",
       "gl1tch_yield_xray",
       "gl1tch_deployer_reputation",
       "gl1tch_rug_radar",
       "gl1tch_agent_trust",
+      "gl1tch_verifiable_random",
+      "gl1tch_token_verdict",
     ]);
 
     const plugin = gl1tchElizaPlugin({ fetch: mockFetch });
     expect(plugin.name).toBe("@gl1tch/plugin-solana-safety");
-    expect(plugin.actions).toHaveLength(5);
+    expect(plugin.actions).toHaveLength(8);
+    expect(plugin.providers).toHaveLength(1);
+    expect(plugin.evaluators).toHaveLength(1);
     const yieldAction = plugin.actions.find((a) => a.name === "GL1TCH_YIELD_XRAY")!;
     const out = await yieldAction.handler({}, {}, {}, { chain: "solana" });
     expect(out).toEqual({ pools: [{ id: "solana-kamino-usdc", apyPct: 6.4 }] });
@@ -79,4 +84,3 @@ describe("Phase 1 Agent Toolkit & Apify Actor", () => {
     expect(body.channels.quantumGiveaway.botCommand).toBe("/giveaway");
   });
 });
-

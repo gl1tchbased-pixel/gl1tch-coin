@@ -8,7 +8,7 @@ export function GET() {
     {
       ok: true,
       name: "GL1TCH Agent & B2B Monetization Integrations",
-      version: "1.1.0",
+      version: "1.2.0",
       site: OFFICIAL.SITE_URL,
       repository: OFFICIAL.GITHUB_URL,
       channels: {
@@ -39,11 +39,25 @@ export function GET() {
         },
         solanaAgentKit: {
           package: "@gl1tch/agent-toolkit",
+          version: "1.2.0",
           path: "packages/gl1tch-agent-toolkit",
-          exports: ["Gl1tchClient", "createSolanaAgentKitTools", "gl1tchElizaPlugin"],
+          exports: [
+            "Gl1tchClient",
+            "createSolanaAgentKitTools",
+            "gl1tchElizaPlugin",
+            "gl1tchPreTradeGuard",
+            "gl1tchSafetyProvider",
+            "gl1tchPreTradeEvaluator",
+            "drawProvablyFairWinners",
+            "rollProvablyFairDice",
+            "shuffleProvablyFair",
+            "createRadarStreamListener",
+            "verifyAgentTrust",
+          ],
         },
         apifyActor: {
           name: "gl1tch-token-safety-scanner",
+          version: "1.2.0",
           store: "https://apify.com/gl1tch-pixel/gl1tch-token-safety-scanner",
           path: "apify-actor",
           pricingModel: "Pay-Per-Event ($0.005 per result · 80% creator revenue share)",
@@ -59,6 +73,18 @@ export function GET() {
           webConsole: `${OFFICIAL.SITE_URL}/quantum-core/random`,
           x402Endpoint: `${OFFICIAL.SITE_URL}/api/x402/random`,
           freeQuota: "1 verifiable drand draw/day (25/day for verified $GL1TCH holders)",
+        },
+        rugRadarStream: {
+          endpoint: `${OFFICIAL.SITE_URL}/api/radar/stream`,
+          protocol: "Server-Sent Events (SSE)",
+          vipAccess: "Header x-gl1tch-key or ?key= for 120 req/min continuous stream",
+          paidDeltaRoute: `${OFFICIAL.SITE_URL}/api/x402/radar?since=<cursor>`,
+        },
+        knowYourAgentErc8004: {
+          endpoint: `${OFFICIAL.SITE_URL}/api/agent/erc8004`,
+          badgeEndpoint: `${OFFICIAL.SITE_URL}/api/agent/badge`,
+          paidCheckRoute: `${OFFICIAL.SITE_URL}/api/x402/agent`,
+          protocol: "ERC-8004 Trustless Agents Specification",
         },
         solanaActionsAndBlinks: {
           actionsJson: `${OFFICIAL.SITE_URL}/actions.json`,
@@ -91,4 +117,3 @@ export function GET() {
     }
   );
 }
-

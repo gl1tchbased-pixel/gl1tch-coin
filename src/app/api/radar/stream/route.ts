@@ -1,13 +1,14 @@
 import type { NextRequest } from "next/server";
 import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 import { sweepOnce, lastSweep, type RadarSweep } from "@/lib/radar";
+import { checkApiKey } from "@/lib/apikey";
 
 /**
  * RUG RADAR LIVE STREAM (Server-Sent Events / SSE).
  *
  * Streams live radar snapshots and heartbeat pulses to clients that toggle "Live Feed"
  * on `/radar`. Reuses the cached instance sweep (`lastSweep` / `sweepOnce`) so opening
- * a stream never amplifies RPC load.
+ * a stream never amplifies RPC load. VIP keys (`x-gl1tch-key` / `?key=`) receive higher throughput.
  */
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,7 +22,14 @@ const view = (r: RadarSweep) => ({
 
 export async function GET(req: NextRequest) {
   sweepBuckets();
-  if (!rateLimit(`radar-stream:${clientIp(req)}`, 6, 60_000).ok) {
+
+  const rawKey = (req.headers.get("x-gl1tch-key") ?? req.nextUrl.searchParams.get("key") ?? "").trim();
+  const keyInfo = rawKey ? await checkApiKey(rawKey) : null;
+  const isVip = Boolean(keyInfo && keyInfo.tier >= 1);
+  const limit = isVip ? 120 : 6;
+  const bucketKey = isVip ? `radar-stream:key:${rawKey}` : `radar-stream:${clientIp(req)}`;
+
+  if (!rateLimit(bucketKey, limit, 60_000).ok) {
     return new Response("rate limited", { status: 429, headers: { "retry-after": "60" } });
   }
 
