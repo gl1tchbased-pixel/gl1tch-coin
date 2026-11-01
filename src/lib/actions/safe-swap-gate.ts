@@ -1,4 +1,4 @@
-import { REFERRAL_ACCOUNT } from "@/lib/official";
+import { CONTRACT_ADDRESS, REFERRAL_ACCOUNT } from "@/lib/official";
 
 /** Who Safe Swap will route a buy into. Fails closed: no scan or a weak scan means no swap. */
 const PASSING_VERDICTS = new Set(["CLEAN", "LOW RISK"]);
@@ -54,6 +54,11 @@ export function parseSwapLamports(raw: string | null): number | null {
 export function swapFee(env: Record<string, string | undefined> = process.env): { account: string; bps: number } | null {
   if (env.JUP_REFERRAL_ACCOUNT?.trim().toLowerCase() === "off") return null;
   return { account: REFERRAL_ACCOUNT, bps: SWAP_FEE_BPS };
+}
+
+/** No fee on our own token: we shouldn't earn from a buy of what our scanner graded for itself. */
+export function swapFeeFor(mint: string, env: Record<string, string | undefined> = process.env) {
+  return mint === CONTRACT_ADDRESS ? null : swapFee(env);
 }
 
 /** Token names are written by whoever launched the token: keep them out of our wallet prompts unless they're plain. */
