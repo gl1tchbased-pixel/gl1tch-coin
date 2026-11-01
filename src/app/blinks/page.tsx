@@ -16,8 +16,6 @@ const POPULAR_TOKENS = [
 export default function BlinksPage() {
   const [activeType, setActiveType] = useState<"swap" | "scan">("swap");
   const [tokenMint, setTokenMint] = useState(POPULAR_TOKENS[0].mint);
-  const [selectedPreset, setSelectedPreset] = useState("0.5");
-  const [customAmount, setCustomAmount] = useState("");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const selectedToken = POPULAR_TOKENS.find((t) => t.mint === tokenMint);
@@ -196,42 +194,18 @@ export default function BlinksPage() {
 
               {activeType === "swap" ? (
                 <>
-                  <div className={styles.blinkPresetRow}>
-                    {["0.1", "0.5", "1.0"].map((amt) => (
-                      <button
-                        key={amt}
-                        className={`${styles.blinkPresetBtn} ${
-                          selectedPreset === amt && !customAmount ? styles.blinkPresetActive : ""
-                        }`}
-                        onClick={() => {
-                          setSelectedPreset(amt);
-                          setCustomAmount("");
-                        }}
-                      >
-                        {amt} SOL
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className={styles.blinkCustomRow}>
-                    <input
-                      type="number"
-                      step="0.1"
-                      className={styles.blinkCustomInput}
-                      placeholder="Custom SOL amount..."
-                      value={customAmount}
-                      onChange={(e) => setCustomAmount(e.target.value)}
-                    />
-                  </div>
-
                   <a
                     href={dialToUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.blinkSwapBtn}
                   >
-                    ⚡ Swap {customAmount ? `${customAmount} SOL` : `${selectedPreset} SOL`} on Jupiter
+                    ⚡ Open Safe Swap ↗
                   </a>
+                  <p className={styles.blinkNote}>
+                    You choose the amount on the next screen, on dial.to, a third-party Blink page. Won&apos;t open on your network?{" "}
+                    <Link href={`/scan/solana-${tokenMint}`}>Scan this token</Link> for a direct Jupiter link.
+                  </p>
                 </>
               ) : (
                 <a

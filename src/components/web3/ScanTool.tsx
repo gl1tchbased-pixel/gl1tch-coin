@@ -338,6 +338,13 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
                   🐦 Share Blink on X
                 </a>
               </div>
+              <p className={styles.blinkFallback}>
+                Blink page won&apos;t open on your network?{" "}
+                <a href={`https://jup.ag/swap/SOL-${encodeURIComponent(result.mint)}`} target="_blank" rel="noreferrer">
+                  Swap directly on Jupiter ↗
+                </a>{" "}
+                (no GL1TCH fee, no gate at swap time).
+              </p>
             </div>
           )}
 
