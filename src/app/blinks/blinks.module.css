@@ -362,53 +362,6 @@
   margin: 0 0 16px;
 }
 
-.blinkPresetRow {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 10px;
-}
-
-.blinkPresetBtn {
-  padding: 10px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  font-size: 0.85rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.blinkPresetBtn:hover,
-.blinkPresetActive {
-  background: rgba(124, 246, 200, 0.15);
-  border-color: rgba(124, 246, 200, 0.4);
-  color: var(--accent, #7cf6c8);
-}
-
-.blinkCustomRow {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.blinkCustomInput {
-  flex: 1;
-  padding: 10px 12px;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  font-size: 0.85rem;
-  outline: none;
-}
-
-.blinkCustomInput:focus {
-  border-color: var(--accent, #7cf6c8);
-}
-
 .blinkSwapBtn {
   width: 100%;
   padding: 12px;
@@ -503,3 +456,13 @@
   margin: 12px 0;
 }
 
+.blinkNote {
+  margin: 10px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-secondary, #a8b0bd);
+}
+
+.blinkNote a {
+  text-decoration: underline;
+}
