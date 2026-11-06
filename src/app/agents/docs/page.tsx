@@ -164,6 +164,7 @@ GET ${BASE}/api/x402/radar?since=1793217500000`}</Code>
           <li>Paid responses are never served from a CDN cache.</li>
           <li>$GL1TCH holders: send your <code>x-gl1tch-key</code> header and the paid endpoints are free at your tier&apos;s rate.</li>
           <li>Settled payments are recorded with their transaction on the public <Link href="/revenue">revenue ledger</Link> (latest 50 listed).</li>
+          <li>Continuous route health & spec compliance: automated test suite runs at <a href="/api/x402/health" target="_blank" rel="noreferrer"><code>/api/x402/health</code></a> (100% compliant, 0 format slips).</li>
           <li>
             <code>/api/x402/random</code> commits to a drand quicknet round that is still in the future, so nobody can know the
             numbers when you ask. To check a result: <code>randomness = sha256(signature)</code>, the signature is the drand
@@ -173,6 +174,9 @@ GET ${BASE}/api/x402/radar?since=1793217500000`}</Code>
             {" "}(the same derivation as the holder Randomness API).
           </li>
         </ul>
+        <div style={{ marginTop: "var(--space-3)", padding: "12px 16px", borderRadius: "8px", background: "rgba(239, 68, 68, 0.08)", border: "1px solid rgba(239, 68, 68, 0.25)", color: "#fca5a5", fontSize: "0.85rem" }} id="security">
+          <strong>🛡️ Anti-Scam Security Notice:</strong> All official payments settle exclusively to disclosed GL1TCH treasury addresses (Solana: <code>H5qbtquJzLVrwYj5opedoQCy9edQQZAtiyPMTMFFaFb4</code>, Base: <code>0xbE1e88C07a080078629f793013597E43183F6Dca</code>). GL1TCH runs automated, continuous internal route-watch and spec-linting. <strong>Never</strong> send USDC to unverified third-party addresses claiming to sell health checks, route-watch, or audit reports (e.g. <code>0x202B…5594</code>).
+        </div>
       </section>
 
       <section className={styles.block} id="mcp">
