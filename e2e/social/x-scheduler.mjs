@@ -27,6 +27,7 @@ function run(script) {
 
 async function cycle() {
   await run("x-daily.mjs");        // idempotent — one post/thread per day
+  await run("x-radar-auto.mjs");   // autonomous Rug Radar alert & discloser
   await run("x-proof.mjs");        // shares a real serial-deployer catch (usually a no-op)
   await run("x-newsjack.mjs");     // quote-tweets big rug/scam news (max 1/day)
   await run("x-reply.mjs");        // rate-limited helpful replies
