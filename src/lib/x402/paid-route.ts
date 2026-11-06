@@ -134,6 +134,12 @@ export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest)
                   networks: accepts.map((a) => a.network),
                   docs: `${OFFICIAL.SITE_URL}/agents/docs#x402`,
                   free: `${OFFICIAL.SITE_URL}${FREE_ALTERNATIVE[id]}`,
+                  healthCheck: `${OFFICIAL.SITE_URL}/api/x402/health`,
+                  officialTreasuries: {
+                    solana: payTo.solana,
+                    base: payTo.base,
+                  },
+                  securityNotice: "GL1TCH never solicits manual audit fees to private addresses. Verify official channels at /agents/docs#security",
                 },
               }),
             },
