@@ -1,4 +1,4 @@
-import { Composer, type Context } from "grammy";
+import { Composer, InlineKeyboard, type Context } from "grammy";
 import { OFFICIAL } from "./content.js";
 import { guardianStore } from "./guardian/store.js";
 import { officialGroups } from "./guardian/commands.js";
@@ -139,7 +139,10 @@ scanCommands.command("scan", async (ctx) => {
   try {
     const text = await runScan(q);
     if (!text) { await ctx.reply("⚪ Couldn't scan that — try the exact name or paste the contract address.", HTML); return; }
-    await ctx.reply(text, HTML);
+    const kb = new InlineKeyboard()
+      .url("🔍 Full Scan ↗", `${OFFICIAL.SITE}/scan/${encodeURIComponent(q)}`)
+      .url("⚡ Buy $GL1TCH ↗", `${OFFICIAL.SITE}/token`);
+    await ctx.reply(text, { ...HTML, reply_markup: kb });
   } catch {
     await ctx.reply("⚠️ Scanner is busy — try again in a moment.", HTML);
   }
@@ -214,9 +217,13 @@ autoScan.on("message:text", async (ctx, next) => {
         guardianFooter = `\n🛡 <i>GL1TCH Guardian (${g.usedToday}/${g.limit} free today) · /guardian</i>`;
       }
     }
+    const kb = new InlineKeyboard()
+      .url("🛡️ Safe Swap ↗", `${OFFICIAL.SITE}/safe-swap/${encodeURIComponent(addr)}`)
+      .url("⚡ Buy $GL1TCH ↗", `${OFFICIAL.SITE}/token`);
     await ctx.reply(`🛰 <i>Auto-scanned the contract above:</i>\n\n${out}${guardianFooter}`, {
       ...HTML,
       reply_parameters: { message_id: ctx.message.message_id },
+      reply_markup: kb,
     });
   } catch {
     /* stay quiet on errors — auto path should never nag */
