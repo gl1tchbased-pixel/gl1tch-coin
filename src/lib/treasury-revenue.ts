@@ -150,7 +150,7 @@ async function fetchSolanaRpc<T>(method: string, params: unknown[], rpcUrl: stri
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
       signal: AbortSignal.timeout(5000),
-      next: { revalidate: 60 },
+      next: { revalidate: 15 },
     });
     if (!res.ok) return null;
     const json = (await res.json()) as { result?: T };
@@ -175,7 +175,7 @@ async function fetchBaseUsdcBalance(wallet: string, baseRpcUrl: string): Promise
         params: [{ to: BASE_USDC_CONTRACT, data }, "latest"],
       }),
       signal: AbortSignal.timeout(5000),
-      next: { revalidate: 60 },
+      next: { revalidate: 15 },
     });
     if (!res.ok) return null;
     const json = (await res.json()) as { result?: string };

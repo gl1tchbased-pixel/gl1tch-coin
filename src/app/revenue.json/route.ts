@@ -20,7 +20,7 @@ export async function GET() {
     { ...summary, treasury },
     {
       headers: {
-        "cache-control": "public, s-maxage=30, stale-while-revalidate=120",
+        "cache-control": "public, max-age=10, s-maxage=10, stale-while-revalidate=30",
         "access-control-allow-origin": "*",
       },
     }

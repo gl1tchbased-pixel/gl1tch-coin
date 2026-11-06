@@ -15,7 +15,8 @@ export const metadata: Metadata = shareMeta({
   alternates: { canonical: "/revenue" },
 });
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const usd = (micro: number) =>
   `$${(micro / 1e6).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 3 })}`;
@@ -143,7 +144,12 @@ export default async function RevenuePage() {
       </section>
 
       <section className={styles.how}>
-        <span className={styles.kicker}>Live on-chain treasury &amp; creator rewards</span>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
+          <span className={styles.kicker}>Live on-chain treasury &amp; creator rewards</span>
+          <span style={{ fontSize: "0.75rem", color: "#64748b", fontFamily: "var(--font-mono, monospace)" }}>
+            Snapshot: {when(treasury.fetchedAt)}
+          </span>
+        </div>
         <p className={styles.note}>
           Read directly from Solana Mainnet and Base Mainnet RPCs. Every wallet and claim transaction links
           to its block explorer so anyone can verify the exact lamports and USDC balances independently.

@@ -131,7 +131,7 @@ export function recordQuote(route: PaidRouteId, userAgent: string | null): void 
 
 export async function getRevenue(): Promise<RevenueSummary | null> {
   try {
-    const r = await fetch(`${BASE}/revenue`, { signal: AbortSignal.timeout(6000), next: { revalidate: 30 } });
+    const r = await fetch(`${BASE}/revenue`, { signal: AbortSignal.timeout(6000), next: { revalidate: 15 } });
     if (!r.ok) return null;
     const d = (await r.json()) as RevenueSummary;
     return d && d.ok === true && d.paid ? d : null;
