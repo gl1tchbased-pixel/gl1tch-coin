@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { CONTRACT_ADDRESS } from "@/lib/official";
 import styles from "./RugRadar.module.css";
 
 /**
@@ -106,8 +107,13 @@ export function RugRadar({ limit }: { limit?: number } = {}) {
         <div className={styles.grid}>
           {data.caught.slice(0, limit ?? data.caught.length).map((c) => {
             const t = vtone(c.verdict);
+            const canSwap =
+              c.chain === "solana" &&
+              c.mint !== CONTRACT_ADDRESS &&
+              (c.verdict === "CLEAN" || c.verdict === "LOW RISK") &&
+              c.score >= 60;
             return (
-              <Link key={c.mint} href={`/scan/${c.chain}-${c.mint}`} className={`${styles.card} ${styles[`t_${t}`]}`}>
+              <div key={c.mint} className={`${styles.card} ${styles[`t_${t}`]}`}>
                 {c.flagged && <span className={styles.ribbon}>⚠ CAUGHT</span>}
                 <div className={styles.cardTop}>
                   <span className={styles.name}>{c.symbol ? `$${c.symbol}` : c.name}</span>
@@ -118,8 +124,13 @@ export function RugRadar({ limit }: { limit?: number } = {}) {
                   <span className={styles.addr}>{short(c.mint)}</span>
                 </div>
                 <div className={styles.reason}>⚠ {c.reason}</div>
-                <div className={styles.cta}>full report →</div>
-              </Link>
+                <div className={styles.cardFoot}>
+                  <Link href={`/scan/${c.chain}-${c.mint}`} className={styles.cta}>full report →</Link>
+                  {canSwap && (
+                    <a href={`/safe-swap/${c.mint}`} className={styles.swapCta}>⚡ Safe Swap</a>
+                  )}
+                </div>
+              </div>
             );
           })}
         </div>

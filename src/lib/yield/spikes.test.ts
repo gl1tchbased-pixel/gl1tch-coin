@@ -64,4 +64,47 @@ describe("DeFi Yield Spikes & Arbitrage Report", () => {
     // Should flag high IL risk in Orca
     expect(rep?.riskAlerts.some((a) => a.id === "solana-orca-sol-usdc")).toBe(true);
   });
+
+  it("normalizes fractional on-chain APY values (0.085 = 8.5%) into percentage spreads", async () => {
+    const { getYieldSnapshot } = await import("./client");
+    vi.mocked(getYieldSnapshot).mockResolvedValueOnce({
+      updatedAt: 1793399000000,
+      opportunities: [
+        {
+          id: "solana-kamino-usdc",
+          chain: "solana",
+          protocol: "kamino",
+          kind: "lending",
+          symbol: "USDC",
+          stable: true,
+          apy: 0.085,
+          tvlUsd: 15_000_000,
+          ilRisk: "none",
+          idleShare: 0.15,
+        } as never,
+        {
+          id: "base-aave-v3-usdc",
+          chain: "base",
+          protocol: "aave-v3",
+          kind: "lending",
+          symbol: "USDC",
+          stable: true,
+          apy: 0.032,
+          tvlUsd: 45_000_000,
+          ilRisk: "none",
+          idleShare: 0.25,
+        } as never,
+      ],
+      sources: [],
+      prices: {},
+      gas: {},
+      network: { solanaEpochsPerYear: null, solanaInflation: null, solanaStakedShare: null },
+    });
+
+    const rep = await getYieldSpikesReport();
+    expect(rep?.rebalanceSpreads.length).toBe(1);
+    expect(rep?.rebalanceSpreads[0]?.borrowApy).toBeCloseTo(3.2, 2);
+    expect(rep?.rebalanceSpreads[0]?.supplyApy).toBeCloseTo(8.5, 2);
+    expect(rep?.rebalanceSpreads[0]?.netSpreadPct).toBeCloseTo(5.3, 2);
+  });
 });

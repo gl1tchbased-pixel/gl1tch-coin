@@ -5,7 +5,17 @@
  */
 
 import { NextRequest } from "next/server";
-import { PAID_ROUTES, readPayTo, SOLANA_MAINNET, BASE_MAINNET, type PaidRouteId } from "./config";
+import {
+  ARBITRUM_MAINNET,
+  AVALANCHE_MAINNET,
+  BASE_MAINNET,
+  PAID_ROUTES,
+  POLYGON_MAINNET,
+  SEI_MAINNET,
+  SOLANA_MAINNET,
+  readPayTo,
+  type PaidRouteId,
+} from "./config";
 import { OFFICIAL, DEPLOYER_WALLET, PAY_TO_SOLANA, PAY_TO_BASE } from "@/lib/official";
 import { SELF_TEST_HEADER } from "./settle";
 
@@ -19,6 +29,7 @@ import { GET as randomGet } from "@/app/api/x402/random/route";
 import { GET as quickGet } from "@/app/api/x402/quick/route";
 import { GET as batchGet } from "@/app/api/x402/batch/route";
 import { GET as yieldGet } from "@/app/api/x402/yield/route";
+import { GET as spikesGet } from "@/app/api/x402/spikes/route";
 
 const ROUTE_HANDLERS: Record<PaidRouteId, (req: NextRequest) => Promise<Response>> = {
   scan: scanGet,
@@ -30,10 +41,17 @@ const ROUTE_HANDLERS: Record<PaidRouteId, (req: NextRequest) => Promise<Response
   quick: quickGet,
   batch: batchGet,
   yield: yieldGet,
+  spikes: spikesGet,
 };
 
 const USDC_SOLANA = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
-const USDC_BASE = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+const USDC_EVM: Record<string, string> = {
+  [BASE_MAINNET]: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  [ARBITRUM_MAINNET]: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+  [POLYGON_MAINNET]: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+  [AVALANCHE_MAINNET]: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+  [SEI_MAINNET]: "0xe15fC38F6D8c56aF07bbCBe3BAf5708A2Bf42392",
+};
 
 export interface RouteHealthCheck {
   id: PaidRouteId;
@@ -183,17 +201,19 @@ export async function checkX402Health(): Promise<X402HealthReport> {
           if (!sol.extra?.feePayer) slips.push("Missing pinned feePayer in Solana requirement extra");
         }
 
-        // Base check
-        const base = accepts.find((a) => a.network === BASE_MAINNET);
-        if (!base) {
-          slips.push(`Missing Base mainnet accept requirement (${BASE_MAINNET})`);
-        } else {
-          if (base.scheme !== "exact") slips.push(`Base scheme must be 'exact', got '${base.scheme}'`);
-          if (base.amount !== String(config.priceMicro)) {
-            slips.push(`Base amount mismatch: expected '${config.priceMicro}', got '${base.amount}'`);
-          }
-          if (base.asset?.toLowerCase() !== USDC_BASE.toLowerCase()) {
-            slips.push(`Base asset must be USDC address '${USDC_BASE}'`);
+        // EVM multi-chain check (Base, Arbitrum, Polygon, Avalanche, Sei)
+        for (const [evmNet, expectedUsdc] of Object.entries(USDC_EVM)) {
+          const evmOpt = accepts.find((a) => a.network === evmNet);
+          if (!evmOpt) {
+            slips.push(`Missing EVM accept requirement (${evmNet})`);
+          } else {
+            if (evmOpt.scheme !== "exact") slips.push(`${evmNet} scheme must be 'exact', got '${evmOpt.scheme}'`);
+            if (evmOpt.amount !== String(config.priceMicro)) {
+              slips.push(`${evmNet} amount mismatch: expected '${config.priceMicro}', got '${evmOpt.amount}'`);
+            }
+            if (evmOpt.asset?.toLowerCase() !== expectedUsdc.toLowerCase()) {
+              slips.push(`${evmNet} asset must be USDC address '${expectedUsdc}'`);
+            }
           }
         }
       }

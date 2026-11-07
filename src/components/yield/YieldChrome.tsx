@@ -6,6 +6,7 @@ export function YieldSubnav() {
   return (
     <nav className={styles.subnav} aria-label="Yield X-Ray">
       <Link href="/yield">All yields</Link>
+      <Link href="/yield/spikes">⚡ Spikes &amp; Arbitrage</Link>
       <Link href="/yield/staking">SOL vs ETH staking</Link>
       <Link href="/yield/dollar">Where does a dollar earn?</Link>
       <Link href="/yield/il">Impermanent loss, visualised</Link>

@@ -14,12 +14,14 @@ export function CardActions({
   share,
   scans,
   protocol,
+  safeSwapHref,
 }: {
   telegram: string;
   url: string;
   share: string;
   scans: { label: string; href: string }[];
   protocol: { name: string; url: string } | null;
+  safeSwapHref?: string | null;
 }) {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
@@ -37,6 +39,11 @@ export function CardActions({
       <a className={`${styles.btn} ${styles.btnPrimary}`} href={telegram} target="_blank" rel="noopener noreferrer">
         🔔 Alert me on Telegram
       </a>
+      {safeSwapHref && (
+        <a className={styles.btn} href={safeSwapHref}>
+          ⚡ Safe Swap
+        </a>
+      )}
       <a className={styles.btn} href={x} target="_blank" rel="noopener noreferrer">
         Share on X
       </a>

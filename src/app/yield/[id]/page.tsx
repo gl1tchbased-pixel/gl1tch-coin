@@ -112,6 +112,15 @@ export default async function YieldCardPage({ params }: Props) {
         share={shareText(o)}
         scans={links}
         protocol={copy ? { name: copy.name, url: copy.url } : null}
+        safeSwapHref={(() => {
+          const tok = o.tokens.find((t) => t.address && t.address !== "native");
+          if (!tok) return null;
+          if (o.chain === "solana") return `/safe-swap/${tok.address}`;
+          if (["base", "ethereum", "arbitrum", "bsc", "polygon"].includes(o.chain)) {
+            return `/safe-swap/${o.chain}-${tok.address}`;
+          }
+          return null;
+        })()}
       />
 
       <div className={styles.stats}>

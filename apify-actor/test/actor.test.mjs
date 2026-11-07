@@ -84,6 +84,33 @@ describe("gl1tch-apify-actor (Pay-Per-Event)", () => {
     assert.strictEqual(items[0].id, "kamino-usdc");
   });
 
+  test("executes spikes and agent actions", async () => {
+    const mockFetch = async (url) => {
+      if (url.includes("/api/yield/spikes")) {
+        return {
+          ok: true,
+          json: async () => ({
+            rebalanceSpreads: [{ borrowChain: "ethereum", supplyChain: "solana", netSpreadPct: 5.3 }],
+            topOpportunities: [{ id: "solana-kamino-usdc", apy: 8.5 }],
+          }),
+        };
+      }
+      assert.ok(url.includes("/api/agent/check"));
+      return {
+        ok: true,
+        json: async () => ({ address: "Agent1", score: 85, level: "trusted" }),
+      };
+    };
+
+    const spikeItems = await executeActorInput({ action: "spikes" }, { fetch: mockFetch });
+    assert.strictEqual(spikeItems.length, 2);
+    assert.strictEqual(spikeItems[0].kind, "rebalance_spread");
+
+    const agentItems = await executeActorInput({ action: "agent", address: "Agent1" }, { fetch: mockFetch });
+    assert.strictEqual(agentItems.length, 1);
+    assert.strictEqual(agentItems[0].level, "trusted");
+  });
+
   test("isChargeable excludes errors and degraded items", () => {
     assert.strictEqual(isChargeable({ verdict: "CLEAN", score: 90 }), true);
     assert.strictEqual(isChargeable({ error: "RPC failed" }), false);

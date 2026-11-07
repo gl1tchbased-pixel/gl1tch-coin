@@ -21,11 +21,23 @@ export const revalidate = 0;
 const usd = (micro: number) =>
   `$${(micro / 1e6).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 3 })}`;
 
-const networkName = (n: string) => (n.startsWith("solana:") ? "Solana" : n === "eip155:8453" ? "Base" : n);
+const networkName = (n: string) => {
+  if (n.startsWith("solana:")) return "Solana";
+  if (n === "eip155:8453") return "Base";
+  if (n === "eip155:42161") return "Arbitrum";
+  if (n === "eip155:137") return "Polygon";
+  if (n === "eip155:43114") return "Avalanche";
+  if (n === "eip155:1329") return "Sei";
+  return n;
+};
 
 function txUrl(e: RevenueEntry): string | null {
   if (e.network.startsWith("solana:")) return `https://solscan.io/tx/${e.tx}`;
   if (e.network === "eip155:8453") return `https://basescan.org/tx/${e.tx}`;
+  if (e.network === "eip155:42161") return `https://arbiscan.io/tx/${e.tx}`;
+  if (e.network === "eip155:137") return `https://polygonscan.com/tx/${e.tx}`;
+  if (e.network === "eip155:43114") return `https://snowtrace.io/tx/${e.tx}`;
+  if (e.network === "eip155:1329") return `https://seitrace.com/tx/${e.tx}`;
   return null;
 }
 
@@ -107,12 +119,12 @@ export default async function RevenuePage() {
               textDecoration: "none",
             }}
           >
-            ● 9/9 x402 Routes Healthy (100% Compliant) ↗
+            ● 10/10 x402 Routes Healthy (100% Compliant) ↗
           </a>
         </div>
         <div style={{ maxWidth: "750px", margin: "1rem auto 0", padding: "10px 14px", borderRadius: "8px", background: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.07)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
           <span style={{ fontSize: "0.8rem", color: "#94a3b8" }}>
-            🛡️ <strong style={{ color: "#e2e8f0" }}>Continuous Spec-Lint:</strong> All 9 routes verified with 0 format slips. Beware of unsolicited 3 USDC health-check solicitations.
+            🛡️ <strong style={{ color: "#e2e8f0" }}>Continuous Spec-Lint:</strong> All 10 routes verified with 0 format slips. Beware of unsolicited 3 USDC health-check solicitations.
           </span>
           <a href="/agents/docs#security" style={{ fontSize: "0.8rem", color: "#38bdf8", textDecoration: "underline" }}>Security Advisory →</a>
         </div>
@@ -169,11 +181,15 @@ export default async function RevenuePage() {
             </span>
           </div>
           <div className={styles.row}>
-            <span>x402 Base Treasury ({shortAddr(treasury.baseWallet)})</span>
-            <span>Base</span>
-            <span>{shown(treasury.baseUsdc, usdc(3))} USDC</span>
+            <span>x402 Multi-Chain EVM Treasury ({shortAddr(treasury.baseWallet)})</span>
+            <span>Base · Arbitrum · Polygon · Avalanche · Sei</span>
+            <span>
+              Base: {shown(treasury.baseUsdc, usdc(3))} · Arb: {shown(treasury.arbitrumUsdc, usdc(3))} · Poly: {shown(treasury.polygonUsdc, usdc(3))} · Avax: {shown(treasury.avalancheUsdc, usdc(3))} USDC
+            </span>
             <span className={styles.proof}>
               <a href={`https://basescan.org/address/${treasury.baseWallet}`} target="_blank" rel="noreferrer">Basescan ↗</a>
+              {" · "}
+              <a href={`https://arbiscan.io/address/${treasury.baseWallet}`} target="_blank" rel="noreferrer">Arbiscan ↗</a>
             </span>
           </div>
           <div className={styles.row}>

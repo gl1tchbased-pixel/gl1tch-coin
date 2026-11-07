@@ -98,6 +98,27 @@ describe("GL1TCH MCP server", () => {
     expect(body.result?.isError).toBeFalsy();
   });
 
+  it("includes a scan-gated Safe Swap link when a Solana token passes the safety gate", async () => {
+    const deps = fakeDeps({
+      scan: vi.fn(async () => ({
+        status: 200,
+        body: {
+          verdict: "CLEAN",
+          score: 92,
+          confidence: 95,
+          name: "Bonk",
+          symbol: "BONK",
+          chain: "solana",
+          mint: MINT,
+          bottomLine: "Mint & freeze disabled.",
+          risks: [],
+        },
+      })),
+    });
+    const { body } = await call(buildMcpHandler(deps), "tools/call", { name: "scan_token", arguments: { mint: MINT } });
+    expect(text(body)).toContain(`https://gl1tchbased.xyz/safe-swap/${MINT}`);
+  });
+
   it("reports a failed scan as a tool error, not a verdict", async () => {
     const deps = fakeDeps({ scan: vi.fn(async () => ({ status: 422, body: { error: "scan failed" } })) });
     const { body } = await call(buildMcpHandler(deps), "tools/call", { name: "scan_token", arguments: { mint: MINT } });

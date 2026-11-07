@@ -117,7 +117,19 @@
 .scoreMax { font-size: 15px; color: var(--text-muted); font-weight: 600; }
 .addr { font-family: var(--font-mono); font-size: 13px; color: var(--text-muted); }
 .reason { font-size: 14px; color: var(--text-secondary); }
-.cta { font-family: var(--font-mono); font-size: 13px; color: var(--color-signal); margin-top: 2px; }
+.cardFoot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 4px; }
+.cta { font-family: var(--font-mono); font-size: 13px; color: var(--color-signal); text-decoration: none; }
+.cta:hover { text-decoration: underline; }
+.swapCta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--color-signal);
+  color: #050505;
+  text-decoration: none;
+}
 
 .loadingWrap { text-align: center; padding: var(--space-8) 0; }
 .sweep {

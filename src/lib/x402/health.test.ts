@@ -12,12 +12,12 @@ describe("x402 automated health & spec linter", () => {
     vi.unstubAllEnvs();
   });
 
-  it("lints all 9 routes with 100% spec compliance and 0 format slips", async () => {
+  it("lints all 10 routes with 100% spec compliance and 0 format slips", async () => {
     const report = await checkX402Health();
 
     expect(report.status).toBe("healthy");
-    expect(report.routesTotal).toBe(9);
-    expect(report.routesHealthy).toBe(9);
+    expect(report.routesTotal).toBe(10);
+    expect(report.routesHealthy).toBe(10);
     expect(report.specCompliancePct).toBe(100);
     expect(report.totalSlips).toBe(0);
 
@@ -28,6 +28,10 @@ describe("x402 automated health & spec linter", () => {
       expect(route.slips).toEqual([]);
       expect(route.networks).toContain("solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp");
       expect(route.networks).toContain("eip155:8453");
+      expect(route.networks).toContain("eip155:42161");
+      expect(route.networks).toContain("eip155:137");
+      expect(route.networks).toContain("eip155:43114");
+      expect(route.networks).toContain("eip155:1329");
     }
 
     expect(report.securityAdvisory.flaggedScamAddress).toBe("0x202B73254C28fA012BD11ff50425D94534b95594");
@@ -44,6 +48,6 @@ describe("x402 automated health & spec linter", () => {
     expect(res.headers.get("x-spec-compliance")).toBe("100%");
     const data = await res.json();
     expect(data.status).toBe("healthy");
-    expect(data.routesHealthy).toBe(9);
+    expect(data.routesHealthy).toBe(10);
   }, 30_000);
 });

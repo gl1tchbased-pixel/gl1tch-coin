@@ -91,6 +91,11 @@ export class Gl1tchClient {
   async verifiableRandom({ min = 1, max = 100, count = 1, salt } = {}) {
     return this._get("/api/x402/random", "/api/x402/random", { min, max, count, salt });
   }
+
+  /** Cross-chain DeFi yield spikes, risk-adjusted top pools, and stablecoin rebalance spreads ($0.005 on x402). */
+  async yieldSpikes() {
+    return this._get("/api/yield/spikes", "/api/x402/spikes", {});
+  }
 }
 
 /* =========================================================================
@@ -218,7 +223,11 @@ export async function drawProvablyFairWinners({ participants, count = 1, salt = 
   const client = passedClient || new Gl1tchClient(clientOpts);
   const randomRes = await client.verifiableRandom({ min: 1, max: 1_000_000, count: 1, salt });
 
-  const signature = String(randomRes.signature || randomRes.randomness || randomRes.numbers?.[0] || Date.now());
+  const round = randomRes.proof?.round ?? randomRes.round;
+  const sig = randomRes.proof?.signature ?? randomRes.signature;
+  const randHex = randomRes.proof?.randomness ?? randomRes.randomness;
+  const drawn = randomRes.values ?? randomRes.numbers;
+  const signature = String(sig || randHex || drawn?.[0] || Date.now());
   const copy = [...participants];
   const winners = [];
   const targetCount = Math.min(count, copy.length);
@@ -240,10 +249,10 @@ export async function drawProvablyFairWinners({ participants, count = 1, salt = 
 
   return {
     winners,
-    round: randomRes.round,
-    signature: randomRes.signature,
-    randomness: randomRes.randomness,
-    proofUrl: randomRes.proofUrl || `${client.baseUrl}/quantum-core/beacon`,
+    round,
+    signature: sig,
+    randomness: randHex,
+    proofUrl: randomRes.proofUrl || randomRes.proof?.verify || `${client.baseUrl}/quantum-core/beacon`,
     timestamp: Date.now(),
   };
 }
@@ -254,11 +263,16 @@ export async function drawProvablyFairWinners({ participants, count = 1, salt = 
 export async function rollProvablyFairDice({ sides = 6, count = 1, salt = "", client: passedClient, ...clientOpts } = {}) {
   const client = passedClient || new Gl1tchClient(clientOpts);
   const res = await client.verifiableRandom({ min: 1, max: sides, count, salt });
+  const rolls = Array.isArray(res.values)
+    ? res.values
+    : Array.isArray(res.numbers)
+      ? res.numbers
+      : [res.value ?? res.number ?? 1];
   return {
-    rolls: res.numbers || [res.number || 1],
-    round: res.round,
-    signature: res.signature,
-    proofUrl: res.proofUrl || `${client.baseUrl}/quantum-core/beacon`,
+    rolls,
+    round: res.proof?.round ?? res.round,
+    signature: res.proof?.signature ?? res.signature,
+    proofUrl: res.proofUrl || res.proof?.verify || `${client.baseUrl}/quantum-core/beacon`,
   };
 }
 

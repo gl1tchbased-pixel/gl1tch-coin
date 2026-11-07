@@ -124,7 +124,7 @@ describe("gl1tch-agent-toolkit (v1.2.0)", () => {
     assert.notStrictEqual(result.winners[0], result.winners[1]); // no duplicate winners
   });
 
-  test("rollProvablyFairDice returns numbers within range", async () => {
+  test("rollProvablyFairDice returns numbers within range (flat and nested proof formats)", async () => {
     const mockFetch = async () => ({
       ok: true,
       json: async () => ({ numbers: [4], round: 999, signature: "sig123" }),
@@ -134,6 +134,20 @@ describe("gl1tch-agent-toolkit (v1.2.0)", () => {
     assert.strictEqual(result.rolls.length, 1);
     assert.strictEqual(result.rolls[0], 4);
     assert.strictEqual(result.round, 999);
+
+    // Live /api/x402/random nested format ({ values, proof: { round, signature, randomness } })
+    const mockLiveFetch = async () => ({
+      ok: true,
+      json: async () => ({
+        kind: "ints",
+        values: [5, 2],
+        proof: { round: 888111, signature: "bls_sig_live", randomness: "deadbeef" },
+      }),
+    });
+    const liveDice = await rollProvablyFairDice({ sides: 6, count: 2, fetch: mockLiveFetch });
+    assert.deepStrictEqual(liveDice.rolls, [5, 2]);
+    assert.strictEqual(liveDice.round, 888111);
+    assert.strictEqual(liveDice.signature, "bls_sig_live");
   });
 
   test("verifyAgentTrust checks KYA credentials and rank", async () => {

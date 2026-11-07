@@ -68,7 +68,10 @@ describe("treasury-revenue", () => {
       expect(snap.solanaSol).toBeCloseTo(0.0921832, 7);
       expect(snap.solanaUsdc).toBe(0);
       expect(snap.baseUsdc).toBeCloseTo(0.01, 6);
-      expect(snap.totalUsdc).toBeCloseTo(0.01, 6);
+      expect(snap.arbitrumUsdc).toBeCloseTo(0.01, 6);
+      expect(snap.polygonUsdc).toBeCloseTo(0.01, 6);
+      expect(snap.avalancheUsdc).toBeCloseTo(0.01, 6);
+      expect(snap.totalUsdc).toBeCloseTo(0.04, 6);
       expect(snap.feeVault).toBe("DqKd8TtLf9m8dkg81K6XNVg5CGB9uMHVSQKQn9qNjYTU");
       expect(snap.feeVaultSol).toBe(0.25);
     } finally {

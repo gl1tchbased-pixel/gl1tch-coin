@@ -15,7 +15,8 @@ import { riskOf } from "@/lib/yield/risk";
 import { pct, usd } from "@/lib/yield/format";
 import { isAddress, isChain, parseScanInput } from "@/lib/validate";
 import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
-import { OFFICIAL } from "@/lib/official";
+import { checkSwapGate, isSupportedEvmSwapChain } from "@/lib/actions/safe-swap-gate";
+import { CONTRACT_ADDRESS, OFFICIAL } from "@/lib/official";
 
 export interface McpDeps {
   scan: (mint: string, chain: string | undefined) => Promise<ScanReport>;
@@ -35,11 +36,19 @@ const chain = z.string().max(16).optional().describe("solana (default), ethereum
 
 function scanText(b: Record<string, unknown>): string {
   const risks = Array.isArray(b.risks) ? (b.risks as { name?: string }[]).map((r) => r.name).filter(Boolean) : [];
+  const ch = typeof b.chain === "string" ? b.chain : "";
+  const canSafeSwap =
+    (ch === "solana" || isSupportedEvmSwapChain(ch)) &&
+    typeof b.mint === "string" &&
+    b.mint !== CONTRACT_ADDRESS &&
+    checkSwapGate(200, b).ok;
+  const swapPath = ch === "solana" ? `/safe-swap/${b.mint}` : `/safe-swap/${ch}-${b.mint}`;
   const lines = [
     `${b.name ?? "Token"} (${b.symbol ?? "?"}) on ${b.chain}: ${b.verdict} — safety score ${b.score}/100${typeof b.confidence === "number" ? ` (confidence ${b.confidence}%)` : ""}.`,
     typeof b.bottomLine === "string" ? b.bottomLine : "",
     risks.length ? `Risks: ${risks.join("; ")}.` : "No named risks.",
     `Full report: ${SITE}/scan?t=${b.chain}:${b.mint}`,
+    canSafeSwap ? `Scan-gated Safe Swap (${ch}): ${SITE}${swapPath}` : "",
     NOT_ADVICE,
   ];
   return lines.filter(Boolean).join("\n");

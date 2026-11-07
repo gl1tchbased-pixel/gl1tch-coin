@@ -46,13 +46,17 @@ export async function getYieldSpikesReport(): Promise<YieldSpikesReport | null> 
     (o): o is ValidOpp => typeof o.apy === "number" && o.apy > 0
   ));
 
+  // Normalize on-chain fractional APY (e.g. 0.0542 = 5.42%) to percentage points (5.42),
+  // while remaining compatible with already-scaled percentage values (e.g. 8.5 in unit tests).
+  const toApyPct = (raw: number): number => (raw <= 1.5 ? raw * 100 : raw);
+
   // Top 5 opportunities sorted by risk-adjusted APY
   // Note: in riskOf(), higher score = riskier. Safer pools have (100 - score).
   const top = [...valid]
     .sort((a, b) => {
       const safeA = Math.max(0, 100 - riskOf(a).score);
       const safeB = Math.max(0, 100 - riskOf(b).score);
-      return b.apy * (safeB / 100) - a.apy * (safeA / 100);
+      return toApyPct(b.apy) * (safeB / 100) - toApyPct(a.apy) * (safeA / 100);
     })
     .slice(0, 5)
     .map((o) => {
@@ -62,7 +66,7 @@ export async function getYieldSpikesReport(): Promise<YieldSpikesReport | null> 
         chain: o.chain,
         protocol: o.protocol,
         symbol: o.symbol,
-        apy: Number(o.apy.toFixed(2)),
+        apy: Number(toApyPct(o.apy).toFixed(2)),
         tvlUsd: Math.round(o.tvlUsd ?? 0),
         riskScore: r.score,
         riskLevel: r.level,
@@ -73,21 +77,23 @@ export async function getYieldSpikesReport(): Promise<YieldSpikesReport | null> 
   const spreads: RebalanceSpread[] = [];
   const usdcPools = valid.filter((o) => o.stable && /usdc/i.test(o.symbol));
 
-  const cheapBorrows = usdcPools.filter((o) => o.kind === "lending" && o.apy < 5.0);
-  const highSupplies = usdcPools.filter((o) => o.apy > 6.0);
+  const cheapBorrows = usdcPools.filter((o) => o.kind === "lending" && toApyPct(o.apy) < 5.0);
+  const highSupplies = usdcPools.filter((o) => toApyPct(o.apy) > 6.0);
 
   for (const b of cheapBorrows) {
     for (const s of highSupplies) {
       if (b.chain !== s.chain) {
-        const netSpread = Number((s.apy - b.apy).toFixed(2));
+        const bPct = toApyPct(b.apy);
+        const sPct = toApyPct(s.apy);
+        const netSpread = Number((sPct - bPct).toFixed(2));
         if (netSpread >= 1.5) {
           spreads.push({
             borrowChain: b.chain,
             borrowProtocol: b.protocol,
-            borrowApy: Number(b.apy.toFixed(2)),
+            borrowApy: Number(bPct.toFixed(2)),
             supplyChain: s.chain,
             supplyProtocol: s.protocol,
-            supplyApy: Number(s.apy.toFixed(2)),
+            supplyApy: Number(sPct.toFixed(2)),
             asset: "USDC",
             netSpreadPct: netSpread,
           });
@@ -109,7 +115,7 @@ export async function getYieldSpikesReport(): Promise<YieldSpikesReport | null> 
         id: o.id,
         chain: o.chain,
         symbol: o.symbol,
-        apy: Number(o.apy.toFixed(2)),
+        apy: Number(toApyPct(o.apy).toFixed(2)),
         warning: r.warnings[0] || r.reasons[0]?.text || "Elevated protocol or impermanent loss risk.",
       };
     });
