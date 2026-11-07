@@ -133,7 +133,7 @@ export default async function RevenuePage() {
       <section className={styles.totals}>
         <div className={styles.stat}>
           <span className={styles.statV}>{shown(treasury.totalUsdc, usdc(2))}</span>
-          <span className={styles.statK}>treasury USDC (Solana + Base)</span>
+          <span className={styles.statK}>treasury USDC (multi-chain)</span>
         </div>
         <div className={styles.stat}>
           <span className={styles.statV}>{shown(treasury.solanaSol, solAmount(4))}</span>
@@ -190,6 +190,10 @@ export default async function RevenuePage() {
               <a href={`https://basescan.org/address/${treasury.baseWallet}`} target="_blank" rel="noreferrer">Basescan ↗</a>
               {" · "}
               <a href={`https://arbiscan.io/address/${treasury.baseWallet}`} target="_blank" rel="noreferrer">Arbiscan ↗</a>
+              {" · "}
+              <a href={`https://polygonscan.com/address/${treasury.baseWallet}`} target="_blank" rel="noreferrer">Polygonscan ↗</a>
+              {" · "}
+              <a href={`https://snowtrace.io/address/${treasury.baseWallet}`} target="_blank" rel="noreferrer">Snowtrace ↗</a>
             </span>
           </div>
           <div className={styles.row}>

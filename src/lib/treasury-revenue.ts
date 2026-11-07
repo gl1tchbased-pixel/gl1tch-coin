@@ -224,7 +224,7 @@ export async function getTreasurySnapshot(opts?: {
     ),
     fetchEvmUsdcBalance(baseWallet, baseRpc, BASE_USDC_CONTRACT),
     fetchEvmUsdcBalance(baseWallet, "https://arb1.arbitrum.io/rpc", ARBITRUM_USDC_CONTRACT),
-    fetchEvmUsdcBalance(baseWallet, "https://polygon-rpc.com", POLYGON_USDC_CONTRACT),
+    fetchEvmUsdcBalance(baseWallet, "https://polygon-bor-rpc.publicnode.com", POLYGON_USDC_CONTRACT),
     fetchEvmUsdcBalance(baseWallet, "https://api.avax.network/ext/bc/C/rpc", AVALANCHE_USDC_CONTRACT),
     fetchSolanaRpc<{ value: { uiAmount: number | null } }>("getTokenAccountBalance", [feeVault], solanaRpc),
   ]);
