@@ -55,6 +55,7 @@ const PARAMS: Record<PaidRouteId, Param[]> = {
     { name: "stable", required: false, description: "Filter stablecoin pools only: true or false", example: "true" },
     { name: "id", required: false, description: "Single pool id, e.g. ethereum-aave-v3-usdc or solana-kamino-usdc", example: "solana-kamino-usdc" },
   ],
+  spikes: [],
 };
 
 const QUICK_BONK = {
@@ -191,6 +192,44 @@ const OUTPUT_EXAMPLES: Record<PaidRouteId, unknown> = {
           warnings: [],
         },
         cardUrl: "https://gl1tchbased.xyz/yield/solana-kamino-usdc",
+      },
+    ],
+  },
+  spikes: {
+    ok: true,
+    updatedAt: 1793265333485,
+    count: 18,
+    topOpportunities: [
+      {
+        id: "solana-kamino-usdc",
+        chain: "solana",
+        protocol: "Kamino",
+        symbol: "USDC",
+        apy: 8.5,
+        tvlUsd: 185000000,
+        riskScore: 13,
+        riskLevel: "low",
+      },
+    ],
+    rebalanceSpreads: [
+      {
+        borrowChain: "ethereum",
+        borrowProtocol: "aave-v3",
+        borrowApy: 3.2,
+        supplyChain: "solana",
+        supplyProtocol: "kamino",
+        supplyApy: 8.5,
+        asset: "USDC",
+        netSpreadPct: 5.3,
+      },
+    ],
+    riskAlerts: [
+      {
+        id: "solana-orca-sol-usdc",
+        chain: "solana",
+        symbol: "SOL-USDC",
+        apy: 38.0,
+        warning: "Elevated protocol or impermanent loss risk.",
       },
     ],
   },
@@ -437,6 +476,59 @@ const OUTPUT_SCHEMAS: Record<PaidRouteId, Schema> = {
       ),
     },
     ["updatedAt", "count", "opportunities"]
+  ),
+  spikes: obj(
+    {
+      ok: bool("True when the spikes report succeeded"),
+      updatedAt: num("Time of the underlying on-chain snapshot, Unix milliseconds"),
+      count: int("Total positive-APY pools evaluated"),
+      topOpportunities: list(
+        obj(
+          {
+            id: text("Pool id"),
+            chain: text("Chain of the pool"),
+            protocol: text("Protocol name"),
+            symbol: text("Asset or pair symbol"),
+            apy: num("Annualized percentage yield (%)"),
+            tvlUsd: num("Total value locked in USD"),
+            riskScore: num("Risk score, 0 (safest) to 100 (riskiest)"),
+            riskLevel: text("Risk tier (low, moderate, elevated, high)"),
+          },
+          ["id", "chain", "protocol", "symbol", "apy", "tvlUsd", "riskScore", "riskLevel"]
+        ),
+        "Top 5 risk-adjusted yield opportunities"
+      ),
+      rebalanceSpreads: list(
+        obj(
+          {
+            borrowChain: text("Chain with lower stablecoin lending rate"),
+            borrowProtocol: text("Protocol on the low-rate chain"),
+            borrowApy: num("Low lending APY (%)"),
+            supplyChain: text("Chain with higher stablecoin supply rate"),
+            supplyProtocol: text("Protocol on the high-rate chain"),
+            supplyApy: num("High supply APY (%)"),
+            asset: text("Stablecoin symbol (USDC)"),
+            netSpreadPct: num("Net APY spread in percentage points"),
+          },
+          ["borrowChain", "borrowProtocol", "borrowApy", "supplyChain", "supplyProtocol", "supplyApy", "asset", "netSpreadPct"]
+        ),
+        "Cross-chain stablecoin yield spreads (>= 1.5% net spread)"
+      ),
+      riskAlerts: list(
+        obj(
+          {
+            id: text("Pool id"),
+            chain: text("Chain of the pool"),
+            symbol: text("Asset or pair symbol"),
+            apy: num("Annualized percentage yield (%)"),
+            warning: text("Primary risk or impermanent-loss warning"),
+          },
+          ["id", "chain", "symbol", "apy", "warning"]
+        ),
+        "Pools flagged for elevated risk score (>40) or high impermanent loss"
+      ),
+    },
+    ["ok", "updatedAt", "count", "topOpportunities", "rebalanceSpreads", "riskAlerts"]
   ),
 };
 

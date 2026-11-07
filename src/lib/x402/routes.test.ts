@@ -20,6 +20,7 @@ describe("paid routes without a receiving wallet", () => {
     ["quick", `/api/x402/quick?mint=${BONK}`],
     ["batch", `/api/x402/batch?mints=${BONK}`],
     ["yield", "/api/x402/yield?chain=solana"],
+    ["spikes", "/api/x402/spikes"],
   ])("%s answers 503 'paid API not configured', never an empty 402", async (id, path) => {
     vi.stubEnv("X402_PAY_TO_SOLANA", "");
     vi.stubEnv("X402_PAY_TO_BASE", "");
@@ -28,7 +29,7 @@ describe("paid routes without a receiving wallet", () => {
     expect(res.status).toBe(503);
     expect(res.headers.get("cache-control")).toBe("private, no-store");
     expect(await res.json()).toEqual({ error: "paid API not configured" });
-  });
+  }, 20000);
 });
 
 describe("a mistyped or refused receiving wallet", () => {

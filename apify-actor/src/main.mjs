@@ -79,6 +79,25 @@ export async function executeActorInput(input = {}, opts = {}) {
     return pools.map((p) => ({ action, ...p }));
   }
 
+  if (action === "spikes") {
+    const data = await getJson("/api/yield/spikes");
+    const spreads = Array.isArray(data.rebalanceSpreads) ? data.rebalanceSpreads : [];
+    const top = Array.isArray(data.topOpportunities) ? data.topOpportunities : [];
+    return [
+      ...spreads.map((s) => ({ action, kind: "rebalance_spread", ...s })),
+      ...top.map((t) => ({ action, kind: "top_opportunity", ...t })),
+    ];
+  }
+
+  if (action === "agent") {
+    const address = String(input.address || input.mint || "").trim();
+    if (!address) throw new Error("address is required when action=agent");
+    const q = new URLSearchParams({ address });
+    if (input.chain) q.set("chain", String(input.chain));
+    const data = await getJson(`/api/agent/check?${q}`);
+    return [{ action, ...data }];
+  }
+
   throw new Error(`Unsupported action: ${action}`);
 }
 

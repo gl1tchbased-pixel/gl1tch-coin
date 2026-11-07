@@ -6,8 +6,8 @@ import type { TokenCandidate } from "@/lib/scan-multichain";
 import { CHAIN_LABEL } from "@/lib/scan-multichain";
 import { formatHoldingPct } from "@/lib/deployer-holdings";
 import { fmtPrice } from "@/lib/market";
-import { checkSwapGate } from "@/lib/actions/safe-swap-gate";
-import { CONTRACT_ADDRESS } from "@/lib/official";
+import { checkSwapGate, isSupportedEvmSwapChain } from "@/lib/actions/safe-swap-gate";
+import { CONTRACT_ADDRESS, links } from "@/lib/official";
 import { RiskOrb } from "./RiskOrb";
 import { unlock } from "@/lib/fun/achievements";
 import styles from "./ScanTool.module.css";
@@ -309,23 +309,60 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
           )}
 
           {/* Same gate as the swap itself, and never on our own token: a scanner shouldn't offer a paid buy of what it just graded for itself. */}
-          {result.chain === "solana" && result.mint && result.mint !== CONTRACT_ADDRESS && checkSwapGate(200, result).ok && (
+          {result.chain === "solana" && result.mint && result.mint === CONTRACT_ADDRESS && (
+            <div className={styles.blinkCard}>
+              <div className={styles.blinkHead}>
+                <span className={styles.blinkIcon}>◆</span>
+                <div>
+                  <strong>$GL1TCH Utility &amp; 0% Fee Access</strong>
+                  <p>GL1TCH takes 0% platform fee on its own token. Holding ≥ 100,000 $GL1TCH unlocks a free holder API key (x402 &amp; drand Quantum Randomness) and privacy-preserving Zero-Knowledge holder proofs.</p>
+                </div>
+              </div>
+              <div className={styles.blinkActions}>
+                <a href={`https://jup.ag/swap/SOL-${CONTRACT_ADDRESS}`} target="_blank" rel="noopener noreferrer" className={styles.blinkSwapBtn}>
+                  Buy on Jupiter (0% GL1TCH fee) ↗
+                </a>
+                <a href={links.pumpfun} target="_blank" rel="noopener noreferrer" className={styles.blinkTweetBtn}>
+                  Pump.fun ↗
+                </a>
+                <a href="/ranks" className={styles.blinkTweetBtn}>
+                  Holder Ranks &amp; ZK Proof →
+                </a>
+                <a href="/token" className={styles.blinkTweetBtn}>
+                  Mint Free API Key →
+                </a>
+              </div>
+            </div>
+          )}
+
+          {(result.chain === "solana" || isSupportedEvmSwapChain(result.chain)) && result.mint && result.mint !== CONTRACT_ADDRESS && checkSwapGate(200, result).ok && (
             <div className={styles.blinkCard}>
               <div className={styles.blinkHead}>
                 <span className={styles.blinkIcon}>⚡</span>
                 <div>
-                  <strong>Solana Safe Swap</strong>
-                  <p>Optional swap via Jupiter, offered only after a passing scan. A passing scan is not a recommendation and cannot rule out losses. You sign in your own wallet. GL1TCH earns a 0.5% fee on swaps where the swap screen shows it; the fee plays no part in the score.</p>
+                  <strong>{result.chain === "solana" ? "Solana Safe Swap" : `${chainName(result.chain)} Safe Swap`}</strong>
+                  <p>
+                    {result.chain === "solana"
+                      ? "Optional swap via Jupiter, offered only after a passing scan. A passing scan is not a recommendation and cannot rule out losses. You sign in your own wallet. GL1TCH earns a 0.5% fee on swaps where the swap screen shows it; the fee plays no part in the score."
+                      : `Optional non-custodial swap on ${chainName(result.chain)} (1inch / Odos / Uniswap), offered only after a passing scan. You sign in your own wallet; aggregator routes may include a disclosed 0.5% GL1TCH partner fee to the EVM treasury.`}
+                  </p>
                 </div>
               </div>
               <div className={styles.blinkActions}>
                 {/* A plain <a>: the swap page needs a full page load for its CSP. */}
-                <a href={`/safe-swap/${encodeURIComponent(result.mint)}`} className={styles.blinkSwapBtn}>
-                  ⚡ Open Safe Swap
+                <a
+                  href={
+                    result.chain === "solana"
+                      ? `/safe-swap/${encodeURIComponent(result.mint)}`
+                      : `/safe-swap/${encodeURIComponent(`${result.chain}-${result.mint}`)}`
+                  }
+                  className={styles.blinkSwapBtn}
+                >
+                  ⚡ Open Safe Swap ({chainName(result.chain)})
                 </a>
                 <a
                   href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                    `Check out the safety scan for $${result.symbol || "TOKEN"} on @gl1tchbased: ${result.verdict} (${result.score}/100) 🛡️\n\nScan-gated swap 👇\nhttps://gl1tchbased.xyz/safe-swap/${result.mint}`
+                    `Check out the safety scan for $${result.symbol || "TOKEN"} on @gl1tchbased (${chainName(result.chain)}): ${result.verdict} (${result.score}/100) 🛡️\n\nScan-gated swap 👇\nhttps://gl1tchbased.xyz/safe-swap/${result.chain === "solana" ? result.mint : `${result.chain}-${result.mint}`}`
                   )}`}
                   target="_blank"
                   rel="noreferrer"

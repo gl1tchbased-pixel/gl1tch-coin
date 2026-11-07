@@ -1,7 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { appliedFeeBps, checkSwapGate, feeLabel, parseSwapLamports, safeSymbol, swapFee, swapFeeFor } from "./safe-swap-gate";
-import { CONTRACT_ADDRESS } from "@/lib/official";
-import { REFERRAL_ACCOUNT } from "@/lib/official";
+import {
+  appliedFeeBps,
+  checkSwapGate,
+  evmSwapFee,
+  feeLabel,
+  parseSafeSwapTarget,
+  parseSwapLamports,
+  safeSymbol,
+  swapFee,
+  swapFeeFor,
+} from "./safe-swap-gate";
+import { CONTRACT_ADDRESS, PAY_TO_BASE, REFERRAL_ACCOUNT } from "@/lib/official";
 
 const ADDRESS = "So11111111111111111111111111111111111111112";
 
@@ -80,5 +89,22 @@ describe("swapFeeFor", () => {
 
   it("obeys the kill switch", () => {
     expect(swapFeeFor("JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN", { JUP_REFERRAL_ACCOUNT: "off" })).toBeNull();
+  });
+});
+
+describe("parseSafeSwapTarget & evmSwapFee", () => {
+  it("resolves Solana mints and multi-chain EVM addresses", () => {
+    expect(parseSafeSwapTarget(ADDRESS)).toEqual({ chain: "solana", address: ADDRESS });
+    expect(parseSafeSwapTarget(`solana-${ADDRESS}`)).toEqual({ chain: "solana", address: ADDRESS });
+    const evmAddr = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+    expect(parseSafeSwapTarget(`base-${evmAddr}`)).toEqual({ chain: "base", address: evmAddr });
+    expect(parseSafeSwapTarget(`arbitrum-${evmAddr}`)).toEqual({ chain: "arbitrum", address: evmAddr });
+    expect(parseSafeSwapTarget(evmAddr, "polygon")).toEqual({ chain: "polygon", address: evmAddr });
+    expect(parseSafeSwapTarget("invalid-address")).toBeNull();
+  });
+
+  it("pins EVM partner fee to PAY_TO_BASE at 50 bps and obeys EVM_REFERRAL_FEE=off", () => {
+    expect(evmSwapFee({})).toEqual({ recipient: PAY_TO_BASE, bps: 50, pct: 0.5 });
+    expect(evmSwapFee({ EVM_REFERRAL_FEE: "off" })).toBeNull();
   });
 });

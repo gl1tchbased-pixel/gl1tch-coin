@@ -33,6 +33,7 @@ const FREE_ALTERNATIVE: Record<PaidRouteId, string> = {
   quick: "/api/scan", // the quick check is a condensed scan
   batch: "/api/scan", // one free scan per token
   yield: "/api/yield", // the free Yield X-Ray snapshot
+  spikes: "/api/yield/spikes", // the free DeFi Yield Spikes summary
 };
 
 type Handler = (req: NextRequest) => Promise<NextResponse>;

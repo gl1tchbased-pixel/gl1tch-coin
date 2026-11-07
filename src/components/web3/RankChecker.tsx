@@ -11,6 +11,8 @@ import {
   formatAmount,
   type RankTier,
 } from "@/lib/ranks";
+import { ZKAP_MIN_HOLDING } from "@/lib/zk/zkap";
+import { useZKGlitchAuth } from "@/hooks/useZKGlitchAuth";
 import { ConnectWallet } from "./ConnectWallet";
 import { publishRank } from "@/lib/fun/rank-signal";
 import { RankCard } from "@/components/ui/RankCard";
@@ -21,6 +23,8 @@ export function RankChecker() {
   const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [copiedZk, setCopiedZk] = useState(false);
+  const zk = useZKGlitchAuth(ZKAP_MIN_HOLDING);
 
   const live = Boolean(CONTRACT_ADDRESS);
 
@@ -92,6 +96,59 @@ export function RankChecker() {
               </span>
             ) : (
               <span className={styles.next}>Top tier reached. Ghost Node.</span>
+            )}
+
+            <div className={styles.actionsRow}>
+              {next && (
+                <a
+                  href={`https://jup.ag/swap/SOL-${CONTRACT_ADDRESS}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.buyBtn}
+                >
+                  Get $GL1TCH on Jupiter (0% GL1TCH fee) ↗
+                </a>
+              )}
+              {(balance ?? 0) >= ZKAP_MIN_HOLDING && (
+                <a href="/token" className={styles.secondaryBtn}>
+                  Mint Free Holder API Key →
+                </a>
+              )}
+              {address && (balance ?? 0) >= ZKAP_MIN_HOLDING && zk.status !== "verified" && (
+                <button
+                  type="button"
+                  className={styles.secondaryBtn}
+                  disabled={zk.status === "proving" || zk.status === "verifying"}
+                  onClick={() => zk.proveAndVerify(address, balance ?? 0)}
+                >
+                  {zk.status === "proving" || zk.status === "verifying"
+                    ? "Generating ZK Proof…"
+                    : "🛡 Generate Zero-Knowledge Holder Proof"}
+                </button>
+              )}
+            </div>
+
+            {zk.status === "verified" && zk.nullifier && (
+              <div className={styles.zkBox}>
+                <span className={styles.zkBadge}>✓ ZK-Verified Holder (≥100K $GL1TCH, wallet hidden)</span>
+                <code className={styles.zkCode}>nullifier: {zk.nullifier.slice(0, 18)}…{zk.nullifier.slice(-10)}</code>
+                <button
+                  type="button"
+                  className={styles.retry}
+                  onClick={() => {
+                    if (!zk.proof) return;
+                    navigator.clipboard?.writeText(JSON.stringify(zk.proof)).then(() => {
+                      setCopiedZk(true);
+                      window.setTimeout(() => setCopiedZk(false), 1800);
+                    }).catch(() => {});
+                  }}
+                >
+                  {copiedZk ? "✓ Proof JSON copied" : "Copy ZK Proof JSON"}
+                </button>
+              </div>
+            )}
+            {zk.status === "error" && zk.error && (
+              <span className={styles.next}>{zk.error}</span>
             )}
           </div>
         )}

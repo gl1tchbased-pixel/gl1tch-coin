@@ -11,6 +11,7 @@ import { deployerReputation } from "@/lib/signal-graph";
 import { parseScanInput, isAddress, isChain } from "@/lib/validate";
 import { sweepOnce, lastSweep, type RadarSweep } from "@/lib/radar";
 import { getYieldSnapshot } from "@/lib/yield/client";
+import { getYieldSpikesReport } from "@/lib/yield/spikes";
 import { riskOf } from "@/lib/yield/risk";
 import type { YieldChain, YieldKind, YieldSnapshot } from "@/lib/yield/types";
 import { OFFICIAL } from "@/lib/official";
@@ -283,4 +284,12 @@ export async function yieldHandler(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: `yield snapshot unavailable — retry; ${NOT_CHARGED}` }, { status: 503 });
   }
   return NextResponse.json(yieldView(snap, parsed));
+}
+
+export async function spikesHandler(_req: NextRequest): Promise<NextResponse> {
+  const report = await getYieldSpikesReport();
+  if (!report) {
+    return NextResponse.json({ error: `yield spikes unavailable — retry; ${NOT_CHARGED}` }, { status: 503 });
+  }
+  return NextResponse.json(report);
 }

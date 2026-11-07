@@ -17,6 +17,9 @@ export const DEFAULT_BASE_TREASURY = PAY_TO_BASE;
 
 const SOLANA_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const BASE_USDC_CONTRACT = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+const ARBITRUM_USDC_CONTRACT = "0xaf88d065e77c8cC2239327C5EDb3A432268e5831";
+const POLYGON_USDC_CONTRACT = "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359";
+const AVALANCHE_USDC_CONTRACT = "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E";
 const VAULT_RENT_EXEMPT_LAMPORTS = 890_880;
 
 export interface CreatorFeeClaim {
@@ -60,8 +63,8 @@ export interface RevenueChannelStatus {
 export const REVENUE_CHANNELS: RevenueChannelStatus[] = [
   {
     id: "x402",
-    name: "x402 Paid Agent API (9 Endpoints)",
-    model: "$0.001–$0.01 USDC per call on Solana & Base (free for $GL1TCH holders)",
+    name: "x402 Paid Agent API (10 Endpoints · 6 Chains)",
+    model: "$0.001–$0.01 USDC per call on Solana, Base, Arbitrum, Polygon, Avalanche & Sei (free for $GL1TCH holders)",
     status: "live",
     verifyHref: "/agents/docs#x402",
   },
@@ -102,8 +105,8 @@ export const REVENUE_CHANNELS: RevenueChannelStatus[] = [
   },
   {
     id: "blinks",
-    name: "Solana Actions & Blinks (Jupiter Safe Swap)",
-    model: "Optional scan-gated swaps via Jupiter. A 0.5% GL1TCH fee applies only when the swap screen shows it, before signing. Jupiter keeps 20% of the fee",
+    name: "Multi-Chain Safe Swap (Solana & 7 EVM Chains)",
+    model: "Scan-gated swaps via Jupiter (Solana) and 1inch/Odos (Base, Ethereum, Arbitrum, BSC, Polygon, Avalanche, Optimism) with disclosed 0.5% partner fee",
     status: "live",
     verifyHref: "/blinks",
   },
@@ -116,10 +119,10 @@ export const REVENUE_CHANNELS: RevenueChannelStatus[] = [
   },
   {
     id: "yield-spikes",
-    name: "DeFi Yield Spikes Feed",
-    model: "Free 7-chain APY and risk feed for bots. No revenue yet",
+    name: "DeFi Yield Spikes & Arbitrage Feed",
+    model: "$0.005 USDC/call via /api/x402/spikes (free for $GL1TCH holders & public preview at /api/yield/spikes)",
     status: "live",
-    verifyHref: "/api/yield/spikes",
+    verifyHref: "/api/x402/spikes",
   },
 ];
 
@@ -130,6 +133,9 @@ export interface TreasurySnapshot {
   solanaSol: number | null;
   solanaUsdc: number | null;
   baseUsdc: number | null;
+  arbitrumUsdc: number | null;
+  polygonUsdc: number | null;
+  avalancheUsdc: number | null;
   totalUsdc: number | null;
   creatorVaultRawSol: number | null;
   creatorVaultClaimableSol: number | null;
@@ -160,19 +166,19 @@ async function fetchSolanaRpc<T>(method: string, params: unknown[], rpcUrl: stri
   }
 }
 
-async function fetchBaseUsdcBalance(wallet: string, baseRpcUrl: string): Promise<number | null> {
+async function fetchEvmUsdcBalance(wallet: string, rpcUrl: string, usdcContract = BASE_USDC_CONTRACT): Promise<number | null> {
   try {
     const clean = wallet.replace(/^0x/i, "").toLowerCase();
     if (!/^[0-9a-f]{40}$/.test(clean)) return null;
     const data = "0x70a08231" + clean.padStart(64, "0");
-    const res = await fetch(baseRpcUrl, {
+    const res = await fetch(rpcUrl, {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         jsonrpc: "2.0",
         id: 1,
         method: "eth_call",
-        params: [{ to: BASE_USDC_CONTRACT, data }, "latest"],
+        params: [{ to: usdcContract, data }, "latest"],
       }),
       signal: AbortSignal.timeout(5000),
       next: { revalidate: 15 },
@@ -204,7 +210,7 @@ export async function getTreasurySnapshot(opts?: {
 
   const feeVault = referralVaultAddress(new PublicKey(REFERRAL_ACCOUNT)).toBase58();
 
-  const [solBal, vaultBal, solUsdcAccs, baseUsdc, feeVaultBal] = await Promise.all([
+  const [solBal, vaultBal, solUsdcAccs, baseUsdc, arbitrumUsdc, polygonUsdc, avalancheUsdc, feeVaultBal] = await Promise.all([
     fetchSolanaRpc<{ value: number }>("getBalance", [solanaWallet], solanaRpc),
     fetchSolanaRpc<{ value: number }>("getBalance", [PUMP_CREATOR_VAULT_PDA], solanaRpc),
     fetchSolanaRpc<{
@@ -216,7 +222,10 @@ export async function getTreasurySnapshot(opts?: {
       [solanaWallet, { mint: SOLANA_USDC_MINT }, { encoding: "jsonParsed" }],
       solanaRpc
     ),
-    fetchBaseUsdcBalance(baseWallet, baseRpc),
+    fetchEvmUsdcBalance(baseWallet, baseRpc, BASE_USDC_CONTRACT),
+    fetchEvmUsdcBalance(baseWallet, "https://arb1.arbitrum.io/rpc", ARBITRUM_USDC_CONTRACT),
+    fetchEvmUsdcBalance(baseWallet, "https://polygon-rpc.com", POLYGON_USDC_CONTRACT),
+    fetchEvmUsdcBalance(baseWallet, "https://api.avax.network/ext/bc/C/rpc", AVALANCHE_USDC_CONTRACT),
     fetchSolanaRpc<{ value: { uiAmount: number | null } }>("getTokenAccountBalance", [feeVault], solanaRpc),
   ]);
 
@@ -227,6 +236,7 @@ export async function getTreasurySnapshot(opts?: {
     ) ?? null;
 
   const creatorClaimedSol = VERIFIED_CREATOR_CLAIMS.reduce((s, c) => s + c.amountSol, 0);
+  const evmExtra = (arbitrumUsdc ?? 0) + (polygonUsdc ?? 0) + (avalancheUsdc ?? 0);
 
   return {
     solanaWallet,
@@ -235,7 +245,10 @@ export async function getTreasurySnapshot(opts?: {
     solanaSol: solBal ? solBal.value / 1e9 : null,
     solanaUsdc,
     baseUsdc,
-    totalUsdc: solanaUsdc !== null && baseUsdc !== null ? Number((solanaUsdc + baseUsdc).toFixed(6)) : null,
+    arbitrumUsdc,
+    polygonUsdc,
+    avalancheUsdc,
+    totalUsdc: solanaUsdc !== null && baseUsdc !== null ? Number((solanaUsdc + baseUsdc + evmExtra).toFixed(6)) : null,
     creatorVaultRawSol: vaultBal ? vaultBal.value / 1e9 : null,
     creatorVaultClaimableSol: vaultBal ? computeClaimableVaultSol(vaultBal.value) : null,
     feeVault,

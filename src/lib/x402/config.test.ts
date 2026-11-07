@@ -1,7 +1,11 @@
 import { describe, it, expect } from "vitest";
 import {
+  ARBITRUM_MAINNET,
+  AVALANCHE_MAINNET,
   BASE_MAINNET,
   PAID_ROUTES,
+  POLYGON_MAINNET,
+  SEI_MAINNET,
   SOLANA_MAINNET,
   buildAccepts,
   readPayTo,
@@ -44,10 +48,18 @@ describe("readPayTo", () => {
 });
 
 describe("buildAccepts", () => {
-  it("offers one exact USDC option per configured network, Solana first", () => {
+  it("offers one exact USDC option per configured network, Solana first, followed by Base, Arbitrum, Polygon, Avalanche and Sei", () => {
     const both = buildAccepts("$0.01", { solana: SOL, base: EVM });
-    expect(both.map((a) => a.network)).toEqual([SOLANA_MAINNET, BASE_MAINNET]);
+    expect(both.map((a) => a.network)).toEqual([
+      SOLANA_MAINNET,
+      BASE_MAINNET,
+      ARBITRUM_MAINNET,
+      POLYGON_MAINNET,
+      AVALANCHE_MAINNET,
+      SEI_MAINNET,
+    ]);
     expect(both[0]).toEqual({ scheme: "exact", price: "$0.01", network: SOLANA_MAINNET, payTo: SOL, maxTimeoutSeconds: 60 });
+    expect(both[1]).toEqual({ scheme: "exact", price: "$0.01", network: BASE_MAINNET, payTo: EVM, maxTimeoutSeconds: 60 });
     expect(buildAccepts("$0.01", { solana: SOL })).toHaveLength(1);
     expect(buildAccepts("$0.01", {})).toEqual([]);
   });

@@ -12,8 +12,21 @@ export type Caip2 = `${string}:${string}`;
 
 export const SOLANA_MAINNET: Caip2 = "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp";
 export const BASE_MAINNET: Caip2 = "eip155:8453";
+export const ARBITRUM_MAINNET: Caip2 = "eip155:42161";
+export const POLYGON_MAINNET: Caip2 = "eip155:137";
+export const AVALANCHE_MAINNET: Caip2 = "eip155:43114";
+export const SEI_MAINNET: Caip2 = "eip155:1329";
 
-export type PaidRouteId = "scan" | "agent" | "deployer" | "verdict" | "radar" | "random" | "quick" | "batch" | "yield";
+/** All EVM networks supported out-of-the-box by both @x402/evm and PayAI facilitator, sharing the same 0x treasury wallet. */
+export const EVM_PAYMENT_NETWORKS: readonly Caip2[] = [
+  BASE_MAINNET,
+  ARBITRUM_MAINNET,
+  POLYGON_MAINNET,
+  AVALANCHE_MAINNET,
+  SEI_MAINNET,
+];
+
+export type PaidRouteId = "scan" | "agent" | "deployer" | "verdict" | "radar" | "random" | "quick" | "batch" | "yield" | "spikes";
 
 /** Catalogs keep only the first few tags (the Coinbase Bazaar keeps five), so the most specific come first. */
 export const PAID_ROUTES: Record<PaidRouteId, { path: string; price: string; priceMicro: number; description: string; tags: string[] }> = {
@@ -90,6 +103,14 @@ export const PAID_ROUTES: Record<PaidRouteId, { path: string; price: string; pri
       "Yield X-Ray: on-chain DeFi yields across 7 chains (Solana, Ethereum, Base, Arbitrum, BSC, Tron, Robinhood), read directly from protocol contracts (Aave v3, Morpho, Sky, Kamino, Jito, Lido, Uniswap v3, Raydium, JustLend). Returns real APY, TVL, withdrawable idle share, impermanent-loss exposure and an explainable 0-100 risk score with reasons. Filter by chain, kind or stablecoin. Use it before an agent deposits, routes or rebalances funds into a yield pool. Not charged on failure.",
     tags: ["defi-yield", "apy", "lending", "liquid-staking", "solana", "base", "ethereum", "agents"],
   },
+  spikes: {
+    path: "/api/x402/spikes",
+    price: "$0.005",
+    priceMicro: 5_000,
+    description:
+      "DeFi Yield Spikes & Arbitrage Spreads: cross-chain USDC borrow-vs-supply spreads, top 5 risk-adjusted APY opportunities, and elevated IL or exit-liquidity risk alerts across 7 chains (Solana, Ethereum, Base, Arbitrum, BSC, Tron, Robinhood). Use it when a DeFi or treasury agent looks for cross-chain stablecoin yield spreads or risk alerts before rebalancing. Not charged on failure.",
+    tags: ["defi-arbitrage", "yield-spikes", "usdc-spreads", "solana", "base", "defi-yield", "agents"],
+  },
 };
 
 export interface PaymentOption {
@@ -123,11 +144,15 @@ export function readPayTo(env: Env): { solana?: string; base?: string; rejected:
   return out;
 }
 
-/** One exact-USDC payment option per configured network, Solana first. Empty when none is set. */
+/** One exact-USDC payment option per configured network, Solana first, then all supported EVM networks (Base, Arbitrum, Polygon, Avalanche, Sei). Empty when none is set. */
 export function buildAccepts(price: string, payTo: { solana?: string; base?: string }): PaymentOption[] {
   const accepts: PaymentOption[] = [];
   if (payTo.solana) accepts.push({ scheme: "exact", price, network: SOLANA_MAINNET, payTo: payTo.solana, maxTimeoutSeconds: 60 });
-  if (payTo.base) accepts.push({ scheme: "exact", price, network: BASE_MAINNET, payTo: payTo.base, maxTimeoutSeconds: 60 });
+  if (payTo.base) {
+    for (const network of EVM_PAYMENT_NETWORKS) {
+      accepts.push({ scheme: "exact", price, network, payTo: payTo.base, maxTimeoutSeconds: 60 });
+    }
+  }
   return accepts;
 }
 
