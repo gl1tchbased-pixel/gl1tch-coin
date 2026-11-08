@@ -96,7 +96,7 @@ https://gl1tchbased.xyz/quantum-core/random/<id>   (human proof page; verifies i
 For agents that would rather pay than share a rate limit. Standard x402 v2: the first call returns
 402 Payment Required with a PAYMENT-REQUIRED header (price, network, payTo); your x402 client signs a
 USDC transfer and retries with PAYMENT-SIGNATURE; the 200 response carries PAYMENT-RESPONSE (the
-settled transaction). Networks: Solana mainnet USDC, Base mainnet USDC. Facilitators: Coinbase CDP and PayAI.
+settled transaction). Networks: Solana mainnet USDC, Base mainnet USDC, Arbitrum mainnet USDC, Polygon mainnet USDC, Avalanche mainnet USDC, Sei mainnet USDC. Facilitators: Coinbase CDP and PayAI.
 
 GET /api/x402/scan?mint=<address>&chain=solana       $0.005  full pre-trade token safety report (same as /api/scan)
 GET /api/x402/agent?address=<wallet>&chain=solana    $0.01   Know Your Agent trust assessment
@@ -107,6 +107,7 @@ GET /api/x402/quick?mint=<address>&chain=solana      $0.001  quick check: verdic
 GET /api/x402/batch?mints=<a>,<b>,…&chain=solana     $0.008  up to 10 tokens in one call, each as a quick check
 GET /api/x402/random?min=1&max=100&count=1&salt=<s>  $0.003  verifiable random integers seeded by a future drand round
 GET /api/x402/yield?chain=solana&stableOnly=false    $0.003  Yield X-Ray: real-yield vs emissions breakdown across DeFi pools (Kamino, Marinade, Jito, Aave, Lido, etc.)
+GET /api/x402/spikes                                  $0.005  Yield spikes, APY spread anomalies & arbitrage opportunities across DeFi protocols
 
 - You pay only for a successful response: errors, and scans that lost their sources (confidence < 60,
   returned as 503), settle nothing.
@@ -117,7 +118,14 @@ GET /api/x402/yield?chain=solana&stableOnly=false    $0.003  Yield X-Ray: real-y
 
 ---
 
-## 5. MCP server — the same checks as tools for Claude, Cursor or any MCP client
+## 5. Multi-Chain Safe Swap — scan-gated token purchases
+Pre-trade scan gate for retail and autonomous agents protecting against honeypots, malicious taxes, and liquidity drains.
+URL: https://gl1tchbased.xyz/safe-swap/<chain>-<address> (or /safe-swap/<mint> for Solana)
+Supported chains: Solana (via Jupiter with disclosed 0.5% fee) and 7 EVM chains (Base, Ethereum, Arbitrum, BSC, Polygon, Avalanche, Optimism via Aerodrome, Uniswap, and 1inch).
+
+---
+
+## 6. MCP server — the same checks as tools for Claude, Cursor or any MCP client
 
 Streamable HTTP endpoint: https://gl1tchbased.xyz/api/mcp (free, 60 requests/min per IP)
 Tools:

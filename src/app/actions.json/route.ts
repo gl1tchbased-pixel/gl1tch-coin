@@ -25,6 +25,10 @@ export function GET() {
         pathPattern: "/swap/**",
         apiPath: "/api/actions/safe-swap",
       },
+      {
+        pathPattern: "/safe-swap/**",
+        apiPath: "/api/actions/safe-swap",
+      },
     ],
   });
 }

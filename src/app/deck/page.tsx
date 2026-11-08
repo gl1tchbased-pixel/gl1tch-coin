@@ -42,8 +42,12 @@ const product = [
     text: "Scan from chat, and get alerted when a watched token’s risk changes or a watched wallet dumps 25%+ of a position. 25 tokens and 25 wallets per user, plus 100 automatic scans a day in any group, free for everyone.",
   },
   {
+    title: "Safe Swap (Solana & 7 EVM Chains)",
+    text: "Pre-trade scan gate protecting buyers from honeypots, malicious transfer fees and unlocked LP before routing into Jupiter (Solana) or Aerodrome, Uniswap & 1inch (Base, Ethereum, Arbitrum, BSC, Polygon, Avalanche, Optimism).",
+  },
+  {
     title: "For AI agents: MCP + x402",
-    text: "The same checks as tools for AI agents: a free 4-tool MCP server at /api/mcp (rate-limited per IP) and 9 pay-per-call endpoints in USDC through x402 (no signup). Listed in the official MCP Registry, Coinbase x402 Bazaar and the PayAI catalog. Payments are public at /revenue; the free JSON API stays free.",
+    text: "The same checks as tools for AI agents: a free 4-tool MCP server at /api/mcp (rate-limited per IP) and 10 pay-per-call endpoints in USDC through x402 across 6 chains: Solana, Base, Arbitrum, Polygon, Avalanche & Sei (no signup). Listed in the official MCP Registry, Coinbase x402 Bazaar and PayAI catalog. Payments are public at /revenue; the free JSON API stays free.",
   },
 ];
 
@@ -114,7 +118,7 @@ export default async function DeckPage() {
   return (
     <section className={styles.wrap}>
       <article className={`${styles.slide} ${styles.cover}`}>
-        <span className="t-eyebrow">Grant deck · October 2026</span>
+        <span className="t-eyebrow">Grant deck · November 2026</span>
         <h1 className="t-h2">GL1TCH: scan before you buy</h1>
         <p className={styles.lead}>
           A free, open-source (MIT) token safety scanner for Solana, plus 15 EVM chains. Paste
@@ -210,7 +214,7 @@ export default async function DeckPage() {
           {rev && (
             <li>
               <strong>AI-agent adoption (x402 + MCP, live since 28 October 2026):</strong>{" "}
-              <strong>{rev.paid.count.toLocaleString("en-US")} settled external paid calls</strong> in USDC on Solana and Base
+              <strong>{rev.paid.count.toLocaleString("en-US")} settled external paid calls</strong> in USDC across 6 blockchains (Solana, Base, Arbitrum, Polygon, Avalanche, Sei)
               {rev.quotes ? ` alongside ${rev.quotes.last30.total.toLocaleString("en-US")} price quotes` : ""}, with every on-chain
               transaction published at <Link className={styles.link} href="/revenue">/revenue</Link> (our own test calls are listed
               separately and excluded from totals). Ranked in the top 5 on the Coinbase x402 Bazaar for{" "}
@@ -245,8 +249,7 @@ export default async function DeckPage() {
           <div className={styles.card}>
             <span className={styles.cardTitle}>Quality gates</span>
             <span className={styles.cardText}>
-              TypeScript for the scanner, API and bot, and more than 680 automated unit tests (323 on the site
-              and 358 on the bot), run in CI on every push alongside type checks.
+              TypeScript for the scanner, API and bot, and more than 870 automated unit and invariant tests (431 on the site, 430 on the bot, and 9 on the agent toolkit), run in CI on every push alongside type checks and prebuild money guards.
             </span>
           </div>
           <div className={styles.card}>
@@ -317,13 +320,12 @@ export default async function DeckPage() {
           <li>Running costs are small and itemized above: about $1,100 a year of infrastructure at list prices.</li>
           <li>Grants cover the first 12 months and the open-source work.</li>
           <li>
-            After that, pay-per-call AI-agent endpoints over x402 (9 routes in USDC on Solana and Base, live today
+            After that, pay-per-call AI-agent endpoints over x402 (10 routes in USDC across 6 blockchains: Solana, Base, Arbitrum, Polygon, Avalanche, Sei, live today
             at <Link className={styles.link} href="/revenue">/revenue</Link>) and B2B services on top of the free
             tools carry the hosting. The public scanner, JSON API, MCP server, Watchtower and badge stay 100% free.
           </li>
           <li>
-            An optional scan-gated swap through Jupiter is also live. A GL1TCH fee of 0.5% applies only when the swap
-            screen shows it, before signing, and plays no part in a token&apos;s score. It is never required to use the scanner.
+            A scan-gated Safe Swap across Solana (Jupiter) and 7 EVM chains (Base, Ethereum, Arbitrum, BSC, Polygon, Avalanche, Optimism) is also live. A GL1TCH fee of 0.5% applies on Solana only when the swap screen shows it, before signing, and plays no part in a token's score. It is never required to use the scanner.
           </li>
         </ul>
       </article>

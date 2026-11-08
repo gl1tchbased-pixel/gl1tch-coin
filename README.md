@@ -5,8 +5,10 @@ and get a 0–100 risk score with a plain-language reason for every check, in se
 it never asks for a signature, never touches a wallet, and costs nothing to use.
 
 - Scanner: <https://gl1tchbased.xyz/scan>
-- Solana Actions & Blinks (Spec v2.4): <https://gl1tchbased.xyz/actions.json> · [Safe Swap](https://gl1tchbased.xyz/blinks)
-- Live On-Chain Treasury & Revenue: <https://gl1tchbased.xyz/revenue> (reads Solana & Base Mainnet RPCs directly)
+- Safe Swap (Solana & 7 EVM chains): <https://gl1tchbased.xyz/safe-swap> · [Solana Actions & Blinks (Spec v2.4)](https://gl1tchbased.xyz/blinks)
+- Paid Agent API (x402 v2 · 10 endpoints · 6 chains): <https://gl1tchbased.xyz/agents/docs> (USDC on Solana, Base, Arbitrum, Polygon, Avalanche, Sei)
+- MCP Server & Agent Toolkit: <https://gl1tchbased.xyz/api/mcp> · [gl1tch-agent-toolkit](https://www.npmjs.com/package/gl1tch-agent-toolkit)
+- Live On-Chain Treasury & Revenue: <https://gl1tchbased.xyz/revenue> (reads Solana, Base, Arbitrum, Polygon, Avalanche directly on-chain)
 - Mobile Prototype (Solana Mobile Wallet Adapter · Android): [52s YouTube Demo](https://youtu.be/HubNomvZ7_k) · [`mobile/`](./mobile)
 - Yield X-Ray (multi-chain APY & risk analysis across 7 chains): <https://gl1tchbased.xyz/yield>
 - Rug Radar (risky new launches, swept every 10 minutes): <https://gl1tchbased.xyz/radar>
