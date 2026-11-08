@@ -160,6 +160,7 @@ GET ${BASE}/api/x402/radar            → { cursor: 1793217500000, tokens: [...]
 GET ${BASE}/api/x402/radar?since=1793217500000`}</Code>
         <Code head="Agent skill (Claude Code, Codex, OpenClaw, …)">{`npx skills add gl1tchbased-pixel/gl1tch-coin --skill gl1tch-token-safety`}</Code>
         <ul className={styles.reasonList} style={{ marginTop: "var(--space-3)" }}>
+          <li><strong>Multi-Chain x402:</strong> All 10 paid routes accept USDC on 6 mainnets: <strong>Solana</strong>, <strong>Base</strong>, <strong>Arbitrum</strong>, <strong>Polygon</strong>, <strong>Avalanche</strong>, and <strong>Sei</strong>, facilitated gaslessly via PayAI and Coinbase CDP.</li>
           <li>You pay only for a successful response. A failed or degraded read (sources down) returns an error and settles nothing.</li>
           <li>Paid responses are never served from a CDN cache.</li>
           <li>$GL1TCH holders: send your <code>x-gl1tch-key</code> header and the paid endpoints are free at your tier&apos;s rate.</li>
