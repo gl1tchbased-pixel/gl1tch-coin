@@ -3,6 +3,10 @@
 # rolls back if the health check fails. Run by gl1tch-site-update.timer every 5 minutes.
 set -euo pipefail
 
+# One run at a time: the timer and a manual run must not extract into the same folder.
+exec 9>/run/gl1tch-site-update.lock
+flock -n 9 || { echo "another update is running" >&2; exit 0; }
+
 BASE="https://github.com/gl1tchbased-pixel/gl1tch-coin/releases/download/site-build"
 ROOT=/opt/gl1tch-site
 HEALTH="http://127.0.0.1:3000/api/x402/health"
