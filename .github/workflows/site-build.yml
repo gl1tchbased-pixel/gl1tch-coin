@@ -1,0 +1,55 @@
+# Builds the website for the Oracle server and publishes it as the "site-build" release.
+# The server (deploy/site/update.sh) checks site.rev every 5 minutes, verifies the checksum,
+# swaps the release in and rolls back if the health check fails. No server credentials live here.
+name: site build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: site-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        env:
+          NEXT_OUTPUT: standalone
+          NEXT_TELEMETRY_DISABLED: "1"
+      - name: Package
+        run: |
+          out=.next/standalone
+          cp -r public "$out/public"
+          mkdir -p "$out/.next"
+          cp -r .next/static "$out/.next/static"
+          echo "$GITHUB_SHA" > "$out/REVISION"
+          tar -C "$out" -czf site.tar.gz .
+          sha256sum site.tar.gz | cut -d' ' -f1 > site.sha256
+          echo "$GITHUB_SHA" > site.rev
+          ls -lh site.tar.gz
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view site-build >/dev/null 2>&1; then
+            gh release create site-build --prerelease --target "$GITHUB_SHA" \
+              --title "Website build (Oracle server)" \
+              --notes "Rolling build of main for the website server. Not a product release."
+          fi
+          # site.rev goes last: the server only acts once the new revision is announced.
+          gh release upload site-build site.tar.gz site.sha256 --clobber
+          gh release upload site-build site.rev --clobber
