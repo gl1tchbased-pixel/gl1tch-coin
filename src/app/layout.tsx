@@ -93,7 +93,8 @@ export default function RootLayout({
           <MobileBottomNav />
         </WalletRoot>
         <FunLayer />
-        <Analytics />
+        {/* Vercel Analytics only exists on Vercel; elsewhere its script is a 404. */}
+        {process.env.VERCEL ? <Analytics /> : null}
       </body>
     </html>
   );

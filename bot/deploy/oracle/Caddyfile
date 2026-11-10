@@ -6,3 +6,15 @@ bot.gl1tchbased.xyz {
 		header_up X-Real-IP {remote_host}
 	}
 }
+
+# The website (Next.js standalone, deploy/site). Moved here from Vercel on 2026-11-10.
+gl1tchbased.xyz {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:3000 {
+		header_up X-Real-IP {remote_host}
+	}
+}
+
+www.gl1tchbased.xyz {
+	redir https://gl1tchbased.xyz{uri} permanent
+}

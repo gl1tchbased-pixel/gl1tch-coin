@@ -41,6 +41,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // The Oracle server runs a self-contained build (site-build.yml sets NEXT_OUTPUT). Plain next build is unchanged.
+  ...(process.env.NEXT_OUTPUT === "standalone" ? { output: "standalone" as const } : {}),
   // next build type-checks the whole tsconfig program with the tsc CLI (Next 16.4+). Tests import
   // bot/, which .vercelignore keeps out of the deploy, so builds use a config without tests;
   // CI still type-checks the tests with the full tsconfig.json.
