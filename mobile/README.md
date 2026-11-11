@@ -12,6 +12,10 @@ token safety scanner as a mobile-first Android app. MIT-licensed, like the rest 
   any app to GL1TCH and it scans on arrival.
 - **Scan your wallet, read-only.** Connect a wallet over Mobile Wallet Adapter; the app lists every token you hold
   and risk-checks them one tap at a time.
+- **Scan a QR code.** Point the camera at a QR code with a token address, a link that contains one, or a Solana Pay
+  code (it reads the `spl-token` mint, not the payee wallet). The camera is used only on that screen; nothing is recorded.
+- **Recent scans.** The last 20 verdicts are saved on the phone only (AsyncStorage) and can be reopened without a
+  network call. Nothing is uploaded.
 - **Prove ownership without a transaction.** "Sign in with Solana" asks the wallet to sign a short message (on
   Seeker, the Seed Vault-backed wallet signs it). It's used to tie Watchtower alerts to your own wallet.
 
@@ -29,9 +33,12 @@ Every feature above was tested end to end on a real Android 16 phone with Phanto
 Token holdings are read from the official public RPC first; some free endpoints now refuse token-account lookups
 without a key, and the app reports that as an error instead of "no tokens".
 
+QR scanning and recent scans (added 11 Nov 2026) type-check and their address parsing is tested, but they have not
+been tried on a phone yet.
+
 ## Not in this prototype yet
 
-Planned in the grant milestones: Watchtower push alerts, QR scanning, an offline verdict cache, Seeker polish and
+Planned in the grant milestones: Watchtower push alerts, Seeker polish and
 the Solana dApp Store release.
 
 ## Build
@@ -57,4 +64,6 @@ needs a development or release build; Expo Go can't run them.
 | --- | --- |
 | `App.tsx` | The screen: paste, share-sheet handling, verdict card, wallet section |
 | `src/scan.ts` | Scan API client and address extraction from pasted or shared text |
+| `src/QrScanner.tsx` | Full-screen QR reader (expo-camera), QR codes only |
+| `src/history.ts` | Recent scans saved on the phone |
 | `src/wallet.ts` | Read-only Mobile Wallet Adapter connection, Sign in with Solana, token holdings over RPC |
