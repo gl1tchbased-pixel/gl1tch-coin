@@ -13,6 +13,8 @@ import { StatusBar } from "expo-status-bar";
 import { useShareIntent } from "expo-share-intent";
 import { extractAddress, scan, STATUS_COLOR, STATUS_ICON, VERDICT_COLOR, type ScanResult } from "./src/scan";
 import { connectWallet, holdings, type Connected, type Holding } from "./src/wallet";
+import { addToHistory, ago, loadHistory, saveHistory, type HistoryItem } from "./src/history";
+import { QrScanner } from "./src/QrScanner";
 
 const C = { bg: "#0B0A14", card: "#15132A", border: "#2A2650", text: "#F2F0FF", muted: "#9A95C0", signal: "#7CFF6B" };
 const short = (a: string) => `${a.slice(0, 4)}…${a.slice(-4)}`;
@@ -28,8 +30,14 @@ export default function App() {
   const [held, setHeld] = useState<Holding[] | null>(null);
   const [quick, setQuick] = useState<Record<string, Quick>>({});
   const [walletBusy, setWalletBusy] = useState<string | null>(null);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [qrOpen, setQrOpen] = useState(false);
   const scroll = useRef<ScrollView>(null);
   const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent();
+
+  useEffect(() => {
+    loadHistory().then(setHistory);
+  }, []);
 
   const run = useCallback(async (raw: string) => {
     const address = extractAddress(raw);
@@ -42,7 +50,13 @@ export default function App() {
     setInput(address);
     setBusy(true);
     try {
-      setResult(await scan(address));
+      const r = await scan(address);
+      setResult(r);
+      setHistory((h) => {
+        const next = addToHistory(h, r);
+        saveHistory(next);
+        return next;
+      });
       scroll.current?.scrollTo({ y: 0, animated: true });
     } catch (e) {
       setError((e as Error).message);
@@ -89,6 +103,18 @@ export default function App() {
     setWalletBusy(null);
   };
 
+  if (qrOpen) {
+    return (
+      <QrScanner
+        onClose={() => setQrOpen(false)}
+        onScanned={(text) => {
+          setQrOpen(false);
+          run(text);
+        }}
+      />
+    );
+  }
+
   return (
     <View style={s.root}>
       <StatusBar style="light" />
@@ -109,6 +135,9 @@ export default function App() {
           />
           <Pressable style={[s.button, busy && s.buttonOff]} onPress={() => run(input)} disabled={busy}>
             {busy ? <ActivityIndicator color={C.bg} /> : <Text style={s.buttonText}>Scan</Text>}
+          </Pressable>
+          <Pressable style={s.buttonGhost} onPress={() => setQrOpen(true)} disabled={busy}>
+            <Text style={s.buttonGhostText}>Scan a QR code</Text>
           </Pressable>
           <Text style={s.hint}>Tip: share a token link from any app to GL1TCH for an instant verdict.</Text>
         </View>
@@ -144,6 +173,33 @@ export default function App() {
             <Pressable onPress={() => Linking.openURL(`https://gl1tchbased.xyz/scan/${result.chain}-${result.mint}`)}>
               <Text style={s.link}>Full report on gl1tchbased.xyz →</Text>
             </Pressable>
+          </View>
+        )}
+
+        {history.length > 0 && (
+          <View style={s.card}>
+            <Text style={s.section}>Recent scans</Text>
+            <Text style={s.hint}>Saved on this phone only. Tap to see the saved verdict, scan again for a fresh one.</Text>
+            {history.map((h) => (
+              <Pressable
+                key={`${h.result.chain}:${h.result.mint}`}
+                style={s.holding}
+                onPress={() => {
+                  setError(null);
+                  setInput(h.result.mint);
+                  setResult(h.result);
+                  scroll.current?.scrollTo({ y: 0, animated: true });
+                }}
+              >
+                <Text style={s.holdingMint}>
+                  {h.result.symbol ? `$${h.result.symbol}` : short(h.result.mint)}
+                  <Text style={s.muted}>  {ago(h.at)}</Text>
+                </Text>
+                <Text style={[s.holdingVerdict, { color: VERDICT_COLOR[h.result.verdict] }]}>
+                  {h.result.verdict} {h.result.score}
+                </Text>
+              </Pressable>
+            ))}
           </View>
         )}
 

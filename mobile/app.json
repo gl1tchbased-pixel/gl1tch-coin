@@ -26,6 +26,7 @@
     },
     "plugins": [
       ["expo-share-intent", { "androidIntentFilters": ["text/*"] }],
+      ["expo-camera", { "cameraPermission": "GL1TCH uses the camera only to read QR codes with a token address.", "microphonePermission": false, "recordAudioAndroid": false, "barcodeScannerEnabled": true }],
       "./plugins/with-android-build-tweaks.js"
     ]
   }

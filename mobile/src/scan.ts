@@ -32,6 +32,9 @@ const EVM_RE = /0x[0-9a-fA-F]{40}/;
 /** First token-looking address in the text. EVM first (unambiguous), then the longest base58 run. */
 export function extractAddress(text: string | null | undefined): string | null {
   if (!text) return null;
+  // Solana Pay QR codes name the token in `spl-token=`; the address before `?` is the payee wallet.
+  const splToken = text.match(/[?&]spl-token=([1-9A-HJ-NP-Za-km-z]{32,44})/);
+  if (splToken) return splToken[1];
   const evm = text.match(EVM_RE);
   if (evm) return evm[0];
   const sol = (text.match(SOL_RE) || []).sort((a, b) => b.length - a.length);
