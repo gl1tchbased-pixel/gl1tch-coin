@@ -169,17 +169,34 @@ export async function resolveMarketSnapshot(
 export async function fetchMarket(
   signal?: AbortSignal
 ): Promise<MarketSnapshot> {
-  try {
-    const res = await fetch("/api/market", {
-      signal,
-      headers: { accept: "application/json" },
-    });
-    if (!res.ok) return EMPTY;
-    return (await res.json()) as MarketSnapshot;
-  } catch {
-    return EMPTY;
-  }
+  // Several widgets poll this on one page (ticker, hero chip, proof strip). They share one
+  // request and one 25 s result, and a hidden tab reuses the last result instead of polling.
+  const now = Date.now();
+  const hidden = typeof document !== "undefined" && document.visibilityState === "hidden";
+  if (shared.snap && (hidden || now - shared.at < 25_000)) return shared.snap;
+  shared.inflight ??= (async () => {
+    try {
+      const res = await fetch("/api/market", { headers: { accept: "application/json" } });
+      if (!res.ok) return EMPTY;
+      const snap = (await res.json()) as MarketSnapshot;
+      shared.snap = snap;
+      shared.at = Date.now();
+      return snap;
+    } catch {
+      return EMPTY;
+    } finally {
+      shared.inflight = null;
+    }
+  })();
+  const snap = await shared.inflight;
+  return signal?.aborted ? EMPTY : snap;
 }
+
+const shared: { snap: MarketSnapshot | null; at: number; inflight: Promise<MarketSnapshot> | null } = {
+  snap: null,
+  at: 0,
+  inflight: null,
+};
 
 /** Which aggregator a snapshot came from, for honest source labels in the UI. */
 export function marketSourceName(snap: MarketSnapshot | null): string | null {

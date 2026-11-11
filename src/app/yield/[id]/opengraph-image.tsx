@@ -11,7 +11,7 @@ import { OG_SIZE, yieldOgCard } from "@/components/yield/og";
 export const alt = "GL1TCH Yield X-Ray card";
 export const size = OG_SIZE;
 export const contentType = "image/png";
-export const revalidate = 300;
+export const revalidate = 3600; // image rendering is CPU-heavy; link previews can be an hour old
 
 export default async function Image({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

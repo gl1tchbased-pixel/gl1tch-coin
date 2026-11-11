@@ -4,6 +4,7 @@ import { runScanReport } from "@/lib/scan-report";
 import { parseScanInput } from "@/lib/validate";
 import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 import { CONTRACT_ADDRESS } from "@/lib/official";
+import { memo } from "@/lib/memo";
 
 /**
  * GL1TCH SCANNER API — multi-chain, read-only, free for everyone (no key, no token).
@@ -34,7 +35,7 @@ export async function GET(req: NextRequest) {
   // ---- name/symbol search ----
   if (parsed.kind === "search") {
     try {
-      const candidates = await searchTokens(parsed.q);
+      const candidates = await memo(`scan-q:${parsed.q.toLowerCase()}`, 60_000, () => searchTokens(parsed.q));
       return NextResponse.json({ candidates }, { headers: { "cache-control": "public, s-maxage=60, stale-while-revalidate=120" } });
     } catch (e) {
       return NextResponse.json({ error: e instanceof Error ? e.message : "search failed" }, { status: 422 });
@@ -47,7 +48,13 @@ export async function GET(req: NextRequest) {
   // own contract are our pages' live self-checks (/proof, the trust badge, /token), not people.
   const kind = req.headers.has("x-gl1tch-source") || mint === CONTRACT_ADDRESS ? "auto" : "user";
 
-  const report = await runScanReport(mint, parsed.chain, kind);
+  // Same lifetimes the CDN used to apply: a full report 60 s, a degraded read 10 s, errors never.
+  // A repeat inside the window is served from memory and isn't counted again (as with the CDN).
+  const report = await memo(`scan:${parsed.chain ?? ""}:${mint}`, (r) => {
+    if (r.status !== 200) return 0;
+    const c = (r.body as { confidence?: unknown }).confidence;
+    return typeof c === "number" && c < 75 ? 10_000 : 60_000;
+  }, () => runScanReport(mint, parsed.chain, kind));
   if (report.status !== 200) return NextResponse.json(report.body, { status: report.status });
   // A transient source timeout drops checks to "unknown" and degrades the verdict.
   // Don't let such a low-confidence read stick in the CDN cache for a full minute —

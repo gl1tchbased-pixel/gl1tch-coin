@@ -14,8 +14,8 @@ export const metadata: Metadata = shareMeta({
   alternates: { canonical: "/quantum-core" },
 });
 
-// Served from cache and refreshed every minute: the page only displays the latest pulse.
-export const revalidate = 60;
+// Served from cache and rebuilt every 5 minutes: the page only displays the latest pulse.
+export const revalidate = 300;
 
 const PILLARS = [
   {

@@ -10,6 +10,14 @@ bot.gl1tchbased.xyz {
 # The website (Next.js standalone, deploy/site). Moved here from Vercel on 2026-11-10.
 gl1tchbased.xyz {
 	encode zstd gzip
+	# Access log to see which routes cost CPU (small, rotated: 3 x 10 MiB, 7 days).
+	log {
+		output file /var/log/caddy/site.log {
+			roll_size 10MiB
+			roll_keep 3
+			roll_keep_for 168h
+		}
+	}
 	reverse_proxy 127.0.0.1:3000 {
 		header_up X-Real-IP {remote_host}
 	}

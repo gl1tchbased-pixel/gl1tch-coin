@@ -20,7 +20,7 @@ const LVL: Record<string, { label: string; cls: string }> = {
 };
 const short = (a: string) => (a.length > 12 ? `${a.slice(0, 4)}…${a.slice(-4)}` : a);
 
-export const revalidate = 60;
+export const revalidate = 300; // rebuilt at most every 5 minutes to keep server CPU low
 
 export default async function AgentDirectoryPage() {
   const { verified, flagged } = await agentDirectory();
