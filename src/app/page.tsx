@@ -10,8 +10,8 @@ import { FAQ } from "@/components/sections/FAQ";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { MobileCTABar } from "@/components/layout/MobileCTABar";
 
-// Live product numbers (bot metrics) refresh at most once a minute.
-export const revalidate = 60;
+// Live product numbers (bot metrics) refresh at most every 5 minutes: each rebuild costs server CPU.
+export const revalidate = 300;
 
 /**
  * Homepage, v2 — eight beats: use the product (hero scan + Signal Core), see the proof, pick a

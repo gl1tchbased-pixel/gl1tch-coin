@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { latestPulse } from "@/lib/quantum/curby";
 import { isPulseStale } from "@/lib/quantum/freshness";
 import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
+import { memo } from "@/lib/memo";
 
 /**
  * QUANTUM CORE — GET /api/quantum-core/pulse
@@ -18,7 +19,7 @@ export async function GET(req: NextRequest) {
   const rl = rateLimit(`qpulse:${clientIp(req)}`, 30, 60_000);
   if (!rl.ok) return NextResponse.json({ error: "rate limited" }, { status: 429, headers: { "retry-after": String(rl.retryAfter) } });
 
-  const pulse = await latestPulse();
+  const pulse = await memo("curby-pulse", 20_000, () => latestPulse());
   if (!pulse) return NextResponse.json({ ready: false, source: "curby" }, { headers: { "cache-control": "public, s-maxage=20, stale-while-revalidate=40" } });
   return NextResponse.json(
     { ready: true, ...pulse, stale: isPulseStale(pulse.timestamp) },

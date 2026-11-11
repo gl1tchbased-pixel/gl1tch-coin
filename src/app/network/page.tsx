@@ -14,7 +14,7 @@ export const metadata: Metadata = shareMeta({
   alternates: { canonical: "/network" },
 });
 
-export const revalidate = 60;
+export const revalidate = 300; // rebuilt at most every 5 minutes to keep server CPU low
 const n = (x: number | undefined) => (typeof x === "number" ? x.toLocaleString("en-US") : "—");
 
 export default async function NetworkPage() {

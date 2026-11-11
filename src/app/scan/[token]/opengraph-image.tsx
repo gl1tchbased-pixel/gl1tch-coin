@@ -10,7 +10,7 @@ import { verdictKind } from "@/lib/verdict";
 export const alt = "GL1TCH token safety scan";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const revalidate = 300;
+export const revalidate = 3600; // image rendering is CPU-heavy; link previews can be an hour old
 
 const GREEN = "#7CFF4F";
 const RED = "#FF5C5C";

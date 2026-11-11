@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 import { resolveMarketSnapshot } from "@/lib/market";
+import { memo } from "@/lib/memo";
 
 /**
  * Live market data, resolved server-side (DexScreener → GeckoTerminal fallback)
@@ -16,7 +17,8 @@ export async function GET(req: NextRequest) {
   if (!rateLimit(`market:${clientIp(req)}`, 30, 60_000).ok) {
     return NextResponse.json({ error: "rate limited" }, { status: 429, headers: { "retry-after": "60" } });
   }
-  const snap = await resolveMarketSnapshot();
+  // One upstream call per 30 s for everyone, matching the cache header (no CDN in front on Oracle).
+  const snap = await memo("market", 30_000, () => resolveMarketSnapshot());
   return NextResponse.json(snap, {
     headers: {
       // Edge/CDN caches one snapshot for ~30s and serves stale briefly while
