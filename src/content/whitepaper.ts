@@ -80,7 +80,7 @@ export const whitepaperSections: WPSection[] = [
         type: "table",
         headers: ["Property", "Solana", "Why it matters for GL1TCH"],
         rows: [
-          ["Finality", "Sub-second", "Trades and rank checks feel instant"],
+          ["Block time", "About 0.4 seconds", "Trades and rank checks feel instant"],
           ["Typical fee", "Fractions of a cent", "No friction for small holders or frequent verification"],
           ["Throughput", "Thousands of TPS", "Survives launch-window demand spikes"],
           ["Token standard", "Token-2022 (no transfer fee)", "Modern SPL standard, wide support, zero-tax at protocol level"],
