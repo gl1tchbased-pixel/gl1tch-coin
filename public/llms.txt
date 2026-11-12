@@ -121,7 +121,7 @@ GET /api/x402/spikes                                  $0.005  Yield spikes, APY 
 ## 5. Multi-Chain Safe Swap — scan-gated token purchases
 Pre-trade scan gate for retail and autonomous agents protecting against honeypots, malicious taxes, and liquidity drains.
 URL: https://gl1tchbased.xyz/safe-swap/<chain>-<address> (or /safe-swap/<mint> for Solana)
-Supported chains: Solana (via Jupiter with disclosed 0.5% fee) and 7 EVM chains (Base, Ethereum, Arbitrum, BSC, Polygon, Avalanche, Optimism via Aerodrome, Uniswap, and 1inch).
+Supported chains: Solana (a Jupiter swap signed in the user's wallet, with a 0.5% fee shown before signing) and 7 EVM chains (Base, Ethereum, Arbitrum, BSC, Polygon, Avalanche, Optimism: links out to 1inch, Odos and Uniswap, no GL1TCH fee).
 
 ---
 

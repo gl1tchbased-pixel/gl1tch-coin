@@ -1,9 +1,9 @@
 {
   "actorSpecification": 1,
   "name": "gl1tch-token-safety-scanner",
-  "title": "Solana Honeypot Scanner & Token Safety API (DexScreener & Pump.fun)",
-  "description": "Sub-second token rug-pull scanner & honeypot detector for Solana, Base, ETH & Pump.fun. Automated LP lock, mint authority, holder concentration, deployer history & 7-chain DeFi yields. High-speed RugCheck & DexScreener API alternative for trading bots & quants.",
-  "version": "1.3",
+  "title": "Solana & EVM Token Safety Scanner and DeFi Yield Check",
+  "description": "Check any Solana or EVM token for rug-pull risks before you buy or list it: mint and freeze authority, LP lock, honeypot tax, holder concentration and insiders. Also lists fresh Solana launches with risk notes and on-chain DeFi yields across 7 chains.",
+  "version": "1.2",
   "meta": {
     "templateId": "js-start"
   },

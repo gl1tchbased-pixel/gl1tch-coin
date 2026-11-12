@@ -2,7 +2,7 @@
   "name": "gl1tch-token-safety-scanner",
   "version": "1.2.0",
   "type": "module",
-  "description": "Apify Store Pay-Per-Event Actor for GL1TCH Solana/EVM Token Safety, Insider Graph, Rug Radar & 7-Chain DeFi Yield X-Ray.",
+  "description": "Apify Store pay-per-event Actor: GL1TCH token safety scans for Solana and EVM, Rug Radar and on-chain DeFi yields.",
   "main": "src/main.mjs",
   "scripts": {
     "start": "node src/main.mjs",

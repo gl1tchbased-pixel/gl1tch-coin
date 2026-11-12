@@ -27,7 +27,7 @@ const product = [
   },
   {
     title: "Rug Radar (Sweeps + Live SSE)",
-    text: "Sweeps freshly promoted tokens every 30 minutes and streams real-time Solana pool creations (Pump.fun, Raydium) via RPC logsSubscribe so flagged launches are visible before people buy.",
+    text: "Sweeps freshly promoted Solana tokens every 30 minutes and publishes the riskiest first, so flagged launches are visible before people buy.",
   },
   {
     title: "Yield X-Ray (multi-chain)",
@@ -43,7 +43,7 @@ const product = [
   },
   {
     title: "Safe Swap (Solana & 7 EVM Chains)",
-    text: "Pre-trade scan gate protecting buyers from honeypots, malicious transfer fees and unlocked LP before routing into Jupiter (Solana) or Aerodrome, Uniswap & 1inch (Base, Ethereum, Arbitrum, BSC, Polygon, Avalanche, Optimism).",
+    text: "A swap is offered only after a passing scan (honeypot, transfer-fee and LP checks). On Solana it is a Jupiter swap signed in the user's own wallet, with a 0.5% GL1TCH fee shown before signing. On 7 EVM chains (Base, Ethereum, Arbitrum, BSC, Polygon, Avalanche, Optimism) it links out to 1inch, Odos and Uniswap, with no GL1TCH fee.",
   },
   {
     title: "For AI agents: MCP + x402",

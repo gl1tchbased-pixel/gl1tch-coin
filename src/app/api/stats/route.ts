@@ -25,7 +25,6 @@ export async function GET(req: NextRequest) {
       jupiterBlinks: "active",
       signalGraph: "active",
       x402PaidGateway: "active",
-      webacyRiskEngine: "adapter_ready",
     },
   }, { headers: { "cache-control": "public, s-maxage=20, stale-while-revalidate=60" } });
 }

@@ -344,7 +344,7 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
                   <p>
                     {result.chain === "solana"
                       ? "Optional swap via Jupiter, offered only after a passing scan. A passing scan is not a recommendation and cannot rule out losses. You sign in your own wallet. GL1TCH earns a 0.5% fee on swaps where the swap screen shows it; the fee plays no part in the score."
-                      : `Optional non-custodial swap on ${chainName(result.chain)} (1inch / Odos / Uniswap), offered only after a passing scan. You sign in your own wallet; aggregator routes may include a disclosed 0.5% GL1TCH partner fee to the EVM treasury.`}
+                      : `Optional non-custodial swap on ${chainName(result.chain)} (1inch / Odos / Uniswap), offered only after a passing scan. A passing scan is not a recommendation and cannot rule out losses. The links open each router's own app, where you sign in your own wallet. GL1TCH takes no fee on EVM swaps.`}
                   </p>
                 </div>
               </div>
