@@ -33,8 +33,9 @@ Every feature above was tested end to end on a real Android 16 phone with Phanto
 Token holdings are read from the official public RPC first; some free endpoints now refuse token-account lookups
 without a key, and the app reports that as an error instead of "no tokens".
 
-QR scanning and recent scans (added 11 Nov 2026) type-check and their address parsing is tested, but they have not
-been tried on a phone yet.
+QR scanning and recent scans were tested on the same phone on 11 Nov 2026 (release APK built by the `mobile-apk`
+workflow): a Solana Pay QR code scanned the `spl-token` mint (BONK), not the payee wallet, and the recent-scans
+list survived an app restart.
 
 ## Not in this prototype yet
 
