@@ -18,11 +18,15 @@ function isSnapshot(x: unknown): x is YieldSnapshot {
   );
 }
 
-/** `fresh` skips the data cache — used only when a cached snapshot doesn't know an id yet. */
+/**
+ * `fresh` bypasses the 5-minute snapshot — used only when a cached snapshot doesn't know an id yet. It changes the
+ * cache key (a per-minute query the bot ignores) instead of using `cache: "no-store"`: a no-store fetch inside an
+ * ISR page makes Next.js throw "Page changed from static to dynamic at runtime" (seen in Sentry on /yield/[id]).
+ */
 export async function getYieldSnapshot(opts: { fresh?: boolean } = {}): Promise<YieldSnapshot | null> {
   try {
-    const cache = opts.fresh ? ({ cache: "no-store" } as const) : { next: { revalidate: 300 } };
-    const r = await fetch(`${BASE}/yield`, { signal: AbortSignal.timeout(8000), ...cache });
+    const url = opts.fresh ? `${BASE}/yield?fresh=${Math.floor(Date.now() / 60_000)}` : `${BASE}/yield`;
+    const r = await fetch(url, { signal: AbortSignal.timeout(8000), next: { revalidate: opts.fresh ? 60 : 300 } });
     if (!r.ok) return null;
     const j: unknown = await r.json();
     return isSnapshot(j) ? j : null;

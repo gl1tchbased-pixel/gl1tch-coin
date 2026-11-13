@@ -58,13 +58,15 @@ describe("findOpportunityFresh", () => {
   it("re-reads the bot without the cache when the cached snapshot doesn't know the id yet", async () => {
     const fresh = { ...SNAP, opportunities: [...SNAP.opportunities, { id: "tron-justlend-usdt", chain: "tron", symbol: "USDT" }] };
     const f = vi.fn(async (_url: string, init?: RequestInit) =>
-      new Response(JSON.stringify(init?.cache === "no-store" ? fresh : SNAP), { status: 200 })
+      new Response(JSON.stringify(_url.includes("?fresh=") ? fresh : SNAP), { status: 200 })
     );
     vi.stubGlobal("fetch", f);
     const r = await findOpportunityFresh(SNAP, "tron-justlend-usdt");
     expect(r.opportunity?.id).toBe("tron-justlend-usdt");
     expect(r.snapshot?.opportunities).toHaveLength(2);
     expect(f).toHaveBeenCalledTimes(1);
+    // never no-store: inside the ISR card page that throws "static to dynamic at runtime"
+    expect(f.mock.calls[0][1]?.cache).toBeUndefined();
   });
 
   it("doesn't refetch on a hit, and returns null for an unknown id", async () => {
