@@ -74,7 +74,7 @@ const funding: { track: string; items: Item[] }[] = [
         amount: "$3,000",
         detail: [
           "Private Solana RPC, Helius Developer: $49/mo × 12 ≈ $590",
-          "Site + public API, Vercel Pro (Hobby is non-commercial only): $20/mo × 12 = $240",
+          "Site + public API: $0 today on the same Oracle Cloud Always Free VM as the bot (moved off Vercel in November 2026); ≈ $240 kept for paid site hosting if traffic outgrows the free VM",
           "Bot VM, Oracle Cloud Always Free: $0 today (moved off Railway in October 2026); ≈ $180 kept for a paid fallback VM if Oracle reclaims the free one",
           "Domain, mail forwarding, uptime monitoring: ≈ $90",
           "Reliability engineering, ≈ $1,900: status page and alerts, bot health checks, API abuse protection, daily backups of the bot's data, a load test at Rug Radar volume",
@@ -233,7 +233,7 @@ export default async function DeckPage() {
           <div className={styles.card}>
             <span className={styles.cardTitle}>Scanner + public API</span>
             <span className={styles.cardText}>
-              Next.js on Vercel. Each scan reads Solana RPC directly (mint, authorities, holders,
+              Next.js on an Oracle Cloud VM (since November 2026). Each scan reads Solana RPC directly (mint, authorities, holders,
               the deployer&apos;s live balance) and cross-checks RugCheck, DexScreener /
               GeckoTerminal and, for EVM, GoPlus. Every source is fault-tolerant: a slow one
               degrades to &quot;unknown&quot; and lowers the confidence score instead of failing.
@@ -243,7 +243,7 @@ export default async function DeckPage() {
             <span className={styles.cardTitle}>Bot + Signal Graph</span>
             <span className={styles.cardText}>
               TypeScript Telegram bot on an Oracle Cloud VM with atomic temp+rename on-disk state and daily snapshots:
-              the deployer reputation graph, Watchtower sweeps, real-time RPC pool listener and the public counters.
+              the deployer reputation graph, Watchtower sweeps, Rug Radar sweeps and the public counters.
             </span>
           </div>
           <div className={styles.card}>
@@ -306,7 +306,8 @@ export default async function DeckPage() {
         <p className={styles.body}>
           <strong>Already built:</strong> a working Android prototype (Expo / React Native, MIT), tested end
           to end on a real Android phone with Phantom. Share a Pump.fun link from any app and it scans on
-          arrival; connect a wallet over Mobile Wallet Adapter (read-only) and it risk-checks every token
+          arrival; scan a QR code (for a Solana Pay code it reads the token, not the payee wallet), with
+          recent scans kept only on the phone; connect a wallet over Mobile Wallet Adapter (read-only) and it risk-checks every token
           you hold; Sign in with Solana proves ownership with a signed message, never a transaction. The
           mobile milestones above turn it into a polished dApp Store release with Watchtower alerts.{" "}
           <a className={styles.link} href="https://youtu.be/HubNomvZ7_k">Demo video</a> ·{" "}
