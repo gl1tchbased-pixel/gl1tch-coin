@@ -79,7 +79,7 @@ Machine-readable docs for agents: <https://gl1tchbased.xyz/llms.txt>.
 
 ```mermaid
 flowchart LR
-  U[Browser · Telegram · API caller] --> S["/api/scan (Next.js on Vercel)"]
+  U[Browser · Telegram · API caller] --> S["/api/scan (Next.js on an Oracle Cloud VM)"]
   S --> RPC[Solana RPC: mint, authorities, holders, deployer balance]
   S --> RC[RugCheck: LP lock, insiders, deployer]
   S --> MK[DexScreener / GeckoTerminal: market]
