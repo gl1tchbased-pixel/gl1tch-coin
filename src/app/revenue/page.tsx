@@ -274,6 +274,8 @@ export default async function RevenuePage() {
               {rev.paid.count.toLocaleString("en-US")} external paid calls ({usd(rev.paid.usdMicro)} USDC) since{" "}
               {rev.since ? new Date(rev.since).toISOString().slice(0, 10) : "launch"}, plus{" "}
               {rev.self.count.toLocaleString("en-US")} self-test settlements ({usd(rev.self.usdMicro)} USDC, excluded from revenue totals).
+              {" "}Price is today&apos;s price; Earned adds up what each call actually paid, so the two can differ
+              where a price changed (Rug Radar went from $0.005 to $0.002 on 29 October 2026).
             </p>
             <div className={styles.ledger}>
               <div className={`${styles.row} ${styles.head}`}>
