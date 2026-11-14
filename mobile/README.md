@@ -16,6 +16,13 @@ token safety scanner as a mobile-first Android app. MIT-licensed, like the rest 
   code (it reads the `spl-token` mint, not the payee wallet). The camera is used only on that screen; nothing is recorded.
 - **Recent scans.** The last 20 verdicts are saved on the phone only (AsyncStorage) and can be reopened without a
   network call. Nothing is uploaded.
+- **Watchtower alerts (not yet tested on a phone).** Tap "Watch this token" on a verdict (up to 10 tokens). The app
+  re-checks them in the background about every hour, whenever Android's WorkManager allows it, and shows a local
+  notification when one gets riskier: a worse verdict, a check that slid pass → warn → fail, or an LP lock that
+  dropped 20+ points (the same rules as the Telegram bot's Watchtower; `src/watch-rules.ts`, unit-tested). A timed-out
+  source never counts as a change. The watchlist stays on the phone, there is no push server or account, and the
+  background re-checks are tagged as automated, so they don't count as people's scans on /api/stats. "Check now"
+  runs the same check on demand. Force-stopping the app pauses the checks until it is opened again.
 - **Prove ownership without a transaction.** "Sign in with Solana" asks the wallet to sign a short message (on
   Seeker, the Seed Vault-backed wallet signs it). It's used to tie Watchtower alerts to your own wallet.
 
@@ -39,8 +46,8 @@ list survived an app restart.
 
 ## Not in this prototype yet
 
-Planned in the grant milestones: Watchtower push alerts, Seeker polish and
-the Solana dApp Store release.
+Planned in the grant milestones: server-sent push alerts tied to your own wallet's holdings (today's alerts come
+from the on-phone watchlist), Seeker polish and the Solana dApp Store release.
 
 ## Build
 

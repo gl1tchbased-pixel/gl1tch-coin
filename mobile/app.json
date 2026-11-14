@@ -25,9 +25,32 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      ["expo-share-intent", { "androidIntentFilters": ["text/*"] }],
-      ["expo-camera", { "cameraPermission": "GL1TCH uses the camera only to read QR codes with a token address.", "microphonePermission": false, "recordAudioAndroid": false, "barcodeScannerEnabled": true }],
-      "./plugins/with-android-build-tweaks.js"
+      [
+        "expo-share-intent",
+        {
+          "androidIntentFilters": [
+            "text/*"
+          ]
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "GL1TCH uses the camera only to read QR codes with a token address.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": true
+        }
+      ],
+      "./plugins/with-android-build-tweaks.js",
+      "expo-background-task",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/android-icon-monochrome.png",
+          "color": "#7CFF6B"
+        }
+      ]
     ]
   }
 }

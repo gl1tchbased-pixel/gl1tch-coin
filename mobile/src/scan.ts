@@ -41,9 +41,14 @@ export function extractAddress(text: string | null | undefined): string | null {
   return sol[0] ?? null;
 }
 
-export async function scan(address: string, signal?: AbortSignal): Promise<ScanResult> {
+/**
+ * `source` marks an automated call (e.g. the background Watchtower re-check). The site then counts it as
+ * automation, not as a person's scan, so the public counter at /api/stats stays honest.
+ */
+export async function scan(address: string, signal?: AbortSignal, source?: string): Promise<ScanResult> {
   const chain = address.startsWith("0x") ? "" : "&chain=solana";
-  const res = await fetch(`${API}?mint=${encodeURIComponent(address)}${chain}`, { signal });
+  const headers: Record<string, string> = source ? { "x-gl1tch-source": source } : {};
+  const res = await fetch(`${API}?mint=${encodeURIComponent(address)}${chain}`, { signal, headers });
   const body = await res.json().catch(() => ({}));
   if (!res.ok || !body.verdict) throw new Error(body.error || `Scan failed (HTTP ${res.status})`);
   return body as ScanResult;
