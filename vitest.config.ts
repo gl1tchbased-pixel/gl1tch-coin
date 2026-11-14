@@ -9,8 +9,7 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    // mobile/: only its pure-logic tests (no React Native imports), so the app's rules run in CI too.
-    include: ["src/**/*.test.ts", "mobile/src/**/*.test.ts"],
+    include: ["src/**/*.test.ts"],
     // @x402/next imports "next/server" without an extension; Node's own ESM loader can't resolve
     // that (next has no exports map), so let Vite transform it like app code.
     server: { deps: { inline: [/@x402\/next/] } },

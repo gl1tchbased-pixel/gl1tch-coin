@@ -1,6 +1,15 @@
-import { describe, expect, it } from "vitest";
+// Runs with Node's own test runner (no Expo or vitest needed): node --experimental-strip-types --test mobile/src/*.test.ts
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 import type { ScanCheck, ScanResult } from "./scan";
-import { addWatch, baselineFrom, mergeBaseline, removeWatch, WATCH_CAP, worsened, type WatchItem } from "./watch-rules";
+import { addWatch, baselineFrom, mergeBaseline, removeWatch, WATCH_CAP, worsened, type WatchItem } from "./watch-rules.ts";
+
+const expect = (actual: unknown) => ({
+  toEqual: (expected: unknown) => assert.deepEqual(actual, expected),
+  toBe: (expected: unknown) => assert.equal(actual, expected),
+  toMatchObject: (expected: Record<string, unknown>) =>
+    assert.deepEqual(Object.fromEntries(Object.keys(expected).map((k) => [k, (actual as Record<string, unknown>)[k]])), expected),
+});
 
 const check = (key: string, status: ScanCheck["status"], value = "", label = key): ScanCheck => ({
   key,
