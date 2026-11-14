@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  AppState,
   Linking,
   Pressable,
   ScrollView,
@@ -15,6 +16,9 @@ import { extractAddress, scan, STATUS_COLOR, STATUS_ICON, VERDICT_COLOR, type Sc
 import { connectWallet, holdings, type Connected, type Holding } from "./src/wallet";
 import { addToHistory, ago, loadHistory, saveHistory, type HistoryItem } from "./src/history";
 import { QrScanner } from "./src/QrScanner";
+import * as Notifications from "expo-notifications";
+import { checkWatchlist, ensureNotifyPermission, loadWatchlist, saveWatchlist, syncSchedule } from "./src/watch";
+import { addWatch, removeWatch, WATCH_CAP, type WatchItem } from "./src/watch-rules";
 
 const C = { bg: "#0B0A14", card: "#15132A", border: "#2A2650", text: "#F2F0FF", muted: "#9A95C0", signal: "#7CFF6B" };
 const short = (a: string) => `${a.slice(0, 4)}…${a.slice(-4)}`;
@@ -32,12 +36,31 @@ export default function App() {
   const [walletBusy, setWalletBusy] = useState<string | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [qrOpen, setQrOpen] = useState(false);
+  const [watchlist, setWatchlist] = useState<WatchItem[]>([]);
+  const [watchBusy, setWatchBusy] = useState(false);
+  const [watchMsg, setWatchMsg] = useState<string | null>(null);
   const scroll = useRef<ScrollView>(null);
+  const handledTap = useRef<string | null>(null);
   const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent();
+  const lastTap = Notifications.useLastNotificationResponse();
 
   useEffect(() => {
     loadHistory().then(setHistory);
   }, []);
+
+  // The background check updates stored baselines, so re-read the watchlist whenever the app comes back.
+  const refreshWatch = useCallback(() => {
+    loadWatchlist().then(setWatchlist);
+  }, []);
+  useEffect(() => {
+    // Re-arm the background check at launch too (an app update or reinstall can drop the OS registration).
+    loadWatchlist().then((list) => {
+      setWatchlist(list);
+      syncSchedule(list);
+    });
+    const sub = AppState.addEventListener("change", (state) => state === "active" && refreshWatch());
+    return () => sub.remove();
+  }, [refreshWatch]);
 
   const run = useCallback(async (raw: string) => {
     const address = extractAddress(raw);
@@ -71,6 +94,58 @@ export default function App() {
     run(shareIntent.text || shareIntent.webUrl || "");
     resetShareIntent();
   }, [hasShareIntent, shareIntent, resetShareIntent, run]);
+
+  // Tapping a Watchtower alert opens the app on a fresh scan of that token.
+  useEffect(() => {
+    if (!lastTap || lastTap.actionIdentifier !== Notifications.DEFAULT_ACTION_IDENTIFIER) return;
+    const id = lastTap.notification.request.identifier;
+    if (handledTap.current === id) return;
+    handledTap.current = id;
+    const mint = lastTap.notification.request.content.data?.mint;
+    if (typeof mint === "string") run(mint);
+  }, [lastTap, run]);
+
+  const isWatched = (r: ScanResult) => watchlist.some((w) => w.chain === r.chain && w.mint === r.mint);
+
+  const stopWatch = async (chain: string, mint: string) => {
+    setWatchMsg(null);
+    const next = removeWatch(await loadWatchlist(), chain, mint);
+    await saveWatchlist(next);
+    setWatchlist(next);
+    await syncSchedule(next);
+  };
+
+  const toggleWatch = async (r: ScanResult) => {
+    if (isWatched(r)) return stopWatch(r.chain, r.mint);
+    setWatchMsg(null);
+    const out = addWatch(await loadWatchlist(), r);
+    if (out.full) {
+      setWatchMsg(`You're watching ${WATCH_CAP} tokens, the limit. Stop one to make room.`);
+      return;
+    }
+    await saveWatchlist(out.list);
+    setWatchlist(out.list);
+    await syncSchedule(out.list);
+    if (!(await ensureNotifyPermission())) {
+      setWatchMsg("Notifications are off for GL1TCH, so alerts can't reach you. Turn them on in Android settings.");
+    }
+  };
+
+  const checkNow = async () => {
+    setWatchBusy(true);
+    setWatchMsg(null);
+    try {
+      const { checked, alerts } = await checkWatchlist();
+      setWatchMsg(
+        alerts > 0
+          ? `${alerts} of ${checked} checked got riskier: see the notification.`
+          : `Checked ${checked} of ${watchlist.length}: nothing got worse.`,
+      );
+    } finally {
+      setWatchBusy(false);
+      refreshWatch();
+    }
+  };
 
   const connect = async (signIn: boolean) => {
     setWalletBusy(signIn ? "Waiting for the wallet to sign the message…" : "Waiting for the wallet…");
@@ -173,6 +248,41 @@ export default function App() {
             <Pressable onPress={() => Linking.openURL(`https://gl1tchbased.xyz/scan/${result.chain}-${result.mint}`)}>
               <Text style={s.link}>Full report on gl1tchbased.xyz →</Text>
             </Pressable>
+            <Pressable style={s.buttonGhost} onPress={() => toggleWatch(result)}>
+              <Text style={s.buttonGhostText}>{isWatched(result) ? "Watching ✓ · tap to stop" : "Watch this token"}</Text>
+            </Pressable>
+          </View>
+        )}
+
+        {(watchlist.length > 0 || watchMsg) && (
+          <View style={s.card}>
+            <Text style={s.section}>Watchtower</Text>
+            <Text style={s.hint}>
+              GL1TCH re-checks these about every hour, whenever Android allows it, and notifies you if one gets
+              riskier. The list stays on this phone. If you force-stop the app, checks pause until you open it again.
+            </Text>
+            {watchlist.map((w) => (
+              <View key={`${w.chain}:${w.mint}`} style={s.holding}>
+                <Pressable style={s.watchName} onPress={() => run(w.mint)}>
+                  <Text style={s.holdingMint}>
+                    {w.symbol ? `$${w.symbol}` : short(w.mint)}
+                    <Text style={s.muted}>  checked {ago(w.checkedAt)}</Text>
+                  </Text>
+                </Pressable>
+                <Text style={[s.holdingVerdict, { color: VERDICT_COLOR[w.baseline.verdict] }]}>
+                  {w.baseline.verdict} {w.baseline.score}
+                </Text>
+                <Pressable onPress={() => stopWatch(w.chain, w.mint)} hitSlop={8}>
+                  <Text style={s.stop}>Stop</Text>
+                </Pressable>
+              </View>
+            ))}
+            {watchlist.length > 0 && (
+              <Pressable style={[s.buttonGhost, watchBusy && s.buttonOff]} onPress={checkNow} disabled={watchBusy}>
+                {watchBusy ? <ActivityIndicator color={C.signal} /> : <Text style={s.buttonGhostText}>Check now</Text>}
+              </Pressable>
+            )}
+            {watchMsg && <Text style={s.hint}>{watchMsg}</Text>}
           </View>
         )}
 
@@ -290,5 +400,7 @@ const s = StyleSheet.create({
   holding: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 8, borderTopColor: C.border, borderTopWidth: 1 },
   holdingMint: { color: C.text, fontSize: 14 },
   holdingVerdict: { fontSize: 13, fontWeight: "700" },
+  watchName: { flex: 1 },
+  stop: { color: C.muted, fontSize: 13, marginLeft: 12, textDecorationLine: "underline" },
   footer: { color: C.muted, fontSize: 12, textAlign: "center", marginTop: 6, marginBottom: 24 },
 });

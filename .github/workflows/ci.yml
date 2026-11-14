@@ -24,6 +24,9 @@ jobs:
         run: npx tsc --noEmit
       - name: Test site
         run: npm test
+      # The Android app's pure rules (no React Native imports). Node's own runner, so no mobile install is needed.
+      - name: Test mobile rules
+        run: node --experimental-strip-types --test mobile/src/*.test.ts
       - name: Install (bot)
         run: cd bot && npm install --no-audit --no-fund
       - name: Type-check bot

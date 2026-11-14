@@ -1,6 +1,8 @@
 // Must run before anything that uses crypto.getRandomValues (the wallet adapter's session keys).
 import "react-native-get-random-values";
 import { registerRootComponent } from "expo";
+// Defines the background Watchtower task at startup, so Android can run it while the app is closed.
+import "./src/watch";
 
 import App from "./App";
 
