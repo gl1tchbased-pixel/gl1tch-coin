@@ -63,6 +63,13 @@ cd android && ./gradlew assembleRelease     # APK in android/app/build/outputs/a
 daemon, and network timeouts are long (helps behind HTTPS-scanning proxies or antivirus). `patches/` removes the
 Mobile Wallet Adapter library's own `buildscript`, whose AGP/Kotlin versions clash with React Native 0.86's.
 
+**Release signing.** CI (`.github/workflows/mobile-apk.yml`) builds every APK. When the repo secrets
+`ANDROID_KEYSTORE_BASE64` and `ANDROID_KEYSTORE_PASSWORD` exist, it re-signs the APK with the GL1TCH release key and,
+on a push to main, publishes it to the
+[android-latest release](https://github.com/gl1tchbased-pixel/gl1tch-coin/releases/tag/android-latest). Without the
+key, the APK keeps the Expo template's public debug key and is never published. The key is created once with
+`pwsh mobile/scripts/create-signing-key.ps1` (backup stays on the maintainer's PC; nothing is committed).
+
 `npx tsc --noEmit` type-checks the app. The share sheet and Mobile Wallet Adapter use native modules, so the app
 needs a development or release build; Expo Go can't run them.
 

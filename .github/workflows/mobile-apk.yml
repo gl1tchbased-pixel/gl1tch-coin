@@ -1,11 +1,16 @@
-# Builds the Android app (mobile/) into a test APK on GitHub's runners, so no local disk or SDK is needed.
-# The APK is signed with the Expo template's debug key: fine for testing on a phone, not for the dApp Store.
-# Download it from the run's "Artifacts" section.
+# Builds the Android app (mobile/) into an APK on GitHub's runners, so no local disk or SDK is needed.
+# With the release key in the repo secrets (created once by mobile/scripts/create-signing-key.ps1) the APK is
+# re-signed with it; otherwise it keeps the Expo template's public debug key and is only an artifact for testing.
+# On a push to main, a release-signed APK is published to the rolling "android-latest" GitHub release.
+# A debug-signed APK is never published: anyone could sign a fake "update" with that public key.
 name: mobile-apk
 
 on:
   workflow_dispatch:
   pull_request:
+    paths: ["mobile/**", ".github/workflows/mobile-apk.yml"]
+  push:
+    branches: [main]
     paths: ["mobile/**", ".github/workflows/mobile-apk.yml"]
 
 permissions:
@@ -19,6 +24,11 @@ jobs:
   apk:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    permissions:
+      contents: write # only used by the publish step, which runs on pushes to main
+    env:
+      HAS_KEY: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' && secrets.ANDROID_KEYSTORE_PASSWORD != '' }}
+      APK_DIR: ${{ github.workspace }}/mobile/android/app/build/outputs/apk/release
     defaults:
       run:
         working-directory: mobile
@@ -40,8 +50,34 @@ jobs:
       - name: Assemble release APK (arm64 + x86_64)
         working-directory: mobile/android
         run: ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a,x86_64 --no-daemon
+      - name: Sign with the GL1TCH release key
+        if: env.HAS_KEY == 'true'
+        working-directory: ${{ env.APK_DIR }}
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          "$BT/apksigner" sign --ks "$RUNNER_TEMP/release.jks" --ks-key-alias gl1tch \
+            --ks-pass env:KS_PASS --key-pass env:KS_PASS --out gl1tch-android.apk app-release.apk
+          rm -f "$RUNNER_TEMP/release.jks" app-release.apk
+          "$BT/apksigner" verify --print-certs gl1tch-android.apk | grep -E "Signer #1 certificate (DN|SHA-256)"
       - uses: actions/upload-artifact@v4
         with:
           name: gl1tch-android-apk
           path: mobile/android/app/build/outputs/apk/release/*.apk
           retention-days: 30
+      - name: Publish to the android-latest release
+        if: github.event_name == 'push' && env.HAS_KEY == 'true'
+        working-directory: ${{ github.workspace }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NOTES="Latest Android build of GL1TCH (test build, not yet in the Solana dApp Store). Built by GitHub Actions from ${GITHUB_SHA::7} on $(date -u +%Y-%m-%d). Install: download gl1tch-android.apk on an Android phone and allow installs from your browser. Read-only: the app never asks for a transaction signature. Source: mobile/ in this repo (MIT)."
+          if gh release view android-latest >/dev/null 2>&1; then
+            gh release edit android-latest --notes "$NOTES"
+          else
+            gh release create android-latest --prerelease --target "$GITHUB_SHA" --title "GL1TCH for Android (latest test build)" --notes "$NOTES"
+          fi
+          gh release upload android-latest "$APK_DIR/gl1tch-android.apk" --clobber
