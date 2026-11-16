@@ -217,7 +217,7 @@ export default async function DeckPage() {
               <strong>{rev.paid.count.toLocaleString("en-US")} settled external paid calls</strong> in USDC across 6 blockchains (Solana, Base, Arbitrum, Polygon, Avalanche, Sei)
               {rev.quotes ? ` alongside ${rev.quotes.last30.total.toLocaleString("en-US")} price quotes` : ""}, with every on-chain
               transaction published at <Link className={styles.link} href="/revenue">/revenue</Link> (our own test calls are listed
-              separately and excluded from totals). Ranked in the top 5 on the Coinbase x402 Bazaar for{" "}
+              separately and excluded from totals). At the end of October 2026 it ranked in the top 5 on the Coinbase x402 Bazaar for{" "}
               <em>agent wallet trust</em> (#2), <em>solana yield</em> (#2), <em>deployer reputation</em> (#3) and{" "}
               <em>verifiable random number</em> (#5).
             </li>
