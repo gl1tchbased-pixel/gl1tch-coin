@@ -57,12 +57,14 @@ jobs:
           KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
+          set -o pipefail
           echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
           BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
           "$BT/apksigner" sign --ks "$RUNNER_TEMP/release.jks" --ks-key-alias gl1tch \
             --ks-pass env:KS_PASS --key-pass env:KS_PASS --out gl1tch-android.apk app-release.apk
           rm -f "$RUNNER_TEMP/release.jks" app-release.apk
-          "$BT/apksigner" verify --print-certs gl1tch-android.apk | grep -E "Signer #1 certificate (DN|SHA-256)"
+          # build-tools 37 prints "V2 Signer: certificate DN", older ones "Signer #1 certificate DN".
+          "$BT/apksigner" verify --print-certs gl1tch-android.apk | grep -E "certificate (DN|SHA-256)"
       - uses: actions/upload-artifact@v4
         with:
           name: gl1tch-android-apk
