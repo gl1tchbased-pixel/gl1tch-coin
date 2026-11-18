@@ -3,6 +3,13 @@
 A proof of concept for the Solana Mobile proposal in the [grant deck](https://gl1tchbased.xyz/deck): the GL1TCH
 token safety scanner as a mobile-first Android app. MIT-licensed, like the rest of the repo.
 
+**Try it:** download `gl1tch-android.apk` from the
+[android-latest release](https://github.com/gl1tchbased-pixel/gl1tch-coin/releases/tag/android-latest) on an Android
+phone and allow installs from your browser. It's a test build, not yet in the Solana dApp Store. Every build is
+signed with the GL1TCH release key; its certificate SHA-256 is
+`88:0A:A3:BC:C6:5C:1E:31:A5:A9:08:5C:65:9D:9C:26:13:20:4B:B8:35:8D:FC:97:F8:06:83:EB:F7:E3:03:92`
+(check with `apksigner verify --print-certs gl1tch-android.apk`).
+
 ## What it does
 
 - **Scan by paste.** Paste a token address or any link that contains one, get the verdict, the 0–100 score and a
