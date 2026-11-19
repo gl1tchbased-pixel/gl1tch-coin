@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { readFileSync } from "node:fs";
-import { revenueEntryFromSettle } from "./revenue";
+import { paidNetworkNames, revenueEntryFromSettle } from "./revenue";
 import { SOLANA_MAINNET } from "./x402/config";
 
 afterEach(() => {
@@ -110,5 +110,20 @@ describe("revenueEntryFromSettle", () => {
 
   it("flags our own test wallet as a self-test", () => {
     expect(revenueEntryFromSettle({ result: ok, resourceUrl: URL_SCAN }, new Set(["Payer111"]))?.self).toBe(true);
+  });
+});
+
+describe("paidNetworkNames", () => {
+  it("names only networks with external payments, most payments first", () => {
+    const names = paidNetworkNames({
+      [SOLANA_MAINNET]: { count: 10, usdMicro: 50_000 },
+      "eip155:8453": { count: 13, usdMicro: 27_000 },
+      "eip155:1329": { count: 0, usdMicro: 0 },
+    });
+    expect(names).toEqual(["Base", "Solana"]);
+  });
+
+  it("keeps an unknown network id as is", () => {
+    expect(paidNetworkNames({ "eip155:10": { count: 1, usdMicro: 3_000 } })).toEqual(["eip155:10"]);
   });
 });
