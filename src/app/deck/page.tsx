@@ -3,7 +3,7 @@ import { shareMeta } from "@/lib/share-meta";
 import Link from "next/link";
 import { OFFICIAL } from "@/lib/official";
 import { getStats } from "@/lib/stats";
-import { getRevenue } from "@/lib/revenue";
+import { getRevenue, paidNetworkNames } from "@/lib/revenue";
 import { deployerStatus, deployerCopy, DEPLOYER_EVENTS } from "@/lib/deployer-status";
 import styles from "./deck.module.css";
 
@@ -111,9 +111,14 @@ const funding: { track: string; items: Item[] }[] = [
 
 const fmtDate = (ms: number) => new Date(ms).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 
+/** "Base", "Base and Solana", "Base, Solana and Sei". */
+const joinNames = (names: string[]) =>
+  names.length < 2 ? names.join("") : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+
 export default async function DeckPage() {
   const [stats, dep, rev] = await Promise.all([getStats(), deployerStatus(), getRevenue()]);
   const deployer = deployerCopy(dep);
+  const paidChains = rev ? paidNetworkNames(rev.byNetwork ?? {}) : [];
 
   return (
     <section className={styles.wrap}>
@@ -214,7 +219,8 @@ export default async function DeckPage() {
           {rev && (
             <li>
               <strong>AI-agent adoption (x402 + MCP, live since 28 October 2026):</strong>{" "}
-              <strong>{rev.paid.count.toLocaleString("en-US")} settled external paid calls</strong> in USDC across 6 blockchains (Solana, Base, Arbitrum, Polygon, Avalanche, Sei)
+              <strong>{rev.paid.count.toLocaleString("en-US")} settled external paid calls</strong> in USDC
+              {paidChains.length > 0 ? ` (paid so far on ${joinNames(paidChains)}; the API accepts 6 chains)` : ""}
               {rev.quotes ? ` alongside ${rev.quotes.last30.total.toLocaleString("en-US")} price quotes` : ""}, with every on-chain
               transaction published at <Link className={styles.link} href="/revenue">/revenue</Link> (our own test calls are listed
               separately and excluded from totals). At the end of October 2026 it ranked in the top 5 on the Coinbase x402 Bazaar for{" "}

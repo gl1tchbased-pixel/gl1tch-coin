@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { shareMeta } from "@/lib/share-meta";
-import { getRevenue, type RevenueEntry } from "@/lib/revenue";
+import { getRevenue, networkName, type RevenueEntry } from "@/lib/revenue";
 import { getTreasurySnapshot } from "@/lib/treasury-revenue";
 import { PAID_ROUTES, readPayTo, type PaidRouteId } from "@/lib/x402/config";
 import { DEPLOYER_WALLET } from "@/lib/official";
@@ -20,16 +20,6 @@ export const revalidate = 0;
 
 const usd = (micro: number) =>
   `$${(micro / 1e6).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 3 })}`;
-
-const networkName = (n: string) => {
-  if (n.startsWith("solana:")) return "Solana";
-  if (n === "eip155:8453") return "Base";
-  if (n === "eip155:42161") return "Arbitrum";
-  if (n === "eip155:137") return "Polygon";
-  if (n === "eip155:43114") return "Avalanche";
-  if (n === "eip155:1329") return "Sei";
-  return n;
-};
 
 function txUrl(e: RevenueEntry): string | null {
   if (e.network.startsWith("solana:")) return `https://solscan.io/tx/${e.tx}`;

@@ -43,6 +43,25 @@ export interface RevenueSummary {
   quotes?: QuoteSummary;
 }
 
+/** Display name for a CAIP-2 network id from the ledger. */
+export function networkName(n: string): string {
+  if (n.startsWith("solana:")) return "Solana";
+  if (n === "eip155:8453") return "Base";
+  if (n === "eip155:42161") return "Arbitrum";
+  if (n === "eip155:137") return "Polygon";
+  if (n === "eip155:43114") return "Avalanche";
+  if (n === "eip155:1329") return "Sei";
+  return n;
+}
+
+/** Networks that have received at least one external payment, most payments first. */
+export function paidNetworkNames(byNetwork: Record<string, Tally>): string[] {
+  return Object.entries(byNetwork)
+    .filter(([, t]) => t.count > 0)
+    .sort((a, b) => b[1].count - a[1].count)
+    .map(([n]) => networkName(n));
+}
+
 /** The fields we read from an x402 settlement response. */
 export interface SettleLike {
   success: boolean;
