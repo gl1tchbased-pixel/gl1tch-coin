@@ -24,7 +24,8 @@ describe("x402 automated health & spec linter", () => {
     receivable.ok = false;
     const report = await checkX402Health();
     expect(report.solanaUsdcAccount).toBe("missing");
-    expect(report.status).not.toBe("healthy");
+    // degraded, not unhealthy: the routes still take payment on Base & co., and a 503 would roll the deploy back
+    expect(report.status).toBe("degraded");
     for (const route of report.routes) {
       expect(route.httpStatus).toBe(402);
       expect(route.networks).not.toContain("solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp");

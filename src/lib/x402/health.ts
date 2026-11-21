@@ -271,7 +271,10 @@ export async function checkX402Health(): Promise<X402HealthReport> {
   const specCompliancePct = Math.round((healthyCount / routeIds.length) * 100);
 
   return {
-    status: totalSlips === 0 ? "healthy" : healthyCount > 0 ? "degraded" : "unhealthy",
+    // "unhealthy" (HTTP 503, which also makes the deploy roll back) only when a route can't quote a price at all.
+    // A route that still answers 402 with a slip, e.g. Solana held back while its receive account is closed, is
+    // "degraded": it can still be paid on the other networks.
+    status: totalSlips === 0 ? "healthy" : results.some((r) => r.status === "down") ? "unhealthy" : "degraded",
     checkedAt: Date.now(),
     specCompliancePct,
     routesTotal: routeIds.length,
