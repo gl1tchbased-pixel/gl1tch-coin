@@ -52,6 +52,10 @@ const nextConfig: NextConfig = {
   experimental: { inlineCss: true },
   // Share cards pick their image (Risk Orb still, Glitchy pose) at runtime, which the tracer can't follow.
   outputFileTracingIncludes: { "/scan/**": ["./assets/orb/*.png"], "/play/**": ["./assets/play/*.png"] },
+  // @x402/next loads "@x402/extensions/bazaar" with a bundler-ignored dynamic import. Keeping the package external
+  // makes the standalone build ship it (and its deps) in node_modules; otherwise every paid request logs
+  // "Cannot find package '@x402/extensions'".
+  serverExternalPackages: ["@x402/extensions"],
   async headers() {
     return [
       {
