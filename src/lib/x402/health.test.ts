@@ -2,8 +2,16 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { checkX402Health } from "./health";
 import { PAY_TO_SOLANA, PAY_TO_BASE } from "@/lib/official";
 
+// The Solana receive account is read from the chain; tests pin it instead of depending on mainnet state.
+const receivable = vi.hoisted(() => ({ ok: true }));
+vi.mock("./receivable", () => ({
+  readSolanaReceivable: async () => receivable.ok,
+  solanaCanReceive: async () => receivable.ok,
+}));
+
 describe("x402 automated health & spec linter", () => {
   beforeEach(() => {
+    receivable.ok = true;
     vi.stubEnv("X402_PAY_TO_SOLANA", PAY_TO_SOLANA);
     vi.stubEnv("X402_PAY_TO_BASE", PAY_TO_BASE);
   });
@@ -11,6 +19,19 @@ describe("x402 automated health & spec linter", () => {
   afterEach(() => {
     vi.unstubAllEnvs();
   });
+
+  it("stops offering Solana and says why when the receive wallet has no USDC account", async () => {
+    receivable.ok = false;
+    const report = await checkX402Health();
+    expect(report.solanaUsdcAccount).toBe("missing");
+    expect(report.status).not.toBe("healthy");
+    for (const route of report.routes) {
+      expect(route.httpStatus).toBe(402);
+      expect(route.networks).not.toContain("solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp");
+      expect(route.networks).toContain("eip155:8453");
+      expect(route.slips.join(" ")).toContain("has no USDC token account");
+    }
+  }, 30_000);
 
   it("lints all 10 routes with 100% spec compliance and 0 format slips", async () => {
     const report = await checkX402Health();

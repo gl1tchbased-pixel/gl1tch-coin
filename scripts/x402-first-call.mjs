@@ -10,7 +10,8 @@
  *   node scripts/x402-first-call.mjs where
  *       Prints where the wallet file lives.
  *   node scripts/x402-first-call.mjs run --pay-to <revenue Solana address> [--base https://gl1tchbased.xyz] [--routes scan,radar]
- *       Pays each paid endpoint once (all nine: $0.045 USDC on Solana; the facilitator pays the SOL fee).
+ *       Pays each paid endpoint once (all ten: $0.05 USDC on Solana; the facilitator pays the SOL fee).
+ *       The wallet file may live elsewhere: X402_TEST_WALLET=<path to test-wallet.json>.
  *
  * Guards: pays only on Solana mainnet, only to --pay-to, at most $0.01 per call; refuses to run if the
  * wallet holds more than 1 USDC or the revenue wallet has no USDC token account yet. Every call is
@@ -52,6 +53,7 @@ const ALL_CALLS = {
   quick: `/api/x402/quick?mint=${BONK}&chain=solana`,
   batch: `/api/x402/batch?mints=${BONK},${JUP}&chain=solana`,
   yield: `/api/x402/yield?chain=solana`,
+  spikes: `/api/x402/spikes`,
 };
 const ROUTES = (arg("--routes") || Object.keys(ALL_CALLS).join(",")).split(",").map((r) => r.trim()).filter(Boolean);
 for (const r of ROUTES) if (!(r in ALL_CALLS)) throw new Error(`unknown route "${r}" (known: ${Object.keys(ALL_CALLS).join(", ")})`);

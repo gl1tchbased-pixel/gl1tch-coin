@@ -18,6 +18,7 @@ import {
 } from "./config";
 import { OFFICIAL, DEPLOYER_WALLET, PAY_TO_SOLANA, PAY_TO_BASE } from "@/lib/official";
 import { SELF_TEST_HEADER } from "./settle";
+import { readSolanaReceivable } from "./receivable";
 
 // Static imports of all 9 route handlers to prevent dynamic import warnings in Vite/Next
 import { GET as scanGet } from "@/app/api/x402/scan/route";
@@ -78,6 +79,8 @@ export interface X402HealthReport {
     solana: string;
     base: string;
   };
+  /** Whether the Solana receive wallet has a USDC token account (without one, Solana payments can't land). */
+  solanaUsdcAccount: "open" | "missing" | "unknown";
   securityAdvisory: {
     warning: string;
     flaggedScamAddress: string;
@@ -116,6 +119,7 @@ export async function checkX402Health(): Promise<X402HealthReport> {
   const startAll = Date.now();
   const routeIds = Object.keys(PAID_ROUTES) as PaidRouteId[];
   const payTo = readPayTo(process.env);
+  const solanaReceivable = payTo.solana ? await readSolanaReceivable(payTo.solana) : null;
   const results: RouteHealthCheck[] = [];
 
   for (const id of routeIds) {
@@ -191,7 +195,11 @@ export async function checkX402Health(): Promise<X402HealthReport> {
         // Solana check
         const sol = accepts.find((a) => a.network === SOLANA_MAINNET);
         if (!sol) {
-          slips.push(`Missing Solana mainnet accept requirement (${SOLANA_MAINNET})`);
+          slips.push(
+            solanaReceivable === false
+              ? `Solana not offered: receive wallet ${payTo.solana} has no USDC token account (send it any USDC to reopen it)`
+              : `Missing Solana mainnet accept requirement (${SOLANA_MAINNET})`
+          );
         } else {
           if (sol.scheme !== "exact") slips.push(`Solana scheme must be 'exact', got '${sol.scheme}'`);
           if (sol.amount !== String(config.priceMicro)) {
@@ -274,6 +282,7 @@ export async function checkX402Health(): Promise<X402HealthReport> {
       solana: payTo.solana || PAY_TO_SOLANA,
       base: payTo.base || PAY_TO_BASE,
     },
+    solanaUsdcAccount: solanaReceivable === null ? "unknown" : solanaReceivable ? "open" : "missing",
     securityAdvisory: {
       warning:
         "GL1TCH runs automated, continuous spec-linting internally. GL1TCH never solicits manual route-watch or audit fees to private addresses.",
