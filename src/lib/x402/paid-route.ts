@@ -17,6 +17,7 @@ import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 import { OFFICIAL } from "@/lib/official";
 import { recordQuote } from "@/lib/revenue";
 import { SELF_TEST_HEADER } from "./settle";
+import { solanaCanReceive } from "./receivable";
 
 /** Per-IP requests per minute on paid routes; guards the upstream sources, not revenue. */
 const PAID_RATE_PER_MIN = 120;
@@ -50,7 +51,7 @@ function noStore(handler: Handler): Handler {
 
 export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest) => Promise<Response> {
   const route = PAID_ROUTES[id];
-  let paid: Handler | null = null;
+  const paidByOffer = new Map<string, Handler>();
 
   return async function handle(req: NextRequest): Promise<Response> {
     let effectiveReq = req;
@@ -87,7 +88,10 @@ export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest)
       }
       return NextResponse.json({ error: "paid API misconfigured" }, { status: 503, headers: { "cache-control": NO_STORE } });
     }
-    const accepts = buildAccepts(route.price, payTo);
+    // Offer Solana only while the receive wallet can take USDC there (see receivable.ts).
+    const solanaOk = payTo.solana ? await solanaCanReceive(payTo.solana) : false;
+    const accepts = buildAccepts(route.price, solanaOk ? payTo : { ...payTo, solana: undefined });
+    const offerKey = accepts.map((a) => a.network).join(",");
 
     sweepBuckets();
     const key = effectiveReq.headers.get("x-gl1tch-key") ?? "";
@@ -109,7 +113,9 @@ export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest)
         res.headers.set("x-gl1tch-access", "holder");
         return res;
       }
-      case "paid":
+      case "paid": {
+        // One x402 wrapper per set of offered networks: the wrapper keeps the accepts it was built with.
+        let paid = paidByOffer.get(offerKey);
         paid ??= withX402(
           noStore(handler),
           {
@@ -147,10 +153,12 @@ export function paidRoute(id: PaidRouteId, handler: Handler): (req: NextRequest)
           },
           getX402Server()
         );
+        paidByOffer.set(offerKey, paid);
         const res = await paid(effectiveReq);
         // A 402 is a price quote: counted so the ledger shows found-versus-bought (our own test client excluded).
         if (res.status === 402 && effectiveReq.headers.get(SELF_TEST_HEADER) !== "1") recordQuote(id, effectiveReq.headers.get("user-agent"));
         return res;
+      }
     }
   };
 }

@@ -5,6 +5,7 @@ import type { AddressInfo } from "node:net";
 import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { PAID_ROUTES } from "./config";
 
 /** Runs scripts/x402-first-call.mjs as a real process against a local fake RPC / API. */
 
@@ -78,7 +79,7 @@ describe("scripts/x402-first-call.mjs", () => {
     seenSelfTestHeaders.length = 0;
     const r = await runAsync(["run", "--pay-to", PAY_TO, "--base", base], env, dir);
     expect(r.status).toBe(0);
-    expect(seenSelfTestHeaders).toEqual(Array(9).fill("1")); // one call per paid route
+    expect(seenSelfTestHeaders).toEqual(Array(Object.keys(PAID_ROUTES).length).fill("1")); // one call per paid route
   }, 30_000);
 
   it("limits the run to --routes, and refuses an unknown route before paying", async () => {
