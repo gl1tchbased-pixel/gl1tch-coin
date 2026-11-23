@@ -5,6 +5,7 @@ import { parseScanInput } from "@/lib/validate";
 import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 import { CONTRACT_ADDRESS } from "@/lib/official";
 import { memo } from "@/lib/memo";
+import { describeScanSource } from "@/lib/scan-source";
 
 /**
  * GL1TCH SCANNER API — multi-chain, read-only, free for everyone (no key, no token).
@@ -54,7 +55,11 @@ export async function GET(req: NextRequest) {
     if (r.status !== 200) return 0;
     const c = (r.body as { confidence?: unknown }).confidence;
     return typeof c === "number" && c < 75 ? 10_000 : 60_000;
-  }, () => runScanReport(mint, parsed.chain, kind));
+  }, () => {
+    // Every fresh scan counted as a person's gets one coarse log line, so a jump in the public counter can be traced.
+    if (kind === "user") console.log(`[scan:user] ${describeScanSource(req, mint)}`);
+    return runScanReport(mint, parsed.chain, kind);
+  });
   if (report.status !== 200) return NextResponse.json(report.body, { status: report.status });
   // A transient source timeout drops checks to "unknown" and degrades the verdict.
   // Don't let such a low-confidence read stick in the CDN cache for a full minute —
