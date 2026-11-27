@@ -37,6 +37,8 @@ import { startYieldCollector } from "../yield/collector.js";
 import { createRpc } from "../yield/rpc.js";
 import { sendYieldAlerts } from "../yield/alerts.js";
 import { yieldWatchStore } from "../yield/watch-store.js";
+import { truthStore } from "../rpc-truth/store.js";
+import { startTruthMonitor } from "../rpc-truth/monitor.js";
 
 /** Shared store — the bot issues nonces here and the HTTP endpoint consumes them. */
 export const store = new VerifyStore();
@@ -153,6 +155,9 @@ export function startVerification(bot: Bot): Server | null {
     const n = await sendYieldAlerts(bot, snap);
     if (n) console.log(`[yield-watch] ${n} alerts sent`);
   });
+  // RPC Truth Monitor: measures free public RPCs every 6 h (schedule anchored to the last stored pass).
+  truthStore.load();
+  startTruthMonitor(truthStore);
   attestStore.load();
   balanceHistory.load();
   signalGraph.load();
@@ -282,6 +287,9 @@ export function startVerification(bot: Bot): Server | null {
     yield: {
       snapshot: () => yieldStore.snapshot(),
       history: (id) => ({ id, points: yieldStore.history(id) }),
+    },
+    rpcTruth: {
+      view: () => truthStore.view(),
     },
     signal: {
       token: config.stats.token,

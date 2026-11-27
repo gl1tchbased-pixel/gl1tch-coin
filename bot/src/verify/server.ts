@@ -37,6 +37,11 @@ export interface VerifyServerOptions {
     snapshot: () => unknown;
     history: (id: string) => unknown;
   };
+  /** RPC Truth Monitor: public GET /rpc-truth (latest measurement of free public RPCs + 7-day records;
+   *  503 until the first pass). */
+  rpcTruth?: {
+    view: () => unknown;
+  };
   /** Signal Graph endpoints: public GET /signal/deployer (deployer track record),
    *  token-guarded POST /signal/observe (record a scan). Shares the stats token. */
   signal?: {
@@ -194,6 +199,19 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
       }
       res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=60", ...cors });
       res.end(JSON.stringify(opts.yield.history(id)));
+      return;
+    }
+
+    // ---- RPC Truth Monitor ----
+    if (opts.rpcTruth && sPath === "/rpc-truth" && req.method === "GET") {
+      const view = opts.rpcTruth.view();
+      if (!view) {
+        res.writeHead(503, { "Content-Type": "application/json", "Retry-After": "120", ...cors });
+        res.end(JSON.stringify({ ok: false, error: "warming_up" }));
+        return;
+      }
+      res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=120", ...cors });
+      res.end(JSON.stringify(view));
       return;
     }
 
