@@ -204,13 +204,15 @@ export default async function DeckPage() {
           </li>
           <li>
             From 20 October 2026 the counter records people&apos;s scans and automated scans
-            separately and publishes both at <code>/api/stats</code>. At first our own pages&apos; live
-            self-checks of $GL1TCH, link previews and badge renders were still counted as people&apos;s scans,
-            so we fixed that and restarted the split
+            separately and publishes both at <code>/api/stats</code>. We have tightened what counts as a
+            person twice: first our own pages&apos; self-checks, link previews and badge renders were moved to
+            automated; then, in late November, we found that scripts calling the scan API directly were being
+            counted as people (one script made about 7,000 calls in four days), so the people&apos;s count now
+            only includes scans started on our website or in our Android app. Each change restarts the count
             {stats?.splitSince ? (
               <>
-                {" "}on {fmtDate(stats.splitSince)}: since then, <strong>{stats.user.toLocaleString("en-US")} user scans</strong> and{" "}
-                {stats.auto.toLocaleString("en-US")} automated.
+                , most recently on {fmtDate(stats.splitSince)}: since then, <strong>{stats.user.toLocaleString("en-US")} scans by people</strong> and{" "}
+                {stats.auto.toLocaleString("en-US")} automated (including direct API use).
               </>
             ) : (
               "."

@@ -47,7 +47,8 @@ export function extractAddress(text: string | null | undefined): string | null {
  */
 export async function scan(address: string, signal?: AbortSignal, source?: string): Promise<ScanResult> {
   const chain = address.startsWith("0x") ? "" : "&chain=solana";
-  const headers: Record<string, string> = source ? { "x-gl1tch-source": source } : {};
+  // Manual scans say they come from the app (counted as a person's scan); automated ones say what they are.
+  const headers: Record<string, string> = source ? { "x-gl1tch-source": source } : { "x-gl1tch-client": "gl1tch-android" };
   const res = await fetch(`${API}?mint=${encodeURIComponent(address)}${chain}`, { signal, headers });
   const body = await res.json().catch(() => ({}));
   if (!res.ok || !body.verdict) throw new Error(body.error || `Scan failed (HTTP ${res.status})`);

@@ -5,7 +5,7 @@ import { parseScanInput } from "@/lib/validate";
 import { rateLimit, clientIp, sweepBuckets } from "@/lib/ratelimit";
 import { CONTRACT_ADDRESS } from "@/lib/official";
 import { memo } from "@/lib/memo";
-import { describeScanSource } from "@/lib/scan-source";
+import { describeScanSource, scanKind } from "@/lib/scan-source";
 
 /**
  * GL1TCH SCANNER API — multi-chain, read-only, free for everyone (no key, no token).
@@ -44,10 +44,11 @@ export async function GET(req: NextRequest) {
   }
 
   const mint = parsed.mint;
-  // The public counter reports people's scans apart from automation. Our own automated callers
-  // (Watchtower re-scans, link previews, embedded badges) tag themselves, and scans of $GL1TCH's
-  // own contract are our pages' live self-checks (/proof, the trust badge, /token), not people.
-  const kind = req.headers.has("x-gl1tch-source") || mint === CONTRACT_ADDRESS ? "auto" : "user";
+  // The public counter reports people's scans apart from automation: only scans from our own website or
+  // app count as people (see scanKind). Direct API callers, our tagged automation and self-checks are auto.
+  const kind = scanKind(req, mint, CONTRACT_ADDRESS);
+  // Untagged direct API calls are worth seeing too (demand for the API), logged apart from people's scans.
+  const direct = kind === "auto" && !req.headers.has("x-gl1tch-source") && mint !== CONTRACT_ADDRESS;
 
   // Same lifetimes the CDN used to apply: a full report 60 s, a degraded read 10 s, errors never.
   // A repeat inside the window is served from memory and isn't counted again (as with the CDN).
@@ -58,6 +59,7 @@ export async function GET(req: NextRequest) {
   }, () => {
     // Every fresh scan counted as a person's gets one coarse log line, so a jump in the public counter can be traced.
     if (kind === "user") console.log(`[scan:user] ${describeScanSource(req, mint)}`);
+    else if (direct) console.log(`[scan:api] ${describeScanSource(req, mint)}`);
     return runScanReport(mint, parsed.chain, kind);
   });
   if (report.status !== 200) return NextResponse.json(report.body, { status: report.status });

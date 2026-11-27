@@ -1,5 +1,27 @@
 import { clientIp } from "./ratelimit";
 
+/** Header the GL1TCH Android app sends on scans a person starts by hand. */
+export const APP_CLIENT_HEADER = "x-gl1tch-client";
+export const APP_CLIENT_VALUE = "gl1tch-android";
+
+/**
+ * Who triggered a scan, for the public people-vs-automation counter (/api/stats). Strict on purpose: a scan
+ * counts as a person's only when it plainly came from one of our own front ends.
+ *  - our website: browsers add `Sec-Fetch-Site: same-origin` themselves (page scripts can't set it), with a
+ *    browser user agent;
+ *  - our Android app: manual scans carry `x-gl1tch-client: gl1tch-android` (background re-checks are tagged
+ *    `x-gl1tch-source` and stay automated).
+ * Everything else, including scripts calling /api/scan directly, is automation. Until 28 Nov 2026 those direct
+ * calls were counted as people (one script on a hosting provider's network made ~7,000 of them in four days).
+ */
+export function scanKind(req: Request, mint: string, ownContract: string): "user" | "auto" {
+  const h = req.headers;
+  if (mint === ownContract || h.has("x-gl1tch-source")) return "auto";
+  if (h.get(APP_CLIENT_HEADER) === APP_CLIENT_VALUE) return "user";
+  if (h.get("sec-fetch-site") === "same-origin" && /^Mozilla\/5\.0 /.test(h.get("user-agent") ?? "")) return "user";
+  return "auto";
+}
+
 /**
  * One log line describing where a counted "person's scan" came from, so a jump in the public `user`
  * counter (/api/stats) can be explained before anyone quotes it. Only coarse data: the IP is cut to its

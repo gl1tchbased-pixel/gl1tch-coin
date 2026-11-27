@@ -9,11 +9,13 @@ const BASE = (process.env.SCAN_STATS_URL || "https://bot.gl1tchbased.xyz").repla
 const TOKEN = process.env.STATS_TOKEN || "";
 
 /** `scanned` is the all-time total (people + automation); since `splitSince` the bot also
- *  counts `user` scans (web, Telegram, API callers) apart from `auto` ones (Rug Radar sweeps,
- *  Watchtower re-scans, link previews, badge renders, self-checks of $GL1TCH). */
+ *  counts `user` scans (our website, Android app, Telegram bot) apart from `auto` ones (Rug Radar
+ *  sweeps, Watchtower re-scans, link previews, badge renders, self-checks, direct API callers). */
 /** Counting rules behind user vs auto. Raise it whenever they change: the bot then restarts the
- *  split from zero. 2 = self-checks of $GL1TCH, link previews and badge renders count as auto. */
-const SPLIT_REV = 2;
+ *  split from zero. 2 = self-checks of $GL1TCH, link previews and badge renders count as auto.
+ *  3 = only scans from our own website (same-origin browser) or Android app count as people;
+ *  direct API callers count as auto (see scanKind in scan-source.ts). */
+const SPLIT_REV = 3;
 
 export type ScanStats = { scanned: number; flagged: number; user: number; auto: number; splitSince: number | null };
 
