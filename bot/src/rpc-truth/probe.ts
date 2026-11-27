@@ -192,7 +192,8 @@ export async function runEvmChain(chain: EvmTruthChain, endpoints: Endpoint[], c
   const anchor = maxHead - Math.ceil(120 / bt);
   const len = WINDOW_BLOCKS;
   const windows = DEPTHS.map((d) => {
-    const from = anchor - Math.round(d.seconds / bt!);
+    // Never ask for blocks before genesis (only matters on very young chains or in tests).
+    const from = Math.max(1, anchor - Math.round(d.seconds / bt!));
     return { depth: d.id, from, to: from + len - 1 };
   });
 

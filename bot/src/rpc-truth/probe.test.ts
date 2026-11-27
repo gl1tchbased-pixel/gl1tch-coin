@@ -11,7 +11,7 @@ const noWait = { gapMs: 0, retryMs: 0, sleep: async () => {} };
 const eps = (chain: Endpoint["chain"], providers: string[]): Endpoint[] => providers.map((p) => ({ id: `${chain}:${p}`, chain, provider: p, url: `https://${p}.example` }));
 
 /**
- * A fake Base chain: head 1,000,000, 2 s blocks. Each endpoint has a behaviour:
+ * A fake Base chain: head 5,000,000, 2 s blocks (30 days back is block ~3.7M). Each endpoint has a behaviour:
  *  full     — serves every window
  *  shallow  — serves only the last ~2 days, then says "Archive requests require a personal token"
  *  silent   — serves only the last ~2 days, then answers [] (the dangerous failure)
@@ -19,7 +19,7 @@ const eps = (chain: Endpoint["chain"], providers: string[]): Endpoint[] => provi
  *  ratelim  — rate-limited on every getLogs
  */
 function fakeEvm(behaviour: Record<string, "full" | "shallow" | "silent" | "partial" | "ratelim">): RpcCaller {
-  const HEAD = 1_000_000;
+  const HEAD = 5_000_000;
   const canary = CANARY_TOKEN.base;
   return async (url, method, params) => {
     const who = new URL(url).hostname.split(".")[0];
