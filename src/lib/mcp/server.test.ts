@@ -4,6 +4,7 @@ import type { AgentAssessment } from "@/lib/agent-trust";
 import type { DeployerReputation } from "@/lib/signal-graph";
 import type { YieldSnapshot } from "@/lib/yield/types";
 import { VIEW } from "@/lib/rpc-truth/fixture.test-data";
+import { REALITY } from "@/lib/token-reality/fixture.test-data";
 
 /** One JSON-RPC call over Streamable HTTP; reads a JSON or SSE answer. */
 async function call(handler: (req: Request) => Promise<Response>, method: string, params: unknown = {}, ip = "1.2.3.4") {
@@ -82,10 +83,16 @@ describe("withRateLimit", () => {
 });
 
 describe("GL1TCH MCP server", () => {
-  it("lists the five tools including xray_yield and rpc_truth", async () => {
+  it("lists the six tools including xray_yield, rpc_truth and new_token_reality", async () => {
     const { body } = await call(buildMcpHandler(fakeDeps()), "tools/list");
     const names = ((body.result?.tools as { name: string }[]) ?? []).map((t) => t.name).sort();
-    expect(names).toEqual(["check_agent_wallet", "deployer_reputation", "rpc_truth", "scan_token", "xray_yield"]);
+    expect(names).toEqual(["check_agent_wallet", "deployer_reputation", "new_token_reality", "rpc_truth", "scan_token", "xray_yield"]);
+  });
+
+  it("new_token_reality answers from the measured view", async () => {
+    const h = buildMcpHandler(fakeDeps({ reality: async () => REALITY }));
+    const t = text((await call(h, "tools/call", { name: "new_token_reality", arguments: { chain: "solana" } })).body);
+    expect(t).toContain("81% of new Solana tokens");
   });
 
   it("scan_token returns the verdict, the score and a link to the full report", async () => {

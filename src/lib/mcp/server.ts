@@ -13,6 +13,8 @@ import type { DeployerReputation } from "@/lib/signal-graph";
 import type { YieldSnapshot } from "@/lib/yield/types";
 import type { TruthView } from "@/lib/rpc-truth/types";
 import { TRUTH_CHAINS, truthText } from "@/lib/rpc-truth/api";
+import type { RealityView } from "@/lib/token-reality/types";
+import { REALITY_CHAINS, realityText } from "@/lib/token-reality/view";
 import { riskOf } from "@/lib/yield/risk";
 import { pct, usd } from "@/lib/yield/format";
 import { isAddress, isChain, parseScanInput } from "@/lib/validate";
@@ -26,6 +28,7 @@ export interface McpDeps {
   deployer: (address: string, chain: string) => Promise<DeployerReputation | null>;
   yieldSnap?: () => Promise<YieldSnapshot | null>;
   rpcTruth?: () => Promise<TruthView | null>;
+  reality?: () => Promise<RealityView | null>;
 }
 
 const SITE = OFFICIAL.SITE_URL;
@@ -167,6 +170,20 @@ export function buildMcpHandler(deps: McpDeps): (req: Request) => Promise<Respon
         async ({ chain: ch, depth }) => {
           if (!deps.rpcTruth) return failure("RPC Truth unavailable right now.");
           return reply(truthText(await deps.rpcTruth(), ch as (typeof TRUTH_CHAINS)[number], depth));
+        }
+      );
+
+      server.registerTool(
+        "new_token_reality",
+        {
+          title: "New Token Reality: what happens to brand-new tokens in 3 days",
+          description:
+            "Base rates for brand-new tokens on a chain, measured by GL1TCH from tokens sampled at birth: share that stopped trading within an hour, share down ≥50% / ≥90% three days later, median change. Use as context before buying a token younger than three days. Not a prediction for any single token.",
+          inputSchema: z.object({ chain: z.enum(REALITY_CHAINS as [string, ...string[]]).describe("solana, ethereum, base, bsc, arbitrum or polygon") }),
+        },
+        async ({ chain: ch }) => {
+          if (!deps.reality) return failure("New Token Reality unavailable right now.");
+          return reply(realityText(await deps.reality(), ch as (typeof REALITY_CHAINS)[number]));
         }
       );
     },

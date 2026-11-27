@@ -9,6 +9,7 @@ import { fmtPrice } from "@/lib/market";
 import { checkSwapGate, isSupportedEvmSwapChain } from "@/lib/actions/safe-swap-gate";
 import { CONTRACT_ADDRESS, links } from "@/lib/official";
 import { RiskOrb } from "./RiskOrb";
+import { NewTokenRealityLine } from "./NewTokenRealityLine";
 import { unlock } from "@/lib/fun/achievements";
 import styles from "./ScanTool.module.css";
 
@@ -194,6 +195,7 @@ export function ScanTool({ initialAddress, initialChain }: { initialAddress?: st
           <div className={`${styles.bottomLine} ${VERDICT_TONE[result.verdict] || styles.vUnknown}`}>
             {result.bottomLine}
           </div>
+          <NewTokenRealityLine chain={result.chain} ageValue={result.checks.find((c) => c.key === "token_age")?.value} />
 
           {/* The rogue-AI's narrative read — GL1TCH's signature differentiator */}
           {result.aiVerdict && (

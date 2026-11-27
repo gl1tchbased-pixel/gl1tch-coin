@@ -42,6 +42,10 @@ export interface VerifyServerOptions {
   rpcTruth?: {
     view: () => unknown;
   };
+  /** New Token Reality: public GET /token-reality (tokens sampled at birth and their 72-hour outcomes, per chain). */
+  tokenReality?: {
+    view: () => unknown;
+  };
   /** Signal Graph endpoints: public GET /signal/deployer (deployer track record),
    *  token-guarded POST /signal/observe (record a scan). Shares the stats token. */
   signal?: {
@@ -212,6 +216,13 @@ export function createVerifyServer(opts: VerifyServerOptions): Server {
       }
       res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=120", ...cors });
       res.end(JSON.stringify(view));
+      return;
+    }
+
+    // ---- New Token Reality ----
+    if (opts.tokenReality && sPath === "/token-reality" && req.method === "GET") {
+      res.writeHead(200, { "Content-Type": "application/json", "cache-control": "public, max-age=300", ...cors });
+      res.end(JSON.stringify(opts.tokenReality.view()));
       return;
     }
 

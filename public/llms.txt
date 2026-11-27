@@ -134,6 +134,7 @@ Tools:
   deployer_reputation(address, chain?) tokens launched and how many were flagged (serial rugger check)
   xray_yield(chain?, kind?, stableOnly?) DeFi yield pool X-Ray: real yield (fees/staking) vs token-emission APY, sustainability score & risk flags
   rpc_truth(chain, depth?)             which free public RPC endpoints answered history checks correctly (and which returned silent empty answers)
+  new_token_reality(chain)             base rates for brand-new tokens: share that stopped trading within an hour or lost half within 3 days
 Client config: { "gl1tch": { "url": "https://gl1tchbased.xyz/api/mcp" } }  (stdio-only clients: npx -y mcp-remote <url>)
 
 ---
@@ -146,6 +147,15 @@ history questions (1h/1d/7d/30d back). Data that any endpoint proves exists make
 explicit errors count as honest. Free JSON (60 req/min per IP):
 GET /api/rpc-truth                                   the whole latest measurement, every probe, 7-day records
 GET /api/rpc-truth?chain=base&depth=7d&minSpan=1000  endpoints worth using (never one with a silent failure in 7 days)
+
+---
+
+## 8. New Token Reality — what happens to brand-new tokens in three days
+
+Page: https://gl1tchbased.xyz/new-token-reality
+Every hour up to 4 brand-new tokens per chain are sampled at birth from GeckoTerminal's newest pools (all launchpads/DEXes)
+and their outcome 72 h after the 1-hour price is measured. Numbers are published only after 30 measured launches.
+GET /api/token-reality[?chain=solana|ethereum|base|bsc|arbitrum|polygon]   free JSON (60 req/min per IP)
 
 ---
 

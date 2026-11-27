@@ -4,6 +4,7 @@ import { agentCheck } from "@/lib/agent-trust";
 import { deployerReputation } from "@/lib/signal-graph";
 import { getYieldSnapshot } from "@/lib/yield/client";
 import { getTruth } from "@/lib/rpc-truth/client";
+import { getReality } from "@/lib/token-reality/client";
 
 /** GL1TCH MCP server (Streamable HTTP): connect any MCP client to https://gl1tchbased.xyz/api/mcp. */
 export const runtime = "nodejs";
@@ -18,6 +19,7 @@ const handler = withRateLimit(
     deployer: deployerReputation,
     yieldSnap: () => getYieldSnapshot(),
     rpcTruth: () => getTruth(),
+    reality: () => getReality(),
   }),
   60
 );
