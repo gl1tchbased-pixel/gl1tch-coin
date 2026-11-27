@@ -133,7 +133,19 @@ Tools:
   check_agent_wallet(address, chain?)  Know Your Agent trust score and level
   deployer_reputation(address, chain?) tokens launched and how many were flagged (serial rugger check)
   xray_yield(chain?, kind?, stableOnly?) DeFi yield pool X-Ray: real yield (fees/staking) vs token-emission APY, sustainability score & risk flags
+  rpc_truth(chain, depth?)             which free public RPC endpoints answered history checks correctly (and which returned silent empty answers)
 Client config: { "gl1tch": { "url": "https://gl1tchbased.xyz/api/mcp" } }  (stdio-only clients: npx -y mcp-remote <url>)
+
+---
+
+## 7. RPC Truth Monitor — which free RPCs answer history honestly
+
+Page: https://gl1tchbased.xyz/rpc-truth
+Every 6 hours each free, keyless RPC endpoint of Solana, Ethereum, Base, BNB Chain, Arbitrum and Polygon gets the same
+history questions (1h/1d/7d/30d back). Data that any endpoint proves exists makes an empty answer a "silent failure";
+explicit errors count as honest. Free JSON (60 req/min per IP):
+GET /api/rpc-truth                                   the whole latest measurement, every probe, 7-day records
+GET /api/rpc-truth?chain=base&depth=7d&minSpan=1000  endpoints worth using (never one with a silent failure in 7 days)
 
 ---
 

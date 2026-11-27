@@ -3,6 +3,7 @@ import { buildMcpHandler, withRateLimit, type McpDeps } from "./server";
 import type { AgentAssessment } from "@/lib/agent-trust";
 import type { DeployerReputation } from "@/lib/signal-graph";
 import type { YieldSnapshot } from "@/lib/yield/types";
+import { VIEW } from "@/lib/rpc-truth/fixture.test-data";
 
 /** One JSON-RPC call over Streamable HTTP; reads a JSON or SSE answer. */
 async function call(handler: (req: Request) => Promise<Response>, method: string, params: unknown = {}, ip = "1.2.3.4") {
@@ -81,10 +82,10 @@ describe("withRateLimit", () => {
 });
 
 describe("GL1TCH MCP server", () => {
-  it("lists the four tools including xray_yield", async () => {
+  it("lists the five tools including xray_yield and rpc_truth", async () => {
     const { body } = await call(buildMcpHandler(fakeDeps()), "tools/list");
     const names = ((body.result?.tools as { name: string }[]) ?? []).map((t) => t.name).sort();
-    expect(names).toEqual(["check_agent_wallet", "deployer_reputation", "scan_token", "xray_yield"]);
+    expect(names).toEqual(["check_agent_wallet", "deployer_reputation", "rpc_truth", "scan_token", "xray_yield"]);
   });
 
   it("scan_token returns the verdict, the score and a link to the full report", async () => {
@@ -152,5 +153,19 @@ describe("GL1TCH MCP server", () => {
     expect(t).toContain("Kamino USDC");
     expect(t).toContain("5.42%");
     expect(t).toContain("https://gl1tchbased.xyz/yield/solana-kamino-usdc");
+  });
+
+  it("rpc_truth recommends honest endpoints and names the silent ones", async () => {
+    const h = buildMcpHandler(fakeDeps({ rpcTruth: async () => VIEW }));
+    const t = text((await call(h, "tools/call", { name: "rpc_truth", arguments: { chain: "solana" } })).body);
+    expect(t).toContain("https://api.mainnet-beta.solana.com");
+    expect(t).toContain("Avoid (silent empty answers right now): https://solana-rpc.publicnode.com");
+    const bad = await call(h, "tools/call", { name: "rpc_truth", arguments: { chain: "tron" } });
+    expect(JSON.stringify(bad.body)).toMatch(/error|invalid/i);
+  });
+
+  it("rpc_truth explains when no measurement is available", async () => {
+    const h = buildMcpHandler(fakeDeps({ rpcTruth: async () => null }));
+    expect(text((await call(h, "tools/call", { name: "rpc_truth", arguments: { chain: "base" } })).body)).toMatch(/not available/);
   });
 });

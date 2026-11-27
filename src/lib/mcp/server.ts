@@ -11,6 +11,8 @@ import type { ScanReport } from "@/lib/scan-report";
 import type { AgentAssessment } from "@/lib/agent-trust";
 import type { DeployerReputation } from "@/lib/signal-graph";
 import type { YieldSnapshot } from "@/lib/yield/types";
+import type { TruthView } from "@/lib/rpc-truth/types";
+import { TRUTH_CHAINS, truthText } from "@/lib/rpc-truth/api";
 import { riskOf } from "@/lib/yield/risk";
 import { pct, usd } from "@/lib/yield/format";
 import { isAddress, isChain, parseScanInput } from "@/lib/validate";
@@ -23,6 +25,7 @@ export interface McpDeps {
   agent: (address: string, chain: string) => Promise<AgentAssessment | null>;
   deployer: (address: string, chain: string) => Promise<DeployerReputation | null>;
   yieldSnap?: () => Promise<YieldSnapshot | null>;
+  rpcTruth?: () => Promise<TruthView | null>;
 }
 
 const SITE = OFFICIAL.SITE_URL;
@@ -147,6 +150,23 @@ export function buildMcpHandler(deps: McpDeps): (req: Request) => Promise<Respon
             return `• [${o.chain}] ${o.protocol} ${o.symbol} (${o.kind}): APY ${pct(o.apy, 2)} · TVL ${usd(o.tvlUsd)} · risk ${r.score}/100 (${r.level}) → ${SITE}/yield/${o.id}`;
           });
           return reply([`Yield X-Ray (${rows.length} pools):`, ...lines, `Full table & paid x402 feed: ${SITE}/yield · ${SITE}/api/x402/yield`, NOT_ADVICE].join("\n"));
+        }
+      );
+
+      server.registerTool(
+        "rpc_truth",
+        {
+          title: "RPC Truth: which free RPC endpoints answer history honestly",
+          description:
+            "Before reading on-chain history through a free public RPC, ask which endpoints on that chain answered GL1TCH's latest history checks correctly. Some free endpoints return an empty, successful answer for data that exists (\"silent empty\"), which makes code conclude \"no activity\". Measured every 6 h on Solana, Ethereum, Base, BNB Chain, Arbitrum and Polygon.",
+          inputSchema: z.object({
+            chain: z.enum(TRUTH_CHAINS as [string, ...string[]]).describe("solana, ethereum, base, bsc, arbitrum or polygon"),
+            depth: z.enum(["1h", "1d", "7d", "30d"]).optional().describe("How far back you need to read (endpoints that didn't serve it are left out)"),
+          }),
+        },
+        async ({ chain: ch, depth }) => {
+          if (!deps.rpcTruth) return failure("RPC Truth unavailable right now.");
+          return reply(truthText(await deps.rpcTruth(), ch as (typeof TRUTH_CHAINS)[number], depth));
         }
       );
     },

@@ -44,15 +44,15 @@ export interface ProbeJudgement {
 const ORDERED: [ErrorClass, RegExp][] = [
   // Order matters: "Rate limit exceeded. Upgrade your plan" is a rate limit, "ranges over 100 blocks are not
   // supported on free plan" is a range limit, "Archive requests require a personal token" is a paid plan.
-  ["rate_limited", /rate[- ]?limit|too many requests|429|limit exceeded|limit reached|quota|throttl/i],
+  ["rate_limited", /rate[- ]?limit|too many requests|\b429\b|limit exceeded|limit reached|quota|throttl/i],
   ["discontinued", /discontinued|deprecated endpoint|no longer (available|supported)/i],
-  ["result_limit", /max(imum)? results|response size|too many results|exceeds limit of d+|more than d+ (logs|results)|log response size/i],
-  ["range_limit", /range|max(imum)? (number of )?blocks|too many blocks|limited to d+|exceed(s|ed)? .*block|block span/i],
+  ["result_limit", /max(imum)? results|response size|too many results|exceeds limit of \d+|more than \d+ (logs|results)|log response size/i],
+  ["range_limit", /range|max(imum)? (number of )?blocks|too many blocks|limited to \d+|exceed(s|ed)? .*block|block span/i],
   ["paid_plan_required", /free plan|free tier|upgrade|paid plan|personal token|premium/i],
-  ["auth_required", /api[ -]?key|unauthori[sz]ed|forbidden|40[13]|authenticate|access denied/i],
+  ["auth_required", /api[ -]?key|unauthori[sz]ed|forbidden|\b40[13]\b|authenticate|access denied/i],
   ["method_unsupported", /method not (found|supported|available)|unsupported method|method .* (is )?not supported/i],
   ["history_unavailable", /archive|pruned|missing trie|header not found|not available|history|before first available|was skipped|cleaned up|not found/i],
-  ["http_error", /^http d{3}/i],
+  ["http_error", /^http \d{3}/i],
 ];
 
 /** Errors that say nothing about what the endpoint can serve: try again later, judge nothing. */

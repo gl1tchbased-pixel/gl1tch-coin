@@ -90,6 +90,7 @@ export const FOOTER_LINKS = [
   { id: "foot-buyback", label: "Buyback Ledger", href: "/buyback" },
   { id: "foot-revenue", label: "Revenue", href: "/revenue" },
   { id: "foot-network", label: "Network Stats", href: "/network" },
+  { id: "foot-rpc-truth", label: "RPC Truth", href: "/rpc-truth" },
   { id: "foot-quantum", label: "Quantum Core", href: "/quantum-core" },
   { id: "foot-radar", label: "Rug Radar", href: "/radar" },
   { id: "foot-yield", label: "Yield X-Ray", href: "/yield" },

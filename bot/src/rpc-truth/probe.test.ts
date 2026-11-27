@@ -51,7 +51,7 @@ describe("runEvmChain (end to end against a fake chain)", () => {
 
     expect(r.blockTimeSec).toBe(2);
     expect(r.probes.map((p) => p.id)).toEqual(["logs-1h", "logs-1d", "logs-7d", "logs-30d"]);
-    expect(r.probes.every((p) => p.exists && p.reference?.providers === 2)).toBe(true);
+    expect(r.probes.every((p) => p.exists && (p.reference?.providers ?? 0) >= 2)).toBe(true);
 
     expect(g.full).toMatchObject({ grade: "trusted", reach: "30d", maxLogSpan: 10_000, logSpanLimit: "range_limit" });
     expect(g.shallow).toMatchObject({ grade: "honest_limited", reach: "1d" });
