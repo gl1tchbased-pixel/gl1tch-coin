@@ -33,6 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/yield/dollar",
     "/yield/il",
     "/rpc-truth",
+    "/new-token-reality",
     "/verify-scan",
     "/embed",
     "/learn",

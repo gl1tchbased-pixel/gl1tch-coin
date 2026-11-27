@@ -41,3 +41,16 @@ describe("GET /rpc-truth", () => {
     expect(r.status).not.toBe(200);
   });
 });
+
+describe("GET /token-reality", () => {
+  it("serves the reality view", async () => {
+    const s = createVerifyServer({ origin: "https://gl1tchbased.xyz", handle: async () => ({ status: 404, body: {} }), tokenReality: { view: () => ({ version: 1, chains: [] }) } });
+    await new Promise<void>((r) => s.listen(0, "127.0.0.1", r));
+    const url = `http://127.0.0.1:${(s.address() as AddressInfo).port}/token-reality`;
+    const r = await fetch(url);
+    expect(r.status).toBe(200);
+    expect(r.headers.get("cache-control")).toBe("public, max-age=300");
+    expect(await r.json()).toEqual({ version: 1, chains: [] });
+    await new Promise<void>((r) => s.close(() => r()));
+  });
+});
