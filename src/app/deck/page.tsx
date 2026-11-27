@@ -18,7 +18,8 @@ export const metadata: Metadata = shareMeta({
 });
 
 // Live numbers (scan counter split, deployer balance, revenue ledger) refresh hourly.
-export const revalidate = 3600;
+// Live counters on this page must not lag an hour behind a counter restart: refresh every 10 minutes.
+export const revalidate = 600;
 
 const product = [
   {
