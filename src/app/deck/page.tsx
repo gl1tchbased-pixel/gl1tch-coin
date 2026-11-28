@@ -47,8 +47,16 @@ const product = [
     text: "A swap is offered only after a passing scan (honeypot, transfer-fee and LP checks). On Solana it is a Jupiter swap signed in the user's own wallet, with a 0.5% GL1TCH fee shown before signing. On 7 EVM chains (Base, Ethereum, Arbitrum, BSC, Polygon, Avalanche, Optimism) it links out to 1inch, Odos and Uniswap, with no GL1TCH fee.",
   },
   {
+    title: "RPC Truth Monitor (public good)",
+    text: "Every 6 hours, 43 free keyless RPC endpoints on Solana, Ethereum, Base, BNB Chain, Arbitrum and Polygon get the same history questions. It publishes which ones answer correctly, which refuse honestly, and which return an empty, successful answer for data that exists (wallets read that as “no activity”, scanners as “clean”). Its first passes caught two such silent failures. Free page, JSON API and MCP tool; the measuring code is open source.",
+  },
+  {
+    title: "New Token Reality (base rates)",
+    text: "Every hour, brand-new tokens on six chains are sampled at birth across all launchpads, and each is measured three days after its 1-hour price. Numbers are published per chain only after 30 measured launches, with a 95% range, and appear under scans of tokens younger than three days. Sampling started on 27 November 2026.",
+  },
+  {
     title: "For AI agents: MCP + x402",
-    text: "The same checks as tools for AI agents: a free 4-tool MCP server at /api/mcp (rate-limited per IP) and 10 pay-per-call endpoints in USDC through x402 across 6 chains: Solana, Base, Arbitrum, Polygon, Avalanche & Sei (no signup). Listed in the official MCP Registry, Coinbase x402 Bazaar and PayAI catalog. Payments are public at /revenue; the free JSON API stays free.",
+    text: "The same checks as tools for AI agents: a free 6-tool MCP server at /api/mcp (rate-limited per IP) and 10 pay-per-call endpoints in USDC through x402 across 6 chains: Solana, Base, Arbitrum, Polygon, Avalanche & Sei (no signup). Listed in the official MCP Registry, Coinbase x402 Bazaar and PayAI catalog. Payments are public at /revenue; the free JSON API stays free.",
   },
 ];
 
